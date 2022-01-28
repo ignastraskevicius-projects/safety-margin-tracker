@@ -9,4 +9,7 @@ Margin of safety is a principle of investing in which an investor only purchases
 * Java 17
 
 ### Run
-* ./mvnw spring-boot:run
+./mvnw spring-boot:run
+
+### Test
+./mvnw test

@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.estimates.api;
+package org.ignast.stockinvesting.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

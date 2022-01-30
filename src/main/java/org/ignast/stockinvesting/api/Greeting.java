@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.estimates.api;
+package org.ignast.stockinvesting.api;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;

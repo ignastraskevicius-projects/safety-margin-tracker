@@ -16,6 +16,6 @@ public class RootController {
     public HttpEntity<Root> root() {
         Root root = new Root();
         root.add(linkTo(methodOn(RootController.class).root()).withRel("stocks:company"));
-        return new ResponseEntity<>(root, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(root, HttpStatus.OK);
     }
 }

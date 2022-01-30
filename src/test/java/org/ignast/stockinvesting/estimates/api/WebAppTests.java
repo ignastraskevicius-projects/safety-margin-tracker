@@ -19,7 +19,7 @@ public class WebAppTests {
 
     @Test
     public void exampleTest() {
-        String url = "http://localhost:" + port + "/";
-        assertThat(restTemplate.getForObject(url, String.class)).contains("Hello, World");
+        String url = "http://localhost:" + port + "/greeting?name=World";
+        assertThat(restTemplate.getForObject(url, String.class)).contains("hello, World");
     }
 }

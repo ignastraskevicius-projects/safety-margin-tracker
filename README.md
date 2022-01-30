@@ -1,4 +1,4 @@
-# Stock Investing Estimates
+# Stock Investing
 
 ## Set up
 

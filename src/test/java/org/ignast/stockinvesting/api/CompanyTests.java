@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -22,7 +24,9 @@ public class CompanyTests {
     @Test
     public void shouldDefineCompany() throws JSONException {
         String url = "http://localhost:" + port + "/";
-        JSONObject root = new JSONObject(restTemplate.getForObject(url, String.class));
+        ResponseEntity<String> rootResponse = restTemplate.getForEntity(url, String.class);
+        assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
+        JSONObject root = new JSONObject(rootResponse.getBody());
 
         root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
     }

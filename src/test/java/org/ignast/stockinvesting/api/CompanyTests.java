@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.api;
 
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,7 +12,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
-public class WebAppTests {
+public class CompanyTests {
     @LocalServerPort
     private int port;
 
@@ -18,8 +20,10 @@ public class WebAppTests {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void exampleTest() {
-        String url = "http://localhost:" + port + "/greeting?name=World";
-        assertThat(restTemplate.getForObject(url, String.class)).contains("hello, World");
+    public void shouldDefineCompany() throws JSONException {
+        String url = "http://localhost:" + port + "/";
+        JSONObject root = new JSONObject(restTemplate.getForObject(url, String.class));
+
+        root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
     }
 }

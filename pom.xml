@@ -37,6 +37,12 @@
             <version>${springboot.version}</version>
             <type>maven-plugin</type>
         </dependency>
+        <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20211205</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

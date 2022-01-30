@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.api;
 
-import org.springframework.hateoas.LinkRelation;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +14,7 @@ public class RootController {
     @RequestMapping("/")
     public HttpEntity<Root> root() {
         Root root = new Root();
-        root.add(linkTo(methodOn(RootController.class).root()).withRel("stocks:company"));
+        root.add(linkTo(methodOn(CompanyController.class).defineCompany()).withRel("stocks:company"));
         return new ResponseEntity<>(root, HttpStatus.OK);
     }
 }

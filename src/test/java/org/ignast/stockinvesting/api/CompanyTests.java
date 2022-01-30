@@ -28,6 +28,8 @@ public class CompanyTests {
         assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONObject root = new JSONObject(rootResponse.getBody());
 
-        root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
+        String companiesHref = root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
+        ResponseEntity<String> companyDefinition = restTemplate.postForEntity(companiesHref, "", String.class);
+        assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 }

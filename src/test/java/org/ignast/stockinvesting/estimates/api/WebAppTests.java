@@ -1,4 +1,4 @@
-package org.ignast.investing.safetymargin.api;
+package org.ignast.stockinvesting.estimates.api;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

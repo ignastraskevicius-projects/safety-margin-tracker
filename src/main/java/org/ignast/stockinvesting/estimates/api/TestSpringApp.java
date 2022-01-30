@@ -1,4 +1,4 @@
-package org.ignast.investing.safetymargin.api;
+package org.ignast.stockinvesting.estimates.api;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

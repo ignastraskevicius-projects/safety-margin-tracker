@@ -12,7 +12,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 public class RootController {
 
     @RequestMapping("/")
-    public HttpEntity<Root> root() {
+    public HttpEntity<Root> getRoot() {
         Root root = new Root();
         root.add(linkTo(methodOn(CompanyController.class).defineCompany()).withRel("stocks:company"));
         return new ResponseEntity<>(root, HttpStatus.OK);

@@ -17,6 +17,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.api.test.HateoasJsonMatchers.hasRel;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -28,13 +29,14 @@ public class RootControllerTest {
 
     @Test
     public void rootShouldContainLinkToCompanies() throws Exception {
-        try {
-            ResultActions mvcResult = mockMvc.perform(get("/"));
-            ResultActions resultExpectation = mvcResult.andExpect(status().isOk());
-            resultExpectation.andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        ResultActions root = mockMvc.perform(get("/"));
+        root.andExpect(status().isOk()).andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
+    }
+
+    @Test
+    public void shouldAcceptOnlyGetMethodRequests() throws Exception {
+        ResultActions post = mockMvc.perform(post("/"));
+        post.andExpect(status().isMethodNotAllowed());
     }
 }
 

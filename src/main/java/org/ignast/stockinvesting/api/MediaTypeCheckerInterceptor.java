@@ -10,6 +10,8 @@ import java.util.stream.Collectors;
 public class MediaTypeCheckerInterceptor implements HandlerInterceptor {
     private static boolean PASS_ONTO_NEXT_HANDLER = true;
     private static int NOT_ACCEPTABLE = 406;
+
+    @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         if (isGETrequestMissingMediaTypeAsPerExplicitApiVersionRequirementNotToBreakClientsOnUpgrades(request)) {
             response.setStatus(NOT_ACCEPTABLE);

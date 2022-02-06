@@ -23,7 +23,8 @@ public class CompanyResourceTest {
 
     @Test
     public void shouldDefineCompany() throws JSONException {
-        ResponseEntity<String> rootResponse = restTemplate.exchange(rootResourceOn(port), HttpMethod.GET, v1(), String.class);
+        ResponseEntity<String> rootResponse = restTemplate.exchange(rootResourceOn(port), HttpMethod.GET, v1(),
+                String.class);
         assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONObject root = new JSONObject(rootResponse.getBody());
 

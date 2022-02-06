@@ -21,7 +21,8 @@ public class MediaTypeCheckerInterceptor implements HandlerInterceptor {
         }
     }
 
-    private boolean isGETrequestMissingMediaTypeAsPerExplicitApiVersionRequirementNotToBreakClientsOnUpgrades(HttpServletRequest request) {
+    private boolean isGETrequestMissingMediaTypeAsPerExplicitApiVersionRequirementNotToBreakClientsOnUpgrades(
+            HttpServletRequest request) {
         return isGET(request) && !containsAcceptHeader(request);
     }
 
@@ -30,6 +31,7 @@ public class MediaTypeCheckerInterceptor implements HandlerInterceptor {
     }
 
     private boolean containsAcceptHeader(HttpServletRequest request) {
-        return Collections.list(request.getHeaderNames()).stream().map(h -> h.toLowerCase()).collect(Collectors.toList()).contains("accept");
+        return Collections.list(request.getHeaderNames()).stream().map(h -> h.toLowerCase())
+                .collect(Collectors.toList()).contains("accept");
     }
 }

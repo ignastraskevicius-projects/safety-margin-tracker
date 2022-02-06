@@ -14,7 +14,7 @@ class MediaTypeCheckerInterceptorTest {
     private final HandlerInterceptor interceptor = new MediaTypeCheckerInterceptor();
 
     @ParameterizedTest
-    @ValueSource(strings = {"Accept", "accept", "Accept"})
+    @ValueSource(strings = { "Accept", "accept", "Accept" })
     public void GETMethodRequestsShouldComeWithAcceptHeader(String accept) throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "any");
         request.addHeader(accept, "any");

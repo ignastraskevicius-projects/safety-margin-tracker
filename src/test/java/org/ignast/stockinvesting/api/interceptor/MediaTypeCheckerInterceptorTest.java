@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api;
+package org.ignast.stockinvesting.api.interceptor;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

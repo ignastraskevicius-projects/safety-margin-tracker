@@ -36,13 +36,15 @@ public class CompanyControllerTest {
     @Test
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(post("/companies/").contentType("application/json"))
-                .andExpect(status().isUnsupportedMediaType());
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
         mockMvc.perform(post("/companies/").contentType("application/hal+json"))
-                .andExpect(status().isUnsupportedMediaType());
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test

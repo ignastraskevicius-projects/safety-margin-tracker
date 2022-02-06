@@ -8,6 +8,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static org.ignast.stockinvesting.api.test.HateoasJsonMatchers.hasRel;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest({ RootController.class, HalConfig.class })
@@ -32,5 +33,10 @@ public class RootControllerTest {
     @Test
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    public void shouldNotBeModifiableResource() throws Exception {
+        mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed());
     }
 }

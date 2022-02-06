@@ -5,9 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest
 public class CompanyControllerTest {
@@ -39,8 +38,4 @@ public class CompanyControllerTest {
         mockMvc.perform(post("/companies/").accept("application/hal+json")).andExpect(status().isNotAcceptable());
     }
 
-    @Test
-    public void shouldNotBeReadableResource() throws Exception {
-        mockMvc.perform(get("/companies/")).andExpect(status().isMethodNotAllowed());
-    }
 }

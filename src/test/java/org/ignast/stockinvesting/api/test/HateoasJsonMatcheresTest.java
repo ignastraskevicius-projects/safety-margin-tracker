@@ -18,7 +18,10 @@ public class HateoasJsonMatcheresTest {
         matcher.describeTo(desc);
         matcher.describeMismatch(testJson, desc);
 
-        assertThat(desc.toString()).contains("HATEOAS json should contain a 'link:link' rel with a href containing substring 'contextPath'").contains(testJson);
+        assertThat(desc.toString())
+                .contains(
+                        "HATEOAS json should contain a 'link:link' rel with a href containing substring 'contextPath'")
+                .contains(testJson);
     }
 
     @Test
@@ -43,6 +46,7 @@ public class HateoasJsonMatcheresTest {
 
     @Test
     public void shouldMatchJsonWhereRelIsPresentAndHrefContainsRequiredString() {
-        assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com/contextPath\"}}}")).isTrue();
+        assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com/contextPath\"}}}"))
+                .isTrue();
     }
 }

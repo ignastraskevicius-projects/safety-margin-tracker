@@ -33,7 +33,8 @@ public class HateoasJsonMatchers {
             @Override
             protected boolean matchesSafely(String hateoasJson) {
                 try {
-                    return new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href").contains(hrefSubstring);
+                    return new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href")
+                            .contains(hrefSubstring);
                 } catch (JSONException e) {
                     return false;
                 }
@@ -41,7 +42,9 @@ public class HateoasJsonMatchers {
 
             @Override
             public void describeTo(Description description) {
-                description.appendText(String.format("HATEOAS json should contain a '%s' rel with a href containing substring '%s'", relName, hrefSubstring));
+                description.appendText(
+                        String.format("HATEOAS json should contain a '%s' rel with a href containing substring '%s'",
+                                relName, hrefSubstring));
             }
         }
     }

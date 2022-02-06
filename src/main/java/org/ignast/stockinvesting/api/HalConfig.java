@@ -10,7 +10,8 @@ public class HalConfig {
 
     @Bean
     public HalConfiguration halAcceptingServiceSpecificMediaType() {
-        return new HalConfiguration().withMediaType(MediaType.valueOf("application/vnd.stockinvesting.estimates-v1.hal+json"));
+        return new HalConfiguration()
+                .withMediaType(MediaType.valueOf("application/vnd.stockinvesting.estimates-v1.hal+json"));
     }
 
 }

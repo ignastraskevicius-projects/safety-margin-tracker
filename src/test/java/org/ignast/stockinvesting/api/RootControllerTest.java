@@ -10,7 +10,7 @@ import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({RootController.class, HalConfig.class})
+@WebMvcTest({ RootController.class, HalConfig.class })
 public class RootControllerTest {
 
     private @Autowired MockMvc mockMvc;
@@ -20,7 +20,8 @@ public class RootControllerTest {
     @Test
     public void rootResourceShouldLinkToCompanies() throws Exception {
         ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
-        root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE)).andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
+        root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE))
+                .andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
     }
 
     @Test
@@ -33,4 +34,3 @@ public class RootControllerTest {
         mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable());
     }
 }
-

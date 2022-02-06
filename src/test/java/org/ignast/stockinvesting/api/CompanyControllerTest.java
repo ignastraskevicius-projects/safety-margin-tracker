@@ -26,7 +26,7 @@ public class CompanyControllerTest {
     @Test
     public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("not-a-json-object"))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest()).andExpect(content().json("{\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test

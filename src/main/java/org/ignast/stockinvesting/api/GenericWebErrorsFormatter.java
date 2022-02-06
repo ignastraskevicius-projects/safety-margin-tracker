@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GenericWebErrorsFormatter {
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
-    public ResponseEntity<String> handleMothodNotAllowed(HttpRequestMethodNotSupportedException error) {
+    public ResponseEntity<String> handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
         return new ResponseEntity("{\"errorName\":\"methodNotAllowed\"}", HttpStatus.METHOD_NOT_ALLOWED);
     }
 }

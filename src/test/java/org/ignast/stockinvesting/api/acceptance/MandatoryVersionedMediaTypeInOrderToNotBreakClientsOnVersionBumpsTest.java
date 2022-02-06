@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api;
+package org.ignast.stockinvesting.api.acceptance;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,7 +11,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.api.Uris.rootResourceOn;
+import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class MandatoryVersionedMediaTypeInOrderToNotBreakClientsOnVersionBumpsTest {

@@ -9,4 +9,4 @@
 ./mvnw spring-boot:run
 
 ### Test
-./mvnw test
+./mvnw verify

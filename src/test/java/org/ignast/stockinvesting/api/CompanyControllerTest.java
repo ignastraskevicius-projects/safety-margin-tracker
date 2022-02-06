@@ -10,7 +10,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({ CompanyController.class, GenericWebErrorsFormatter.class })
+@WebMvcTest(CompanyController.class)
 public class CompanyControllerTest {
     @Autowired
     private MockMvc mockMvc;

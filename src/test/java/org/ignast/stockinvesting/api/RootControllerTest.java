@@ -32,7 +32,8 @@ public class RootControllerTest {
 
     @Test
     public void shouldRejectNonHalRequests() throws Exception {
-        mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable());
+        mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable())
+                .andExpect(content().string("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test

@@ -23,20 +23,28 @@ public class CompanyResourceTest {
 
     @Test
     public void shouldDefineCompany() throws JSONException {
-        ResponseEntity<String> rootResponse = restTemplate.exchange(rootResourceOn(port), HttpMethod.GET, v1(),
+        ResponseEntity<String> rootResponse = restTemplate.exchange(rootResourceOn(port), HttpMethod.GET, acceptV1(),
                 String.class);
         assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONObject root = new JSONObject(rootResponse.getBody());
 
         String companiesHref = root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
-        ResponseEntity<String> companyDefinition = restTemplate.postForEntity(companiesHref, "{}", String.class);
+        ResponseEntity<String> companyDefinition = restTemplate.exchange(companiesHref, HttpMethod.POST,
+                contentTypeV1("{}"), String.class);
         assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 
-    private HttpEntity<String> v1() {
+    private HttpEntity<String> acceptV1() {
         MediaType v1MediaType = MediaType.valueOf("application/vnd.stockinvesting.estimates-v1.hal+json");
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", v1MediaType.toString());
         return new HttpEntity<>(headers);
+    }
+
+    private HttpEntity<String> contentTypeV1(String content) {
+        MediaType v1MediaType = MediaType.valueOf("application/vnd.stockinvesting.estimates-v1.hal+json");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", v1MediaType.toString());
+        return new HttpEntity<>(content, headers);
     }
 }

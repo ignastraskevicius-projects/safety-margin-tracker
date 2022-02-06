@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("companies")
 public class CompanyController {
 
-    @PostMapping(produces = VersionedApiMediaTypes.V1)
+    @PostMapping(consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> defineCompany(@RequestBody String body) {
         return new ResponseEntity<>("", "{}".equals(body) ? HttpStatus.CREATED : HttpStatus.BAD_REQUEST);
     }

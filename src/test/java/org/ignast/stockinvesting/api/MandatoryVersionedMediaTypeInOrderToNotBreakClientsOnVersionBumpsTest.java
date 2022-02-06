@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.api.Uris.rootResourceOn;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class MandatoryExplicitMediaTypeInOrderToNotBreakClientsOnVersionBumpsTest {
+public class MandatoryVersionedMediaTypeInOrderToNotBreakClientsOnVersionBumpsTest {
 
     @LocalServerPort
     private int port;

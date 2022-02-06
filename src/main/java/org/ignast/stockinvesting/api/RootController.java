@@ -11,7 +11,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 public class RootController {
 
-    @GetMapping(value = "/", produces = "application/vnd.stockinvesting.estimates-v1.hal+json")
+    @GetMapping(value = "/", produces = VersionedApiMediaTypes.V1)
     public HttpEntity<Root> getRoot() {
         Root root = new Root();
         root.add(linkTo(methodOn(CompanyController.class).defineCompany()).withRel("stocks:company"));

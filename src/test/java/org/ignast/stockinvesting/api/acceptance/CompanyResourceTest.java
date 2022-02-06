@@ -29,7 +29,7 @@ public class CompanyResourceTest {
         JSONObject root = new JSONObject(rootResponse.getBody());
 
         String companiesHref = root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
-        ResponseEntity<String> companyDefinition = restTemplate.postForEntity(companiesHref, "", String.class);
+        ResponseEntity<String> companyDefinition = restTemplate.postForEntity(companiesHref, "company", String.class);
         assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }
 

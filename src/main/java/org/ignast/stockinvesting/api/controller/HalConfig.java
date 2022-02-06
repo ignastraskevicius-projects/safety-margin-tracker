@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api;
+package org.ignast.stockinvesting.api.controller;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

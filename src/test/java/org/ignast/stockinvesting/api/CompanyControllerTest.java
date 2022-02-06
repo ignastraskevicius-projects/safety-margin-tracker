@@ -18,8 +18,9 @@ public class CompanyControllerTest {
     private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
-    public void shouldDefineCompany() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)).andExpect(status().isBadRequest());
+    public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)).andExpect(status().isBadRequest())
+                .andExpect(content().json("{\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test

@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.api;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -24,5 +25,10 @@ public class GenericWebErrorsFormatter {
     public ResponseEntity<String> handleUnsupportedContentType(HttpMediaTypeNotSupportedException error) {
         return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
                 .body("{\"errorName\":\"unsupportedContentType\"}");
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
     }
 }

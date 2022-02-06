@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api;
+package org.ignast.stockinvesting.api.controller;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

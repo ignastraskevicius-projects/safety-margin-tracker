@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api;
+package org.ignast.stockinvesting.api.controller;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

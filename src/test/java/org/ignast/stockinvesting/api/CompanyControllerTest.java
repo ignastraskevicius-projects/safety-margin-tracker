@@ -16,7 +16,17 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldDefineCompany() throws Exception {
-        mockMvc.perform(post("/companies/")).andExpect(status().isCreated());
+        mockMvc.perform(post("/companies/")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
+        mockMvc.perform(post("/companies/").content("not-a-json-object")).andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void companyShouldBeDefinedInJson() throws Exception {
+        mockMvc.perform(post("/companies/").content("{}")).andExpect(status().isCreated());
     }
 
     @Test

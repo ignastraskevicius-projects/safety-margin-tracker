@@ -3,6 +3,8 @@ package org.ignast.stockinvesting.api;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import static org.ignast.stockinvesting.api.test.HateoasJsonMatchers.hasRel;
@@ -21,6 +23,16 @@ public class RootControllerTest {
     public void rootResourceShouldLinkToCompanies() throws Exception {
         ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
         root.andExpect(status().isOk()).andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
+    }
+
+    @Test
+    public void shouldRejectUnversionedRequests() throws Exception {
+        mockMvc.perform(get("/").accept("application/hal+json")).andExpect(status().isNotAcceptable());
+    }
+
+    @Test
+    public void shouldRejectNonHalRequests() throws Exception {
+        mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable());
     }
 }
 

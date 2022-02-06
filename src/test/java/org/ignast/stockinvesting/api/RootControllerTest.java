@@ -39,6 +39,7 @@ public class RootControllerTest {
 
     @Test
     public void shouldNotBeModifiableResource() throws Exception {
-        mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed());
+        mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed())
+                .andExpect(content().string("{\"errorName\":\"methodNotAllowed\"}"));
     }
 }

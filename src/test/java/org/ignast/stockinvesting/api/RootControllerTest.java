@@ -8,9 +8,9 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import static org.ignast.stockinvesting.api.test.HateoasJsonMatchers.hasRel;
+import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(RootController.class)
 public class RootControllerTest {
@@ -22,7 +22,7 @@ public class RootControllerTest {
     @Test
     public void rootResourceShouldLinkToCompanies() throws Exception {
         ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
-        root.andExpect(status().isOk()).andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
+        root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE)).andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
     }
 
     @Test

@@ -20,6 +20,11 @@ public class CompanyControllerTest {
     }
 
     @Test
+    public void shouldRejectNonHalRequests() throws Exception {
+        mockMvc.perform(post("/companies/").accept("application/json")).andExpect(status().isNotAcceptable());
+    }
+
+    @Test
     public void shouldNotBeReadableResource() throws Exception {
         mockMvc.perform(get("/companies/")).andExpect(status().isMethodNotAllowed());
     }

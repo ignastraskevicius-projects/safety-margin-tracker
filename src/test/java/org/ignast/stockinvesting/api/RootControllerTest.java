@@ -27,7 +27,8 @@ public class RootControllerTest {
 
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
-        mockMvc.perform(get("/").accept("application/hal+json")).andExpect(status().isNotAcceptable());
+        mockMvc.perform(get("/").accept("application/hal+json")).andExpect(status().isNotAcceptable())
+                .andExpect(content().string("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test

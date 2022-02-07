@@ -37,9 +37,10 @@ public class CompanyControllerTest {
                 .andExpect(content().string("{\"errorName\":\"invalidJsonField\",\"jsonPath\":\"$name\"}"));
     }
 
-    @Test
-    public void companyWithNameAsNonPrimitiveTypeShouldBeRejected() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":[]}"))
+    @ParameterizedTest
+    @ValueSource(strings = { "{\"name\":[]}", "{\"name\":{}}" })
+    public void companyWithNameAsNonPrimitiveTypeShouldBeRejected(String jsonCompany) throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$name\"}"));
     }

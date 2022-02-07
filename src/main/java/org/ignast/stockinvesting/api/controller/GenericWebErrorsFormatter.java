@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller;
 
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -28,7 +29,12 @@ public class GenericWebErrorsFormatter {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
+    public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
+        if (error.getCause() instanceof MismatchedInputException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"errorName\":\"invalidJsonField\",\"jsonPath\":\"$name\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
+        }
     }
 }

@@ -30,8 +30,15 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void companyShouldBeDefinedInJson() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{}")).andExpect(status().isCreated());
+    public void companyWithoutNameShouldBeRejected() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{}")).andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"invalidJsonField\",\"jsonPath\":\"$name\"}"));
+    }
+
+    @Test
+    public void shouldDefineCompany() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\"}"))
+                .andExpect(status().isCreated());
     }
 
     @Test

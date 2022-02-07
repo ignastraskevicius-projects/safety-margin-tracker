@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -36,12 +37,13 @@ public class GenericWebErrorsFormatter {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"invalidJsonField\",\"jsonPath\":\"$.name\"}");
+                String jsonPath = "{\"errorName\":\"fieldIsMissing\"" + ((MismatchedInputException) error.getCause())
+                        .getPath().stream().findAny().map(JsonMappingException.Reference::getFieldName)
+                        .map(f -> ",\"jsonPath\":\"$." + f + "\"").orElse("") + "}";
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonPath);
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
         }
     }
-
 }

@@ -31,10 +31,17 @@ public class GenericWebErrorsFormatter {
     @ExceptionHandler
     public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
         if (error.getCause() instanceof MismatchedInputException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"errorName\":\"invalidJsonField\",\"jsonPath\":\"$name\"}");
+            String message = error.getCause().getMessage();
+            if (message.contains("Cannot deserialize value of type ")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$name\"}");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"invalidJsonField\",\"jsonPath\":\"$name\"}");
+            }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
         }
     }
+
 }

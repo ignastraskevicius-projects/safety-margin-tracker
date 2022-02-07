@@ -36,6 +36,13 @@ public class CompanyControllerTest {
     }
 
     @Test
+    public void companyWithNameAsArrayBeRejected() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":[]}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$name\"}"));
+    }
+
+    @Test
     public void shouldDefineCompany() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\"}"))
                 .andExpect(status().isCreated());

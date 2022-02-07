@@ -1,6 +1,8 @@
 package org.ignast.stockinvesting.api.controller;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
@@ -36,10 +38,18 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void companyWithNameAsArrayBeRejected() throws Exception {
+    public void companyWithNameAsNonPrimitiveTypeShouldBeRejected() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":[]}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$name\"}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "{\"name\":3}", "{\"name\":3.3}", "{\"name\":true}", "{\"name\":false}",
+            "{\"name\":null}" })
+    public void companyWithNameAsNonStringPrimitiveTypesShouldCreated(String jsonCompany) throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
+                .andExpect(status().isCreated());
     }
 
     @Test

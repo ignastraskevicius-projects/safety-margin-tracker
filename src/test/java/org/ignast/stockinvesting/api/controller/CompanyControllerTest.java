@@ -26,16 +26,24 @@ public class CompanyControllerTest {
     }
 
     @Test
+    public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("not-a-json-object"))
+                .andExpect(status().isBadRequest()).andExpect(content().json("{\"errorName\":\"bodyNotParsable\"}"));
+    }
+
+    @Test
     public void companyWithoutAddressShouldBeRejected() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\"}"))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
     }
 
-    @Test
-    public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("not-a-json-object"))
-                .andExpect(status().isBadRequest()).andExpect(content().json("{\"errorName\":\"bodyNotParsable\"}"));
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false", "null", "\"jsonString\"" })
+    public void companyWithAddressAsPrimitiveTypesShouldBeRejected(String addressAsPrimitive) throws Exception {
+        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":%s}", addressAsPrimitive);
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -55,7 +63,7 @@ public class CompanyControllerTest {
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "null" })
     public void companyWithNameAsNonStringPrimitiveTypesShouldCreated(String companyName) throws Exception {
-        String jsonCompany = String.format("{\"name\":%s,\"address\":\"US\"}", companyName);
+        String jsonCompany = String.format("{\"name\":%s,\"address\":[]}", companyName);
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isCreated());
     }
@@ -63,7 +71,7 @@ public class CompanyControllerTest {
     @Test
     public void shouldDefineCompany() throws Exception {
         mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\",\"address\":\"US\"}"))
+                post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\",\"address\":[]}"))
                 .andExpect(status().isCreated());
     }
 

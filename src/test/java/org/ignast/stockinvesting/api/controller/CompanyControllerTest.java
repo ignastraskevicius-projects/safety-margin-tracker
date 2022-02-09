@@ -43,7 +43,8 @@ public class CompanyControllerTest {
     public void companyWithAddressAsNonObjectShouldBeRejected(String addressAsPrimitive) throws Exception {
         String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":%s}", addressAsPrimitive);
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}"));
     }
 
     @Test

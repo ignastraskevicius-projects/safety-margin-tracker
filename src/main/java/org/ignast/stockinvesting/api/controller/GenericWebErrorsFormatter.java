@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -30,10 +31,20 @@ public class GenericWebErrorsFormatter {
     }
 
     @ExceptionHandler
+    public ResponseEntity<String> handleNotNullValidations(MethodArgumentNotValidException error) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
+    }
+
+    @ExceptionHandler
     public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
         if (error.getCause() instanceof MismatchedInputException) {
             String message = error.getCause().getMessage();
-            if (message.contains("Cannot deserialize value of type ")) {
+            if (message.contains("Cannot construct instance of")
+                    || message.contains("Cannot deserialize value of type `org.ignast.stockinvesting.api.controller")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
+            } else if (message.contains("Cannot deserialize value of type ")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
             } else {

@@ -39,7 +39,7 @@ class TypeSafeStringDeserializerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false" })
+    @ValueSource(strings = { "3", "3.3", "true", "false", "null" })
     public void shouldFailToReadOtherJsonScalars(String scalar) throws JsonProcessingException {
         assertThatExceptionOfType(StrictStringParsingException.class).isThrownBy(() -> {
             mapper.readValue(scalar, String.class);

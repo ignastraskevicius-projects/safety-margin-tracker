@@ -44,6 +44,15 @@ class StrictStringDeserializerTest {
     }
 
     @Test
+    public void failureShouldPreserveLocation() throws JsonProcessingException {
+        StrictStringDeserializingException exception = catchThrowableOfType(() -> {
+            mapper.readValue("{\"stringValue\":6}", StringWrapper.class);
+        }, StrictStringDeserializingException.class);
+
+        assertThat(exception.getLocation().getColumnNr()).isEqualTo(16);
+    }
+
+    @Test
     public void failureShouldBeDueToStrictDeserializing() {
         Throwable throwable = catchThrowable(() -> {
             mapper.readValue("3", String.class);

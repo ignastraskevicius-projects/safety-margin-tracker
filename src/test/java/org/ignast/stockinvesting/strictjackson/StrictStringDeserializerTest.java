@@ -36,6 +36,14 @@ class StrictStringDeserializerTest {
     }
 
     @Test
+    public void shouldReadJsonStringJsonPair() throws JsonProcessingException {
+        StringWrapper wrapper = new StringWrapper();
+        wrapper.stringValue = "someValue";
+        assertThat(mapper.readValue("{\"stringValue\":\"someValue\"}", StringWrapper.class).stringValue)
+                .isEqualTo("someValue");
+    }
+
+    @Test
     public void failureShouldBeDueToStrictDeserializing() {
         Throwable throwable = catchThrowable(() -> {
             mapper.readValue("3", String.class);
@@ -63,5 +71,9 @@ class StrictStringDeserializerTest {
 
     static class IntWrapper {
         public int intValue;
+    }
+
+    static class StringWrapper {
+        public String stringValue;
     }
 }

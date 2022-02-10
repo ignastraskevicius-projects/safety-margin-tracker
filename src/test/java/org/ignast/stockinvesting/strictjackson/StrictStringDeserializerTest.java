@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.jacksontypesafe;
+package org.ignast.stockinvesting.strictjackson;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -12,14 +12,14 @@ import org.springframework.boot.test.autoconfigure.json.JsonTest;
 import static org.assertj.core.api.Assertions.*;
 
 @JsonTest
-class TypeSafeStringDeserializerTest {
+class StrictStringDeserializerTest {
 
     private ObjectMapper mapper;
 
     @BeforeEach
     public void setup() {
         SimpleModule module = new SimpleModule();
-        module.addDeserializer(String.class, new TypeSafeStringDeserializer());
+        module.addDeserializer(String.class, new StrictStringDeserializer());
         mapper = new ObjectMapper().registerModule(module);
     }
 
@@ -29,27 +29,20 @@ class TypeSafeStringDeserializerTest {
     }
 
     @Test
-    public void failureToReadShouldBeDueToStrictParsing() {
+    public void failureShouldBeDueToStrictDeserializing() {
         Throwable throwable = catchThrowable(() -> {
             mapper.readValue("3", String.class);
         });
 
-        assertThat(throwable).isExactlyInstanceOf(StrictStringParsingException.class)
-                .isInstanceOf(StrictParsingException.class);
+        assertThat(throwable).isExactlyInstanceOf(StrictStringDeserializingException.class)
+                .isInstanceOf(StrictDeserializingException.class);
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "null" })
-    public void shouldFailToReadOtherJsonScalars(String scalar) throws JsonProcessingException {
-        assertThatExceptionOfType(StrictStringParsingException.class).isThrownBy(() -> {
+    public void shouldFailForOtherJsonScalars(String scalar) throws JsonProcessingException {
+        assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
             mapper.readValue(scalar, String.class);
-        });
-    }
-
-    @Test
-    public void shouldFailToReadJsonFloat() throws JsonProcessingException {
-        assertThatExceptionOfType(StrictStringParsingException.class).isThrownBy(() -> {
-            mapper.readValue("3.3", String.class);
         });
     }
 }

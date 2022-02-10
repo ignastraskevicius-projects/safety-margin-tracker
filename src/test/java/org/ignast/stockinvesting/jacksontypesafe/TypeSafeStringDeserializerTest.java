@@ -5,6 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.boot.test.autoconfigure.json.JsonTest;
 
 import static org.assertj.core.api.Assertions.*;
@@ -36,10 +38,11 @@ class TypeSafeStringDeserializerTest {
                 .isInstanceOf(StrictParsingException.class);
     }
 
-    @Test
-    public void shouldFailToReadJsonInteger() throws JsonProcessingException {
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false" })
+    public void shouldFailToReadOtherJsonScalars(String scalar) throws JsonProcessingException {
         assertThatExceptionOfType(StrictStringParsingException.class).isThrownBy(() -> {
-            mapper.readValue("3", String.class);
+            mapper.readValue(scalar, String.class);
         });
     }
 

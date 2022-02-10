@@ -11,7 +11,11 @@ import java.io.IOException;
 public class TypeSafeStringDeserializer extends StringDeserializer {
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
-        if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
+        if (p.hasToken(JsonToken.VALUE_TRUE)) {
+            throw new StrictStringParsingException();
+        } else if (p.hasToken(JsonToken.VALUE_FALSE)) {
+            throw new StrictStringParsingException();
+        } else if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             throw new StrictStringParsingException();
         } else if (p.hasToken(JsonToken.VALUE_NUMBER_FLOAT)) {
             throw new StrictStringParsingException();

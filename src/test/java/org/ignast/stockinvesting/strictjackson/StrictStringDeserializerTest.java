@@ -39,6 +39,14 @@ class StrictStringDeserializerTest {
     }
 
     @ParameterizedTest
+    @ValueSource(strings = { "{}", "[]" })
+    public void shouldFailForOtherJsonCompoundTypes(String compoundType) throws JsonProcessingException {
+        assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
+            mapper.readValue(compoundType, String.class);
+        });
+    }
+
+    @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "null" })
     public void shouldFailForOtherJsonScalars(String scalar) throws JsonProcessingException {
         assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {

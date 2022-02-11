@@ -1,10 +1,7 @@
 package org.ignast.stockinvesting.strictjackson;
 
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.InvalidNullException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +20,7 @@ class StrictStringDeserializerTest {
     public void setup() {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(String.class, new StrictStringDeserializer());
-        mapper = new ObjectMapper().setDefaultSetterInfo(JsonSetter.Value.forValueNulls(Nulls.FAIL))
-                .registerModule(module);
+        mapper = new ObjectMapper().registerModule(module);
     }
 
     @Test
@@ -49,7 +45,7 @@ class StrictStringDeserializerTest {
 
     @Test
     public void shouldFailToDeserializeBeanValueWithNull() {
-        assertThatExceptionOfType(InvalidNullException.class).isThrownBy(() -> {
+        assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
             mapper.readValue("{\"stringValue\":null}", StringWrapper.class);
         });
     }
@@ -74,16 +70,8 @@ class StrictStringDeserializerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "{}", "[]" })
-    public void shouldFailForOtherJsonCompoundTypes(String compoundType) throws JsonProcessingException {
-        assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
-            mapper.readValue(compoundType, String.class);
-        });
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "null" })
-    public void shouldFailForOtherJsonScalars(String scalar) throws JsonProcessingException {
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]", "null" })
+    public void shouldFailFromOtherJsonTypes(String scalar) throws JsonProcessingException {
         assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
             mapper.readValue(scalar, String.class);
         });

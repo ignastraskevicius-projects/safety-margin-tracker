@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -38,15 +39,15 @@ public class GenericWebErrorsFormatter {
 
     @ExceptionHandler
     public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
-        if (error.getCause() instanceof MismatchedInputException) {
+        if (error.getCause() instanceof StrictStringDeserializingException) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
+        } else if (error.getCause() instanceof MismatchedInputException) {
             String message = error.getCause().getMessage();
             if (message.contains("Cannot construct instance of")
                     || message.contains("Cannot deserialize value of type `org.ignast.stockinvesting.api.controller")) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
-            } else if (message.contains("Cannot deserialize value of type ")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
             } else {
                 String jsonPath = "{\"errorName\":\"fieldIsMissing\"" + ((MismatchedInputException) error.getCause())
                         .getPath().stream().findAny().map(JsonMappingException.Reference::getFieldName)

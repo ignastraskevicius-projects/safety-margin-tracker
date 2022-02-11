@@ -54,19 +54,12 @@ public class CompanyControllerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "{\"name\":[]}", "{\"name\":{}}" })
-    public void companyWithNameAsNonPrimitiveTypeShouldBeRejected(String jsonCompany) throws Exception {
+    @ValueSource(strings = { "3", "3.3", "true", "false", "null", "{}", "[]" })
+    public void companyWithNameAsNonJsonStringShouldBeRejected(String companyName) throws Exception {
+        String jsonCompany = String.format("{\"name\":%s,\"address\":{}}", companyName);
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}"));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "null" })
-    public void companyWithNameAsNonStringPrimitiveTypesShouldCreated(String companyName) throws Exception {
-        String jsonCompany = String.format("{\"name\":%s,\"address\":{}}", companyName);
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isCreated());
     }
 
     @Test

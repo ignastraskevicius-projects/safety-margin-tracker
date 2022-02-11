@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.strictjackson;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
@@ -7,11 +8,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.boot.test.autoconfigure.json.JsonTest;
 
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.*;
 
-@JsonTest
 class StrictStringDeserializerTest {
 
     private ObjectMapper mapper;
@@ -50,13 +50,17 @@ class StrictStringDeserializerTest {
         });
     }
 
-    @Test
-    public void failureShouldPreserveLocation() throws JsonProcessingException {
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]", "null" })
+    public void failureShouldPreserveParserAndLocation(String jsonValue) throws JsonProcessingException {
         StrictStringDeserializingException exception = catchThrowableOfType(() -> {
-            mapper.readValue("{\"stringValue\":6}", StringWrapper.class);
+            mapper.readValue(format("{\"stringValue\":%s}", jsonValue), StringWrapper.class);
         }, StrictStringDeserializingException.class);
 
+        assertThat(exception.getMessage()).startsWith("java.String can only be deserialized only from json String");
         assertThat(exception.getLocation().getColumnNr()).isEqualTo(16);
+        assertThat(exception.getProcessor()).isInstanceOf(JsonParser.class);
+        assertThat(((JsonParser) exception.getProcessor()).getTokenLocation().getColumnNr()).isEqualTo(16);
     }
 
     @Test
@@ -71,9 +75,9 @@ class StrictStringDeserializerTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]", "null" })
-    public void shouldFailFromOtherJsonTypes(String scalar) throws JsonProcessingException {
+    public void shouldFailFromOtherJsonTypes(String jsonValue) throws JsonProcessingException {
         assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
-            mapper.readValue(scalar, String.class);
+            mapper.readValue(jsonValue, String.class);
         });
     }
 

@@ -1,7 +1,10 @@
 package org.ignast.stockinvesting.strictjackson;
 
+import com.fasterxml.jackson.annotation.JsonSetter;
+import com.fasterxml.jackson.annotation.Nulls;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.InvalidNullException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +23,8 @@ class StrictStringDeserializerTest {
     public void setup() {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(String.class, new StrictStringDeserializer());
-        mapper = new ObjectMapper().registerModule(module);
+        mapper = new ObjectMapper().setDefaultSetterInfo(JsonSetter.Value.forValueNulls(Nulls.FAIL))
+                .registerModule(module);
     }
 
     @Test
@@ -36,11 +40,18 @@ class StrictStringDeserializerTest {
     }
 
     @Test
-    public void shouldReadJsonStringJsonPair() throws JsonProcessingException {
+    public void shouldDeserializeBeanValue() throws JsonProcessingException {
         StringWrapper wrapper = new StringWrapper();
         wrapper.stringValue = "someValue";
         assertThat(mapper.readValue("{\"stringValue\":\"someValue\"}", StringWrapper.class).stringValue)
                 .isEqualTo("someValue");
+    }
+
+    @Test
+    public void shouldFailToDeserializeBeanValueWithNull() {
+        assertThatExceptionOfType(InvalidNullException.class).isThrownBy(() -> {
+            mapper.readValue("{\"stringValue\":null}", StringWrapper.class);
+        });
     }
 
     @Test

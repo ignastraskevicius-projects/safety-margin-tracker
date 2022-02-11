@@ -4,8 +4,6 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
-import com.fasterxml.jackson.databind.node.NullNode;
-import com.fasterxml.jackson.databind.node.TreeTraversingParser;
 
 import java.io.IOException;
 
@@ -21,6 +19,6 @@ public class StrictStringDeserializer extends StringDeserializer {
 
     @Override
     public String getNullValue(DeserializationContext ctxt) throws StrictStringDeserializingException {
-        throw new StrictStringDeserializingException(new TreeTraversingParser(NullNode.getInstance()));
+        throw new StrictStringDeserializingException(ctxt.getParser());
     }
 }

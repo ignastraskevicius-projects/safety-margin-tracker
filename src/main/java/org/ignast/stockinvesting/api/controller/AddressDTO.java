@@ -1,7 +1,10 @@
 package org.ignast.stockinvesting.api.controller;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class AddressDTO {
-    public void setCountry(String country) {
+
+    public AddressDTO(@JsonProperty(value = "country", required = true) String country) {
 
     }
 }

@@ -13,6 +13,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.util.List;
+
 @ControllerAdvice
 public class GenericWebErrorsFormatter {
     @ExceptionHandler
@@ -54,10 +56,19 @@ public class GenericWebErrorsFormatter {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
             } else {
-                String jsonPath = "{\"errorName\":\"fieldIsMissing\"" + ((MismatchedInputException) error.getCause())
-                        .getPath().stream().findAny().map(JsonMappingException.Reference::getFieldName)
-                        .map(f -> ",\"jsonPath\":\"$." + f + "\"").orElse("") + "}";
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(jsonPath);
+                List<JsonMappingException.Reference> path = ((MismatchedInputException) error.getCause()).getPath();
+                if (path.get(0).getFieldName() == "address") {
+                    if (path.size() == 2) {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}");
+                    } else {
+                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                                .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}");
+                    }
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}");
+                }
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");

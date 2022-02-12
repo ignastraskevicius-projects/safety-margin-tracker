@@ -4,11 +4,9 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StringDeserializer;
-import org.springframework.boot.jackson.JsonComponent;
 
 import java.io.IOException;
 
-@JsonComponent
 public class StrictStringDeserializer extends StringDeserializer {
     @Override
     public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
@@ -17,10 +15,5 @@ public class StrictStringDeserializer extends StringDeserializer {
         } else {
             throw new StrictStringDeserializingException(p);
         }
-    }
-
-    @Override
-    public String getNullValue(DeserializationContext ctxt) throws StrictStringDeserializingException {
-        throw new StrictStringDeserializingException(ctxt.getParser());
     }
 }

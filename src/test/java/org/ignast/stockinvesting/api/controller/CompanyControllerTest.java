@@ -80,6 +80,14 @@ public class CompanyControllerTest {
     }
 
     @Test
+    public void shouldRejectCompanyWithNonCountryAsNonJsonStringIndicatingWrongType() throws Exception {
+        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":{\"country\":3}}");
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
+                .andExpect(status().isBadRequest()).andExpect(
+                        content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}"));
+    }
+
+    @Test
     public void shouldDefineCompany() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\",\"address\":{}}"))

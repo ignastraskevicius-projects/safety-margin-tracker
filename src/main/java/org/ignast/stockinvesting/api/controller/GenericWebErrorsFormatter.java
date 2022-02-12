@@ -40,8 +40,13 @@ public class GenericWebErrorsFormatter {
     @ExceptionHandler
     public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
         if (error.getCause() instanceof StrictStringDeserializingException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
+            if (((StrictStringDeserializingException) error.getCause()).getPath().get(0).getFieldName() == "address") {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
+            }
         } else if (error.getCause() instanceof MismatchedInputException) {
             String message = error.getCause().getMessage();
             if (message.contains("Cannot construct instance of")

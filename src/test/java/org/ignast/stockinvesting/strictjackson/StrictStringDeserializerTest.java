@@ -1,8 +1,11 @@
 package org.ignast.stockinvesting.strictjackson;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,7 +23,8 @@ class StrictStringDeserializerTest {
     public void setup() {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(String.class, new StrictStringDeserializer());
-        mapper = new ObjectMapper().registerModule(module);
+        mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
+                .registerModule(module);
     }
 
     @Test
@@ -37,21 +41,25 @@ class StrictStringDeserializerTest {
 
     @Test
     public void shouldDeserializeBeanValue() throws JsonProcessingException {
-        StringWrapper wrapper = new StringWrapper();
-        wrapper.stringValue = "someValue";
+        StringWrapper wrapper = new StringWrapper("someValue");
         assertThat(mapper.readValue("{\"stringValue\":\"someValue\"}", StringWrapper.class).stringValue)
                 .isEqualTo("someValue");
     }
 
     @Test
     public void shouldFailToDeserializeBeanValueWithNull() {
-        assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
+        MismatchedInputException exception = catchThrowableOfType(() -> {
             mapper.readValue("{\"stringValue\":null}", StringWrapper.class);
-        });
+        }, MismatchedInputException.class);
+
+        assertThat(exception).isNotNull();
+        assertThat(exception.getPath().size()).isEqualTo(1);
+        assertThat(exception.getPath().get(0).getFrom()).isEqualTo(StringWrapper.class);
+        assertThat(exception.getPath().get(0).getFieldName()).isEqualTo("stringValue");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]", "null" })
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
     public void failureShouldPreserveParserAndLocation(String jsonValue) throws JsonProcessingException {
         StrictStringDeserializingException exception = catchThrowableOfType(() -> {
             mapper.readValue(format("{\"stringValue\":%s}", jsonValue), StringWrapper.class);
@@ -74,11 +82,16 @@ class StrictStringDeserializerTest {
     }
 
     @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]", "null" })
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
     public void shouldFailFromOtherJsonTypes(String jsonValue) throws JsonProcessingException {
         assertThatExceptionOfType(StrictStringDeserializingException.class).isThrownBy(() -> {
             mapper.readValue(jsonValue, String.class);
         });
+    }
+
+    @Test
+    public void shouldConvertJsonNullToJavaNull() throws JsonProcessingException {
+        assertThat(mapper.readValue("null", String.class)).isEqualTo(null);
     }
 
     static class IntWrapper {
@@ -86,6 +99,10 @@ class StrictStringDeserializerTest {
     }
 
     static class StringWrapper {
-        public String stringValue;
+        private String stringValue;
+
+        public StringWrapper(@JsonProperty(value = "stringValue", required = true) String stringValue) {
+            this.stringValue = stringValue;
+        }
     }
 }

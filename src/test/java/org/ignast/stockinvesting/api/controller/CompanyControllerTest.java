@@ -73,10 +73,18 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String.format("{\"name\":null,\"address\":{}}");
+        String jsonCompany = String.format("{\"name\":null,\"address\":{\"country\":\"Romania\"}}");
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithoutCountryIndicatingFieldIsMandatory() throws Exception {
+        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":{}}");
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
     }
 
     @Test
@@ -89,8 +97,8 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldDefineCompany() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\",\"address\":{}}"))
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content("{\"name\":\"Santander\",\"address\":{\"country\":\"Romania\"}}"))
                 .andExpect(status().isCreated());
     }
 

@@ -58,7 +58,9 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{}")).andExpect(status().isBadRequest())
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"address\":{\"country\":\"Romania\"}}"))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
     }
 
@@ -98,7 +100,7 @@ public class CompanyControllerTest {
     @Test
     public void shouldDefineCompany() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content("{\"name\":\"Santander\",\"address\":{\"country\":\"Romania\"}}"))
+                .content("{\"name\":\"Santander\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}"))
                 .andExpect(status().isCreated());
     }
 
@@ -159,7 +161,23 @@ class CompanyControllerNameParsingTest {
 
     private String companyWithNameOfLength(int length) {
         String name = "c".repeat(length);
-        return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"}}", name);
+        return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}", name);
     }
 
+}
+
+@WebMvcTest
+class CompanyControllerListingsParsingTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
+    public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"}}"))
+                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+    }
 }

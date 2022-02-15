@@ -2,7 +2,6 @@ package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Size;
 
 public class CompanyDTO {
@@ -11,7 +10,8 @@ public class CompanyDTO {
     private String name;
 
     public CompanyDTO(@JsonProperty(value = "name", required = true) String name,
-            @JsonProperty(value = "address", required = true) AddressDTO address) {
+            @JsonProperty(value = "address", required = true) AddressDTO address,
+            @JsonProperty(value = "listings", required = false) String listings) {
         this.name = name;
     }
 }

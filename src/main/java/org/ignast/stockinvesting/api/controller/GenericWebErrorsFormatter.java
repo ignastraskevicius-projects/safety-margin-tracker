@@ -34,9 +34,9 @@ public class GenericWebErrorsFormatter {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleNotNullValidations(MethodArgumentNotValidException error) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
+    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}");
     }
 
     @ExceptionHandler

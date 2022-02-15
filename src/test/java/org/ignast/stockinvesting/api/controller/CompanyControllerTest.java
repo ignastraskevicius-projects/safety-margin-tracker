@@ -62,24 +62,6 @@ public class CompanyControllerTest {
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
     }
 
-    @Test
-    public void shouldRejectCompanyWithEmptyName() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
-    }
-
-    @Test
-    public void shouldCreateCompanyWithAtLeast1Character() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(1)))
-                .andExpect(status().isCreated());
-    }
-
-    private String companyWithNameOfLength(int length) {
-        String name = "c".repeat(length);
-        return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"}}", name);
-    }
-
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
     public void shouldRejectCompanyWithNameAsNonJsonStringIndicatingWrongType(String companyName) throws Exception {
@@ -139,4 +121,45 @@ public class CompanyControllerTest {
         mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
                 .andExpect(content().string("{\"errorName\":\"methodNotAllowed\"}"));
     }
+}
+
+@WebMvcTest
+class CompanyControllerNameParsingTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
+    public void shouldRejectCompanyWithEmptyName() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
+                .andExpect(status().isBadRequest()).andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
+    }
+
+    @Test
+    public void shouldCreateCompanyWithAtLeast1Character() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(1)))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void shouldRejectCompanyWithTooLongName() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(256)))
+                .andExpect(status().isBadRequest()).andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
+    }
+
+    @Test
+    public void shouldCreateCompanyWithWithNamesOfRelativelyReasonableLength() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(255)))
+                .andExpect(status().isCreated());
+    }
+
+    private String companyWithNameOfLength(int length) {
+        String name = "c".repeat(length);
+        return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"}}", name);
+    }
+
 }

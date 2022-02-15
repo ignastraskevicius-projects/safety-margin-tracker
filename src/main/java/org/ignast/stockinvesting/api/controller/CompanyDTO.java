@@ -7,7 +7,7 @@ import javax.validation.constraints.Size;
 
 public class CompanyDTO {
 
-    @Size(min = 1)
+    @Size(min = 1, max = 255)
     private String name;
 
     public CompanyDTO(@JsonProperty(value = "name", required = true) String name,

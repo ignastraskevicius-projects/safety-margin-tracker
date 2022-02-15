@@ -50,7 +50,7 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithNullAddressIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":null}");
+        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":null,\"listings\":\"listings\"}");
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
@@ -75,7 +75,8 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String.format("{\"name\":null,\"address\":{\"country\":\"Romania\"}}");
+        String jsonCompany = String
+                .format("{\"name\":null,\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}");
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
@@ -178,6 +179,15 @@ class CompanyControllerListingsParsingTest {
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"}}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+    }
+
+    @Test
+    public void companyWithNullListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":null}"))
+                .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
     }
 }

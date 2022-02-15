@@ -64,10 +64,20 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithEmptyName() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content("{\"name\":\"\",\"address\":{\"country\":\"Romania\"}}")).andExpect(status().isBadRequest())
-                .andExpect(content().string(
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
+                .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
+    }
+
+    @Test
+    public void shouldCreateCompanyWithAtLeast1Character() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(1)))
+                .andExpect(status().isCreated());
+    }
+
+    private String companyWithNameOfLength(int length) {
+        String name = "c".repeat(length);
+        return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"}}", name);
     }
 
     @ParameterizedTest

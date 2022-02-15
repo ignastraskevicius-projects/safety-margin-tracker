@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.constraints.Size;
 import java.util.List;
 
 @ControllerAdvice
@@ -35,8 +37,15 @@ public class GenericWebErrorsFormatter {
 
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}");
+        if (exception.getBindingResult().getFieldErrors().get(0).unwrap(ConstraintViolationImpl.class)
+                .getConstraintDescriptor().getAnnotation().annotationType() == Size.class) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
+                    "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}",
+                            exception.getBindingResult().getFieldErrors().get(0).getField()));
+        }
     }
 
     @ExceptionHandler

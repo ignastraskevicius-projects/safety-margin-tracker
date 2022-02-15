@@ -3,9 +3,7 @@ package org.ignast.stockinvesting.strictjackson;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import com.fasterxml.jackson.databind.module.SimpleModule;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,8 +21,7 @@ class StrictStringDeserializerTest {
     public void setup() {
         SimpleModule module = new SimpleModule();
         module.addDeserializer(String.class, new StrictStringDeserializer());
-        mapper = new ObjectMapper().enable(DeserializationFeature.FAIL_ON_NULL_CREATOR_PROPERTIES)
-                .registerModule(module);
+        mapper = new ObjectMapper().registerModule(module);
     }
 
     @Test
@@ -47,15 +44,8 @@ class StrictStringDeserializerTest {
     }
 
     @Test
-    public void shouldFailToDeserializeBeanValueWithNull() {
-        MismatchedInputException exception = catchThrowableOfType(() -> {
-            mapper.readValue("{\"stringValue\":null}", StringWrapper.class);
-        }, MismatchedInputException.class);
-
-        assertThat(exception).isNotNull();
-        assertThat(exception.getPath().size()).isEqualTo(1);
-        assertThat(exception.getPath().get(0).getFrom()).isEqualTo(StringWrapper.class);
-        assertThat(exception.getPath().get(0).getFieldName()).isEqualTo("stringValue");
+    public void shouldFailToDeserializeBeanValueWithNull() throws JsonProcessingException {
+        assertThat(mapper.readValue("{\"stringValue\":null}", StringWrapper.class).stringValue).isNull();
     }
 
     @ParameterizedTest

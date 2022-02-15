@@ -62,6 +62,14 @@ public class CompanyControllerTest {
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
     }
 
+    @Test
+    public void shouldRejectCompanyWithEmptyName() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content("{\"name\":\"\",\"address\":{\"country\":\"Romania\"}}")).andExpect(status().isBadRequest())
+                .andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
+    }
+
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
     public void shouldRejectCompanyWithNameAsNonJsonStringIndicatingWrongType(String companyName) throws Exception {

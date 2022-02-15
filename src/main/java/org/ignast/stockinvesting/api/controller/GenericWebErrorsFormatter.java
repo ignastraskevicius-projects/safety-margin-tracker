@@ -65,9 +65,12 @@ public class GenericWebErrorsFormatter {
                         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                                 .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}");
                     }
-                } else {
+                } else if (path.get(0).getFieldName() == "name") {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}");
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}");
                 }
             }
         } else {

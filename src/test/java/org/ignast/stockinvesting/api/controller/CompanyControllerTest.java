@@ -91,7 +91,16 @@ public class CompanyControllerTest {
     }
 
     @Test
-    public void shouldRejectCompanyWithNonCountryAsNonJsonStringIndicatingWrongType() throws Exception {
+    public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
+        String jsonCompany = String
+                .format("{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":\"listings\"}");
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithNonStringAsNonJsonStringIndicatingWrongType() throws Exception {
         String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":{\"country\":3}}");
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
                 .andExpect(status().isBadRequest()).andExpect(

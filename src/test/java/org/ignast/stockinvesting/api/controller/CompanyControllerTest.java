@@ -225,4 +225,12 @@ class CompanyControllerListingsParsingTest {
                 .andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
     }
+
+    @Test
+    public void companyWithNullListingShouldBeRejected() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithListingsJsonPair("\"listings\":[null]")))
+                .andExpect(status().isBadRequest()).andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
+    }
 }

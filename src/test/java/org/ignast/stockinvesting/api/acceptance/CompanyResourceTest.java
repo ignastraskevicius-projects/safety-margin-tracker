@@ -30,7 +30,7 @@ public class CompanyResourceTest {
 
         String companiesHref = root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
         ResponseEntity<String> companyDefinition = restTemplate.exchange(companiesHref, HttpMethod.POST,
-                contentTypeV1("{\"name\":\"Amazon\",\"address\":{\"country\":\"Romania\"},\"listings\":[3]}"),
+                contentTypeV1("{\"name\":\"Amazon\",\"address\":{\"country\":\"Romania\"},\"listings\":[{}]}"),
                 String.class);
         assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);
     }

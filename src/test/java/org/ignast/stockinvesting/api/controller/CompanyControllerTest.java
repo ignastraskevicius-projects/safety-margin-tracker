@@ -246,8 +246,8 @@ class CompanyControllerListingsParsingTest {
 
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
-                bodyFactory.createWithListingsJsonPair("\"listings\":[{\"stockExchange\":3}, {\"stockExchange\":4}]")))
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
+                "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}, {\"stockExchange\":\"London Stock Exchange\"}]")))
                 .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Multiple listings are not supported\"}"));
     }
@@ -269,5 +269,24 @@ class CompanyControllerTestIndividualListingParsingTest {
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithStockExchangeJsonPair("")))
                 .andExpect(status().isBadRequest()).andExpect(content()
                         .string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+    }
+
+    @Test
+    public void shouldRejectCompanyListedWithNullStockExchangeIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithStockExchangeJsonPair("\"stockExchange\":null")))
+                .andExpect(status().isBadRequest()).andExpect(content()
+                        .string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
+    public void shouldRejectCompanyListedWithNonStringStockExchangeIndicatingTypeIsWrong(String stockExchangeValue)
+            throws Exception {
+        String stockExchange = "\"stockExchange\":" + stockExchangeValue;
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithStockExchangeJsonPair(stockExchange))).andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
     }
 }

@@ -8,8 +8,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 class ListingDTOTest {
 
     @ParameterizedTest
-    @ValueSource(ints = { 3, 4 })
-    public void shouldPreserveStockExchange(int stockExchange) {
+    @ValueSource(strings = { "New York Stock Exchange", "London Stock Exchange" })
+    public void shouldPreserveStockExchange(String stockExchange) {
         assertThat(new ListingDTO(stockExchange).getStockExchange()).isEqualTo(stockExchange);
     }
 }

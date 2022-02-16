@@ -35,8 +35,7 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldDefineCompany() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content("{\"name\":\"Santander\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}"))
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createAmazon()))
                 .andExpect(status().isCreated());
     }
 
@@ -181,7 +180,7 @@ class CompanyControllerNameParsingTest {
 
     private String companyWithNameOfLength(int length) {
         String name = "c".repeat(length);
-        return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}", name);
+        return bodyFactory.createWithNameJsonPair(String.format("\"name\":\"%s\"", name));
     }
 }
 
@@ -209,5 +208,13 @@ class CompanyControllerListingsParsingTest {
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "\"jsonString\"" })
+    public void companyWithNonArrayListingShouldBeRejectedIndicatingWrongType() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithListingsJsonPair("\"listings\":3"))).andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}"));
     }
 }

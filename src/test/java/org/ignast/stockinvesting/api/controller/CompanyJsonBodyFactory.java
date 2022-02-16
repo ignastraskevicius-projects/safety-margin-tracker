@@ -2,21 +2,20 @@ package org.ignast.stockinvesting.api.controller;
 
 public class CompanyJsonBodyFactory {
     public String createAmazon() {
-        return "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":\"listings\"}";
+        return "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[3]}";
     }
 
     public String createWithNameJsonPair(String nameJsonPair) {
-        return String.format("{%s\"address\":{\"country\":\"United States\"},\"listings\":\"listings\"}",
+        return String.format("{%s\"address\":{\"country\":\"United States\"},\"listings\":[3]}",
                 appendCommaIfNotEmpty(nameJsonPair));
     }
 
     public String createWithAddressJsonPair(String addressJsonPair) {
-        return String.format("{\"name\":\"Amazon\",%s\"listings\":\"listings\"}",
-                appendCommaIfNotEmpty(addressJsonPair));
+        return String.format("{\"name\":\"Amazon\",%s\"listings\":[3]}", appendCommaIfNotEmpty(addressJsonPair));
     }
 
     public String createWithCountryJsonPair(String countryJsonPair) {
-        return String.format("{\"name\":\"Amazon\",\"address\":{%s},\"listings\":\"listings\"}", countryJsonPair);
+        return String.format("{\"name\":\"Amazon\",\"address\":{%s},\"listings\":[3]}", countryJsonPair);
     }
 
     public String createWithListingsJsonPair(String listingsJsonPair) {

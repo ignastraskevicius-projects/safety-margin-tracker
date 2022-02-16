@@ -246,9 +246,28 @@ class CompanyControllerListingsParsingTest {
 
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithListingsJsonPair("\"listings\":[{}, {}]")))
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
+                bodyFactory.createWithListingsJsonPair("\"listings\":[{\"stockExchange\":3}, {\"stockExchange\":4}]")))
                 .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Multiple listings are not supported\"}"));
+    }
+}
+
+@WebMvcTest
+class CompanyControllerTestIndividualListingParsingTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
+    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
+    public void shouldRejectCompanyListedWithoutStockExchangeIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithStockExchangeJsonPair("")))
+                .andExpect(status().isBadRequest()).andExpect(content()
+                        .string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
     }
 }

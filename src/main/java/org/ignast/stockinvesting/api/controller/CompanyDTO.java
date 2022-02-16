@@ -20,15 +20,20 @@ public class CompanyDTO {
     private AddressDTO address;
 
     @NotNull
+    private String functionalCurrency;
+
+    @NotNull
     @Size(min = 1, message = "Company must be listed on at least 1 stock exchange")
     @Size(max = 1, message = "Multiple listings are not supported")
     @Valid
     private List<ListingDTO> listings;
 
     public CompanyDTO(@JsonProperty(value = "name") String name, @JsonProperty(value = "address") AddressDTO address,
+            @JsonProperty("functionalCurrency") String functionalCurrency,
             @JsonProperty(value = "listings") List<ListingDTO> listings) {
         this.name = name;
         this.address = address;
+        this.functionalCurrency = functionalCurrency;
         if (listings != null) {
             this.listings = listings.stream().filter(Objects::nonNull).collect(Collectors.toList());
         }

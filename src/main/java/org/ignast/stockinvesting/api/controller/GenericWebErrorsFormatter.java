@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.api.controller;
 
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingException;
@@ -15,7 +14,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.validation.constraints.Size;
-import java.util.List;
 
 @ControllerAdvice
 public class GenericWebErrorsFormatter {
@@ -59,29 +57,8 @@ public class GenericWebErrorsFormatter {
                         .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
             }
         } else if (error.getCause() instanceof MismatchedInputException) {
-            String message = error.getCause().getMessage();
-            if (message.contains("Cannot construct instance of")
-                    || message.contains("Cannot deserialize value of type `org.ignast.stockinvesting.api.controller")) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
-            } else {
-                List<JsonMappingException.Reference> path = ((MismatchedInputException) error.getCause()).getPath();
-                if (path.get(0).getFieldName() == "address") {
-                    if (path.size() == 2) {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}");
-                    } else {
-                        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                                .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}");
-                    }
-                } else if (path.get(0).getFieldName() == "name") {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}");
-                } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}");
-                }
-            }
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
         }

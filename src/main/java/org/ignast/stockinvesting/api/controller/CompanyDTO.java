@@ -19,9 +19,8 @@ public class CompanyDTO {
     @NotNull
     private String listings;
 
-    public CompanyDTO(@JsonProperty(value = "name", required = true) String name,
-            @JsonProperty(value = "address", required = true) AddressDTO address,
-            @JsonProperty(value = "listings", required = true) String listings) {
+    public CompanyDTO(@JsonProperty(value = "name") String name, @JsonProperty(value = "address") AddressDTO address,
+            @JsonProperty(value = "listings") String listings) {
         this.name = name;
         this.address = address;
         this.listings = listings;

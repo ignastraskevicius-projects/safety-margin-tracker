@@ -191,12 +191,14 @@ class CompanyControllerListingsParsingTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
     private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"}}"))
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair("")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
     }
@@ -204,7 +206,7 @@ class CompanyControllerListingsParsingTest {
     @Test
     public void companyWithNullListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":null}"))
+                .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
     }

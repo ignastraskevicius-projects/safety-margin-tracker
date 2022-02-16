@@ -15,11 +15,20 @@ public class CompanyJsonBodyFactory {
                 appendCommaIfNotEmpty(addressJsonPair));
     }
 
+    public String createWithCountryJsonPair(String countryJsonPair) {
+        return String.format("{\"name\":\"Amazon\",\"address\":{%s},\"listings\":\"listings\"}", countryJsonPair);
+    }
+
+    public String createWithListingsJsonPair(String listingsJsonPair) {
+        return String.format("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"}%s}",
+                prependCommaIfNotEmpty(listingsJsonPair));
+    }
+
     private String appendCommaIfNotEmpty(String jsonPair) {
         return jsonPair + (jsonPair.isEmpty() ? "" : ",");
     }
 
-    public String createWithCountryJsonPair(String countryJsonPair) {
-        return String.format("{\"name\":\"Amazon\",\"address\":{%s},\"listings\":\"listings\"}", countryJsonPair);
+    private String prependCommaIfNotEmpty(String jsonPair) {
+        return (jsonPair.isEmpty() ? "" : ",") + jsonPair;
     }
 }

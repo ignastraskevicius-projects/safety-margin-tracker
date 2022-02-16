@@ -59,26 +59,24 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithoutCountryIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":{}}");
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithCountryJsonPair("")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String
-                .format("{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":\"listings\"}");
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest())
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithCountryJsonPair("\"country\":null"))).andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNonStringAsNonJsonStringIndicatingWrongType() throws Exception {
-        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":{\"country\":3}}");
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest()).andExpect(
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithCountryJsonPair("\"country\":3"))).andExpect(status().isBadRequest())
+                .andExpect(
                         content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}"));
     }
 
@@ -173,7 +171,6 @@ class CompanyControllerNameParsingTest {
         String name = "c".repeat(length);
         return String.format("{\"name\":\"%s\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}", name);
     }
-
 }
 
 @WebMvcTest

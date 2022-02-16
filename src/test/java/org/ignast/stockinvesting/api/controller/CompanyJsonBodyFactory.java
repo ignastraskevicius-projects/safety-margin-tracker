@@ -18,4 +18,8 @@ public class CompanyJsonBodyFactory {
     private String appendCommaIfNotEmpty(String jsonPair) {
         return jsonPair + (jsonPair.isEmpty() ? "" : ",");
     }
+
+    public String createWithCountryJsonPair(String countryJsonPair) {
+        return String.format("{\"name\":\"Amazon\",\"address\":{%s},\"listings\":\"listings\"}", countryJsonPair);
+    }
 }

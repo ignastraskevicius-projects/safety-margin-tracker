@@ -36,10 +36,15 @@ public class GenericWebErrorsFormatter {
 
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+
         if (exception.getBindingResult().getFieldErrors().get(0).unwrap(ConstraintViolationImpl.class)
                 .getConstraintDescriptor().getAnnotation().annotationType() == Size.class) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(
-                    "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}");
+            String message = exception.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
+            String field = exception.getBindingResult().getFieldErrors().get(0).getField();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(String.format(
+                            "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}", field,
+                            message));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}",

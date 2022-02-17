@@ -10,7 +10,7 @@ import java.util.List;
 public class CompanyDTO {
 
     @NotNull
-    @Size(min = 1, max = 255)
+    @Size(min = 1, max = 255, message = "Company name must be between {min}-{max} characters")
     private String name;
 
     @NotNull
@@ -18,6 +18,7 @@ public class CompanyDTO {
     private AddressDTO address;
 
     @NotNull
+    @Size(min = 1, message = "Company must be listed on at least 1 stock exchange")
     private List<Integer> listings;
 
     public CompanyDTO(@JsonProperty(value = "name") String name, @JsonProperty(value = "address") AddressDTO address,

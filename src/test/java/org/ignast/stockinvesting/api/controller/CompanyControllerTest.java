@@ -156,7 +156,7 @@ class CompanyControllerNameParsingTest {
     public void shouldRejectCompanyWithEmptyName() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
                 .andExpect(status().isBadRequest()).andExpect(content().string(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-255 characters\"}"));
     }
 
     @Test
@@ -169,7 +169,7 @@ class CompanyControllerNameParsingTest {
     public void shouldRejectCompanyWithTooLongName() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(256)))
                 .andExpect(status().isBadRequest()).andExpect(content().string(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-256 characters\"}"));
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-255 characters\"}"));
     }
 
     @Test
@@ -216,5 +216,13 @@ class CompanyControllerListingsParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":3"))).andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}"));
+    }
+
+    @Test
+    public void companyWithZeroListingsShouldBeRejected() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithListingsJsonPair("\"listings\":[]"))).andExpect(status().isBadRequest())
+                .andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
     }
 }

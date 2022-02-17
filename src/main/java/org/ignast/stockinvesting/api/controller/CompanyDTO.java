@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
@@ -21,6 +22,7 @@ public class CompanyDTO {
 
     @NotNull
     @Size(min = 3, max = 3, message = "Currency must have 3 letters (ISO 4217)")
+    @Pattern(regexp = "^[A-Z]*$", message = "Currency must contain only uppercase latin characters", groups = AllowedCharacters.class)
     private String functionalCurrency;
 
     @NotNull

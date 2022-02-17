@@ -6,6 +6,7 @@ import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingExceptio
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -13,8 +14,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -39,18 +42,18 @@ public class GenericWebErrorsFormatter {
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
-        if (exception.getBindingResult().getFieldErrors().get(0).unwrap(ConstraintViolationImpl.class)
-                .getConstraintDescriptor().getAnnotation().annotationType() == Size.class) {
-            String message = exception.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
-            String field = exception.getBindingResult().getFieldErrors().get(0).getField();
+        FieldError error = exception.getBindingResult().getFieldErrors().get(0);
+        String message = error.getDefaultMessage();
+        String field = error.getField();
+        if (Arrays.asList(Size.class, Pattern.class).contains(error.unwrap(ConstraintViolationImpl.class)
+                .getConstraintDescriptor().getAnnotation().annotationType())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(String.format(
                             "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}", field,
                             message));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}",
-                            exception.getBindingResult().getFieldErrors().get(0).getField()));
+                    .body(String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}", error.getField()));
         }
     }
 

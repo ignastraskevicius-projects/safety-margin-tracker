@@ -103,6 +103,16 @@ class CompanyControllerCurrencyParsingTest {
                 .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "123", "usd", "ÑÑÑ" })
+    public void shouldRejectCurrencyCodesContainingNonUppercaseCharacters(String currencyCode) throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithFunctionalCurrencyJsonPair(
+                        String.format("\"functionalCurrency\":\"%s\"", currencyCode))))
+                .andExpect(status().isBadRequest()).andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must contain only uppercase latin characters\"}"));
+    }
 }
 
 @WebMvcTest

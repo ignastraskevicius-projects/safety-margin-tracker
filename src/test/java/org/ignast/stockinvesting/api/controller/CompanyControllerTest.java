@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.forMissingFieldAt;
 import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -76,8 +77,7 @@ class CompanyControllerCurrencyParsingTest {
     public void shouldRejectCompanyWithoutCurrencyIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(""))).andExpect(status().isBadRequest())
-                .andExpect(
-                        contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.functionalCurrency\"}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.functionalCurrency")));
     }
 
     @ParameterizedTest
@@ -131,8 +131,7 @@ class CompanyControllerAddressParsingTest {
     public void shouldRejectCompanyWithoutAddressIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithAddressJsonPair("")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.address")));
     }
 
     @ParameterizedTest
@@ -148,7 +147,7 @@ class CompanyControllerAddressParsingTest {
     public void shouldRejectCompanyWithNullAddressIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithAddressJsonPair("\"address\":null"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.address")));
     }
 
     @Test
@@ -156,14 +155,14 @@ class CompanyControllerAddressParsingTest {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithCountryJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.address.country")));
     }
 
     @Test
     public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithCountryJsonPair("\"country\":null"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.address.country")));
     }
 
     @Test
@@ -189,8 +188,7 @@ class CompanyControllerNameParsingTest {
     @Test
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithNameJsonPair("")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.name")));
     }
 
     @ParameterizedTest
@@ -206,7 +204,7 @@ class CompanyControllerNameParsingTest {
     public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithNameJsonPair("\"name\":null"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.name")));
     }
 
     @Test
@@ -255,16 +253,14 @@ class CompanyControllerListingsParsingTest {
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair("")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
     }
 
     @Test
     public void companyWithNullListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
     }
 
     @ParameterizedTest
@@ -324,16 +320,16 @@ class CompanyControllerTestIndividualListingParsingTest {
     public void shouldRejectCompanyListedWithoutStockExchangeIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithStockExchangeJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].stockExchange")));
     }
 
     @Test
     public void shouldRejectCompanyListedWithNullStockExchangeIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithStockExchangeJsonPair("\"stockExchange\":null")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].stockExchange")));
     }
 
     @ParameterizedTest
@@ -351,8 +347,8 @@ class CompanyControllerTestIndividualListingParsingTest {
     public void shouldRejectCompanyWithoutTickerIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithTickerJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(
-                        contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].ticker\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].ticker")));
     }
 
     @Test

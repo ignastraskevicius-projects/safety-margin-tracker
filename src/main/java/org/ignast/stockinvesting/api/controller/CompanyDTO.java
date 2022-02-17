@@ -20,7 +20,7 @@ public class CompanyDTO {
     private AddressDTO address;
 
     @NotNull
-    @Size(min = 3, message = "Currency must have 3 letters (ISO 4217)")
+    @Size(min = 3, max = 3, message = "Currency must have 3 letters (ISO 4217)")
     private String functionalCurrency;
 
     @NotNull

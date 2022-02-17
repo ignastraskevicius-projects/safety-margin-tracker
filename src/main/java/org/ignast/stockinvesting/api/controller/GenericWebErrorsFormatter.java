@@ -42,18 +42,27 @@ public class GenericWebErrorsFormatter {
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
 
-        FieldError error = exception.getBindingResult().getFieldErrors().get(0);
+        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        FieldError error = fieldErrors.get(0);
         String message = error.getDefaultMessage();
         String field = error.getField();
+
         if (Arrays.asList(Size.class, Pattern.class).contains(error.unwrap(ConstraintViolationImpl.class)
                 .getConstraintDescriptor().getAnnotation().annotationType())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
                     "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}]}",
                     field, message));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                    "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",
-                    error.getField()));
+            if (fieldErrors.size() == 2 && fieldErrors.get(0).getField() != fieldErrors.get(1).getField()) {
+                String field2 = fieldErrors.get(1).getField();
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"},{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",
+                        error.getField(), field2));
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",
+                        error.getField()));
+            }
         }
     }
 

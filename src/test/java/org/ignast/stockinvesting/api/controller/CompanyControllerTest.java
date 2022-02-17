@@ -61,6 +61,14 @@ public class CompanyControllerTest {
         mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
                 .andExpect(contentMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }
+
+    @Test
+    public void shouldAbleToPreserveErrorsFromMultipleFields() throws Exception {
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithoutNameAndCurrency()))
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forTwoMissingFieldsAt("$.name", "$.functionalCurrency")));
+    }
 }
 
 @WebMvcTest

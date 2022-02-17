@@ -9,7 +9,7 @@ public class AddressDTO {
     @NotNull
     private String country;
 
-    public AddressDTO(@JsonProperty(value = "country", required = true) String country) {
+    public AddressDTO(@JsonProperty(value = "country") String country) {
         this.country = country;
     }
 

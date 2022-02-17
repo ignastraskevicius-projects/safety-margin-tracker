@@ -14,25 +14,25 @@ class CompanyDTOTest {
     @ParameterizedTest
     @ValueSource(strings = { "United States", "Germany" })
     public void shouldPreserveAddress(String country) {
-        assertThat(new CompanyDTO("anyName", new AddressDTO(country), Arrays.asList(new ListingDTO())).getAddress()
+        assertThat(new CompanyDTO("anyName", new AddressDTO(country), Arrays.asList(new ListingDTO(3))).getAddress()
                 .getCountry()).isEqualTo(country);
     }
 
     @Test
     public void shouldPreserveListings() {
-        List<ListingDTO> listings = Arrays.asList(new ListingDTO());
+        List<ListingDTO> listings = Arrays.asList(new ListingDTO(3));
         assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), listings).getListings()).isEqualTo(listings);
     }
 
     @Test
     public void shouldPreserveMultiplelistings() {
-        List<ListingDTO> listings = Arrays.asList(new ListingDTO(), new ListingDTO());
+        List<ListingDTO> listings = Arrays.asList(new ListingDTO(3), new ListingDTO(4));
         assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), listings).getListings()).isEqualTo(listings);
     }
 
     @Test
     public void shouldDropAnyIndividualNullListing() {
-        ListingDTO listing = new ListingDTO();
+        ListingDTO listing = new ListingDTO(3);
         assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), Arrays.asList(null, listing)).getListings())
                 .isEqualTo(Arrays.asList(listing));
     }

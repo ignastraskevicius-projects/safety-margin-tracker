@@ -47,10 +47,9 @@ public class GenericWebErrorsFormatter {
         String field = error.getField();
         if (Arrays.asList(Size.class, Pattern.class).contains(error.unwrap(ConstraintViolationImpl.class)
                 .getConstraintDescriptor().getAnnotation().annotationType())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(String.format(
-                            "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}", field,
-                            message));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                    "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}]}",
+                    field, message));
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
                     "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",

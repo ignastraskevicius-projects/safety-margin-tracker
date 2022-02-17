@@ -95,7 +95,7 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\"")))
                 .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
+                        forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)")));
     }
 
     @Test
@@ -103,7 +103,7 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDollar\"")))
                 .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
+                        forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)")));
     }
 
     @ParameterizedTest
@@ -112,8 +112,9 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(
                         String.format("\"functionalCurrency\":\"%s\"", currencyCode))))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must contain only uppercase latin characters\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency",
+                        "Currency must contain only uppercase latin characters")));
     }
 }
 
@@ -210,7 +211,7 @@ class CompanyControllerNameParsingTest {
     public void shouldRejectCompanyWithEmptyName() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
                 .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-255 characters\"}"));
+                        forInvalidValueAt("$.name", "Company name must be between 1-255 characters")));
     }
 
     @Test
@@ -223,7 +224,7 @@ class CompanyControllerNameParsingTest {
     public void shouldRejectCompanyWithTooLongName() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(256)))
                 .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-255 characters\"}"));
+                        forInvalidValueAt("$.name", "Company name must be between 1-255 characters")));
     }
 
     @Test
@@ -275,7 +276,7 @@ class CompanyControllerListingsParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":[]"))).andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
+                        forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange")));
     }
 
     @Test
@@ -283,7 +284,7 @@ class CompanyControllerListingsParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":[null]")))
                 .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
+                        forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange")));
     }
 
     @ParameterizedTest
@@ -299,8 +300,8 @@ class CompanyControllerListingsParsingTest {
     public void shouldNotSupportMultipleListings() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
                 "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}, {\"stockExchange\":\"London Stock Exchange\",\"ticker\":\"Amazon\"}]")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Multiple listings are not supported\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings", "Multiple listings are not supported")));
     }
 }
 

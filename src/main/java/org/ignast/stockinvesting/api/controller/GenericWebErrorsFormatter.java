@@ -52,8 +52,9 @@ public class GenericWebErrorsFormatter {
                             "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}", field,
                             message));
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}", error.getField()));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                    "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",
+                    error.getField()));
         }
     }
 

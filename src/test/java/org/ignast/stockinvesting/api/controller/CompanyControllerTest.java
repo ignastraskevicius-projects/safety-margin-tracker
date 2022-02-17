@@ -61,6 +61,35 @@ public class CompanyControllerTest {
 }
 
 @WebMvcTest
+class CompanyControllerCurrencyParsingTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
+    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
+    public void shouldRejectCompanyWithoutCurrencyIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithFunctionalCurrencyJsonPair(""))).andExpect(status().isBadRequest())
+                .andExpect(
+                        content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.functionalCurrency\"}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
+    public void shouldRejectCompanyWithCurrencyAsNonStringIndicatingWrongType(String currency) throws Exception {
+        String currencyJsonPair = "\"functionalCurrency\":" + currency;
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithFunctionalCurrencyJsonPair(currencyJsonPair)))
+                .andExpect(status().isBadRequest()).andExpect(content()
+                        .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.functionalCurrency\"}"));
+    }
+}
+
+@WebMvcTest
 class CompanyControllerAddressParsingTest {
 
     @Autowired

@@ -11,78 +11,91 @@ public class CompanyJsonBodyFactoryTest {
     @Test
     public void shouldCreateValidJson() {
         assertThat(factory.createAmazon()).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutName() {
         assertThat(factory.createWithNameJsonPair("")).isEqualTo(
-                "{\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomNameJsonPair() {
         assertThat(factory.createWithNameJsonPair("\"name\":null")).isEqualTo(
-                "{\"name\":null,\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":null,\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutAddress() {
         assertThat(factory.createWithAddressJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomAddressJsonPair() {
         assertThat(factory.createWithAddressJsonPair("\"address\":null")).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":null,\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"address\":null,\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutCountry() {
         assertThat(factory.createWithCountryJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"address\":{},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomCountryJsonPair() {
         assertThat(factory.createWithCountryJsonPair("\"country\":null")).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"address\":{\"country\":null},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutListingsField() {
-        assertThat(factory.createWithListingsJsonPair(""))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"}}");
+        assertThat(factory.createWithListingsJsonPair("")).isEqualTo(
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\"}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomListingsJsonPair() {
-        assertThat(factory.createWithListingsJsonPair("\"listings\":null"))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":null}");
+        assertThat(factory.createWithListingsJsonPair("\"listings\":null")).isEqualTo(
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":null}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithoutStockExchangeField() {
         assertThat(factory.createWithStockExchangeJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomStockExchangeField() {
         assertThat(factory.createWithStockExchangeJsonPair("\"stockExchange\":\"London Stock Exchange\"")).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"London Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"London Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithoutTickerField() {
         assertThat(factory.createWithTickerJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomTickerField() {
         assertThat(factory.createWithTickerJsonPair("\"ticker\":\"Amazon\"")).isEqualTo(
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United States Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+    }
+
+    @Test
+    public void shouldCreateCompanyWithoutFunctionalCurrency() {
+        assertThat(factory.createWithFunctionalCurrencyJsonPair("")).isEqualTo(
                 "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+    }
+
+    @Test
+    public void shouldCreateCompanyWithCustomFunctionalCurrency() {
+        assertThat(factory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"United Stated Dollar\""))
+                .isEqualTo(
+                        "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United Stated Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
 }

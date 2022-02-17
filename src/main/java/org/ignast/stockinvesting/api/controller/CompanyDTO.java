@@ -6,6 +6,8 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class CompanyDTO {
 
@@ -25,10 +27,16 @@ public class CompanyDTO {
             @JsonProperty(value = "listings") List<Integer> listings) {
         this.name = name;
         this.address = address;
-        this.listings = listings;
+        if (listings != null) {
+            this.listings = listings.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        }
     }
 
     public AddressDTO getAddress() {
         return address;
+    }
+
+    public List<Integer> getListings() {
+        return listings;
     }
 }

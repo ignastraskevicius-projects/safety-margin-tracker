@@ -24,4 +24,10 @@ public class BodySchemaMismatchJsonErrors {
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}]}",
                 jsonPath);
     }
+
+    public static String forInvalidValueAt(String jsonPath, String message) {
+        return String.format(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"%s\",\"message\":\"%s\"}]}",
+                jsonPath, message);
+    }
 }

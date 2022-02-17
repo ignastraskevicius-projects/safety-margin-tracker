@@ -28,4 +28,11 @@ public class BodySchemaMismatchJsonErrorsTest {
         assertThat(BodySchemaMismatchJsonErrors.forArrayRequiredAt("someJsonPath")).isEqualTo(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"someJsonPath\"}]}");
     }
+
+    @Test
+    void shouldCreateErrorJsonForInvalidValue() {
+        assertThat(BodySchemaMismatchJsonErrors.forInvalidValueAt("someJsonPath", "someMessage")).isEqualTo(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"}]}");
+    }
+
 }

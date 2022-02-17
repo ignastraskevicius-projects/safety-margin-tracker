@@ -17,6 +17,8 @@ public class CompanyControllerTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
     private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
@@ -33,53 +35,26 @@ public class CompanyControllerTest {
 
     @Test
     public void shouldRejectCompanyWithoutAddressIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"name\":\"Santander\"}"))
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithAddressJsonPair("")))
                 .andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "\"jsonString\"", "[]" })
-    public void shouldRejectCompanyWithAddressAsNonObjectIndicatingWrongType(String addressAsPrimitive)
-            throws Exception {
-        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":%s}", addressAsPrimitive);
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest())
+    public void shouldRejectCompanyWithAddressAsNonObjectIndicatingWrongType(String addressValue) throws Exception {
+        String addressJsonPair = "\"address\":" + addressValue;
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithAddressJsonPair(addressJsonPair))).andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNullAddressIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String.format("{\"name\":\"Amazon\",\"address\":null,\"listings\":\"listings\"}");
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest())
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithAddressJsonPair("\"address\":null"))).andExpect(status().isBadRequest())
                 .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content("{\"address\":{\"country\":\"Romania\"}}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
-    public void shouldRejectCompanyWithNameAsNonJsonStringIndicatingWrongType(String companyName) throws Exception {
-        String jsonCompany = String.format("{\"name\":%s,\"address\":{}}", companyName);
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
-        String jsonCompany = String
-                .format("{\"name\":null,\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}");
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(jsonCompany))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
     }
 
     @Test
@@ -141,7 +116,32 @@ class CompanyControllerNameParsingTest {
     @Autowired
     private MockMvc mockMvc;
 
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
     private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
+    public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithNameJsonPair("")))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
+    public void shouldRejectCompanyWithNameAsNonJsonStringIndicatingWrongType(String nameValue) throws Exception {
+        String nameJsonPair = "\"name\":" + nameValue;
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithNameJsonPair(nameJsonPair))).andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}"));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithNameJsonPair("\"name\":null"))).andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+    }
 
     @Test
     public void shouldRejectCompanyWithEmptyName() throws Exception {

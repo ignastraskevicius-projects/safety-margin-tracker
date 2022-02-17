@@ -12,6 +12,12 @@ public class BodySchemaMismatchJsonErrorsTest {
     }
 
     @Test
+    public void shouldCreateErrorJsonForMultipleMissingFields() {
+        assertThat(BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt("someJsonPath", "someOtherPath")).isEqualTo(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"someJsonPath\"}, {\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"someOtherPath\"}]}");
+    }
+
+    @Test
     public void shouldCreateErrorJsonForStringRequiredField() {
         assertThat(BodySchemaMismatchJsonErrors.forStringRequiredAt("someJsonPath")).isEqualTo(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"someJsonPath\"}]}");

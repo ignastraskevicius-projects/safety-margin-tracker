@@ -11,6 +11,10 @@ public class CompanyJsonBodyFactory {
                 appendCommaIfNotEmpty(nameJsonPair));
     }
 
+    public String createWithoutNameAndCurrency() {
+        return "{\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
+    }
+
     public String createWithAddressJsonPair(String addressJsonPair) {
         return String.format(
                 "{\"name\":\"Amazon\",%s\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
@@ -54,5 +58,4 @@ public class CompanyJsonBodyFactory {
     private String prependCommaIfNotEmpty(String jsonPair) {
         return (jsonPair.isEmpty() ? "" : ",") + jsonPair;
     }
-
 }

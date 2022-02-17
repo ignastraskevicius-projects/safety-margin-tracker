@@ -98,4 +98,10 @@ public class CompanyJsonBodyFactoryTest {
                 .isEqualTo(
                         "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"United Stated Dollar\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
     }
+
+    @Test
+    public void shouldCreateWithoutNameAndCurrency() {
+        assertThat(factory.createWithoutNameAndCurrency()).isEqualTo(
+                "{\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}");
+    }
 }

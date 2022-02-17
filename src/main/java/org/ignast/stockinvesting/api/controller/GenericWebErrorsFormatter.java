@@ -68,8 +68,9 @@ public class GenericWebErrorsFormatter {
                         jsonPath));
             } else {
                 if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(String.format("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}", jsonPath));
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}]}",
+                            jsonPath));
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
                             "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"%s\"}]}",

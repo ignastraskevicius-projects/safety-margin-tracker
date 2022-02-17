@@ -18,4 +18,10 @@ public class BodySchemaMismatchJsonErrors {
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"%s\"}]}",
                 jsonPath);
     }
+
+    public static String forArrayRequiredAt(String jsonPath) {
+        return String.format(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}]}",
+                jsonPath);
+    }
 }

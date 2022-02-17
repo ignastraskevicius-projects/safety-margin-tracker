@@ -267,7 +267,7 @@ class CompanyControllerListingsParsingTest {
     public void companyWithNonArrayListingShouldBeRejectedIndicatingWrongType() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":3"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}"));
+                .andExpect(contentMatchesJson(forArrayRequiredAt("$.listings")));
     }
 
     @Test

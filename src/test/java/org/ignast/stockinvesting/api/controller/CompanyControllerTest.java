@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,13 +25,14 @@ public class CompanyControllerTest {
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)).andExpect(status().isBadRequest())
-                .andExpect(content().json("{\"errorName\":\"bodyNotParsable\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test
     public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("not-a-json-object"))
-                .andExpect(status().isBadRequest()).andExpect(content().json("{\"errorName\":\"bodyNotParsable\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test
@@ -43,20 +45,20 @@ public class CompanyControllerTest {
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(post("/companies/").contentType("application/json"))
                 .andExpect(status().isUnsupportedMediaType())
-                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
         mockMvc.perform(post("/companies/").contentType("application/hal+json"))
                 .andExpect(status().isUnsupportedMediaType())
-                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldIndicateResourceNotReadable() throws Exception {
         mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
-                .andExpect(content().string("{\"errorName\":\"methodNotAllowed\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }
 }
 
@@ -75,7 +77,7 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(""))).andExpect(status().isBadRequest())
                 .andExpect(
-                        content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.functionalCurrency\"}"));
+                        contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.functionalCurrency\"}"));
     }
 
     @ParameterizedTest
@@ -84,15 +86,15 @@ class CompanyControllerCurrencyParsingTest {
         String currencyJsonPair = "\"functionalCurrency\":" + currency;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(currencyJsonPair)))
-                .andExpect(status().isBadRequest()).andExpect(content()
-                        .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.functionalCurrency\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
+                        "{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.functionalCurrency\"}"));
     }
 
     @Test
     public void shouldRejectTooShortCurrencyCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\"")))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
     }
 
@@ -100,7 +102,7 @@ class CompanyControllerCurrencyParsingTest {
     public void shouldRejectTooLongCurrencyCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDollar\"")))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
     }
 
@@ -110,7 +112,7 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(
                         String.format("\"functionalCurrency\":\"%s\"", currencyCode))))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must contain only uppercase latin characters\"}"));
     }
 }
@@ -130,7 +132,7 @@ class CompanyControllerAddressParsingTest {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithAddressJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
     }
 
     @ParameterizedTest
@@ -139,14 +141,14 @@ class CompanyControllerAddressParsingTest {
         String addressJsonPair = "\"address\":" + addressValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithAddressJsonPair(addressJsonPair))).andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNullAddressIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithAddressJsonPair("\"address\":null"))).andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address\"}"));
     }
 
     @Test
@@ -154,14 +156,14 @@ class CompanyControllerAddressParsingTest {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithCountryJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithCountryJsonPair("\"country\":null"))).andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.address.country\"}"));
     }
 
     @Test
@@ -169,7 +171,7 @@ class CompanyControllerAddressParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithCountryJsonPair("\"country\":3"))).andExpect(status().isBadRequest())
                 .andExpect(
-                        content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}"));
+                        contentMatchesJson("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}"));
     }
 
 }
@@ -188,7 +190,7 @@ class CompanyControllerNameParsingTest {
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithNameJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
     }
 
     @ParameterizedTest
@@ -197,20 +199,20 @@ class CompanyControllerNameParsingTest {
         String nameJsonPair = "\"name\":" + nameValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithNameJsonPair(nameJsonPair))).andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithNameJsonPair("\"name\":null"))).andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.name\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithEmptyName() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-255 characters\"}"));
     }
 
@@ -223,7 +225,7 @@ class CompanyControllerNameParsingTest {
     @Test
     public void shouldRejectCompanyWithTooLongName() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(256)))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.name\",\"message\":\"Company name must be between 1-255 characters\"}"));
     }
 
@@ -254,7 +256,7 @@ class CompanyControllerListingsParsingTest {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
     }
 
     @Test
@@ -262,7 +264,7 @@ class CompanyControllerListingsParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings\"}"));
     }
 
     @ParameterizedTest
@@ -270,14 +272,14 @@ class CompanyControllerListingsParsingTest {
     public void companyWithNonArrayListingShouldBeRejectedIndicatingWrongType() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":3"))).andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}"));
     }
 
     @Test
     public void companyWithZeroListingsShouldBeRejected() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":[]"))).andExpect(status().isBadRequest())
-                .andExpect(content().string(
+                .andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
     }
 
@@ -285,7 +287,7 @@ class CompanyControllerListingsParsingTest {
     public void companyWithNullListingShouldBeRejected() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithListingsJsonPair("\"listings\":[null]")))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
     }
 
@@ -296,14 +298,14 @@ class CompanyControllerListingsParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
                 bodyFactory.createWithListingsJsonPair(String.format("\"listings\":[%s]", listingOfWrongType))))
                 .andExpect(status().isBadRequest())
-                .andExpect(content().string("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.listings[0]\"}"));
+                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.listings[0]\"}"));
     }
 
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
                 "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}, {\"stockExchange\":\"London Stock Exchange\",\"ticker\":\"Amazon\"}]")))
-                .andExpect(status().isBadRequest()).andExpect(content().string(
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Multiple listings are not supported\"}"));
     }
 }
@@ -322,16 +324,16 @@ class CompanyControllerTestIndividualListingParsingTest {
     public void shouldRejectCompanyListedWithoutStockExchangeIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithStockExchangeJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(content()
-                        .string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
+                        "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
     }
 
     @Test
     public void shouldRejectCompanyListedWithNullStockExchangeIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithStockExchangeJsonPair("\"stockExchange\":null")))
-                .andExpect(status().isBadRequest()).andExpect(content()
-                        .string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
+                        "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
     }
 
     @ParameterizedTest
@@ -341,8 +343,8 @@ class CompanyControllerTestIndividualListingParsingTest {
         String stockExchange = "\"stockExchange\":" + stockExchangeValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithStockExchangeJsonPair(stockExchange))).andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+                .andExpect(contentMatchesJson(
+                        "{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
     }
 
     @Test
@@ -350,14 +352,14 @@ class CompanyControllerTestIndividualListingParsingTest {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithTickerJsonPair("")))
                 .andExpect(status().isBadRequest()).andExpect(
-                        content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].ticker\"}"));
+                        contentMatchesJson("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].ticker\"}"));
     }
 
     @Test
     public void shouldRejectCompanyWithNonStringTickerIndicatingTypeIsWrong() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithTickerJsonPair("\"ticker\":3"))).andExpect(status().isBadRequest())
-                .andExpect(content()
-                        .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].ticker\"}"));
+                .andExpect(contentMatchesJson(
+                        "{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].ticker\"}"));
     }
 }

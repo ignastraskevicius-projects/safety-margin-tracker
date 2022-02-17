@@ -18,7 +18,7 @@ public class RootController {
     public HttpEntity<Root> getRoot() {
         Root root = new Root();
         root.add(linkTo(methodOn(CompanyController.class).defineCompany(new CompanyDTO("Amazon",
-                new AddressDTO("Romania"), Arrays.asList(new ListingDTO("New York Stock Exchange")))))
+                new AddressDTO("Romania"), Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon")))))
                         .withRel("stocks:company"));
         return new ResponseEntity<>(root, HttpStatus.OK);
     }

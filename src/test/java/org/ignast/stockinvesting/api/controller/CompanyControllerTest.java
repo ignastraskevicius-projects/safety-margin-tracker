@@ -247,7 +247,7 @@ class CompanyControllerListingsParsingTest {
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
-                "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}, {\"stockExchange\":\"London Stock Exchange\"}]")))
+                "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}, {\"stockExchange\":\"London Stock Exchange\",\"ticker\":\"Amazon\"}]")))
                 .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Multiple listings are not supported\"}"));
     }
@@ -288,5 +288,21 @@ class CompanyControllerTestIndividualListingParsingTest {
                 .content(bodyFactory.createWithStockExchangeJsonPair(stockExchange))).andExpect(status().isBadRequest())
                 .andExpect(content()
                         .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithoutTickerIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithTickerJsonPair("")))
+                .andExpect(status().isBadRequest()).andExpect(
+                        content().string("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.listings[0].ticker\"}"));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithNonStringTickerIndicatingTypeIsWrong() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithTickerJsonPair("\"ticker\":3"))).andExpect(status().isBadRequest())
+                .andExpect(content()
+                        .string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].ticker\"}"));
     }
 }

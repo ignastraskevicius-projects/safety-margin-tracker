@@ -15,25 +15,26 @@ class CompanyDTOTest {
     @ValueSource(strings = { "United States", "Germany" })
     public void shouldPreserveAddress(String country) {
         assertThat(new CompanyDTO("anyName", new AddressDTO(country),
-                Arrays.asList(new ListingDTO("New York Stock Exchange"))).getAddress().getCountry()).isEqualTo(country);
+                Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"))).getAddress().getCountry())
+                        .isEqualTo(country);
     }
 
     @Test
     public void shouldPreserveListings() {
-        List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange"));
+        List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"));
         assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), listings).getListings()).isEqualTo(listings);
     }
 
     @Test
     public void shouldPreserveMultiplelistings() {
-        List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange"),
-                new ListingDTO("Hong Kong Stock Exchange"));
+        List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"),
+                new ListingDTO("Hong Kong Stock Exchange", "Amazon"));
         assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), listings).getListings()).isEqualTo(listings);
     }
 
     @Test
     public void shouldDropAnyIndividualNullListing() {
-        ListingDTO listing = new ListingDTO("New York Stock Exchange");
+        ListingDTO listing = new ListingDTO("New York Stock Exchange", "Amazon");
         assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), Arrays.asList(null, listing)).getListings())
                 .isEqualTo(Arrays.asList(listing));
     }

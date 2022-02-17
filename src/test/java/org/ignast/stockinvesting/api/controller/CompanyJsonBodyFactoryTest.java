@@ -48,4 +48,16 @@ public class CompanyJsonBodyFactoryTest {
         assertThat(factory.createWithCountryJsonPair("\"country\":null"))
                 .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":\"listings\"}");
     }
+
+    @Test
+    public void shouldCreateCompanyWithoutListingsField() {
+        assertThat(factory.createWithListingsJsonPair(""))
+                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"}}");
+    }
+
+    @Test
+    public void shouldCreateCompanyWithCustomListingsJsonPair() {
+        assertThat(factory.createWithListingsJsonPair("\"listings\":null"))
+                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":null}");
+    }
 }

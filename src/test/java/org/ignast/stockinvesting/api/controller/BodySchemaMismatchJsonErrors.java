@@ -6,4 +6,8 @@ public class BodySchemaMismatchJsonErrors {
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"%s\"}]}",
                 jsonPath);
     }
+
+    public static String forStringRequiredAt(String jsonPath) {
+        return String.format("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"%s\"}", jsonPath);
+    }
 }

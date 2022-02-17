@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.forMissingFieldAt;
+import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.forStringRequiredAt;
 import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -86,8 +87,8 @@ class CompanyControllerCurrencyParsingTest {
         String currencyJsonPair = "\"functionalCurrency\":" + currency;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(currencyJsonPair)))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.functionalCurrency\"}"));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.functionalCurrency")));
     }
 
     @Test
@@ -169,8 +170,7 @@ class CompanyControllerAddressParsingTest {
     public void shouldRejectCompanyWithNonStringAsNonJsonStringIndicatingWrongType() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithCountryJsonPair("\"country\":3"))).andExpect(status().isBadRequest())
-                .andExpect(
-                        contentMatchesJson("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}"));
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.address.country")));
     }
 
 }
@@ -197,7 +197,7 @@ class CompanyControllerNameParsingTest {
         String nameJsonPair = "\"name\":" + nameValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithNameJsonPair(nameJsonPair))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}"));
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.name")));
     }
 
     @Test
@@ -339,8 +339,7 @@ class CompanyControllerTestIndividualListingParsingTest {
         String stockExchange = "\"stockExchange\":" + stockExchangeValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithStockExchangeJsonPair(stockExchange))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].stockExchange\"}"));
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].stockExchange")));
     }
 
     @Test
@@ -355,7 +354,6 @@ class CompanyControllerTestIndividualListingParsingTest {
     public void shouldRejectCompanyWithNonStringTickerIndicatingTypeIsWrong() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithTickerJsonPair("\"ticker\":3"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        "{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.listings[0].ticker\"}"));
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].ticker")));
     }
 }

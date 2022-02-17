@@ -21,10 +21,10 @@ public class CompanyDTO {
 
     @NotNull
     @Size(min = 1, message = "Company must be listed on at least 1 stock exchange")
-    private List<Integer> listings;
+    private List<ListingDTO> listings;
 
     public CompanyDTO(@JsonProperty(value = "name") String name, @JsonProperty(value = "address") AddressDTO address,
-            @JsonProperty(value = "listings") List<Integer> listings) {
+            @JsonProperty(value = "listings") List<ListingDTO> listings) {
         this.name = name;
         this.address = address;
         if (listings != null) {
@@ -36,7 +36,7 @@ public class CompanyDTO {
         return address;
     }
 
-    public List<Integer> getListings() {
+    public List<ListingDTO> getListings() {
         return listings;
     }
 }

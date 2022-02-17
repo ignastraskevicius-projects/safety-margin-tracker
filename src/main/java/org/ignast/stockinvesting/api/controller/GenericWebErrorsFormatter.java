@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.validation.constraints.Size;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GenericWebErrorsFormatter {
@@ -54,24 +56,32 @@ public class GenericWebErrorsFormatter {
 
     @ExceptionHandler
     public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
-        if (error.getCause() instanceof StrictStringDeserializingException) {
-            if (((StrictStringDeserializingException) error.getCause()).getPath().get(0).getFieldName() == "address") {
+        if (error.getCause() instanceof MismatchedInputException) {
+            String jsonPath = extractJsonPath((MismatchedInputException) error.getCause());
+            if (error.getCause() instanceof StrictStringDeserializingException) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}");
+                        .body(String.format("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"%s\"}", jsonPath));
             } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
-            }
-        } else if (error.getCause() instanceof MismatchedInputException) {
-            if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}");
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
+                if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(String.format("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}", jsonPath));
+                } else {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(String.format("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"%s\"}", jsonPath));
+                }
             }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
         }
+    }
+
+    private String extractJsonPath(MismatchedInputException parsingException) {
+        return parsingException.getPath().stream().map(r -> {
+            if (r.getFrom() instanceof List) {
+                return String.format("[%s]", r.getIndex());
+            } else {
+                return String.format(".%s", r.getFieldName());
+            }
+        }).collect(Collectors.joining("", "$", ""));
     }
 }

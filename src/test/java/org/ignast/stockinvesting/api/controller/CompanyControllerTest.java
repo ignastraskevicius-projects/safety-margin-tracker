@@ -233,4 +233,14 @@ class CompanyControllerListingsParsingTest {
                 .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.listings\",\"message\":\"Company must be listed on at least 1 stock exchange\"}"));
     }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "true", "false", "3", "3.3", "\"someString\", []" })
+    public void companyWithIndividualListingAsNonObjectShouldBeRejectedIndicatedWrongType(String listringOfWrongType)
+            throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
+                bodyFactory.createWithListingsJsonPair(String.format("\"listings\":[%s]", listringOfWrongType))))
+                .andExpect(status().isBadRequest())
+                .andExpect(content().string("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.listings[0]\"}"));
+    }
 }

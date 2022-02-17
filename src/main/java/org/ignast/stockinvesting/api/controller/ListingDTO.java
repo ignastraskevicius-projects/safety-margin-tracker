@@ -6,13 +6,13 @@ import javax.validation.constraints.NotNull;
 
 public class ListingDTO {
     @NotNull
-    private Integer stockExchange;
+    private String stockExchange;
 
-    public ListingDTO(@JsonProperty(value = "stockExchange") Integer stockExchange) {
+    public ListingDTO(@JsonProperty(value = "stockExchange") String stockExchange) {
         this.stockExchange = stockExchange;
     }
 
-    public Integer getStockExchange() {
+    public String getStockExchange() {
         return stockExchange;
     }
 }

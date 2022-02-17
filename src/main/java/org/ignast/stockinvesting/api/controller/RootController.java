@@ -17,8 +17,8 @@ public class RootController {
     @GetMapping(value = "/", produces = VersionedApiMediaTypes.V1)
     public HttpEntity<Root> getRoot() {
         Root root = new Root();
-        root.add(linkTo(methodOn(CompanyController.class)
-                .defineCompany(new CompanyDTO("Amazon", new AddressDTO("Romania"), Arrays.asList(new ListingDTO(3)))))
+        root.add(linkTo(methodOn(CompanyController.class).defineCompany(new CompanyDTO("Amazon",
+                new AddressDTO("Romania"), Arrays.asList(new ListingDTO("New York Stock Exchange")))))
                         .withRel("stocks:company"));
         return new ResponseEntity<>(root, HttpStatus.OK);
     }

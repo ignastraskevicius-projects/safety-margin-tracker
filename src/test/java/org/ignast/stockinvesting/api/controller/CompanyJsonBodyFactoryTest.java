@@ -11,43 +11,43 @@ public class CompanyJsonBodyFactoryTest {
     @Test
     public void shouldCreateValidJson() {
         assertThat(factory.createAmazon()).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":4}]}");
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutName() {
-        assertThat(factory.createWithNameJsonPair(""))
-                .isEqualTo("{\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":4}]}");
+        assertThat(factory.createWithNameJsonPair("")).isEqualTo(
+                "{\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomNameJsonPair() {
         assertThat(factory.createWithNameJsonPair("\"name\":null")).isEqualTo(
-                "{\"name\":null,\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":4}]}");
+                "{\"name\":null,\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutAddress() {
         assertThat(factory.createWithAddressJsonPair(""))
-                .isEqualTo("{\"name\":\"Amazon\",\"listings\":[{\"stockExchange\":4}]}");
+                .isEqualTo("{\"name\":\"Amazon\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomAddressJsonPair() {
-        assertThat(factory.createWithAddressJsonPair("\"address\":null"))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":null,\"listings\":[{\"stockExchange\":4}]}");
+        assertThat(factory.createWithAddressJsonPair("\"address\":null")).isEqualTo(
+                "{\"name\":\"Amazon\",\"address\":null,\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutCountry() {
-        assertThat(factory.createWithCountryJsonPair(""))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":{},\"listings\":[{\"stockExchange\":4}]}");
+        assertThat(factory.createWithCountryJsonPair("")).isEqualTo(
+                "{\"name\":\"Amazon\",\"address\":{},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomCountryJsonPair() {
-        assertThat(factory.createWithCountryJsonPair("\"country\":null"))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":[{\"stockExchange\":4}]}");
+        assertThat(factory.createWithCountryJsonPair("\"country\":null")).isEqualTo(
+                "{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"}]}");
     }
 
     @Test

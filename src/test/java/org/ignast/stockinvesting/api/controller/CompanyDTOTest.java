@@ -22,30 +22,31 @@ class CompanyDTOTest {
     @Test
     public void shouldPreserveListings() {
         List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"));
-        assertThat(
-                new CompanyDTO("anyName", new AddressDTO("anyCountry"), "United States Dollar", listings).getListings())
-                        .isEqualTo(listings);
+        assertThat(new CompanyDTO("anyName", anyAddress(), "United States Dollar", listings).getListings())
+                .isEqualTo(listings);
     }
 
     @Test
     public void shouldPreserveMultiplelistings() {
         List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"),
                 new ListingDTO("Hong Kong Stock Exchange", "Amazon"));
-        assertThat(
-                new CompanyDTO("anyName", new AddressDTO("anyCountry"), "United States Dollar", listings).getListings())
-                        .isEqualTo(listings);
+        assertThat(new CompanyDTO("anyName", anyAddress(), "United States Dollar", listings).getListings())
+                .isEqualTo(listings);
     }
 
     @Test
     public void shouldDropAnyIndividualNullListing() {
         ListingDTO listing = new ListingDTO("New York Stock Exchange", "Amazon");
-        assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), "United States Dollar",
-                Arrays.asList(null, listing)).getListings()).isEqualTo(Arrays.asList(listing));
+        assertThat(new CompanyDTO("anyName", anyAddress(), "United States Dollar", Arrays.asList(null, listing))
+                .getListings()).isEqualTo(Arrays.asList(listing));
     }
 
     @Test
     public void shouldAllowNullListingsToEnableJavaxValidation() {
-        assertThat(new CompanyDTO("anyName", new AddressDTO("anyCountry"), "United States Dollar", null).getListings())
-                .isEqualTo(null);
+        assertThat(new CompanyDTO("anyName", anyAddress(), "United States Dollar", null).getListings()).isEqualTo(null);
+    }
+
+    private AddressDTO anyAddress() {
+        return new AddressDTO("anyCountry");
     }
 }

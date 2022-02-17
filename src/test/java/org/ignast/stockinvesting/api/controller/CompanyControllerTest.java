@@ -95,6 +95,14 @@ class CompanyControllerCurrencyParsingTest {
                 .andExpect(status().isBadRequest()).andExpect(content().string(
                         "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
     }
+
+    @Test
+    public void shouldRejectTooLongCurrencyCode() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDollar\"")))
+                .andExpect(status().isBadRequest()).andExpect(content().string(
+                        "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.functionalCurrency\",\"message\":\"Currency must have 3 letters (ISO 4217)\"}"));
+    }
 }
 
 @WebMvcTest

@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import javax.validation.constraints.Size;
+import java.util.ArrayList;
 
 @ControllerAdvice
 public class GenericWebErrorsFormatter {
@@ -57,8 +58,13 @@ public class GenericWebErrorsFormatter {
                         .body("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.name\"}");
             }
         } else if (error.getCause() instanceof MismatchedInputException) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
+            if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"$.listings\"}");
+            } else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}");
+            }
         } else {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
         }

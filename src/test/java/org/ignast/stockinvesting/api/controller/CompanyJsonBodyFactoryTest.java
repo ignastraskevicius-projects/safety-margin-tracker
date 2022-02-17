@@ -10,43 +10,43 @@ public class CompanyJsonBodyFactoryTest {
 
     @Test
     public void shouldCreateValidJson() {
-        assertThat(factory.createAmazon()).isEqualTo(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":\"listings\"}");
+        assertThat(factory.createAmazon())
+                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"listings\":[3]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutName() {
         assertThat(factory.createWithNameJsonPair(""))
-                .isEqualTo("{\"address\":{\"country\":\"United States\"},\"listings\":\"listings\"}");
+                .isEqualTo("{\"address\":{\"country\":\"United States\"},\"listings\":[3]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomNameJsonPair() {
         assertThat(factory.createWithNameJsonPair("\"name\":null"))
-                .isEqualTo("{\"name\":null,\"address\":{\"country\":\"United States\"},\"listings\":\"listings\"}");
+                .isEqualTo("{\"name\":null,\"address\":{\"country\":\"United States\"},\"listings\":[3]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutAddress() {
-        assertThat(factory.createWithAddressJsonPair("")).isEqualTo("{\"name\":\"Amazon\",\"listings\":\"listings\"}");
+        assertThat(factory.createWithAddressJsonPair("")).isEqualTo("{\"name\":\"Amazon\",\"listings\":[3]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomAddressJsonPair() {
         assertThat(factory.createWithAddressJsonPair("\"address\":null"))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":null,\"listings\":\"listings\"}");
+                .isEqualTo("{\"name\":\"Amazon\",\"address\":null,\"listings\":[3]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutCountry() {
         assertThat(factory.createWithCountryJsonPair(""))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":{},\"listings\":\"listings\"}");
+                .isEqualTo("{\"name\":\"Amazon\",\"address\":{},\"listings\":[3]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomCountryJsonPair() {
         assertThat(factory.createWithCountryJsonPair("\"country\":null"))
-                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":\"listings\"}");
+                .isEqualTo("{\"name\":\"Amazon\",\"address\":{\"country\":null},\"listings\":[3]}");
     }
 
     @Test

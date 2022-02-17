@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+import java.util.List;
 
 public class CompanyDTO {
 
@@ -17,10 +18,10 @@ public class CompanyDTO {
     private AddressDTO address;
 
     @NotNull
-    private String listings;
+    private List<Integer> listings;
 
     public CompanyDTO(@JsonProperty(value = "name") String name, @JsonProperty(value = "address") AddressDTO address,
-            @JsonProperty(value = "listings") String listings) {
+            @JsonProperty(value = "listings") List<Integer> listings) {
         this.name = name;
         this.address = address;
         this.listings = listings;

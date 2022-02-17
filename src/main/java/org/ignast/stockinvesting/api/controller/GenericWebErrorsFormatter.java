@@ -71,8 +71,9 @@ public class GenericWebErrorsFormatter {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(String.format("{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}", jsonPath));
                 } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                            .body(String.format("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"%s\"}", jsonPath));
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"%s\"}]}",
+                            jsonPath));
                 }
             }
         } else {

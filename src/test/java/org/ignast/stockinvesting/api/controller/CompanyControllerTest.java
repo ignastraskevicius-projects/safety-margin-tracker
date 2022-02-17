@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.forMissingFieldAt;
-import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -141,7 +140,7 @@ class CompanyControllerAddressParsingTest {
         String addressJsonPair = "\"address\":" + addressValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithAddressJsonPair(addressJsonPair))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.address\"}"));
+                .andExpect(contentMatchesJson(forObjectRequiredAt("$.address")));
     }
 
     @Test
@@ -293,8 +292,7 @@ class CompanyControllerListingsParsingTest {
             throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
                 bodyFactory.createWithListingsJsonPair(String.format("\"listings\":[%s]", listingOfWrongType))))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"$.listings[0]\"}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forObjectRequiredAt("$.listings[0]")));
     }
 
     @Test

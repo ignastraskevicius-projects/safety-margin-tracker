@@ -21,6 +21,7 @@ public class CompanyDTO {
 
     @NotNull
     @Size(min = 1, message = "Company must be listed on at least 1 stock exchange")
+    @Size(max = 1, message = "Multiple listings are not supported")
     private List<ListingDTO> listings;
 
     public CompanyDTO(@JsonProperty(value = "name") String name, @JsonProperty(value = "address") AddressDTO address,

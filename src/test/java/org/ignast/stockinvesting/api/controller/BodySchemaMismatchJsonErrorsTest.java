@@ -13,7 +13,7 @@ public class BodySchemaMismatchJsonErrorsTest {
 
     @Test
     public void shouldCreateErrorJsonForStringRequiredField() {
-        assertThat(BodySchemaMismatchJsonErrors.forStringRequiredAt("someJsonPath"))
-                .isEqualTo("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"someJsonPath\"}");
+        assertThat(BodySchemaMismatchJsonErrors.forStringRequiredAt("someJsonPath")).isEqualTo(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"someJsonPath\"}]}");
     }
 }

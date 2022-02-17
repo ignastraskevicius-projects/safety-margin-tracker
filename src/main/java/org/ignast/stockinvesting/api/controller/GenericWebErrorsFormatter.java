@@ -63,8 +63,9 @@ public class GenericWebErrorsFormatter {
         if (error.getCause() instanceof MismatchedInputException) {
             String jsonPath = extractJsonPath((MismatchedInputException) error.getCause());
             if (error.getCause() instanceof StrictStringDeserializingException) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(String.format("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"%s\"}", jsonPath));
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
+                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"%s\"}]}",
+                        jsonPath));
             } else {
                 if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)

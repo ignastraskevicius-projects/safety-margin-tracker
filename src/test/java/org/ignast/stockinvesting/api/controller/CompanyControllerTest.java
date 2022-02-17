@@ -34,6 +34,44 @@ public class CompanyControllerTest {
     }
 
     @Test
+    public void shouldDefineCompany() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content("{\"name\":\"Santander\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}"))
+                .andExpect(status().isCreated());
+    }
+
+    @Test
+    public void shouldRejectNonHalRequests() throws Exception {
+        mockMvc.perform(post("/companies/").contentType("application/json"))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
+    }
+
+    @Test
+    public void shouldRejectUnversionedRequests() throws Exception {
+        mockMvc.perform(post("/companies/").contentType("application/hal+json"))
+                .andExpect(status().isUnsupportedMediaType())
+                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
+    }
+
+    @Test
+    public void shouldIndicateResourceNotReadable() throws Exception {
+        mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
+                .andExpect(content().string("{\"errorName\":\"methodNotAllowed\"}"));
+    }
+}
+
+@WebMvcTest
+class CompanyControllerAddressParsingTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
+    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
     public void shouldRejectCompanyWithoutAddressIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithAddressJsonPair("")))
@@ -80,32 +118,6 @@ public class CompanyControllerTest {
                         content().string("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.address.country\"}"));
     }
 
-    @Test
-    public void shouldDefineCompany() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content("{\"name\":\"Santander\",\"address\":{\"country\":\"Romania\"},\"listings\":\"listings\"}"))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    public void shouldRejectNonHalRequests() throws Exception {
-        mockMvc.perform(post("/companies/").contentType("application/json"))
-                .andExpect(status().isUnsupportedMediaType())
-                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
-    }
-
-    @Test
-    public void shouldRejectUnversionedRequests() throws Exception {
-        mockMvc.perform(post("/companies/").contentType("application/hal+json"))
-                .andExpect(status().isUnsupportedMediaType())
-                .andExpect(content().string("{\"errorName\":\"unsupportedContentType\"}"));
-    }
-
-    @Test
-    public void shouldIndicateResourceNotReadable() throws Exception {
-        mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
-                .andExpect(content().string("{\"errorName\":\"methodNotAllowed\"}"));
-    }
 }
 
 @WebMvcTest

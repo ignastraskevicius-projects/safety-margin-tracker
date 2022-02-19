@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
@@ -22,16 +23,19 @@ public class ValidationErrorsExtractor {
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
                     .map(fieldError -> extractAnnotationClassCausingViolation(fieldError).map(c -> toViolationType(c))
+                            .filter(Optional::isPresent).map(Optional::get)
                             .map(t -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage(), t)))
                     .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         }
     }
 
-    private ViolationType toViolationType(Class<? extends Annotation> annotationClass) {
+    private Optional<ViolationType> toViolationType(Class<? extends Annotation> annotationClass) {
         if (annotationClass == NotNull.class) {
-            return FIELD_IS_MISSING;
+            return Optional.of(FIELD_IS_MISSING);
+        } else if (annotationClass == Size.class) {
+            return Optional.of(VALUE_INVALID);
         } else {
-            return VALUE_INVALID;
+            return Optional.empty();
         }
     }
 

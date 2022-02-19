@@ -1,13 +1,13 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.MethodParameter;
 import org.springframework.validation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.Payload;
+import javax.validation.constraints.NotNull;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -67,7 +67,7 @@ class ValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldSkipErrorIfThereIsNoErrorConstraintDescriptorProvided() throws NoSuchMethodException {
+    public void shouldSkipErrorIfThereIsNoErrorViolationsCausedByJavaxAnnotation() {
         ConstraintViolation withoutViolation = new ViolationBuilder().build();
         ConstraintViolation withoutDescriptor = new ViolationBuilder().withViolation().build();
         ConstraintViolation withoutAnnotation = new ViolationBuilder().withViolation().withDescriptor().build();
@@ -75,14 +75,20 @@ class ValidationErrorsExtractorTest {
                 .withAnnotation().build();
         Arrays.asList(withoutViolation, withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream()
                 .map(violation -> {
-                    FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
+                    FieldError fieldError = new FieldError("invalid", "invalid", "invalid");
                     fieldError.wrap(violation);
                     return fieldError;
-                }).forEach(error -> {
-                    MethodArgumentNotValidException exception = new MethodArgumentNotValidException(
-                            anyMethodParameter(), bindingResultWithFieldErrorsOf(Arrays.asList(error)));
+                })
+                .map(error -> new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(
+                        Arrays.asList(validFieldErrorWithPath("valid1"), error, validFieldErrorWithPath("valid3")))))
+                .forEach(exception -> {
 
-                    assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
+                    List<ValidationError> validationErrors = errorsExtractor
+                            .extractAnnotationBasedErrorsFrom(exception);
+
+                    assertThat(validationErrors).hasSize(2);
+                    assertThat(validationErrors.get(0).getPath()).isEqualTo("valid1");
+                    assertThat(validationErrors.get(1).getPath()).isEqualTo("valid3");
                 });
     }
 
@@ -93,42 +99,76 @@ class ValidationErrorsExtractorTest {
                 .isThrownBy(() -> new FieldError("company", fieldName, "message"));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "some.path", "some.other.path" })
-    public void shouldExtractErrorPath(String path) throws NoSuchMethodException {
+    @Test
+    public void shouldExtractMissingFieldError() {
+        String underlyingPath = "some.path";
+        String message = "some message";
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldErrorWithUnderlyingPath(path))));
+                bindingResultWithFieldErrorsOf(
+                        Arrays.asList(fieldError(underlyingPath, message, javaxValidationNotNull()))));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        assertThat(validationErrors.get(0).getPath()).isEqualTo(path);
+        ValidationError validationError = validationErrors.get(0);
+        assertThat(validationError.getPath()).isEqualTo(underlyingPath);
+        assertThat(validationError.getMessage()).isEqualTo(message);
+        assertThat(validationError.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "message1", "message2" })
-    public void shouldExtractErrorMessage(String message) throws NoSuchMethodException {
+    @Test
+    public void shouldExtractMultipleMissingFieldErrors() {
+        FieldError fieldError1 = fieldError("path1", "message1", javaxValidationNotNull());
+        FieldError fieldError2 = fieldError("path2", "message2", javaxValidationNotNull());
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldErrorWithMessage(message))));
+                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError1, fieldError2)));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
-        assertThat(validationErrors).hasSize(1);
-        assertThat(validationErrors.get(0).getMessage()).isEqualTo(message);
+        assertThat(validationErrors).hasSize(2);
+        ValidationError validationError1 = validationErrors.get(0);
+        ValidationError validationError2 = validationErrors.get(1);
+        assertThat(validationError1.getPath()).isEqualTo("path1");
+        assertThat(validationError1.getMessage()).isEqualTo("message1");
+        assertThat(validationError1.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
+        assertThat(validationError2.getPath()).isEqualTo("path2");
+        assertThat(validationError2.getMessage()).isEqualTo("message2");
+        assertThat(validationError2.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
     }
 
-    private FieldError fieldErrorWithMessage(String message) {
-        FieldError fieldError = new FieldError("company", "anyName", message);
-        fieldError.wrap(
-                new ViolationBuilder().withViolation().withDescriptor().withAnnotation().withAnnotationType().build());
+    private FieldError validFieldErrorWithPath(String path) {
+        return fieldError(path, "anyMessage", javaxValidationNotNull());
+    }
+
+    private FieldError fieldError(String underlyingPath, String message, Annotation annotation) {
+        FieldError fieldError = new FieldError("company", underlyingPath, message);
+        fieldError.wrap(new ViolationBuilder().withViolation().withDescriptor().withAnnotation(annotation).build());
         return fieldError;
     }
 
-    private FieldError fieldErrorWithUnderlyingPath(String underlyingPath) {
-        FieldError fieldError = new FieldError("company", underlyingPath, "message");
-        fieldError.wrap(
-                new ViolationBuilder().withViolation().withDescriptor().withAnnotation().withAnnotationType().build());
-        return fieldError;
+    private NotNull javaxValidationNotNull() {
+        return new NotNull() {
+
+            @Override
+            public String message() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return NotNull.class;
+            }
+        };
     }
 
     private BindingResult bindingResultWithFieldErrorsOf(List<FieldError> fieldErrors) {
@@ -167,8 +207,13 @@ class ValidationErrorsExtractorTest {
             return this;
         }
 
+        public ViolationBuilder withAnnotation(Annotation annotation) {
+            when(descriptor.getAnnotation()).thenReturn(annotation);
+            return this;
+        }
+
         public ViolationBuilder withAnnotationType() {
-            when(descriptor.getAnnotation()).thenReturn(new AnnotationMock());
+            withAnnotation(new AnnotationMock());
             return this;
         }
 

@@ -1,42 +1,42 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 public class ValidationErrorsExtractor {
     public List<ValidationError> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
-        if (exception.getBindingResult().getFieldErrors() == null) {
-            return new ArrayList<>();
-        }
-        if (exception.getBindingResult().getFieldErrors().isEmpty()) {
+        if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {
             return new ArrayList<>();
         } else {
-            FieldError fieldError = exception.getBindingResult().getFieldErrors().get(0);
-            try {
-                ConstraintViolation violation = fieldError.unwrap(ConstraintViolation.class);
-                if (violation.getConstraintDescriptor() == null) {
-                    return new ArrayList<>();
-                } else {
-                    if (violation.getConstraintDescriptor().getAnnotation() == null) {
-                        return new ArrayList<>();
-                    } else {
-                        if (violation.getConstraintDescriptor().getAnnotation().annotationType() == null) {
-                            return new ArrayList<>();
-                        } else {
-                            return Arrays
-                                    .asList(new ValidationError(fieldError.getField(), fieldError.getDefaultMessage()));
-                        }
-                    }
+            return exception.getBindingResult().getFieldErrors().stream()
+                    .map(fieldError -> extractAnnotationCausingViolation(fieldError)
+                            .map(a -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage())))
+                    .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+        }
+    }
 
-                }
-            } catch (IllegalArgumentException e) {
-                return new ArrayList<>();
-            }
+    private Optional<Class<? extends Annotation>> extractAnnotationCausingViolation(FieldError fieldError) {
+        try {
+            ConstraintViolation violation = extractViolationOrNull(fieldError);
+            return Optional.of(violation.getConstraintDescriptor().getAnnotation().annotationType());
+        } catch (NullPointerException e) {
+            return Optional.empty();
+        }
+    }
+
+    private ConstraintViolation extractViolationOrNull(FieldError fieldError) {
+        try {
+            return fieldError.unwrap(ConstraintViolation.class);
+        } catch (IllegalArgumentException e) {
+            return null;
         }
     }
 }

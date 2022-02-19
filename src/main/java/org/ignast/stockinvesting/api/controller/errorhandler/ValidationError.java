@@ -16,4 +16,8 @@ public class ValidationError {
     public String getMessage() {
         return message;
     }
+
+    public ViolationType getType() {
+        return ViolationType.FIELD_IS_MISSING;
+    }
 }

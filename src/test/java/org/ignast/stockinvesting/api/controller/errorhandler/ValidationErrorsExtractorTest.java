@@ -102,34 +102,49 @@ class ValidationErrorsExtractorTest {
 
     @Test
     public void shouldExtractMissingFieldError() {
-        String underlyingPath = "some.path";
-        String message = "some message";
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(
-                        Arrays.asList(fieldError(underlyingPath, message, javaxValidationNotNull()))));
+                        Arrays.asList(fieldError("some.path", "some message", javaxValidationNotNull()))));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
         ValidationError validationError = validationErrors.get(0);
-        assertThat(validationError.getPath()).isEqualTo(underlyingPath);
-        assertThat(validationError.getMessage()).isEqualTo(message);
         assertThat(validationError.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
     }
 
     @Test
     public void shouldExtractFieldErrorRelatedToSizeRestrictions() {
-        String underlyingPath = "some.path";
-        String message = "some message";
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(
-                        Arrays.asList(fieldError(underlyingPath, message, javaxValidationSize()))));
+                        Arrays.asList(fieldError("anyPath", "anyMessage", javaxValidationSize()))));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
         ValidationError validationError = validationErrors.get(0);
         assertThat(validationError.getType()).isEqualTo(ViolationType.VALUE_INVALID);
+    }
+
+    @Test
+    public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError("anyPath", "anyMessage", javaLangOverride()))));
+
+        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).isEmpty();
+    }
+
+    @Test
+    public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeSupressWarning() {
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(
+                        Arrays.asList(fieldError("anyPath", "anyMessage", javaLangSuppressWarning()))));
+
+        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).isEmpty();
     }
 
     @Test
@@ -162,8 +177,37 @@ class ValidationErrorsExtractorTest {
         return fieldError;
     }
 
+    private Override javaLangOverride() {
+        Override annotation = new Override() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Override.class;
+            }
+        };
+        assertThat(annotation.annotationType() == Override.class);
+        return annotation;
+    }
+
+    private SuppressWarnings javaLangSuppressWarning() {
+        SuppressWarnings annotation = new SuppressWarnings() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return SuppressWarnings.class;
+            }
+
+            @Override
+            public String[] value() {
+                return new String[0];
+            }
+        };
+        assertThat(annotation.annotationType()).isEqualTo(SuppressWarnings.class);
+        return annotation;
+    }
+
     private NotNull javaxValidationNotNull() {
-        return new NotNull() {
+        NotNull annotation = new NotNull() {
 
             @Override
             public String message() {
@@ -185,10 +229,12 @@ class ValidationErrorsExtractorTest {
                 return NotNull.class;
             }
         };
+        assertThat(annotation.annotationType() == NotNull.class);
+        return annotation;
     }
 
     private Size javaxValidationSize() {
-        return new Size() {
+        Size annotation = new Size() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -220,6 +266,8 @@ class ValidationErrorsExtractorTest {
                 return 0;
             }
         };
+        assertThat(annotation.annotationType() == Size.class);
+        return annotation;
     }
 
     private BindingResult bindingResultWithFieldErrorsOf(List<FieldError> fieldErrors) {

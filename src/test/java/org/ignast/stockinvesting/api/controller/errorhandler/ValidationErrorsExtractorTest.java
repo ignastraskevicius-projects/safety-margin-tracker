@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
@@ -117,9 +118,24 @@ class ValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldExtractMultipleMissingFieldErrors() {
+    public void shouldExtractFieldErrorRelatedToSizeRestrictions() {
+        String underlyingPath = "some.path";
+        String message = "some message";
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(
+                        Arrays.asList(fieldError(underlyingPath, message, javaxValidationSize()))));
+
+        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        ValidationError validationError = validationErrors.get(0);
+        assertThat(validationError.getType()).isEqualTo(ViolationType.VALUE_INVALID);
+    }
+
+    @Test
+    public void shouldExtractMultipleFieldErrors() {
         FieldError fieldError1 = fieldError("path1", "message1", javaxValidationNotNull());
-        FieldError fieldError2 = fieldError("path2", "message2", javaxValidationNotNull());
+        FieldError fieldError2 = fieldError("path2", "message2", javaxValidationSize());
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(Arrays.asList(fieldError1, fieldError2)));
 
@@ -133,7 +149,7 @@ class ValidationErrorsExtractorTest {
         assertThat(validationError1.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
         assertThat(validationError2.getPath()).isEqualTo("path2");
         assertThat(validationError2.getMessage()).isEqualTo("message2");
-        assertThat(validationError2.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
+        assertThat(validationError2.getType()).isEqualTo(ViolationType.VALUE_INVALID);
     }
 
     private FieldError validFieldErrorWithPath(String path) {
@@ -167,6 +183,41 @@ class ValidationErrorsExtractorTest {
             @Override
             public Class<? extends Annotation> annotationType() {
                 return NotNull.class;
+            }
+        };
+    }
+
+    private Size javaxValidationSize() {
+        return new Size() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Size.class;
+            }
+
+            @Override
+            public String message() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends Payload>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public int min() {
+                return 0;
+            }
+
+            @Override
+            public int max() {
+                return 0;
             }
         };
     }

@@ -1,6 +1,8 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.core.MethodParameter;
 import org.springframework.validation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -43,15 +45,26 @@ class ValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldExtractSingleError() throws NoSuchMethodException {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(anyField())));
-
-        assertThat(errorsExtractor.extractAnotationBasedErrorsFrom(exception)).hasSize(1);
+    public void ensureThatUnderlyingFieldNameIsNeverNull() {
+        String fieldName = null;
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> new FieldError("company", fieldName, "message"));
     }
 
-    private FieldError anyField() {
-        return new FieldError("company", "name", "message");
+    @ParameterizedTest
+    @ValueSource(strings = { "some.path", "some.other.path" })
+    public void shouldExtractSingleError(String path) throws NoSuchMethodException {
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(Arrays.asList(fieldWithUnderlyingPath(path))));
+
+        List<ValidationError> validationErrors = errorsExtractor.extractAnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        assertThat(validationErrors.get(0).getPath()).isEqualTo(path);
+    }
+
+    private FieldError fieldWithUnderlyingPath(String underlyingPath) {
+        return new FieldError("company", underlyingPath, "message");
     }
 
     private BindingResult bindingResultWithFieldErrorsOf(List<FieldError> fieldErrors) {

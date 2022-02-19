@@ -33,7 +33,7 @@ class ValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(null));
 
-        assertThat(errorsExtractor.extractAnotationBasedErrorsFrom(exception)).isEmpty();
+        assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
     }
 
     @Test
@@ -41,7 +41,7 @@ class ValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(new ArrayList<>()));
 
-        assertThat(errorsExtractor.extractAnotationBasedErrorsFrom(exception)).isEmpty();
+        assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
     }
 
     @Test
@@ -53,17 +53,33 @@ class ValidationErrorsExtractorTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "some.path", "some.other.path" })
-    public void shouldExtractSingleError(String path) throws NoSuchMethodException {
+    public void shouldExtractErrorPath(String path) throws NoSuchMethodException {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldWithUnderlyingPath(path))));
+                bindingResultWithFieldErrorsOf(Arrays.asList(fieldErrorWithUnderlyingPath(path))));
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnotationBasedErrorsFrom(exception);
+        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
         assertThat(validationErrors.get(0).getPath()).isEqualTo(path);
     }
 
-    private FieldError fieldWithUnderlyingPath(String underlyingPath) {
+    @ParameterizedTest
+    @ValueSource(strings = { "message1", "message2" })
+    public void shouldExtractErrorMessage(String message) throws NoSuchMethodException {
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(Arrays.asList(fieldErrorWithMessage(message))));
+
+        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        assertThat(validationErrors.get(0).getMessage()).isEqualTo(message);
+    }
+
+    private FieldError fieldErrorWithMessage(String message) {
+        return new FieldError("company", "anyName", message);
+    }
+
+    private FieldError fieldErrorWithUnderlyingPath(String underlyingPath) {
         return new FieldError("company", underlyingPath, "message");
     }
 

@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
@@ -13,6 +14,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
@@ -32,7 +34,7 @@ public class ValidationErrorsExtractor {
     private Optional<ViolationType> toViolationType(Class<? extends Annotation> annotationClass) {
         if (annotationClass == NotNull.class) {
             return Optional.of(FIELD_IS_MISSING);
-        } else if (annotationClass == Size.class) {
+        } else if (asList(Size.class, Pattern.class).contains(annotationClass)) {
             return Optional.of(VALUE_INVALID);
         } else {
             return Optional.empty();

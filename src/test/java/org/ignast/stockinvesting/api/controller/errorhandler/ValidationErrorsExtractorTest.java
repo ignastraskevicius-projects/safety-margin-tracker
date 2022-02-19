@@ -8,6 +8,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import javax.validation.ConstraintViolation;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
@@ -127,6 +128,19 @@ class ValidationErrorsExtractorTest {
     }
 
     @Test
+    public void shouldExtractFieldErrorRelatedToPatternRestrictions() {
+        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(
+                        Arrays.asList(fieldError("anyPath", "anyMessage", javaxValidationPattern()))));
+
+        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        ValidationError validationError = validationErrors.get(0);
+        assertThat(validationError.getType()).isEqualTo(ViolationType.VALUE_INVALID);
+    }
+
+    @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(Arrays.asList(fieldError("anyPath", "anyMessage", javaLangOverride()))));
@@ -230,6 +244,43 @@ class ValidationErrorsExtractorTest {
             }
         };
         assertThat(annotation.annotationType() == NotNull.class);
+        return annotation;
+    }
+
+    private Pattern javaxValidationPattern() {
+        Pattern annotation = new Pattern() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return Pattern.class;
+            }
+
+            @Override
+            public String regexp() {
+                return null;
+            }
+
+            @Override
+            public Flag[] flags() {
+                return new Flag[0];
+            }
+
+            @Override
+            public String message() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<? extends Payload>[] payload() {
+                return new Class[0];
+            }
+        };
+        assertThat(annotation.annotationType()).isEqualTo(Pattern.class);
         return annotation;
     }
 

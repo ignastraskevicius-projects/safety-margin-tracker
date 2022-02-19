@@ -5,11 +5,15 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.constraints.NotNull;
 import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.FIELD_IS_MISSING;
+import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
 public class ValidationErrorsExtractor {
     public List<ValidationError> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
@@ -17,13 +21,21 @@ public class ValidationErrorsExtractor {
             return new ArrayList<>();
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
-                    .map(fieldError -> extractAnnotationCausingViolation(fieldError)
-                            .map(a -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage())))
+                    .map(fieldError -> extractAnnotationClassCausingViolation(fieldError).map(c -> toViolationType(c))
+                            .map(t -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage(), t)))
                     .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         }
     }
 
-    private Optional<Class<? extends Annotation>> extractAnnotationCausingViolation(FieldError fieldError) {
+    private ViolationType toViolationType(Class<? extends Annotation> annotationClass) {
+        if (annotationClass == NotNull.class) {
+            return FIELD_IS_MISSING;
+        } else {
+            return VALUE_INVALID;
+        }
+    }
+
+    private Optional<Class<? extends Annotation>> extractAnnotationClassCausingViolation(FieldError fieldError) {
         try {
             ConstraintViolation violation = extractViolationOrNull(fieldError);
             return Optional.of(violation.getConstraintDescriptor().getAnnotation().annotationType());

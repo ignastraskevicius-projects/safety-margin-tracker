@@ -3,10 +3,12 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 public class ValidationError {
     private String path;
     private String message;
+    private ViolationType type;
 
-    public ValidationError(String path, String message) {
+    public ValidationError(String path, String message, ViolationType type) {
         this.path = path;
         this.message = message;
+        this.type = type;
     }
 
     public String getPath() {
@@ -18,6 +20,6 @@ public class ValidationError {
     }
 
     public ViolationType getType() {
-        return ViolationType.FIELD_IS_MISSING;
+        return type;
     }
 }

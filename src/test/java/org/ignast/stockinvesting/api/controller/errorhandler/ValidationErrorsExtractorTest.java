@@ -23,7 +23,7 @@ import static org.mockito.Mockito.*;
 
 class ValidationErrorsExtractorTest {
 
-    private ValidationErrorsExtractor errorsExtractor = new ValidationErrorsExtractor();
+    private AnnotationBasedValidationErrorsFilter errorsExtractor = new AnnotationBasedValidationErrorsFilter();
 
     @Test
     public void exceptionShouldAlwaysContainBindingResult() throws NoSuchMethodException {

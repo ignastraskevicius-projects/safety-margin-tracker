@@ -73,14 +73,33 @@ public class MethodArgumentNotValidExceptionMock {
     }
 
     public static MethodArgumentNotValidException withErrorFieldViolation(ConstraintViolation violation) {
-        FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
-        when(fieldError.unwrap(any())).thenReturn(violation);
+        FieldError fieldError = mockFieldErrorCausedByViolation("any", "any", violation);
         return withFieldErrors(asList(fieldError));
     }
 
+    public static MethodArgumentNotValidException withMultipleFields(String underlyingPath1, String defaultMessage1,
+            Annotation annotation1, String underlyingPath2, String defaultMessage2, Annotation annotation2) {
+        FieldError fieldError1 = mockFieldErrorCausedByViolation(underlyingPath1, defaultMessage1,
+                createViolationCausedBy(annotation1));
+        FieldError fieldError2 = mockFieldErrorCausedByViolation(underlyingPath2, defaultMessage2,
+                createViolationCausedBy(annotation2));
+        return withFieldErrors(asList(fieldError1, fieldError2));
+    }
+
+    private static FieldError mockFieldErrorCausedByViolation(String path, String message,
+            ConstraintViolation violation) {
+        FieldError fieldError = mockFieldErrorWithNameAndMessage(path, message);
+        when(fieldError.unwrap(any())).thenReturn(violation);
+        return fieldError;
+    }
+
     public static MethodArgumentNotValidException withFieldErrorCausedBy(Annotation annotation) {
-        return withErrorFieldViolation(new AnnotationBasedValidationErrorsExtractorTest.ViolationBuilder()
-                .withViolation().withDescriptor().withAnnotation(annotation).build());
+        return withErrorFieldViolation(createViolationCausedBy(annotation));
+    }
+
+    private static ConstraintViolation createViolationCausedBy(Annotation annotation) {
+        return new AnnotationBasedValidationErrorsExtractorTest.ViolationBuilder().withViolation().withDescriptor()
+                .withAnnotation(annotation).build();
     }
 
     private static FieldError mockFieldErrorWithNameAndMessage(String field, String defaultMessage) {

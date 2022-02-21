@@ -66,11 +66,22 @@ public class MethodArgumentNotValidExceptionMock {
     }
 
     public static MethodArgumentNotValidException withSourceNotBeingConstraintViolation() {
-        FieldError fieldError = mock(FieldError.class);
+        FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
         when(fieldError.unwrap(any())).thenThrow(IllegalArgumentException.class);
-        when(fieldError.getField()).thenReturn("any");
-        when(fieldError.getDefaultMessage()).thenReturn("any");
         return withFieldErrors(asList(fieldError));
+    }
+
+    public static MethodArgumentNotValidException withViolation(ConstraintViolation violation) {
+        FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
+        when(fieldError.unwrap(any())).thenReturn(violation);
+        return withFieldErrors(asList(fieldError));
+    }
+
+    private static FieldError mockFieldErrorWithNameAndMessage(String field, String defaultMessage) {
+        FieldError fieldError = mock(FieldError.class);
+        when(fieldError.getField()).thenReturn(field);
+        when(fieldError.getDefaultMessage()).thenReturn(defaultMessage);
+        return fieldError;
     }
 
     static MethodParameter anyMethodParameter() {
@@ -87,5 +98,4 @@ public class MethodArgumentNotValidExceptionMock {
         when(result.getFieldErrors()).thenReturn(fieldErrors);
         return result;
     }
-
 }

@@ -43,7 +43,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     @Test
     public void shouldThrowIfFieldErrorSourceIsNotConstraintViolation() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withErrorFieldSourceNotBeingConstraintViolation();
+                .withFieldErrorSourceNotBeingConstraintViolation();
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
@@ -150,7 +150,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         assertThat(validationError2.getType()).isEqualTo(ViolationType.VALUE_INVALID);
     }
 
-    private static Override javaLangOverride() {
+    static Override javaLangOverride() {
         Override annotation = new Override() {
 
             @Override

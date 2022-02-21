@@ -14,8 +14,10 @@ import java.util.List;
 import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.api.controller.errorhandler.MethodArgumentNotValidExceptionMock.anyMethodParameter;
+import static org.ignast.stockinvesting.api.controller.errorhandler.AnnotationBasedValidationErrorsExtractorTest.javaLangOverride;
+import static org.ignast.stockinvesting.api.controller.errorhandler.MethodArgumentNotValidExceptionMock.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -68,7 +70,7 @@ public class MethodArgumentNotValidExceptionMock {
         return new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(fieldErrors));
     }
 
-    public static MethodArgumentNotValidException withErrorFieldSourceNotBeingConstraintViolation() {
+    public static MethodArgumentNotValidException withFieldErrorSourceNotBeingConstraintViolation() {
         FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
         when(fieldError.unwrap(any())).thenThrow(IllegalArgumentException.class);
         return withFieldErrors(asList(fieldError));
@@ -143,7 +145,7 @@ public class MethodArgumentNotValidExceptionMock {
             return this;
         }
 
-        public ViolationMockBuilder withAnnotation(Annotation annotation) {
+        private ViolationMockBuilder withAnnotation(Annotation annotation) {
             when(descriptor.getAnnotation()).thenReturn(annotation);
             return this;
         }
@@ -151,5 +153,72 @@ public class MethodArgumentNotValidExceptionMock {
         private ConstraintViolation build() {
             return violation;
         }
+    }
+}
+
+class MethodArgumentNotValidExceptionMockTest {
+
+    @Test
+    public void shouldCreateMockWithNullFieldErrors() {
+        MethodArgumentNotValidException exception = withFieldErrors(null);
+
+        assertThat(exception.getBindingResult().getFieldErrors()).isNull();
+    }
+
+    @Test
+    public void shouldCreateMockWithEmptyFieldErrors() {
+        MethodArgumentNotValidException exception = withFieldErrors(asList());
+
+        assertThat(exception.getBindingResult().getFieldErrors()).hasSize(0);
+    }
+
+    @Test
+    public void shouldCreateMockContainingErrorsWithoutConstrainViolation() {
+        MethodArgumentNotValidException exception = withFieldErrorSourceNotBeingConstraintViolation();
+
+        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        assertThat(fieldErrors).hasSize(1);
+        assertThatExceptionOfType(IllegalArgumentException.class)
+                .isThrownBy(() -> fieldErrors.get(0).unwrap(ConstraintViolation.class));
+    }
+
+    @Test
+    public void shouldCreateMockContainingErrorsWithViolationsButWithoutDescriptor() {
+        MethodArgumentNotValidException exception = withErrorFieldViolation(c -> {
+        });
+
+        ConstraintViolation violation = exception.getBindingResult().getFieldErrors().get(0)
+                .unwrap(ConstraintViolation.class);
+        assertThat(violation).isNotNull();
+        assertThat(violation.getConstraintDescriptor()).isNull();
+    }
+
+    @Test
+    public void shouldCreateMockContainingErrorsWithViolationDescriptorButWithoutAnnotation() {
+        MethodArgumentNotValidException exception = withErrorFieldViolation(c -> c.withDescriptor());
+
+        ConstraintDescriptor descriptor = exception.getBindingResult().getFieldErrors().get(0)
+                .unwrap(ConstraintViolation.class).getConstraintDescriptor();
+        assertThat(descriptor).isNotNull();
+        assertThat(descriptor.getAnnotation()).isNull();
+    }
+
+    @Test
+    public void shouldCreateMockContainingErrorsWithCausingAnnotationsButWithoutTheType() {
+        MethodArgumentNotValidException exception = withErrorFieldViolation(c -> c.withDescriptor().withAnnotation());
+
+        Annotation violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
+                .unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation();
+        assertThat(violationCausingAnnotation).isNotNull();
+        assertThat(violationCausingAnnotation.annotationType()).isNull();
+    }
+
+    @Test
+    public void shouldCreateMockContainingErrorsWithCausingAnnotations() {
+        MethodArgumentNotValidException exception = withFieldErrorCausedBy(javaLangOverride());
+
+        Annotation violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
+                .unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation();
+        assertThat(violationCausingAnnotation.annotationType()).isNotNull();
     }
 }

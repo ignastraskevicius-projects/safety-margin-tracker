@@ -11,11 +11,11 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 class ErrorSerializerTest {
 
-    private ErrorSerializer serializer = new ErrorSerializer();
+    private JsonErrorSerializer serializer = new JsonErrorSerializer();
 
     @Test
     public void shouldSerialize0FieldValidationErrors() {
-        ResponseEntity<String> responseEntity = serializer.serializeInvalidRequestBody(Collections.emptyList());
+        ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(Collections.emptyList());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(responseEntity.getBody())
@@ -26,7 +26,7 @@ class ErrorSerializerTest {
     public void shouldSerializeMissingFieldValidationError() {
         ValidationError validationError = new ValidationError("somePath", "anyMessage", ViolationType.FIELD_IS_MISSING);
 
-        ResponseEntity<String> responseEntity = serializer.serializeInvalidRequestBody(asList(validationError));
+        ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(responseEntity.getBody()).isEqualTo(
@@ -37,7 +37,7 @@ class ErrorSerializerTest {
     public void shouldSerializeInvalidValueValidationError() {
         ValidationError validationError = new ValidationError("somePath", "someMessage", ViolationType.VALUE_INVALID);
 
-        ResponseEntity<String> responseEntity = serializer.serializeInvalidRequestBody(asList(validationError));
+        ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(responseEntity.getBody()).isEqualTo(
@@ -52,7 +52,7 @@ class ErrorSerializerTest {
                 ViolationType.VALUE_INVALID);
 
         ResponseEntity<String> responseEntity = serializer
-                .serializeInvalidRequestBody(asList(invalidValueError1, invalidValueError2));
+                .serializeBodySchemaMismatchErrors(asList(invalidValueError1, invalidValueError2));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(responseEntity.getBody())
@@ -67,7 +67,7 @@ class ErrorSerializerTest {
         ValidationError messingFieldError2 = new ValidationError("path2", "anyMessage", ViolationType.FIELD_IS_MISSING);
 
         ResponseEntity<String> responseEntity = serializer
-                .serializeInvalidRequestBody(asList(missingFieldError1, messingFieldError2));
+                .serializeBodySchemaMismatchErrors(asList(missingFieldError1, messingFieldError2));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(responseEntity.getBody())
@@ -83,7 +83,7 @@ class ErrorSerializerTest {
         ValidationError messingFieldError2 = new ValidationError("path2", "anyMessage", ViolationType.FIELD_IS_MISSING);
 
         ResponseEntity<String> responseEntity = serializer
-                .serializeInvalidRequestBody(asList(invalidValueError1, messingFieldError2));
+                .serializeBodySchemaMismatchErrors(asList(invalidValueError1, messingFieldError2));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(responseEntity.getBody())

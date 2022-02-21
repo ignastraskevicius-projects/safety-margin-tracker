@@ -11,8 +11,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ValidationErrorsExtractorMock {
-    public static ValidationErrorsExtractor returningErrors() {
-        ValidationErrorsExtractor extractor = mock(ValidationErrorsExtractor.class);
+    public static AnnotationBasedValidationErrorsFilter returningErrors() {
+        AnnotationBasedValidationErrorsFilter extractor = mock(AnnotationBasedValidationErrorsFilter.class);
         when(extractor.extractAnnotationBasedErrorsFrom(notNull())).thenReturn(Arrays.asList(anyValidationError()));
         return extractor;
     }
@@ -26,14 +26,14 @@ class ValidationErrorExtractorMockTest {
 
     @Test
     public void shouldExtractAnError() {
-        ValidationErrorsExtractor extractor = ValidationErrorsExtractorMock.returningErrors();
+        AnnotationBasedValidationErrorsFilter extractor = ValidationErrorsExtractorMock.returningErrors();
 
         assertThat(extractor.extractAnnotationBasedErrorsFrom(mock(MethodArgumentNotValidException.class))).hasSize(1);
     }
 
     @Test
     public void shouldNotActivateMockBehaviourIfNullErrorsArePassedIn() {
-        ValidationErrorsExtractor extractor = ValidationErrorsExtractorMock.returningErrors();
+        AnnotationBasedValidationErrorsFilter extractor = ValidationErrorsExtractorMock.returningErrors();
 
         assertThat(extractor.extractAnnotationBasedErrorsFrom(null)).isEmpty();
     }

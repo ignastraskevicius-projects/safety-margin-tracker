@@ -1,12 +1,10 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
 import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
@@ -14,15 +12,21 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GenericWebErrorsHandler {
+    private ValidationErrorsExtractor validationErrorsExtractor;
+    private ErrorSerializer serializer;
+
+    public GenericWebErrorsHandler(ValidationErrorsExtractor validationErrorsExtractor, ErrorSerializer serializer) {
+
+        this.validationErrorsExtractor = validationErrorsExtractor;
+        this.serializer = serializer;
+    }
+
     @ExceptionHandler
     public ResponseEntity<String> handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
         return new ResponseEntity("{\"errorName\":\"methodNotAllowed\"}", HttpStatus.METHOD_NOT_ALLOWED);
@@ -41,28 +45,8 @@ public class GenericWebErrorsHandler {
 
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
-        FieldError error = fieldErrors.get(0);
-        String message = error.getDefaultMessage();
-        String field = error.getField();
-
-        if (Arrays.asList(Size.class, Pattern.class).contains(error.unwrap(ConstraintViolationImpl.class)
-                .getConstraintDescriptor().getAnnotation().annotationType())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                    "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}]}",
-                    field, message));
-        } else {
-            if (fieldErrors.size() == 2 && fieldErrors.get(0).getField() != fieldErrors.get(1).getField()) {
-                String field2 = fieldErrors.get(1).getField();
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"},{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",
-                        error.getField(), field2));
-            } else {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}]}",
-                        error.getField()));
-            }
-        }
+        return serializer.serializeBodySchemaMismatchErrors(
+                validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
     }
 
     @ExceptionHandler

@@ -10,7 +10,6 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,7 +22,8 @@ import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationTyp
 public class AnnotationBasedValidationErrorsExtractor {
     public List<ValidationError> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
         if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {
-            return new ArrayList<>();
+            throw new ValidationErrorsExtractionException(
+                    "javax.validation exception is expected to contain at least 1 field error");
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
                     .map(fieldError -> extractAnnotationClassCausingViolation(fieldError).map(c -> toViolationType(c))
@@ -58,5 +58,11 @@ public class AnnotationBasedValidationErrorsExtractor {
         } catch (IllegalArgumentException e) {
             return null;
         }
+    }
+}
+
+class ValidationErrorsExtractionException extends RuntimeException {
+    public ValidationErrorsExtractionException(String message) {
+        super(message);
     }
 }

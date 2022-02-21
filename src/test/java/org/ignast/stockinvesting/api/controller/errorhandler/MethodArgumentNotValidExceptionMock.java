@@ -7,6 +7,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 
@@ -65,16 +66,21 @@ public class MethodArgumentNotValidExceptionMock {
         return new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(fieldErrors));
     }
 
-    public static MethodArgumentNotValidException withSourceNotBeingConstraintViolation() {
+    public static MethodArgumentNotValidException withErrorFieldSourceNotBeingConstraintViolation() {
         FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
         when(fieldError.unwrap(any())).thenThrow(IllegalArgumentException.class);
         return withFieldErrors(asList(fieldError));
     }
 
-    public static MethodArgumentNotValidException withViolation(ConstraintViolation violation) {
+    public static MethodArgumentNotValidException withErrorFieldViolation(ConstraintViolation violation) {
         FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
         when(fieldError.unwrap(any())).thenReturn(violation);
         return withFieldErrors(asList(fieldError));
+    }
+
+    public static MethodArgumentNotValidException withFieldErrorCausedBy(Annotation annotation) {
+        return withErrorFieldViolation(new AnnotationBasedValidationErrorsExtractorTest.ViolationBuilder()
+                .withViolation().withDescriptor().withAnnotation(annotation).build());
     }
 
     private static FieldError mockFieldErrorWithNameAndMessage(String field, String defaultMessage) {

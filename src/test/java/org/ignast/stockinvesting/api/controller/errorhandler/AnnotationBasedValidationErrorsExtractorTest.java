@@ -48,7 +48,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     @Test
     public void shouldThrowIfFieldErrorSourceIsNotConstraintViolation() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withSourceNotBeingConstraintViolation();
+                .withErrorFieldSourceNotBeingConstraintViolation();
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
@@ -64,10 +64,13 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         ConstraintViolation withoutAnnotationType = new ViolationBuilder().withViolation().withDescriptor()
                 .withAnnotation().build();
         asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream()
-                .map(MethodArgumentNotValidExceptionMock::withViolation).forEach(exception -> {
+                .map(MethodArgumentNotValidExceptionMock::withErrorFieldViolation).forEach(exception -> {
 
                     assertThatExceptionOfType(ValidationErrorsExtractionException.class)
-                            .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception));
+                            .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                            .withMessage(
+                                    "Extraction of javax.validation error was caused by violation not defined via annotation")
+                            .withCauseInstanceOf(NullPointerException.class);
                 });
     }
 
@@ -81,7 +84,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     @Test
     public void shouldExtractMissingFieldError() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError("some.path", "some message", javaxValidationNotNull())));
+                .withFieldErrorCausedBy(javaxValidationNotNull());
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -93,7 +96,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     @Test
     public void shouldExtractFieldErrorRelatedToSizeRestrictions() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaxValidationSize())));
+                .withFieldErrorCausedBy(javaxValidationSize());
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -105,7 +108,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     @Test
     public void shouldExtractFieldErrorRelatedToPatternRestrictions() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaxValidationPattern())));
+                .withFieldErrorCausedBy(javaxValidationPattern());
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -117,21 +120,21 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaLangOverride())));
+                .withFieldErrorCausedBy(javaLangOverride());
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
-
-        assertThat(validationErrors).isEmpty();
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).withMessage(
+                        "Extraction of javax.validation error due to violation caused by annotation 'java.lang.Override' is not supported");
     }
 
     @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeSuppressWarning() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaLangSuppressWarning())));
+                .withFieldErrorCausedBy(javaLangSuppressWarning());
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
-
-        assertThat(validationErrors).isEmpty();
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).withMessage(
+                        "Extraction of javax.validation error due to violation caused by annotation 'java.lang.SuppressWarnings' is not supported");
     }
 
     @Test
@@ -154,17 +157,13 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         assertThat(validationError2.getType()).isEqualTo(ViolationType.VALUE_INVALID);
     }
 
-    private FieldError validFieldErrorWithPath(String path) {
-        return fieldError(path, "anyMessage", javaxValidationNotNull());
-    }
-
     private FieldError fieldError(String underlyingPath, String message, Annotation annotation) {
         FieldError fieldError = new FieldError("company", underlyingPath, message);
         fieldError.wrap(new ViolationBuilder().withViolation().withDescriptor().withAnnotation(annotation).build());
         return fieldError;
     }
 
-    private Override javaLangOverride() {
+    private static Override javaLangOverride() {
         Override annotation = new Override() {
 
             @Override
@@ -314,7 +313,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
                 bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
     }
 
-    class ViolationBuilder {
+    static class ViolationBuilder {
         private ConstraintViolation violation = null;
         private ConstraintDescriptor descriptor = null;
 
@@ -340,7 +339,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         }
 
         public ViolationBuilder withAnnotationType() {
-            withAnnotation(new AnnotationMock());
+            withAnnotation(javaLangOverride());
             return this;
         }
 

@@ -21,9 +21,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
-class ValidationErrorsExtractorTest {
+class AnnotationBasedValidationErrorsExtractorTest {
 
-    private AnnotationBasedValidationErrorsFilter errorsExtractor = new AnnotationBasedValidationErrorsFilter();
+    private AnnotationBasedValidationErrorsExtractor errorsExtractor = new AnnotationBasedValidationErrorsExtractor();
 
     @Test
     public void exceptionShouldAlwaysContainBindingResult() throws NoSuchMethodException {

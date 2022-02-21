@@ -20,7 +20,7 @@ import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationTyp
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
 @JsonComponent
-public class AnnotationBasedValidationErrorsFilter {
+public class AnnotationBasedValidationErrorsExtractor {
     public List<ValidationError> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
         if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {
             return new ArrayList<>();

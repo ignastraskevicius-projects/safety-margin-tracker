@@ -18,10 +18,10 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class GenericWebErrorsHandler {
-    private AnnotationBasedValidationErrorsFilter validationErrorsExtractor;
+    private AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
     private JsonErrorSerializer serializer;
 
-    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsFilter validationErrorsExtractor,
+    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
             JsonErrorSerializer serializer) {
 
         this.validationErrorsExtractor = validationErrorsExtractor;

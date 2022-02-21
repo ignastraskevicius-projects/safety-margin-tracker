@@ -15,6 +15,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
+import static java.util.Objects.requireNonNull;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
@@ -26,8 +27,7 @@ public class AnnotationBasedValidationErrorsExtractor {
                     "javax.validation exception is expected to contain at least 1 field error");
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
-                    .map(fieldError -> extractAnnotationClassCausingViolation(fieldError).map(c -> toViolationType(c))
-                            .filter(Optional::isPresent).map(Optional::get)
+                    .map(fieldError -> toViolationType(extractAnnotationClassCausingViolation(fieldError))
                             .map(t -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage(), t)))
                     .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
         }
@@ -43,12 +43,14 @@ public class AnnotationBasedValidationErrorsExtractor {
         }
     }
 
-    private Optional<Class<? extends Annotation>> extractAnnotationClassCausingViolation(FieldError fieldError) {
+    private Class<? extends Annotation> extractAnnotationClassCausingViolation(FieldError fieldError) {
         try {
-            ConstraintViolation violation = extractViolation(fieldError);
-            return Optional.of(violation.getConstraintDescriptor().getAnnotation().annotationType());
+            Class<? extends Annotation> annotation = extractViolation(fieldError).getConstraintDescriptor()
+                    .getAnnotation().annotationType();
+            requireNonNull(annotation);
+            return annotation;
         } catch (NullPointerException e) {
-            return Optional.empty();
+            throw new ValidationErrorsExtractionException("aa");
         }
     }
 

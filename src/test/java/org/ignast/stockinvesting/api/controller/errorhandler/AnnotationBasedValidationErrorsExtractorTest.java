@@ -58,25 +58,16 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldSkipErrorIfThereIsNoErrorViolationsCausedByJavaxAnnotation() {
+    public void shouldThrowIfAnyViolationIsNotCausedByJavaxAnnotation() {
         ConstraintViolation withoutDescriptor = new ViolationBuilder().withViolation().build();
         ConstraintViolation withoutAnnotation = new ViolationBuilder().withViolation().withDescriptor().build();
         ConstraintViolation withoutAnnotationType = new ViolationBuilder().withViolation().withDescriptor()
                 .withAnnotation().build();
-        asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream().map(violation -> {
-            FieldError fieldError = new FieldError("invalid", "invalid", "invalid");
-            fieldError.wrap(violation);
-            return fieldError;
-        }).map(error -> MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(validFieldErrorWithPath("valid1"), error, validFieldErrorWithPath("valid3"))))
-                .forEach(exception -> {
+        asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream()
+                .map(MethodArgumentNotValidExceptionMock::withViolation).forEach(exception -> {
 
-                    List<ValidationError> validationErrors = errorsExtractor
-                            .extractAnnotationBasedErrorsFrom(exception);
-
-                    assertThat(validationErrors).hasSize(2);
-                    assertThat(validationErrors.get(0).getPath()).isEqualTo("valid1");
-                    assertThat(validationErrors.get(1).getPath()).isEqualTo("valid3");
+                    assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                            .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception));
                 });
     }
 
@@ -165,12 +156,6 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     private FieldError validFieldErrorWithPath(String path) {
         return fieldError(path, "anyMessage", javaxValidationNotNull());
-    }
-
-    private FieldError wrapWithFieldError(ConstraintViolation violation) {
-        FieldError fieldError = new FieldError("any", "any", "any");
-        fieldError.wrap(violation);
-        return fieldError;
     }
 
     private FieldError fieldError(String underlyingPath, String message, Annotation annotation) {

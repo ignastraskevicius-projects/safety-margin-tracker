@@ -139,10 +139,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldExtractMultipleFieldErrors() {
-        FieldError fieldError1 = fieldError("path1", "message1", javaxValidationNotNull());
-        FieldError fieldError2 = fieldError("path2", "message2", javaxValidationSize());
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError1, fieldError2));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock.withMultipleFields("path1",
+                "message1", javaxValidationNotNull(), "path2", "message2", javaxValidationSize());
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -155,12 +153,6 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         assertThat(validationError2.getPath()).isEqualTo("path2");
         assertThat(validationError2.getMessage()).isEqualTo("message2");
         assertThat(validationError2.getType()).isEqualTo(ViolationType.VALUE_INVALID);
-    }
-
-    private FieldError fieldError(String underlyingPath, String message, Annotation annotation) {
-        FieldError fieldError = new FieldError("company", underlyingPath, message);
-        fieldError.wrap(new ViolationBuilder().withViolation().withDescriptor().withAnnotation(annotation).build());
-        return fieldError;
     }
 
     private static Override javaLangOverride() {
@@ -293,26 +285,6 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         return annotation;
     }
 
-    private BindingResult bindingResultWithFieldErrorsOf(List<FieldError> fieldErrors) {
-        BindingResult result = mock(BindingResult.class);
-        when(result.getFieldErrors()).thenReturn(fieldErrors);
-        return result;
-    }
-
-    private MethodParameter anyMethodParameter() {
-        try {
-            Method anyMethod = String.class.getMethod("charAt", int.class);
-            return new MethodParameter(anyMethod, 0);
-        } catch (NoSuchMethodException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    private MethodArgumentNotValidException wrapWithInvalidArgumentException(FieldError fieldError) {
-        return new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
-    }
-
     static class ViolationBuilder {
         private ConstraintViolation violation = null;
         private ConstraintDescriptor descriptor = null;
@@ -338,37 +310,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
             return this;
         }
 
-        public ViolationBuilder withAnnotationType() {
-            withAnnotation(javaLangOverride());
-            return this;
-        }
-
         public ConstraintViolation build() {
             return violation;
         }
     }
-
-    class AnnotationMock implements Annotation {
-
-        @Override
-        public boolean equals(Object obj) {
-            return false;
-        }
-
-        @Override
-        public int hashCode() {
-            return 0;
-        }
-
-        @Override
-        public String toString() {
-            return null;
-        }
-
-        @Override
-        public Class<? extends Annotation> annotationType() {
-            return Override.class;
-        }
-    }
-
 }

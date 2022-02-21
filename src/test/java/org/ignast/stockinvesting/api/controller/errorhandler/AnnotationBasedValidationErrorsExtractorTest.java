@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
 
-class AnnotationBasedValidationErrorsExtractorTest {
+public class AnnotationBasedValidationErrorsExtractorTest {
 
     private AnnotationBasedValidationErrorsExtractor errorsExtractor = new AnnotationBasedValidationErrorsExtractor();
 
@@ -33,7 +33,7 @@ class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {
+    public void shouldThrowIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(null));
 
@@ -43,7 +43,7 @@ class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldExtractNoErrorsIfExceptionContainsNoFieldErrors() throws NoSuchMethodException {
+    public void shouldThrowIfExceptionContainsNoFieldErrors() throws NoSuchMethodException {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(new ArrayList<>()));
 
@@ -53,39 +53,62 @@ class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldSkipErrorIfItIsNotDueToConstraintViolation() throws NoSuchMethodException {
+    public void shouldThrowIfExceptionIsNotDueToConstraintViolation() throws NoSuchMethodException {
         FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
         Object source = new Object();
         fieldError.wrap(source);
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
 
-        assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                .withMessageContaining(
+                        "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
+                .withCauseInstanceOf(IllegalArgumentException.class).havingCause()
+                .withMessageContaining("No source object of the given type available: ")
+                .withMessageContaining("ConstraintViolation");
     }
 
     @Test
-    public void shouldSkipErrorIfThereIsNoErrorSourceIndicated() throws NoSuchMethodException {
+    public void shouldThrowIfThereIsNoErrorSourceIndicated() throws NoSuchMethodException {
         FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
 
-        assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                .withMessageContaining(
+                        "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
+                .withCauseInstanceOf(IllegalArgumentException.class).havingCause()
+                .withMessageContaining("No source object of the given type available: ")
+                .withMessageContaining("ConstraintViolation");
+    }
+
+    @Test
+    public void shouldThrowIfThereIsNullSourceIndicated() {
+        MethodArgumentNotValidException exception = wrapWithInvalidArgumentException(wrapWithFieldError(null));
+
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                .withMessageContaining(
+                        "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
+                .withCauseInstanceOf(IllegalArgumentException.class).havingCause()
+                .withMessageContaining("No source object of the given type available: ")
+                .withMessageContaining("ConstraintViolation");
     }
 
     @Test
     public void shouldSkipErrorIfThereIsNoErrorViolationsCausedByJavaxAnnotation() {
-        ConstraintViolation withoutViolation = new ViolationBuilder().build();
         ConstraintViolation withoutDescriptor = new ViolationBuilder().withViolation().build();
         ConstraintViolation withoutAnnotation = new ViolationBuilder().withViolation().withDescriptor().build();
         ConstraintViolation withoutAnnotationType = new ViolationBuilder().withViolation().withDescriptor()
                 .withAnnotation().build();
-        Arrays.asList(withoutViolation, withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream()
-                .map(violation -> {
-                    FieldError fieldError = new FieldError("invalid", "invalid", "invalid");
-                    fieldError.wrap(violation);
-                    return fieldError;
-                })
-                .map(error -> new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(
+        Arrays.asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream().map(violation -> {
+            FieldError fieldError = new FieldError("invalid", "invalid", "invalid");
+            fieldError.wrap(violation);
+            return fieldError;
+        }).map(error -> new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(
                         Arrays.asList(validFieldErrorWithPath("valid1"), error, validFieldErrorWithPath("valid3")))))
                 .forEach(exception -> {
 
@@ -187,6 +210,12 @@ class AnnotationBasedValidationErrorsExtractorTest {
 
     private FieldError validFieldErrorWithPath(String path) {
         return fieldError(path, "anyMessage", javaxValidationNotNull());
+    }
+
+    private FieldError wrapWithFieldError(ConstraintViolation violation) {
+        FieldError fieldError = new FieldError("any", "any", "any");
+        fieldError.wrap(violation);
+        return fieldError;
     }
 
     private FieldError fieldError(String underlyingPath, String message, Annotation annotation) {
@@ -326,10 +355,9 @@ class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     private BindingResult bindingResultWithFieldErrorsOf(List<FieldError> fieldErrors) {
-        BindingResult bindingResult = new DataBinder("").getBindingResult();
-        BindingResult spyBindingResult = spy(bindingResult);
-        doReturn(fieldErrors).when(spyBindingResult).getFieldErrors();
-        return spyBindingResult;
+        BindingResult result = mock(BindingResult.class);
+        when(result.getFieldErrors()).thenReturn(fieldErrors);
+        return result;
     }
 
     private MethodParameter anyMethodParameter() {
@@ -339,6 +367,11 @@ class AnnotationBasedValidationErrorsExtractorTest {
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private MethodArgumentNotValidException wrapWithInvalidArgumentException(FieldError fieldError) {
+        return new MethodArgumentNotValidException(anyMethodParameter(),
+                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
     }
 
     class ViolationBuilder {

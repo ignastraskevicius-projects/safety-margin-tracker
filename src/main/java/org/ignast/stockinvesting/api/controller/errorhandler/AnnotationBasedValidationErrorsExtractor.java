@@ -45,18 +45,19 @@ public class AnnotationBasedValidationErrorsExtractor {
 
     private Optional<Class<? extends Annotation>> extractAnnotationClassCausingViolation(FieldError fieldError) {
         try {
-            ConstraintViolation violation = extractViolationOrNull(fieldError);
+            ConstraintViolation violation = extractViolation(fieldError);
             return Optional.of(violation.getConstraintDescriptor().getAnnotation().annotationType());
         } catch (NullPointerException e) {
             return Optional.empty();
         }
     }
 
-    private ConstraintViolation extractViolationOrNull(FieldError fieldError) {
+    private ConstraintViolation extractViolation(FieldError fieldError) {
         try {
             return fieldError.unwrap(ConstraintViolation.class);
         } catch (IllegalArgumentException e) {
-            return null;
+            throw new ValidationErrorsExtractionException(
+                    "Expected javax.validation ConstraintViolation but validation failed due to a different cause", e);
         }
     }
 }
@@ -64,5 +65,9 @@ public class AnnotationBasedValidationErrorsExtractor {
 class ValidationErrorsExtractionException extends RuntimeException {
     public ValidationErrorsExtractionException(String message) {
         super(message);
+    }
+
+    public ValidationErrorsExtractionException(String message, IllegalArgumentException cause) {
+        super(message, cause);
     }
 }

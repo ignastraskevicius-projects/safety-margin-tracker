@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -18,6 +19,7 @@ import static java.util.Arrays.asList;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
+@JsonComponent
 public class AnnotationBasedValidationErrorsFilter implements ValidationErrorsExtractor {
     public List<ValidationError> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
         if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {

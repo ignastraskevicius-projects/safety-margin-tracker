@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
@@ -7,6 +8,7 @@ import java.util.List;
 import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
+@JsonComponent
 public class JsonErrorSerializer implements ErrorSerializer {
     @Override
     public ResponseEntity<String> serializeBodySchemaMismatchErrors(List<ValidationError> errors) {

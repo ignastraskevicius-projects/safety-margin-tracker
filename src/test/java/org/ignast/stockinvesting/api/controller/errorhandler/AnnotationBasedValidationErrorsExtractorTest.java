@@ -1,26 +1,21 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.core.MethodParameter;
 import org.springframework.validation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import javax.validation.ConstraintViolation;
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.*;
+import static org.ignast.stockinvesting.api.controller.errorhandler.MethodArgumentNotValidExceptionMock.withErrorFieldViolation;
 
 public class AnnotationBasedValidationErrorsExtractorTest {
 
@@ -59,19 +54,19 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldThrowIfAnyViolationIsNotCausedByJavaxAnnotation() {
-        ConstraintViolation withoutDescriptor = new ViolationBuilder().withViolation().build();
-        ConstraintViolation withoutAnnotation = new ViolationBuilder().withViolation().withDescriptor().build();
-        ConstraintViolation withoutAnnotationType = new ViolationBuilder().withViolation().withDescriptor()
-                .withAnnotation().build();
-        asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream()
-                .map(MethodArgumentNotValidExceptionMock::withErrorFieldViolation).forEach(exception -> {
+        MethodArgumentNotValidException withoutDescriptor = withErrorFieldViolation(b -> {
+        });
+        MethodArgumentNotValidException withoutAnnotation = withErrorFieldViolation(b -> b.withDescriptor());
+        MethodArgumentNotValidException withoutAnnotationType = withErrorFieldViolation(
+                b -> b.withDescriptor().withAnnotation());
+        asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream().forEach(exception -> {
 
-                    assertThatExceptionOfType(ValidationErrorsExtractionException.class)
-                            .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
-                            .withMessage(
-                                    "Extraction of javax.validation error was caused by violation not defined via annotation")
-                            .withCauseInstanceOf(NullPointerException.class);
-                });
+            assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                    .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                    .withMessage(
+                            "Extraction of javax.validation error was caused by violation not defined via annotation")
+                    .withCauseInstanceOf(NullPointerException.class);
+        });
     }
 
     @Test
@@ -283,35 +278,5 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         };
         assertThat(annotation.annotationType() == Size.class);
         return annotation;
-    }
-
-    static class ViolationBuilder {
-        private ConstraintViolation violation = null;
-        private ConstraintDescriptor descriptor = null;
-
-        public ViolationBuilder withViolation() {
-            violation = mock(ConstraintViolation.class);
-            return this;
-        }
-
-        public ViolationBuilder withDescriptor() {
-            descriptor = mock(ConstraintDescriptor.class);
-            when(violation.getConstraintDescriptor()).thenReturn(descriptor);
-            return this;
-        }
-
-        public ViolationBuilder withAnnotation() {
-            when(descriptor.getAnnotation()).thenReturn(mock(Annotation.class));
-            return this;
-        }
-
-        public ViolationBuilder withAnnotation(Annotation annotation) {
-            when(descriptor.getAnnotation()).thenReturn(annotation);
-            return this;
-        }
-
-        public ConstraintViolation build() {
-            return violation;
-        }
     }
 }

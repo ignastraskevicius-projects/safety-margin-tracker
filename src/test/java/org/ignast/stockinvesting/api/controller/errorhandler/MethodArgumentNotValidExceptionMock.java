@@ -7,9 +7,11 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
+import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
+import java.util.function.Consumer;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -72,8 +74,9 @@ public class MethodArgumentNotValidExceptionMock {
         return withFieldErrors(asList(fieldError));
     }
 
-    public static MethodArgumentNotValidException withErrorFieldViolation(ConstraintViolation violation) {
-        FieldError fieldError = mockFieldErrorCausedByViolation("any", "any", violation);
+    public static MethodArgumentNotValidException withErrorFieldViolation(
+            Consumer<ViolationMockBuilder> violationCustomizer) {
+        FieldError fieldError = mockFieldErrorCausedByViolation("any", "any", violationCustomizer);
         return withFieldErrors(asList(fieldError));
     }
 
@@ -87,9 +90,11 @@ public class MethodArgumentNotValidExceptionMock {
     }
 
     private static FieldError mockFieldErrorCausedByViolation(String path, String message,
-            ConstraintViolation violation) {
+            Consumer<ViolationMockBuilder> violationCustomizer) {
+        ViolationMockBuilder builder = new ViolationMockBuilder();
+        violationCustomizer.accept(builder);
         FieldError fieldError = mockFieldErrorWithNameAndMessage(path, message);
-        when(fieldError.unwrap(any())).thenReturn(violation);
+        when(fieldError.unwrap(any())).thenReturn(builder.build());
         return fieldError;
     }
 
@@ -97,9 +102,8 @@ public class MethodArgumentNotValidExceptionMock {
         return withErrorFieldViolation(createViolationCausedBy(annotation));
     }
 
-    private static ConstraintViolation createViolationCausedBy(Annotation annotation) {
-        return new AnnotationBasedValidationErrorsExtractorTest.ViolationBuilder().withViolation().withDescriptor()
-                .withAnnotation(annotation).build();
+    private static Consumer<ViolationMockBuilder> createViolationCausedBy(Annotation annotation) {
+        return b -> b.withDescriptor().withAnnotation(annotation);
     }
 
     private static FieldError mockFieldErrorWithNameAndMessage(String field, String defaultMessage) {
@@ -122,5 +126,30 @@ public class MethodArgumentNotValidExceptionMock {
         BindingResult result = mock(BindingResult.class);
         when(result.getFieldErrors()).thenReturn(fieldErrors);
         return result;
+    }
+
+    static class ViolationMockBuilder {
+        private ConstraintViolation violation = mock(ConstraintViolation.class);
+        private ConstraintDescriptor descriptor = null;
+
+        public ViolationMockBuilder withDescriptor() {
+            descriptor = mock(ConstraintDescriptor.class);
+            when(violation.getConstraintDescriptor()).thenReturn(descriptor);
+            return this;
+        }
+
+        public ViolationMockBuilder withAnnotation() {
+            when(descriptor.getAnnotation()).thenReturn(mock(Annotation.class));
+            return this;
+        }
+
+        public ViolationMockBuilder withAnnotation(Annotation annotation) {
+            when(descriptor.getAnnotation()).thenReturn(annotation);
+            return this;
+        }
+
+        private ConstraintViolation build() {
+            return violation;
+        }
     }
 }

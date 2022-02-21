@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.*;
@@ -26,16 +27,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     private AnnotationBasedValidationErrorsExtractor errorsExtractor = new AnnotationBasedValidationErrorsExtractor();
 
     @Test
-    public void exceptionShouldAlwaysContainBindingResult() throws NoSuchMethodException {
-        assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MethodArgumentNotValidException(anyMethodParameter(), null))
-                .withMessageContaining("BindingResult");
-    }
-
-    @Test
     public void shouldThrowIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(null));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock.withFieldErrors(null);
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
@@ -44,8 +37,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldThrowIfExceptionContainsNoFieldErrors() throws NoSuchMethodException {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(new ArrayList<>()));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(new ArrayList<>());
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
@@ -57,44 +50,39 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
         Object source = new Object();
         fieldError.wrap(source);
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError));
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
                 .withMessageContaining(
                         "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
-                .withCauseInstanceOf(IllegalArgumentException.class).havingCause()
-                .withMessageContaining("No source object of the given type available: ")
-                .withMessageContaining("ConstraintViolation");
+                .withCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void shouldThrowIfThereIsNoErrorSourceIndicated() throws NoSuchMethodException {
         FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError)));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError));
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
                 .withMessageContaining(
                         "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
-                .withCauseInstanceOf(IllegalArgumentException.class).havingCause()
-                .withMessageContaining("No source object of the given type available: ")
-                .withMessageContaining("ConstraintViolation");
+                .withCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
     public void shouldThrowIfThereIsNullSourceIndicated() {
-        MethodArgumentNotValidException exception = wrapWithInvalidArgumentException(wrapWithFieldError(null));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(wrapWithFieldError(null)));
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
                 .withMessageContaining(
                         "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
-                .withCauseInstanceOf(IllegalArgumentException.class).havingCause()
-                .withMessageContaining("No source object of the given type available: ")
-                .withMessageContaining("ConstraintViolation");
+                .withCauseInstanceOf(IllegalArgumentException.class);
     }
 
     @Test
@@ -103,13 +91,12 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         ConstraintViolation withoutAnnotation = new ViolationBuilder().withViolation().withDescriptor().build();
         ConstraintViolation withoutAnnotationType = new ViolationBuilder().withViolation().withDescriptor()
                 .withAnnotation().build();
-        Arrays.asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream().map(violation -> {
+        asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream().map(violation -> {
             FieldError fieldError = new FieldError("invalid", "invalid", "invalid");
             fieldError.wrap(violation);
             return fieldError;
-        }).map(error -> new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(
-                        Arrays.asList(validFieldErrorWithPath("valid1"), error, validFieldErrorWithPath("valid3")))))
+        }).map(error -> MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(validFieldErrorWithPath("valid1"), error, validFieldErrorWithPath("valid3"))))
                 .forEach(exception -> {
 
                     List<ValidationError> validationErrors = errorsExtractor
@@ -130,9 +117,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldExtractMissingFieldError() {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(
-                        Arrays.asList(fieldError("some.path", "some message", javaxValidationNotNull()))));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError("some.path", "some message", javaxValidationNotNull())));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -143,9 +129,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldExtractFieldErrorRelatedToSizeRestrictions() {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(
-                        Arrays.asList(fieldError("anyPath", "anyMessage", javaxValidationSize()))));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaxValidationSize())));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -156,9 +141,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldExtractFieldErrorRelatedToPatternRestrictions() {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(
-                        Arrays.asList(fieldError("anyPath", "anyMessage", javaxValidationPattern()))));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaxValidationPattern())));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -169,8 +153,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError("anyPath", "anyMessage", javaLangOverride()))));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaLangOverride())));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -178,10 +162,9 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeSupressWarning() {
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(
-                        Arrays.asList(fieldError("anyPath", "anyMessage", javaLangSuppressWarning()))));
+    public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeSuppressWarning() {
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError("anyPath", "anyMessage", javaLangSuppressWarning())));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
@@ -192,8 +175,8 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     public void shouldExtractMultipleFieldErrors() {
         FieldError fieldError1 = fieldError("path1", "message1", javaxValidationNotNull());
         FieldError fieldError2 = fieldError("path2", "message2", javaxValidationSize());
-        MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
-                bindingResultWithFieldErrorsOf(Arrays.asList(fieldError1, fieldError2)));
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrors(asList(fieldError1, fieldError2));
 
         List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 

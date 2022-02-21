@@ -46,37 +46,9 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldThrowIfExceptionIsNotDueToConstraintViolation() throws NoSuchMethodException {
-        FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
-        Object source = new Object();
-        fieldError.wrap(source);
+    public void shouldThrowIfFieldErrorSourceIsNotConstraintViolation() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError));
-
-        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
-                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
-                .withMessageContaining(
-                        "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
-                .withCauseInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void shouldThrowIfThereIsNoErrorSourceIndicated() throws NoSuchMethodException {
-        FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(fieldError));
-
-        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
-                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
-                .withMessageContaining(
-                        "Expected javax.validation ConstraintViolation but validation failed due to a different cause")
-                .withCauseInstanceOf(IllegalArgumentException.class);
-    }
-
-    @Test
-    public void shouldThrowIfThereIsNullSourceIndicated() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrors(asList(wrapWithFieldError(null)));
+                .withSourceNotBeingConstraintViolation();
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))

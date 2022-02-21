@@ -10,8 +10,10 @@ import javax.validation.ConstraintViolation;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.api.controller.errorhandler.MethodArgumentNotValidExceptionMock.anyMethodParameter;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -63,6 +65,14 @@ public class MethodArgumentNotValidExceptionMock {
         return new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(fieldErrors));
     }
 
+    public static MethodArgumentNotValidException withSourceNotBeingConstraintViolation() {
+        FieldError fieldError = mock(FieldError.class);
+        when(fieldError.unwrap(any())).thenThrow(IllegalArgumentException.class);
+        when(fieldError.getField()).thenReturn("any");
+        when(fieldError.getDefaultMessage()).thenReturn("any");
+        return withFieldErrors(asList(fieldError));
+    }
+
     static MethodParameter anyMethodParameter() {
         try {
             Method anyMethod = String.class.getMethod("charAt", int.class);
@@ -77,4 +87,5 @@ public class MethodArgumentNotValidExceptionMock {
         when(result.getFieldErrors()).thenReturn(fieldErrors);
         return result;
     }
+
 }

@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.api.controller.errorhandler.AnnotationStubs.javaLangOverride;
+import static org.ignast.stockinvesting.api.controller.errorhandler.AnnotationStubs.*;
 import static org.ignast.stockinvesting.api.controller.errorhandler.MethodArgumentNotValidExceptionMock.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -220,5 +220,23 @@ class MethodArgumentNotValidExceptionMockTest {
         Annotation violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
                 .unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation();
         assertThat(violationCausingAnnotation.annotationType()).isNotNull();
+    }
+
+    @Test
+    public void shouldCreateMockContainingMultipleErrors() {
+        MethodArgumentNotValidException exception = withMultipleFields("path1", "message1", javaLangOverride(), "path2",
+                "message2", javaLangSuppressWarning());
+
+        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        assertThat(fieldErrors.size()).isEqualTo(2);
+        assertThat(fieldErrors.get(0).getField()).isEqualTo("path1");
+        assertThat(fieldErrors.get(0).getDefaultMessage()).isEqualTo("message1");
+        assertThat(fieldErrors.get(0).unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation()
+                .annotationType()).isEqualTo(Override.class);
+        assertThat(fieldErrors.get(1).getField()).isEqualTo("path2");
+        assertThat(fieldErrors.get(1).getDefaultMessage()).isEqualTo("message2");
+        assertThat(fieldErrors.get(1).unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation()
+                .annotationType()).isEqualTo(SuppressWarnings.class);
+
     }
 }

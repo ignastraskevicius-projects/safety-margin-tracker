@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api.controller;
+package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.hibernate.validator.internal.engine.ConstraintViolationImpl;
@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
-public class GenericWebErrorsFormatter {
+public class GenericWebErrorsHandler {
     @ExceptionHandler
     public ResponseEntity<String> handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
         return new ResponseEntity("{\"errorName\":\"methodNotAllowed\"}", HttpStatus.METHOD_NOT_ALLOWED);
@@ -41,7 +41,6 @@ public class GenericWebErrorsFormatter {
 
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-
         List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
         FieldError error = fieldErrors.get(0);
         String message = error.getDefaultMessage();

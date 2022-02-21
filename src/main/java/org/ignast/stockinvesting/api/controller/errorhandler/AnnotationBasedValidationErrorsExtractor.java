@@ -11,7 +11,6 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.lang.annotation.Annotation;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
@@ -27,19 +26,21 @@ public class AnnotationBasedValidationErrorsExtractor {
                     "javax.validation exception is expected to contain at least 1 field error");
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
-                    .map(fieldError -> toViolationType(extractAnnotationClassCausingViolation(fieldError))
-                            .map(t -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage(), t)))
-                    .filter(Optional::isPresent).map(Optional::get).collect(Collectors.toList());
+                    .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage(),
+                            toViolationType(extractAnnotationClassCausingViolation(fieldError))))
+                    .collect(Collectors.toList());
         }
     }
 
-    private Optional<ViolationType> toViolationType(Class<? extends Annotation> annotationClass) {
+    private ViolationType toViolationType(Class<? extends Annotation> annotationClass) {
         if (annotationClass == NotNull.class) {
-            return Optional.of(FIELD_IS_MISSING);
+            return FIELD_IS_MISSING;
         } else if (asList(Size.class, Pattern.class).contains(annotationClass)) {
-            return Optional.of(VALUE_INVALID);
+            return VALUE_INVALID;
         } else {
-            return Optional.empty();
+            throw new ValidationErrorsExtractionException(String.format(
+                    "Extraction of javax.validation error due to violation caused by annotation '%s' is not supported",
+                    annotationClass.getName()));
         }
     }
 
@@ -50,7 +51,8 @@ public class AnnotationBasedValidationErrorsExtractor {
             requireNonNull(annotation);
             return annotation;
         } catch (NullPointerException e) {
-            throw new ValidationErrorsExtractionException("aa");
+            throw new ValidationErrorsExtractionException(
+                    "Extraction of javax.validation error was caused by violation not defined via annotation", e);
         }
     }
 
@@ -69,7 +71,7 @@ class ValidationErrorsExtractionException extends RuntimeException {
         super(message);
     }
 
-    public ValidationErrorsExtractionException(String message, IllegalArgumentException cause) {
+    public ValidationErrorsExtractionException(String message, RuntimeException cause) {
         super(message, cause);
     }
 }

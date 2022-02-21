@@ -33,11 +33,13 @@ class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldExtractNoErrorsIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {
+    public void shouldThrowExceptionIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(null));
 
-        assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                .withMessageContaining("javax.validation exception is expected to contain at least 1 field error");
     }
 
     @Test
@@ -45,7 +47,9 @@ class AnnotationBasedValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = new MethodArgumentNotValidException(anyMethodParameter(),
                 bindingResultWithFieldErrorsOf(new ArrayList<>()));
 
-        assertThat(errorsExtractor.extractAnnotationBasedErrorsFrom(exception)).isEmpty();
+        assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                .withMessageContaining("javax.validation exception is expected to contain at least 1 field error");
     }
 
     @Test

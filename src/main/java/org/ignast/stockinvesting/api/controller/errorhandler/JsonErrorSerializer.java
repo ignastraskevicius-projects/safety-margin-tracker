@@ -9,8 +9,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @JsonComponent
-public class JsonErrorSerializer implements ErrorSerializer {
-    @Override
+public class JsonErrorSerializer {
     public ResponseEntity<String> serializeBodySchemaMismatchErrors(List<ValidationError> errors) {
         String json = errors.stream().map(this::toJson).collect(wrapWithBodyDoesNotMatchSchema());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(json);

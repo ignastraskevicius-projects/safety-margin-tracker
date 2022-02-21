@@ -16,7 +16,7 @@ import java.util.function.Consumer;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.api.controller.errorhandler.AnnotationBasedValidationErrorsExtractorTest.javaLangOverride;
+import static org.ignast.stockinvesting.api.controller.errorhandler.AnnotationStubs.javaLangOverride;
 import static org.ignast.stockinvesting.api.controller.errorhandler.MethodArgumentNotValidExceptionMock.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;

@@ -20,12 +20,12 @@ public class ErrorSerializer {
     }
 
     private String toJson(ValidationError error) {
-        if (error.getType() == ViolationType.VALUE_INVALID) {
+        if (error.getErrorName() == "fieldHasInvalidValue") {
             return String.format("{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"%s\",\"message\":\"%s\"}",
                     error.getJsonPath(), error.getMessage());
-        } else if (error.getType() == ViolationType.VALUE_MUST_BE_STRING) {
+        } else if (error.getErrorName() == "valueMustBeString") {
             return String.format("{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"%s\"}", error.getJsonPath());
-        } else if (error.getType() == ViolationType.VALUE_MUST_BE_ARRAY) {
+        } else if (error.getErrorName() == "valueMustBeArray") {
             return String.format("{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"%s\"}", error.getJsonPath());
         } else {
             return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"%s\"}", error.getJsonPath());

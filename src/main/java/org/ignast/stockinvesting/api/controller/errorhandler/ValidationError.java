@@ -28,7 +28,7 @@ public class ValidationError {
         return message;
     }
 
-    public ViolationType getType() {
-        return type;
+    public String getErrorName() {
+        return type.getCorrespondigErrorName();
     }
 }

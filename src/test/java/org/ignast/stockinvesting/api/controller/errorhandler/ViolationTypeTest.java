@@ -11,6 +11,7 @@ class ViolationTypeTest {
         assertThat(ViolationType.VALUE_INVALID.getCorrespondigErrorName()).isEqualTo("fieldHasInvalidValue");
         assertThat(ViolationType.VALUE_MUST_BE_STRING.getCorrespondigErrorName()).isEqualTo("valueMustBeString");
         assertThat(ViolationType.FIELD_IS_MISSING.getCorrespondigErrorName()).isEqualTo("fieldIsMissing");
+        assertThat(ViolationType.VALUE_MUST_BE_OBJECT.getCorrespondigErrorName()).isEqualTo("valueMustBeObject");
     }
 
     @Test
@@ -27,5 +28,6 @@ class ViolationTypeTest {
     public void wrongTypeErrorsShouldBeSelfExplanatory() {
         assertThat(ViolationType.VALUE_MUST_BE_STRING.isErrorSelfExplanatory()).isEqualTo(true);
         assertThat(ViolationType.VALUE_MUST_BE_ARRAY.isErrorSelfExplanatory()).isEqualTo(true);
+        assertThat(ViolationType.VALUE_MUST_BE_OBJECT.isErrorSelfExplanatory()).isEqualTo(true);
     }
 }

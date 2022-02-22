@@ -11,13 +11,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class BodyDoesNotMatchSchemaErrorDTOTest {
     @Test
     public void shouldHaveErrorNameSetAutomatically() {
-        assertThat(new BodyDoesNotMatchSchemaErrorDTO(Collections.emptyList()).getErrorName())
-                .isEqualTo("bodyDoesNotMatchSchema");
+        BodyDoesNotMatchSchemaErrorDTO bodyDoesNotMatchSchema = StandardErrorDTO
+                .createForBodyDoesNotMatchSchema(Collections.emptyList());
+
+        assertThat(bodyDoesNotMatchSchema.getErrorName()).isEqualTo("bodyDoesNotMatchSchema");
     }
 
     @Test
     public void shouldTransformNullListToEmptyList() {
-        assertThat(new BodyDoesNotMatchSchemaErrorDTO(null).getValidationErrors()).isEqualTo(Collections.emptyList());
+        BodyDoesNotMatchSchemaErrorDTO bodyDoesNotMatchSchema = StandardErrorDTO.createForBodyDoesNotMatchSchema(null);
+
+        assertThat(bodyDoesNotMatchSchema.getValidationErrors()).isEqualTo(Collections.emptyList());
     }
 
     @Test
@@ -25,9 +29,10 @@ class BodyDoesNotMatchSchemaErrorDTOTest {
         List<ValidationErrorDTO> originalErrors = asList(
                 new ValidationErrorDTO("path", "message", ViolationType.FIELD_IS_MISSING));
 
-        List<ValidationErrorDTO> preservedErrors = new BodyDoesNotMatchSchemaErrorDTO(originalErrors)
-                .getValidationErrors();
+        BodyDoesNotMatchSchemaErrorDTO bodyDoesNotMatchSchema = StandardErrorDTO
+                .createForBodyDoesNotMatchSchema(originalErrors);
 
+        List<ValidationErrorDTO> preservedErrors = bodyDoesNotMatchSchema.getValidationErrors();
         assertThat(preservedErrors).hasSize(1);
         assertThat(preservedErrors.get(0).getErrorName()).isEqualTo("fieldIsMissing");
     }

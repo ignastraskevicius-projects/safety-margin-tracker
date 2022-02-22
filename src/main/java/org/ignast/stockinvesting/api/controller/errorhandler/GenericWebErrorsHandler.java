@@ -11,6 +11,8 @@ import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,13 +21,9 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class GenericWebErrorsHandler {
     private AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
-    private ErrorSerializer serializer;
 
-    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
-            ErrorSerializer serializer) {
-
+    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor) {
         this.validationErrorsExtractor = validationErrorsExtractor;
-        this.serializer = serializer;
     }
 
     @ExceptionHandler
@@ -44,13 +42,15 @@ public class GenericWebErrorsHandler {
                 .body("{\"errorName\":\"unsupportedContentType\"}");
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    @ResponseBody
+    public StandardErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         try {
-            return serializer.serializeBodySchemaMismatchErrors(
+            return StandardErrorDTO.createForBodyDoesNotMatchSchema(
                     validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
         } catch (ValidationErrorsExtractionException e) {
-            return serializer.serializeUnknownClientError();
+            return StandardErrorDTO.createUnknownError();
         }
     }
 

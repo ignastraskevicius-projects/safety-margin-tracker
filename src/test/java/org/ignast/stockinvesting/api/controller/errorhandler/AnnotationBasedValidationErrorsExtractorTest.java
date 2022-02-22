@@ -81,7 +81,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
         assertThat(validationErrors).hasSize(1);
         ValidationError validationError = validationErrors.get(0);
-        assertThat(validationError.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
+        assertThat(validationError.getErrorName()).isEqualTo("fieldIsMissing");
     }
 
     @Test
@@ -93,7 +93,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
         assertThat(validationErrors).hasSize(1);
         ValidationError validationError = validationErrors.get(0);
-        assertThat(validationError.getType()).isEqualTo(ViolationType.VALUE_INVALID);
+        assertThat(validationError.getErrorName()).isEqualTo("fieldHasInvalidValue");
     }
 
     @Test
@@ -105,7 +105,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
 
         assertThat(validationErrors).hasSize(1);
         ValidationError validationError = validationErrors.get(0);
-        assertThat(validationError.getType()).isEqualTo(ViolationType.VALUE_INVALID);
+        assertThat(validationError.getErrorName()).isEqualTo("fieldHasInvalidValue");
     }
 
     @Test
@@ -140,9 +140,9 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         ValidationError validationError2 = validationErrors.get(1);
         assertThat(validationError1.getJsonPath()).isEqualTo("$.path1");
         assertThat(validationError1.getMessage()).isNull();
-        assertThat(validationError1.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
+        assertThat(validationError1.getErrorName()).isEqualTo("fieldIsMissing");
         assertThat(validationError2.getJsonPath()).isEqualTo("$.path2");
         assertThat(validationError2.getMessage()).isEqualTo("message2");
-        assertThat(validationError2.getType()).isEqualTo(ViolationType.VALUE_INVALID);
+        assertThat(validationError2.getErrorName()).isEqualTo("fieldHasInvalidValue");
     }
 }

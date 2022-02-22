@@ -52,12 +52,11 @@ public class ValidationErrorTest {
         assertThat(error.getMessage()).isNull();
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "FIELD_IS_MISSING", "VALUE_INVALID" })
-    public void shouldPreserveType(String violationType) {
-        ValidationError error = new ValidationError("anyPath", "anyMessage", ViolationType.valueOf(violationType));
+    @Test
+    public void shouldConvertTypeToErrorName() {
+        ValidationError error = new ValidationError("anyPath", "anyMessage", FIELD_IS_MISSING);
 
-        assertThat(error.getType()).isEqualTo(ViolationType.valueOf(violationType));
+        assertThat(error.getErrorName()).isEqualTo("fieldIsMissing");
     }
 
     @Test

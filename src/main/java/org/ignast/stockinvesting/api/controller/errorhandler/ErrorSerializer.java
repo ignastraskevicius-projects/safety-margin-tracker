@@ -25,6 +25,8 @@ public class ErrorSerializer {
                     error.getPath(), error.getMessage());
         } else if (error.getType() == ViolationType.VALUE_MUST_BE_STRING) {
             return String.format("{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"$.%s\"}", error.getPath());
+        } else if (error.getType() == ViolationType.VALUE_MUST_BE_ARRAY) {
+            return String.format("{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"$.%s\"}", error.getPath());
         } else {
             return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}", error.getPath());
         }

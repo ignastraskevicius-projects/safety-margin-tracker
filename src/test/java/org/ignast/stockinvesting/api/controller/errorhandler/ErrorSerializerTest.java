@@ -71,6 +71,17 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
     }
 
     @Test
+    public void shouldSerializeValidationErrorRequiringArray() throws JSONException {
+        ValidationError validationError = new ValidationError("somePath", "any", ViolationType.VALUE_MUST_BE_ARRAY);
+
+        ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
+
+        assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThatJson(responseEntity.getBody()).isEqualTo(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"$.somePath\"}]}");
+    }
+
+    @Test
     public void shouldSerializeMultipleInvalidValueValidationErrors() {
         ValidationError invalidValueError1 = new ValidationError("somePath1", "someMessage1",
                 ViolationType.VALUE_INVALID);

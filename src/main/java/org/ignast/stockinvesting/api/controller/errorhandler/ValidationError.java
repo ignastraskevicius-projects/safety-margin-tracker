@@ -13,8 +13,10 @@ public class ValidationError {
         } else {
             this.jsonPath = String.format("$.%s", path);
         }
-        this.message = message;
         requireNonNull(type);
+        if (!type.isErrorSelfExplanatory()) {
+            this.message = message;
+        }
         this.type = type;
     }
 

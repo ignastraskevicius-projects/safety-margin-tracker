@@ -11,8 +11,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class ErrorSerializerMock {
-    public static JsonErrorSerializer serializingBodyShemaMismatchErrors() {
-        JsonErrorSerializer serializer = mock(JsonErrorSerializer.class);
+    public static ErrorSerializer serializingBodyShemaMismatchErrors() {
+        ErrorSerializer serializer = mock(ErrorSerializer.class);
         when(serializer.serializeBodySchemaMismatchErrors(notNull()))
                 .thenReturn(ResponseEntity.badRequest().body("any2"));
         return serializer;
@@ -23,7 +23,7 @@ class ErrorSerializerMockTest {
 
     @Test
     public void shouldSerializeBodySchemaMismatchErrors() {
-        JsonErrorSerializer serializer = ErrorSerializerMock.serializingBodyShemaMismatchErrors();
+        ErrorSerializer serializer = ErrorSerializerMock.serializingBodyShemaMismatchErrors();
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList());
 
@@ -33,7 +33,7 @@ class ErrorSerializerMockTest {
 
     @Test
     public void shouldRejectNullErrors() {
-        JsonErrorSerializer serializer = ErrorSerializerMock.serializingBodyShemaMismatchErrors();
+        ErrorSerializer serializer = ErrorSerializerMock.serializingBodyShemaMismatchErrors();
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(null);
 

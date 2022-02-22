@@ -9,7 +9,7 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @JsonComponent
-public class JsonErrorSerializer {
+public class ErrorSerializer {
     public ResponseEntity<String> serializeBodySchemaMismatchErrors(List<ValidationError> errors) {
         String json = errors.stream().map(this::toJson).collect(wrapWithBodyDoesNotMatchSchema());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(json);
@@ -26,5 +26,9 @@ public class JsonErrorSerializer {
         } else {
             return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}", error.getPath());
         }
+    }
+
+    public ResponseEntity<String> serializeUnknownClientError() {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"unknownError\"}");
     }
 }

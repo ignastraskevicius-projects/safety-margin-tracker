@@ -11,10 +11,23 @@ import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 class ErrorSerializerTest {
 
-    private JsonErrorSerializer serializer = new JsonErrorSerializer();
+    private ErrorSerializer serializer = new ErrorSerializer();
 
     @Test
-    public void shouldSerialize0FieldValidationErrors() {
+    public void shouldSerializeUnknownClientError() {
+        ResponseEntity<String> response = serializer.serializeUnknownClientError();
+
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo("{\"errorName\":\"unknownError\"}");
+    }
+}
+
+class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
+
+    private ErrorSerializer serializer = new ErrorSerializer();
+
+    @Test
+    public void shouldSerializeZeroFieldValidationErrors() {
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(Collections.emptyList());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);

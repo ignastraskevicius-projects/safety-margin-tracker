@@ -23,6 +23,8 @@ public class ErrorSerializer {
         if (error.getType() == ViolationType.VALUE_INVALID) {
             return String.format("{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}",
                     error.getPath(), error.getMessage());
+        } else if (error.getType() == ViolationType.VALUE_MUST_BE_STRING) {
+            return String.format("{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.%s\"}", error.getPath());
         } else {
             return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}", error.getPath());
         }

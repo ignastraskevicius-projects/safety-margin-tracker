@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.ignast.stockinvesting.api.controller.errorhandler.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 

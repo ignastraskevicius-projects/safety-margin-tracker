@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.ResponseEntity;
 
@@ -7,6 +8,7 @@ import java.util.Collections;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.api.fluentjsonassert.JsonAssert.assertThatJson;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 class ErrorSerializerTest {
@@ -14,11 +16,11 @@ class ErrorSerializerTest {
     private ErrorSerializer serializer = new ErrorSerializer();
 
     @Test
-    public void shouldSerializeUnknownClientError() {
+    public void shouldSerializeUnknownClientError() throws JSONException {
         ResponseEntity<String> response = serializer.serializeUnknownClientError();
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(response.getBody()).isEqualTo("{\"errorName\":\"unknownError\"}");
+        assertThatJson(response.getBody()).isEqualTo("{\"errorName\":\"unknownError\"}");
     }
 }
 

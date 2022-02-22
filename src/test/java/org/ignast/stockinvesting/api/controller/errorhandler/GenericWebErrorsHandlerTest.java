@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,24 +9,23 @@ import static org.mockito.Mockito.mock;
 class GenericWebErrorsHandlerTest {
 
     @Test
-    public void shouldSerializeJavaxValidationErrors() {
+    public void shouldExtractJavaxValidationErrors() {
         MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
-        GenericWebErrorsHandler handler = new GenericWebErrorsHandler(ValidationErrorsExtractorMock.returningErrors(),
-                ErrorSerializerMock.serializingBodyShemaMismatchErrors());
+        GenericWebErrorsHandler handler = new GenericWebErrorsHandler(ValidationErrorsExtractorMock.returningErrors());
 
-        ResponseEntity<String> actualResponse = handler.handleMethodArgumentNotValidException(exception);
+        StandardErrorDTO error = handler.handleMethodArgumentNotValidException(exception);
 
-        assertThat(actualResponse).isNotNull();
+        assertThat(error).isInstanceOf(BodyDoesNotMatchSchemaErrorDTO.class);
+        assertThat(((BodyDoesNotMatchSchemaErrorDTO) error).getValidationErrors()).isNotEmpty();
     }
 
     @Test
     public void validationExtractorFailingToExtractExpectedErrorsShouldResultInUnknownErrorSerialized() {
         MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
-        GenericWebErrorsHandler handler = new GenericWebErrorsHandler(ValidationErrorsExtractorMock.failingToExtract(),
-                ErrorSerializerMock.serializingUnknownClientError());
+        GenericWebErrorsHandler handler = new GenericWebErrorsHandler(ValidationErrorsExtractorMock.failingToExtract());
 
-        ResponseEntity<String> actualResponse = handler.handleMethodArgumentNotValidException(exception);
+        StandardErrorDTO error = handler.handleMethodArgumentNotValidException(exception);
 
-        assertThat(actualResponse).isNotNull();
+        assertThat(error.getErrorName()).isEqualTo("unknownError");
     }
 }

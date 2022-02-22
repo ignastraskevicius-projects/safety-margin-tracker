@@ -60,16 +60,16 @@ public class GenericWebErrorsHandler {
             String jsonPath = extractJsonPath((MismatchedInputException) error.getCause());
             if (error.getCause() instanceof StrictStringDeserializingException) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"%s\"}]}",
+                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"%s\"}]}",
                         jsonPath));
             } else {
                 if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeArray\",\"jsonPath\":\"%s\"}]}",
+                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"%s\"}]}",
                             jsonPath));
                 } else {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeObject\",\"jsonPath\":\"%s\"}]}",
+                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeObject\",\"jsonPath\":\"%s\"}]}",
                             jsonPath));
                 }
             }

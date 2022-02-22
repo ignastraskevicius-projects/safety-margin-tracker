@@ -67,7 +67,7 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThatJson(responseEntity.getBody()).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldMustBeString\",\"jsonPath\":\"$.somePath\"}]}");
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"$.somePath\"}]}");
     }
 
     @Test

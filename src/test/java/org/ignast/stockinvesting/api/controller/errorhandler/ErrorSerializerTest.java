@@ -29,35 +29,35 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
     private ErrorSerializer serializer = new ErrorSerializer();
 
     @Test
-    public void shouldSerializeZeroFieldValidationErrors() {
+    public void shouldSerializeZeroFieldValidationErrors() throws JSONException {
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(Collections.emptyList());
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(responseEntity.getBody())
+        assertThatJson(responseEntity.getBody())
                 .isEqualTo("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[]}");
     }
 
     @Test
-    public void shouldSerializeMissingFieldValidationError() {
+    public void shouldSerializeMissingFieldValidationError() throws JSONException {
         ValidationErrorDTO validationError = new ValidationErrorDTO("somePath", "anyMessage",
                 ViolationType.FIELD_IS_MISSING);
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(responseEntity.getBody()).isEqualTo(
+        assertThatJson(responseEntity.getBody()).isEqualTo(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.somePath\"}]}");
     }
 
     @Test
-    public void shouldSerializeInvalidValueValidationError() {
+    public void shouldSerializeInvalidValueValidationError() throws JSONException {
         ValidationErrorDTO validationError = new ValidationErrorDTO("somePath", "someMessage",
                 ViolationType.VALUE_INVALID);
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(responseEntity.getBody()).isEqualTo(
+        assertThatJson(responseEntity.getBody()).isEqualTo(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.somePath\",\"message\":\"someMessage\"}]}");
     }
 
@@ -86,7 +86,7 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
     }
 
     @Test
-    public void shouldSerializeMultipleInvalidValueValidationErrors() {
+    public void shouldSerializeMultipleInvalidValueValidationErrors() throws JSONException {
         ValidationErrorDTO invalidValueError1 = new ValidationErrorDTO("somePath1", "someMessage1",
                 ViolationType.VALUE_INVALID);
         ValidationErrorDTO invalidValueError2 = new ValidationErrorDTO("somePath2", "someMessage2",
@@ -96,14 +96,14 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
                 .serializeBodySchemaMismatchErrors(asList(invalidValueError1, invalidValueError2));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(responseEntity.getBody())
+        assertThatJson(responseEntity.getBody())
                 .isEqualTo("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":["
                         + "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.somePath1\",\"message\":\"someMessage1\"},"
                         + "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.somePath2\",\"message\":\"someMessage2\"}]}");
     }
 
     @Test
-    public void shouldSerializeMultipleMissingFieldValidationError() {
+    public void shouldSerializeMultipleMissingFieldValidationError() throws JSONException {
         ValidationErrorDTO missingFieldError1 = new ValidationErrorDTO("path1", "anyMessage",
                 ViolationType.FIELD_IS_MISSING);
         ValidationErrorDTO messingFieldError2 = new ValidationErrorDTO("path2", "anyMessage",
@@ -113,26 +113,9 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
                 .serializeBodySchemaMismatchErrors(asList(missingFieldError1, messingFieldError2));
 
         assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(responseEntity.getBody())
+        assertThatJson(responseEntity.getBody())
                 .isEqualTo("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":["
                         + "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.path1\"},"
                         + "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.path2\"}" + "]}");
-    }
-
-    @Test
-    public void shouldSerializeMultipleValidationErrorsOfDifferentTypes() {
-        ValidationErrorDTO invalidValueError1 = new ValidationErrorDTO("somePath1", "someMessage1",
-                ViolationType.VALUE_INVALID);
-        ValidationErrorDTO messingFieldError2 = new ValidationErrorDTO("path2", "anyMessage",
-                ViolationType.FIELD_IS_MISSING);
-
-        ResponseEntity<String> responseEntity = serializer
-                .serializeBodySchemaMismatchErrors(asList(invalidValueError1, messingFieldError2));
-
-        assertThat(responseEntity.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(responseEntity.getBody())
-                .isEqualTo("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":["
-                        + "{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.somePath1\",\"message\":\"someMessage1\"},"
-                        + "{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.path2\"}]}");
     }
 }

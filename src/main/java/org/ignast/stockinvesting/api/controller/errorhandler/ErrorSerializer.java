@@ -1,34 +1,31 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import java.util.List;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @JsonComponent
 public class ErrorSerializer {
+    private ObjectMapper mapper = new ObjectMapper();
+
+    {
+        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
+    }
+
     public ResponseEntity<String> serializeBodySchemaMismatchErrors(List<ValidationErrorDTO> errors) {
-        String json = errors.stream().map(this::toJson).collect(wrapWithBodyDoesNotMatchSchema());
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(json);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(toJson(new BodyDoesNotMatchSchemaErrorDTO(errors)));
     }
 
-    private Collector<CharSequence, ?, String> wrapWithBodyDoesNotMatchSchema() {
-        return Collectors.joining(",", "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[", "]}");
-    }
-
-    private String toJson(ValidationErrorDTO error) {
-        if (error.getErrorName() == "fieldHasInvalidValue") {
-            return String.format("{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"%s\",\"message\":\"%s\"}",
-                    error.getJsonPath(), error.getMessage());
-        } else if (error.getErrorName() == "valueMustBeString") {
-            return String.format("{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"%s\"}", error.getJsonPath());
-        } else if (error.getErrorName() == "valueMustBeArray") {
-            return String.format("{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"%s\"}", error.getJsonPath());
-        } else {
-            return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"%s\"}", error.getJsonPath());
+    private String toJson(BodyDoesNotMatchSchemaErrorDTO error) {
+        try {
+            return mapper.writeValueAsString(error);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
         }
     }
 

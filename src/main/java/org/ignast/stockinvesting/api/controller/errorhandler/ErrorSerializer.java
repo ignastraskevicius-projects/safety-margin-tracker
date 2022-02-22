@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 
 @JsonComponent
 public class ErrorSerializer {
-    public ResponseEntity<String> serializeBodySchemaMismatchErrors(List<ValidationError> errors) {
+    public ResponseEntity<String> serializeBodySchemaMismatchErrors(List<ValidationErrorDTO> errors) {
         String json = errors.stream().map(this::toJson).collect(wrapWithBodyDoesNotMatchSchema());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(json);
     }
@@ -19,7 +19,7 @@ public class ErrorSerializer {
         return Collectors.joining(",", "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[", "]}");
     }
 
-    private String toJson(ValidationError error) {
+    private String toJson(ValidationErrorDTO error) {
         if (error.getErrorName() == "fieldHasInvalidValue") {
             return String.format("{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"%s\",\"message\":\"%s\"}",
                     error.getJsonPath(), error.getMessage());

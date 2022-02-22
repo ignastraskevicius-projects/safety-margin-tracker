@@ -20,13 +20,13 @@ import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationTyp
 
 @JsonComponent
 public class AnnotationBasedValidationErrorsExtractor {
-    public List<ValidationError> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
+    public List<ValidationErrorDTO> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
         if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {
             throw new ValidationErrorsExtractionException(
                     "javax.validation exception is expected to contain at least 1 field error");
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
-                    .map(fieldError -> new ValidationError(fieldError.getField(), fieldError.getDefaultMessage(),
+                    .map(fieldError -> new ValidationErrorDTO(fieldError.getField(), fieldError.getDefaultMessage(),
                             toViolationType(extractAnnotationClassCausingViolation(fieldError))))
                     .collect(Collectors.toList());
         }

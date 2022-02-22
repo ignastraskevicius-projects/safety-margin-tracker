@@ -18,8 +18,8 @@ public class ValidationErrorsExtractorMock {
         return extractor;
     }
 
-    private static ValidationError anyValidationError() {
-        return new ValidationError("anyPath", "anyMessage", ViolationType.FIELD_IS_MISSING);
+    private static ValidationErrorDTO anyValidationError() {
+        return new ValidationErrorDTO("anyPath", "anyMessage", ViolationType.FIELD_IS_MISSING);
     }
 
     public static AnnotationBasedValidationErrorsExtractor failingToExtract() {

@@ -7,6 +7,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.FIELD_IS_MISSING;
+import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
 public class ValidationErrorTest {
 
@@ -34,10 +35,21 @@ public class ValidationErrorTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "someMessage", "otherMessage" })
-    public void shouldPreserveMessage(String message) {
-        ValidationError error = new ValidationError("anyPath", message, FIELD_IS_MISSING);
+    public void shouldPreserveMessageForNotSelfExplanatoryErrors(String message) {
+        ViolationType valueInvalid = VALUE_INVALID;
+        assertThat(valueInvalid.isErrorSelfExplanatory()).isEqualTo(false);
+        ValidationError error = new ValidationError("anyPath", message, valueInvalid);
 
         assertThat(error.getMessage()).isEqualTo(message);
+    }
+
+    @Test
+    public void shouldPreserveMessageForSelfExplanatoryErrors() {
+        ViolationType fieldIsMissing = FIELD_IS_MISSING;
+        assertThat(fieldIsMissing.isErrorSelfExplanatory()).isEqualTo(true);
+        ValidationError error = new ValidationError("anyPath", "anyMessage", fieldIsMissing);
+
+        assertThat(error.getMessage()).isNull();
     }
 
     @ParameterizedTest

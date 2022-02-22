@@ -139,7 +139,7 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         ValidationError validationError1 = validationErrors.get(0);
         ValidationError validationError2 = validationErrors.get(1);
         assertThat(validationError1.getJsonPath()).isEqualTo("$.path1");
-        assertThat(validationError1.getMessage()).isEqualTo("message1");
+        assertThat(validationError1.getMessage()).isNull();
         assertThat(validationError1.getType()).isEqualTo(ViolationType.FIELD_IS_MISSING);
         assertThat(validationError2.getJsonPath()).isEqualTo("$.path2");
         assertThat(validationError2.getMessage()).isEqualTo("message2");

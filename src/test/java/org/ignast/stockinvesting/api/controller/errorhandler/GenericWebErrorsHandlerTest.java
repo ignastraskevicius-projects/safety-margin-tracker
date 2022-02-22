@@ -19,4 +19,15 @@ class GenericWebErrorsHandlerTest {
 
         assertThat(actualResponse).isNotNull();
     }
+
+    @Test
+    public void validationExtractorFailingToExtractExpectedErrorsShouldResultInUnknownErrorSerialized() {
+        MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
+        GenericWebErrorsHandler handler = new GenericWebErrorsHandler(ValidationErrorsExtractorMock.failingToExtract(),
+                ErrorSerializerMock.serializingUnknownClientError());
+
+        ResponseEntity<String> actualResponse = handler.handleMethodArgumentNotValidException(exception);
+
+        assertThat(actualResponse).isNotNull();
+    }
 }

@@ -46,8 +46,12 @@ public class GenericWebErrorsHandler {
 
     @ExceptionHandler
     public ResponseEntity<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
-        return serializer.serializeBodySchemaMismatchErrors(
-                validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
+        try {
+            return serializer.serializeBodySchemaMismatchErrors(
+                    validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
+        } catch (ValidationErrorsExtractionException e) {
+            return serializer.serializeUnknownClientError();
+        }
     }
 
     @ExceptionHandler

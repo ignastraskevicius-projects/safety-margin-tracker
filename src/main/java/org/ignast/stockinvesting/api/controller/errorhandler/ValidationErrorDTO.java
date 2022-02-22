@@ -2,12 +2,12 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import static java.util.Objects.requireNonNull;
 
-public class ValidationError {
+public class ValidationErrorDTO {
     private String jsonPath;
     private String message;
     private ViolationType type;
 
-    public ValidationError(String path, String message, ViolationType type) {
+    public ValidationErrorDTO(String path, String message, ViolationType type) {
         if (path == null || path.isEmpty()) {
             this.jsonPath = "$";
         } else {

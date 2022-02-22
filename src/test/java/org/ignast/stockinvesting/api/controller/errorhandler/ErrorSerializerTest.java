@@ -39,7 +39,8 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeMissingFieldValidationError() {
-        ValidationError validationError = new ValidationError("somePath", "anyMessage", ViolationType.FIELD_IS_MISSING);
+        ValidationErrorDTO validationError = new ValidationErrorDTO("somePath", "anyMessage",
+                ViolationType.FIELD_IS_MISSING);
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
@@ -50,7 +51,8 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeInvalidValueValidationError() {
-        ValidationError validationError = new ValidationError("somePath", "someMessage", ViolationType.VALUE_INVALID);
+        ValidationErrorDTO validationError = new ValidationErrorDTO("somePath", "someMessage",
+                ViolationType.VALUE_INVALID);
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
@@ -61,7 +63,8 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeValidationErrorRequiringString() throws JSONException {
-        ValidationError validationError = new ValidationError("somePath", "any", ViolationType.VALUE_MUST_BE_STRING);
+        ValidationErrorDTO validationError = new ValidationErrorDTO("somePath", "any",
+                ViolationType.VALUE_MUST_BE_STRING);
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
@@ -72,7 +75,8 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeValidationErrorRequiringArray() throws JSONException {
-        ValidationError validationError = new ValidationError("somePath", "any", ViolationType.VALUE_MUST_BE_ARRAY);
+        ValidationErrorDTO validationError = new ValidationErrorDTO("somePath", "any",
+                ViolationType.VALUE_MUST_BE_ARRAY);
 
         ResponseEntity<String> responseEntity = serializer.serializeBodySchemaMismatchErrors(asList(validationError));
 
@@ -83,9 +87,9 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeMultipleInvalidValueValidationErrors() {
-        ValidationError invalidValueError1 = new ValidationError("somePath1", "someMessage1",
+        ValidationErrorDTO invalidValueError1 = new ValidationErrorDTO("somePath1", "someMessage1",
                 ViolationType.VALUE_INVALID);
-        ValidationError invalidValueError2 = new ValidationError("somePath2", "someMessage2",
+        ValidationErrorDTO invalidValueError2 = new ValidationErrorDTO("somePath2", "someMessage2",
                 ViolationType.VALUE_INVALID);
 
         ResponseEntity<String> responseEntity = serializer
@@ -100,8 +104,10 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeMultipleMissingFieldValidationError() {
-        ValidationError missingFieldError1 = new ValidationError("path1", "anyMessage", ViolationType.FIELD_IS_MISSING);
-        ValidationError messingFieldError2 = new ValidationError("path2", "anyMessage", ViolationType.FIELD_IS_MISSING);
+        ValidationErrorDTO missingFieldError1 = new ValidationErrorDTO("path1", "anyMessage",
+                ViolationType.FIELD_IS_MISSING);
+        ValidationErrorDTO messingFieldError2 = new ValidationErrorDTO("path2", "anyMessage",
+                ViolationType.FIELD_IS_MISSING);
 
         ResponseEntity<String> responseEntity = serializer
                 .serializeBodySchemaMismatchErrors(asList(missingFieldError1, messingFieldError2));
@@ -115,9 +121,10 @@ class ErrorSerializerForBodyDoesNotMatchSchemaErrorTest {
 
     @Test
     public void shouldSerializeMultipleValidationErrorsOfDifferentTypes() {
-        ValidationError invalidValueError1 = new ValidationError("somePath1", "someMessage1",
+        ValidationErrorDTO invalidValueError1 = new ValidationErrorDTO("somePath1", "someMessage1",
                 ViolationType.VALUE_INVALID);
-        ValidationError messingFieldError2 = new ValidationError("path2", "anyMessage", ViolationType.FIELD_IS_MISSING);
+        ValidationErrorDTO messingFieldError2 = new ValidationErrorDTO("path2", "anyMessage",
+                ViolationType.FIELD_IS_MISSING);
 
         ResponseEntity<String> responseEntity = serializer
                 .serializeBodySchemaMismatchErrors(asList(invalidValueError1, messingFieldError2));

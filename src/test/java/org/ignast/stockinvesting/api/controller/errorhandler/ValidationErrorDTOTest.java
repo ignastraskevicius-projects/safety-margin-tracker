@@ -9,26 +9,26 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.api.controller.errorhandler.ViolationType.VALUE_INVALID;
 
-public class ValidationErrorTest {
+public class ValidationErrorDTOTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "somePath", "otherPath" })
     public void shouldConvertPathToJsonPath(String path) {
-        ValidationError error = new ValidationError(path, "anyMessage", FIELD_IS_MISSING);
+        ValidationErrorDTO error = new ValidationErrorDTO(path, "anyMessage", FIELD_IS_MISSING);
 
         assertThat(error.getJsonPath()).isEqualTo(String.format("$.%s", path));
     }
 
     @Test
     public void shouldConvertNullPathToRootJsonPath() {
-        ValidationError error = new ValidationError(null, "anyMessage", FIELD_IS_MISSING);
+        ValidationErrorDTO error = new ValidationErrorDTO(null, "anyMessage", FIELD_IS_MISSING);
 
         assertThat(error.getJsonPath()).isEqualTo("$");
     }
 
     @Test
     public void shouldConvertEmptyPathToRootJsonPath() {
-        ValidationError error = new ValidationError("", "anyMessage", FIELD_IS_MISSING);
+        ValidationErrorDTO error = new ValidationErrorDTO("", "anyMessage", FIELD_IS_MISSING);
 
         assertThat(error.getJsonPath()).isEqualTo("$");
     }
@@ -38,7 +38,7 @@ public class ValidationErrorTest {
     public void shouldPreserveMessageForNotSelfExplanatoryErrors(String message) {
         ViolationType valueInvalid = VALUE_INVALID;
         assertThat(valueInvalid.isErrorSelfExplanatory()).isEqualTo(false);
-        ValidationError error = new ValidationError("anyPath", message, valueInvalid);
+        ValidationErrorDTO error = new ValidationErrorDTO("anyPath", message, valueInvalid);
 
         assertThat(error.getMessage()).isEqualTo(message);
     }
@@ -47,14 +47,14 @@ public class ValidationErrorTest {
     public void shouldPreserveMessageForSelfExplanatoryErrors() {
         ViolationType fieldIsMissing = FIELD_IS_MISSING;
         assertThat(fieldIsMissing.isErrorSelfExplanatory()).isEqualTo(true);
-        ValidationError error = new ValidationError("anyPath", "anyMessage", fieldIsMissing);
+        ValidationErrorDTO error = new ValidationErrorDTO("anyPath", "anyMessage", fieldIsMissing);
 
         assertThat(error.getMessage()).isNull();
     }
 
     @Test
     public void shouldConvertTypeToErrorName() {
-        ValidationError error = new ValidationError("anyPath", "anyMessage", FIELD_IS_MISSING);
+        ValidationErrorDTO error = new ValidationErrorDTO("anyPath", "anyMessage", FIELD_IS_MISSING);
 
         assertThat(error.getErrorName()).isEqualTo("fieldIsMissing");
     }
@@ -62,6 +62,6 @@ public class ValidationErrorTest {
     @Test
     public void shouldNotBeOfNullType() {
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> new ValidationError("anyPath", "anyMessage", null));
+                .isThrownBy(() -> new ValidationErrorDTO("anyPath", "anyMessage", null));
     }
 }

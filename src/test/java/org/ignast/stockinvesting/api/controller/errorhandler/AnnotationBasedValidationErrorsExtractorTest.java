@@ -77,10 +77,10 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationNotNull());
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationError validationError = validationErrors.get(0);
+        ValidationErrorDTO validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("fieldIsMissing");
     }
 
@@ -89,10 +89,10 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationSize());
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationError validationError = validationErrors.get(0);
+        ValidationErrorDTO validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("fieldHasInvalidValue");
     }
 
@@ -101,10 +101,10 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationPattern());
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationError validationError = validationErrors.get(0);
+        ValidationErrorDTO validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("fieldHasInvalidValue");
     }
 
@@ -133,11 +133,11 @@ public class AnnotationBasedValidationErrorsExtractorTest {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock.withMultipleFields("path1",
                 "message1", javaxValidationNotNull(), "path2", "message2", javaxValidationSize());
 
-        List<ValidationError> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(2);
-        ValidationError validationError1 = validationErrors.get(0);
-        ValidationError validationError2 = validationErrors.get(1);
+        ValidationErrorDTO validationError1 = validationErrors.get(0);
+        ValidationErrorDTO validationError2 = validationErrors.get(1);
         assertThat(validationError1.getJsonPath()).isEqualTo("$.path1");
         assertThat(validationError1.getMessage()).isNull();
         assertThat(validationError1.getErrorName()).isEqualTo("fieldIsMissing");

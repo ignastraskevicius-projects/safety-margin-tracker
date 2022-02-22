@@ -19,6 +19,10 @@ public class StandardErrorDTO {
         return new BodyDoesNotMatchSchemaErrorDTO(errors);
     }
 
+    public static StandardErrorDTO createBodyNotParsable() {
+        return new StandardErrorDTO("bodyNotParsable");
+    }
+
     public String getErrorName() {
         return errorName;
     }

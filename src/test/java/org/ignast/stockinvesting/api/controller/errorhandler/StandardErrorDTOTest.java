@@ -16,6 +16,13 @@ class StandardErrorDTOTest {
 
         assertThat(error.getErrorName()).isEqualTo("unknownError");
     }
+
+    @Test
+    public void shouldCreateBodyNotParsable() {
+        StandardErrorDTO error = StandardErrorDTO.createBodyNotParsable();
+
+        assertThat(error.getErrorName()).isEqualTo("bodyNotParsable");
+    }
 }
 
 class BodyDoesNotMatchSchemaErrorDTOTest {

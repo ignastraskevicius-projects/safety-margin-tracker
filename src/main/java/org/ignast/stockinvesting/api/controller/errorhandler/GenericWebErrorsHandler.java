@@ -18,6 +18,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
+
 @ControllerAdvice
 public class GenericWebErrorsHandler {
     private AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
@@ -54,37 +56,41 @@ public class GenericWebErrorsHandler {
         }
     }
 
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
-    public ResponseEntity<String> handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
+    @ResponseBody
+    public StandardErrorDTO handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
         if (error.getCause() instanceof MismatchedInputException) {
             String jsonPath = extractJsonPath((MismatchedInputException) error.getCause());
             if (error.getCause() instanceof StrictStringDeserializingException) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"%s\"}]}",
-                        jsonPath));
+                return StandardErrorDTO.createForBodyDoesNotMatchSchema(
+                        asList(new ValidationErrorDTO(jsonPath, "", ViolationType.VALUE_MUST_BE_STRING)));
             } else {
                 if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"%s\"}]}",
-                            jsonPath));
+                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(
+                            asList(new ValidationErrorDTO(jsonPath, "", ViolationType.VALUE_MUST_BE_ARRAY)));
                 } else {
-                    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(String.format(
-                            "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeObject\",\"jsonPath\":\"%s\"}]}",
-                            jsonPath));
+                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(
+                            asList(new ValidationErrorDTO(jsonPath, "", ViolationType.VALUE_MUST_BE_OBJECT)));
                 }
             }
         } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errorName\":\"bodyNotParsable\"}");
+            return StandardErrorDTO.createBodyNotParsable();
         }
     }
 
     private String extractJsonPath(MismatchedInputException parsingException) {
-        return parsingException.getPath().stream().map(r -> {
+        String path = parsingException.getPath().stream().map(r -> {
             if (r.getFrom() instanceof List) {
                 return String.format("[%s]", r.getIndex());
             } else {
                 return String.format(".%s", r.getFieldName());
             }
-        }).collect(Collectors.joining("", "$", ""));
+        }).collect(Collectors.joining());
+        if (path.startsWith(".")) {
+            return path.substring(1);
+        } else {
+            return path;
+        }
     }
 }

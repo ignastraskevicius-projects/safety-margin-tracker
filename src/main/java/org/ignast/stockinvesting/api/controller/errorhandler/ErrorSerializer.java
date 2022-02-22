@@ -21,14 +21,14 @@ public class ErrorSerializer {
 
     private String toJson(ValidationError error) {
         if (error.getType() == ViolationType.VALUE_INVALID) {
-            return String.format("{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"$.%s\",\"message\":\"%s\"}",
-                    error.getPath(), error.getMessage());
+            return String.format("{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"%s\",\"message\":\"%s\"}",
+                    error.getJsonPath(), error.getMessage());
         } else if (error.getType() == ViolationType.VALUE_MUST_BE_STRING) {
-            return String.format("{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"$.%s\"}", error.getPath());
+            return String.format("{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"%s\"}", error.getJsonPath());
         } else if (error.getType() == ViolationType.VALUE_MUST_BE_ARRAY) {
-            return String.format("{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"$.%s\"}", error.getPath());
+            return String.format("{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"%s\"}", error.getJsonPath());
         } else {
-            return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.%s\"}", error.getPath());
+            return String.format("{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"%s\"}", error.getJsonPath());
         }
     }
 

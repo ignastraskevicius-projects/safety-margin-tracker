@@ -12,10 +12,24 @@ public class ValidationErrorTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "somePath", "otherPath" })
-    public void shouldPreservePath(String path) {
+    public void shouldConvertPathToJsonPath(String path) {
         ValidationError error = new ValidationError(path, "anyMessage", FIELD_IS_MISSING);
 
-        assertThat(error.getPath()).isEqualTo(path);
+        assertThat(error.getJsonPath()).isEqualTo(String.format("$.%s", path));
+    }
+
+    @Test
+    public void shouldConvertNullPathToRootJsonPath() {
+        ValidationError error = new ValidationError(null, "anyMessage", FIELD_IS_MISSING);
+
+        assertThat(error.getJsonPath()).isEqualTo("$");
+    }
+
+    @Test
+    public void shouldConvertEmptyPathToRootJsonPath() {
+        ValidationError error = new ValidationError("", "anyMessage", FIELD_IS_MISSING);
+
+        assertThat(error.getJsonPath()).isEqualTo("$");
     }
 
     @ParameterizedTest

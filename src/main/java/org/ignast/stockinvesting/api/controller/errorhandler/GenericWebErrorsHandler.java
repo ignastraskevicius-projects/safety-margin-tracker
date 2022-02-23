@@ -63,15 +63,16 @@ public class GenericWebErrorsHandler {
         if (error.getCause() instanceof MismatchedInputException) {
             String jsonPath = extractJsonPath((MismatchedInputException) error.getCause());
             if (error.getCause() instanceof StrictStringDeserializingException) {
-                return StandardErrorDTO.createForBodyDoesNotMatchSchema(
-                        asList(new ValidationErrorDTO(jsonPath, "", ViolationType.VALUE_MUST_BE_STRING)));
+                return StandardErrorDTO
+                        .createForBodyDoesNotMatchSchema(asList(new ValidationErrorDTO(JsonPath.fromJsonPath(jsonPath),
+                                "", ViolationType.VALUE_MUST_BE_STRING)));
             } else {
                 if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
-                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(
-                            asList(new ValidationErrorDTO(jsonPath, "", ViolationType.VALUE_MUST_BE_ARRAY)));
+                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(new ValidationErrorDTO(
+                            JsonPath.fromJsonPath(jsonPath), "", ViolationType.VALUE_MUST_BE_ARRAY)));
                 } else {
-                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(
-                            asList(new ValidationErrorDTO(jsonPath, "", ViolationType.VALUE_MUST_BE_OBJECT)));
+                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(new ValidationErrorDTO(
+                            JsonPath.fromJsonPath(jsonPath), "", ViolationType.VALUE_MUST_BE_OBJECT)));
                 }
             }
         } else {
@@ -80,17 +81,13 @@ public class GenericWebErrorsHandler {
     }
 
     private String extractJsonPath(MismatchedInputException parsingException) {
-        String path = parsingException.getPath().stream().map(r -> {
+        return "$" + parsingException.getPath().stream().map(r -> {
             if (r.getFrom() instanceof List) {
                 return String.format("[%s]", r.getIndex());
             } else {
                 return String.format(".%s", r.getFieldName());
             }
         }).collect(Collectors.joining());
-        if (path.startsWith(".")) {
-            return path.substring(1);
-        } else {
-            return path;
-        }
+
     }
 }

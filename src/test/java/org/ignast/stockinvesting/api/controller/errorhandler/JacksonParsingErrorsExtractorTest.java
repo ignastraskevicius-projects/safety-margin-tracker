@@ -77,7 +77,7 @@ class JacksonParsingErrorsExtractorTest {
         List<Reference> path = asList(ReferenceMock.toIndex(new ArrayList(), 5));
 
         asList(stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
-                .map(e -> extractor.extractError(e)).forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.[5]"));
+                .map(e -> extractor.extractError(e)).forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$[5]"));
     }
 
     class CityDTO {

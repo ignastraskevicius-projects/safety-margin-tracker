@@ -26,7 +26,9 @@ public class AnnotationBasedValidationErrorsExtractor {
                     "javax.validation exception is expected to contain at least 1 field error");
         } else {
             return exception.getBindingResult().getFieldErrors().stream()
-                    .map(fieldError -> new ValidationErrorDTO(fieldError.getField(), fieldError.getDefaultMessage(),
+                    .map(fieldError -> new ValidationErrorDTO(
+                            JsonPath.adaptFromJavaxValidationPath(fieldError.getField()),
+                            fieldError.getDefaultMessage(),
                             toViolationType(extractAnnotationClassCausingViolation(fieldError))))
                     .collect(Collectors.toList());
         }

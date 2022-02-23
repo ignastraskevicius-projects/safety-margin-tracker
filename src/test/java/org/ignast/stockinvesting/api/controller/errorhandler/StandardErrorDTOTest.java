@@ -32,6 +32,13 @@ class StandardErrorDTOTest {
     }
 
     @Test
+    public void shouldCreateForContentTypeNotSupported() {
+        StandardErrorDTO error = StandardErrorDTO.createForUnsupportedContentType();
+
+        assertThat(error.getErrorName()).isEqualTo("unsupportedContentType");
+    }
+
+    @Test
     public void shouldCreateBodyNotParsable() {
         StandardErrorDTO error = StandardErrorDTO.createBodyNotParsable();
 

@@ -31,6 +31,10 @@ public class StandardErrorDTO {
         return new StandardErrorDTO("mediaTypeNotAcceptable");
     }
 
+    public static StandardErrorDTO createForUnsupportedContentType() {
+        return new StandardErrorDTO("unsupportedContentType");
+    }
+
     public String getErrorName() {
         return errorName;
     }

@@ -6,6 +6,7 @@ import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -110,6 +111,12 @@ class GenericWebErrorsHandlerForOtherErrorsTest {
     public void shouldHandleMediaTypeNotAcceptable() {
         assertThat(handler.handleMediaTypeNotAcceptable(mock(HttpMediaTypeNotAcceptableException.class)).getErrorName())
                 .isEqualTo("mediaTypeNotAcceptable");
+    }
+
+    @Test
+    public void shouldHandleContentTypeNotSupported() {
+        assertThat(handler.handleUnsupportedContentType(mock(HttpMediaTypeNotSupportedException.class)).getErrorName())
+                .isEqualTo("unsupportedContentType");
     }
 }
 

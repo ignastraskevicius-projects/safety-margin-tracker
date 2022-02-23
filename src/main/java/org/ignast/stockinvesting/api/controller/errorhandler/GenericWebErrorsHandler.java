@@ -40,10 +40,11 @@ public class GenericWebErrorsHandler {
         return StandardErrorDTO.createForMediaTypeNotAcceptable();
     }
 
+    @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler
-    public ResponseEntity<String> handleUnsupportedContentType(HttpMediaTypeNotSupportedException error) {
-        return ResponseEntity.status(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
-                .body("{\"errorName\":\"unsupportedContentType\"}");
+    @ResponseBody
+    public StandardErrorDTO handleUnsupportedContentType(HttpMediaTypeNotSupportedException error) {
+        return StandardErrorDTO.createForUnsupportedContentType();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

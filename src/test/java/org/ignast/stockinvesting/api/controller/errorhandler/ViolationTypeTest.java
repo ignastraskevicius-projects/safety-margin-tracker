@@ -8,7 +8,7 @@ class ViolationTypeTest {
     @Test
     public void shouldPreserveErrorNames() {
         assertThat(ViolationType.VALUE_MUST_BE_ARRAY.getCorrespondigErrorName()).isEqualTo("valueMustBeArray");
-        assertThat(ViolationType.VALUE_INVALID.getCorrespondigErrorName()).isEqualTo("fieldHasInvalidValue");
+        assertThat(ViolationType.VALUE_INVALID.getCorrespondigErrorName()).isEqualTo("valueIsInvalid");
         assertThat(ViolationType.VALUE_MUST_BE_STRING.getCorrespondigErrorName()).isEqualTo("valueMustBeString");
         assertThat(ViolationType.FIELD_IS_MISSING.getCorrespondigErrorName()).isEqualTo("fieldIsMissing");
         assertThat(ViolationType.VALUE_MUST_BE_OBJECT.getCorrespondigErrorName()).isEqualTo("valueMustBeObject");

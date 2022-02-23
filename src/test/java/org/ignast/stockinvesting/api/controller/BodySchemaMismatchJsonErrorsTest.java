@@ -38,7 +38,7 @@ public class BodySchemaMismatchJsonErrorsTest {
     @Test
     void shouldCreateErrorJsonForInvalidValue() {
         assertThat(BodySchemaMismatchJsonErrors.forInvalidValueAt("someJsonPath", "someMessage")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"}]}");
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"}]}");
     }
 
 }

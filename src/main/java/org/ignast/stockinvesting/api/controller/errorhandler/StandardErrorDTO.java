@@ -27,6 +27,10 @@ public class StandardErrorDTO {
         return new StandardErrorDTO("methodNotAllowed");
     }
 
+    public static StandardErrorDTO createForMediaTypeNotAcceptable() {
+        return new StandardErrorDTO("mediaTypeNotAcceptable");
+    }
+
     public String getErrorName() {
         return errorName;
     }

@@ -5,6 +5,7 @@ import org.ignast.stockinvesting.api.controller.errorhandler.StandardErrorDTO.Bo
 import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
@@ -103,6 +104,12 @@ class GenericWebErrorsHandlerForOtherErrorsTest {
     public void shouldHandleMethodNotAllowed() {
         assertThat(handler.handleMethodNotAllowed(mock(HttpRequestMethodNotSupportedException.class)).getErrorName())
                 .isEqualTo("methodNotAllowed");
+    }
+
+    @Test
+    public void shouldHandleMediaTypeNotAcceptable() {
+        assertThat(handler.handleMediaTypeNotAcceptable(mock(HttpMediaTypeNotAcceptableException.class)).getErrorName())
+                .isEqualTo("mediaTypeNotAcceptable");
     }
 }
 

@@ -109,6 +109,18 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
+    public void shouldExtractFieldErrorRelatedToCurrencyCode() {
+        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrorCausedBy(javaxValidationCurrencyCode());
+
+        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        ValidationErrorDTO validationError = validationErrors.get(0);
+        assertThat(validationError.getErrorName()).isEqualTo("valueIsInvalid");
+    }
+
+    @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaLangOverride());

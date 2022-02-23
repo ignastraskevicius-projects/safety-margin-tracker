@@ -124,6 +124,14 @@ class CompanyControllerCurrencyParsingTest {
                 .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency",
                         "Currency must contain only uppercase latin characters")));
     }
+
+    @Test
+    public void shouldRejectInvalidISO4217Currency() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"ABC\"")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
+                        forInvalidValueAt("$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
+    }
 }
 
 @WebMvcTest

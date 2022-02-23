@@ -2,12 +2,12 @@ package org.ignast.stockinvesting.api.controller;
 
 public class CompanyJsonBodyFactory {
     public String createAmazon() {
-        return "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
+        return "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
     }
 
     public String createWithNameJsonPair(String nameJsonPair) {
         return String.format(
-                "{%s\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
+                "{%s\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(nameJsonPair));
     }
 
@@ -23,25 +23,25 @@ public class CompanyJsonBodyFactory {
 
     public String createWithCountryJsonPair(String countryJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{%s},\"functionalCurrency\":\"abc\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"address\":{%s},\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
                 countryJsonPair);
     }
 
     public String createWithListingsJsonPair(String listingsJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"abc\"%s}",
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\"%s}",
                 prependCommaIfNotEmpty(listingsJsonPair));
     }
 
     public String createWithStockExchangeJsonPair(String stockExchangeJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"abc\",\"listings\":[{%s\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\",\"listings\":[{%s\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(stockExchangeJsonPair));
     }
 
     public String createWithTickerJsonPair(String jsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"abc\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"%s}]}",
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"%s}]}",
                 prependCommaIfNotEmpty(jsonPair));
     }
 

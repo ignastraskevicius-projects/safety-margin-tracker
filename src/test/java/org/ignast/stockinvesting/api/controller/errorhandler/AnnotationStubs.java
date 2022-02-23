@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
+
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -99,6 +101,33 @@ public class AnnotationStubs {
             }
         };
         assertThat(annotation.annotationType()).isEqualTo(Pattern.class);
+        return annotation;
+    }
+
+    static CurrencyCode javaxValidationCurrencyCode() {
+        CurrencyCode annotation = new CurrencyCode() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CurrencyCode.class;
+            }
+
+            @Override
+            public String message() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<?>[] payload() {
+                return new Class[0];
+            }
+        };
+        assertThat(annotation.annotationType()).isEqualTo(CurrencyCode.class);
         return annotation;
     }
 

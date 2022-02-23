@@ -34,7 +34,7 @@ public class BodySchemaMismatchJsonErrors {
 
     public static String forInvalidValueAt(String jsonPath, String message) {
         return String.format(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldHasInvalidValue\",\"jsonPath\":\"%s\",\"message\":\"%s\"}]}",
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"%s\",\"message\":\"%s\"}]}",
                 jsonPath, message);
     }
 }

@@ -45,7 +45,7 @@ class BodyDoesNotMatchSchemaErrorDTOTest {
     @Test
     public void shouldPreserveValidationErrors() {
         List<ValidationErrorDTO> originalErrors = asList(
-                new ValidationErrorDTO("path", "message", ViolationType.FIELD_IS_MISSING));
+                new ValidationErrorDTO(JsonPath.fromJsonPath("$.path"), "message", ViolationType.FIELD_IS_MISSING));
 
         StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO bodyDoesNotMatchSchema = StandardErrorDTO
                 .createForBodyDoesNotMatchSchema(originalErrors);

@@ -19,7 +19,7 @@ public class ValidationErrorsExtractorMock {
     }
 
     private static ValidationErrorDTO anyValidationError() {
-        return new ValidationErrorDTO("anyPath", "anyMessage", ViolationType.FIELD_IS_MISSING);
+        return new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage", ViolationType.FIELD_IS_MISSING);
     }
 
     public static AnnotationBasedValidationErrorsExtractor failingToExtract() {

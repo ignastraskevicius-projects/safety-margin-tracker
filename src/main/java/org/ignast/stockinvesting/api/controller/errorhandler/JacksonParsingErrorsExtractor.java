@@ -14,7 +14,7 @@ public class JacksonParsingErrorsExtractor {
             Optional<ViolationType> violationType = toViolationType(exception);
             if (violationType.isPresent()) {
                 String jsonPath = extractJsonPath(exception);
-                return new ValidationErrorDTO(jsonPath, "", violationType.get());
+                return new ValidationErrorDTO(JsonPath.fromJsonPath(jsonPath), "", violationType.get());
             } else {
                 throw new JacksonParsingErrorExtractionException("Jackson parsing failed on unexpected target type");
             }
@@ -26,11 +26,11 @@ public class JacksonParsingErrorsExtractor {
             throw new JacksonParsingErrorExtractionException("cc");
         }
         if (exception.getPath().isEmpty()) {
-            return null;
+            return "$";
         } else if (List.class.isAssignableFrom(exception.getPath().get(0).getFrom().getClass())) {
-            return "[5]";
+            return "$[5]";
         } else {
-            return "population";
+            return "$.population";
         }
 
     }

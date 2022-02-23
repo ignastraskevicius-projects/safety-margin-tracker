@@ -5,6 +5,7 @@ import org.ignast.stockinvesting.api.controller.errorhandler.StandardErrorDTO.Bo
 import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.Arrays;
@@ -17,14 +18,13 @@ import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class GenericWebErrorsHandlerTest {
+class GenericWebErrorsHandlerForInvalidArgumentsTest {
 
     private AnnotationBasedValidationErrorsExtractor javaxErrorExtractor = mock(
             AnnotationBasedValidationErrorsExtractor.class);
 
-    private JacksonParsingErrorsExtractor jacksonErrorExtractor = mock(JacksonParsingErrorsExtractor.class);
-
-    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(javaxErrorExtractor, jacksonErrorExtractor);
+    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(javaxErrorExtractor,
+            mock(JacksonParsingErrorsExtractor.class));
 
     @Test
     public void shouldExtractJavaxValidationErrors() {
@@ -48,6 +48,14 @@ class GenericWebErrorsHandlerTest {
 
         assertThat(error.getErrorName()).isEqualTo("unknownError");
     }
+
+}
+
+class GenericWebErrorsHandlerForJacksonParsingTest {
+    private JacksonParsingErrorsExtractor jacksonErrorExtractor = mock(JacksonParsingErrorsExtractor.class);
+
+    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(
+            mock(AnnotationBasedValidationErrorsExtractor.class), jacksonErrorExtractor);
 
     @Test
     public void shouldExtractJacksonParsingError() {
@@ -84,6 +92,17 @@ class GenericWebErrorsHandlerTest {
         StandardErrorDTO error = handler.handleUnparsableJson(jacksonFieldLevelError());
 
         assertThat(error.getErrorName()).isEqualTo("unknownError");
+    }
+}
+
+class GenericWebErrorsHandlerForOtherErrorsTest {
+    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(
+            mock(AnnotationBasedValidationErrorsExtractor.class), mock(JacksonParsingErrorsExtractor.class));
+
+    @Test
+    public void shouldHandleMethodNotAllowed() {
+        assertThat(handler.handleMethodNotAllowed(mock(HttpRequestMethodNotSupportedException.class)).getErrorName())
+                .isEqualTo("methodNotAllowed");
     }
 }
 

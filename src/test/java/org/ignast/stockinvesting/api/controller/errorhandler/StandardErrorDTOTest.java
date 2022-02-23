@@ -18,6 +18,13 @@ class StandardErrorDTOTest {
     }
 
     @Test
+    public void shouldCreateMethodNotAllowed() {
+        StandardErrorDTO error = StandardErrorDTO.createForMethodNotAllowed();
+
+        assertThat(error.getErrorName()).isEqualTo("methodNotAllowed");
+    }
+
+    @Test
     public void shouldCreateBodyNotParsable() {
         StandardErrorDTO error = StandardErrorDTO.createBodyNotParsable();
 

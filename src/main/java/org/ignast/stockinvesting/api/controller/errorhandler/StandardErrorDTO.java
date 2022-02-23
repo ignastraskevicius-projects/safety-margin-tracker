@@ -23,6 +23,10 @@ public class StandardErrorDTO {
         return new StandardErrorDTO("bodyNotParsable");
     }
 
+    public static StandardErrorDTO createForMethodNotAllowed() {
+        return new StandardErrorDTO("methodNotAllowed");
+    }
+
     public String getErrorName() {
         return errorName;
     }

@@ -41,3 +41,9 @@ public class JacksonParsingErrorsExtractor {
         }
     }
 }
+
+class JacksonParsingErrorExtractionException extends RuntimeException {
+    public JacksonParsingErrorExtractionException(String message) {
+        super(message);
+    }
+}

@@ -17,31 +17,31 @@ public class CompanyJsonBodyFactory {
 
     public String createWithAddressJsonPair(String addressJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",%s\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",%s\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(addressJsonPair));
     }
 
     public String createWithCountryJsonPair(String countryJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{%s},\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"address\":{%s},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
                 countryJsonPair);
     }
 
     public String createWithListingsJsonPair(String listingsJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\"%s}",
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\"%s}",
                 prependCommaIfNotEmpty(listingsJsonPair));
     }
 
     public String createWithStockExchangeJsonPair(String stockExchangeJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\",\"listings\":[{%s\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{%s\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(stockExchangeJsonPair));
     }
 
     public String createWithTickerJsonPair(String jsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"ABC\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"%s}]}",
+                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"%s}]}",
                 prependCommaIfNotEmpty(jsonPair));
     }
 

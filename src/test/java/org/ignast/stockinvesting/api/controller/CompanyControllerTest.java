@@ -102,18 +102,20 @@ class CompanyControllerCurrencyParsingTest {
     public void shouldRejectTooShortCurrencyCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)")));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(
+                        forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)",
+                                "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
     }
 
     @Test
     public void shouldRejectTooLongCurrencyCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDollar\"")))
+                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDOLLAR\"")))
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(
                         forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)",
-                                "$.functionalCurrency", "Currency must contain only uppercase latin characters")));
+                                "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
     }
 
     @ParameterizedTest
@@ -123,8 +125,9 @@ class CompanyControllerCurrencyParsingTest {
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(
                         String.format("\"functionalCurrency\":\"%s\"", currencyCode))))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency",
-                        "Currency must contain only uppercase latin characters")));
+                .andExpect(contentMatchesJson(forInvalidValuesAt("$.functionalCurrency",
+                        "Currency must contain only uppercase latin characters", "$.functionalCurrency",
+                        "Currency must be a valid ISO 4217 code")));
     }
 
     @Test

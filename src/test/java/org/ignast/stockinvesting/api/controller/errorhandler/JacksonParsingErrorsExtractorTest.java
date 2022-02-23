@@ -10,6 +10,7 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.api.controller.errorhandler.MismatchedInputExceptionMock.*;
+import static org.ignast.stockinvesting.api.controller.errorhandler.ReferenceMock.toField;
 
 class JacksonParsingErrorsExtractorTest {
 
@@ -19,7 +20,8 @@ class JacksonParsingErrorsExtractorTest {
     public void shouldFailToExtractErrorsForNullPath() {
         asList(stringParsingFailedAt(null), dtoParsingFailedAt(null), listParsingFailedAt(null)).stream()
                 .forEach(e -> assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
-                        .isThrownBy(() -> extractor.extractError(e)));
+                        .isThrownBy(() -> extractor.extractError(e))
+                        .withMessage("Jackson parsing failed without target type"));
     }
 
     @Test
@@ -65,11 +67,20 @@ class JacksonParsingErrorsExtractorTest {
 
     @Test
     public void shouldPreserveJsonPathForFields() {
-        List<Reference> path = asList(ReferenceMock.toField(new CityDTO(), "population"));
+        List<Reference> path = asList(toField(new CityDTO(), "population"));
 
         asList(stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
                 .map(e -> extractor.extractError(e))
                 .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population"));
+    }
+
+    @Test
+    public void shouldPreserveJsonPathForNestedFields() {
+        List<Reference> path = asList(toField(new CityDTO(), "population"), toField(new PopulationDTO(), "growth"));
+
+        asList(stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
+                .map(e -> extractor.extractError(e))
+                .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population.growth"));
     }
 
     @Test
@@ -81,5 +92,8 @@ class JacksonParsingErrorsExtractorTest {
     }
 
     class CityDTO {
+    }
+
+    class PopulationDTO {
     }
 }

@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -23,6 +24,7 @@ public class CompanyDTO {
     @NotNull
     @Size(min = 3, max = 3, message = "Currency must have 3 letters (ISO 4217)")
     @Pattern(regexp = "^[A-Z]*$", message = "Currency must contain only uppercase latin characters", groups = AllowedCharacters.class)
+    @CurrencyCode(groups = AdherenceToStandard.class)
     private String functionalCurrency;
 
     @NotNull

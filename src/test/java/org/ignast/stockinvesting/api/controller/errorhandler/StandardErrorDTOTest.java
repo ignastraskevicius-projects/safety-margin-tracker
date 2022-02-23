@@ -25,6 +25,13 @@ class StandardErrorDTOTest {
     }
 
     @Test
+    public void shouldCreateMediaTypeNotAcceptable() {
+        StandardErrorDTO error = StandardErrorDTO.createForMediaTypeNotAcceptable();
+
+        assertThat(error.getErrorName()).isEqualTo("mediaTypeNotAcceptable");
+    }
+
+    @Test
     public void shouldCreateBodyNotParsable() {
         StandardErrorDTO error = StandardErrorDTO.createBodyNotParsable();
 

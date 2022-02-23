@@ -26,14 +26,18 @@ public class GenericWebErrorsHandler {
         this.jacksonParsingErrorsExtractor = jacksonParsingErrorsExtractor;
     }
 
+    @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler
+    @ResponseBody
     public StandardErrorDTO handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
         return StandardErrorDTO.createForMethodNotAllowed();
     }
 
+    @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler
-    public ResponseEntity<String> handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException error) {
-        return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body("{\"errorName\":\"mediaTypeNotAcceptable\"}");
+    @ResponseBody
+    public StandardErrorDTO handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException error) {
+        return StandardErrorDTO.createForMediaTypeNotAcceptable();
     }
 
     @ExceptionHandler

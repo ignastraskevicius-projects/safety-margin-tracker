@@ -37,4 +37,10 @@ public class BodySchemaMismatchJsonErrors {
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"%s\",\"message\":\"%s\"}]}",
                 jsonPath, message);
     }
+
+    public static String forInvalidValuesAt(String jsonPath1, String message1, String jsonPath2, String message2) {
+        return String.format(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"%s\",\"message\":\"%s\"},{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"%s\",\"message\":\"%s\"}]}",
+                jsonPath1, message1, jsonPath2, message2);
+    }
 }

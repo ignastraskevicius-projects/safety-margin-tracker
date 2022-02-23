@@ -41,4 +41,10 @@ public class BodySchemaMismatchJsonErrorsTest {
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"}]}");
     }
 
+    @Test
+    void shouldCreateErrorJsonForMultipleInvalidValues() {
+        assertThat(BodySchemaMismatchJsonErrors.forInvalidValuesAt("someJsonPath", "someMessage", "someOtherJsonPath",
+                "someOtherMessage")).isEqualTo(
+                        "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"},{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someOtherJsonPath\",\"message\":\"someOtherMessage\"}]}");
+    }
 }

@@ -110,8 +110,10 @@ class CompanyControllerCurrencyParsingTest {
     public void shouldRejectTooLongCurrencyCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDollar\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)")));
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(
+                        forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)",
+                                "$.functionalCurrency", "Currency must contain only uppercase latin characters")));
     }
 
     @ParameterizedTest

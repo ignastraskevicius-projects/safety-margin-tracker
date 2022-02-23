@@ -27,8 +27,8 @@ public class GenericWebErrorsHandler {
     }
 
     @ExceptionHandler
-    public ResponseEntity<String> handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
-        return new ResponseEntity("{\"errorName\":\"methodNotAllowed\"}", HttpStatus.METHOD_NOT_ALLOWED);
+    public StandardErrorDTO handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
+        return StandardErrorDTO.createForMethodNotAllowed();
     }
 
     @ExceptionHandler

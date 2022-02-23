@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -14,18 +13,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import static java.util.Arrays.asList;
 
 @ControllerAdvice
 public class GenericWebErrorsHandler {
     private AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
+    private JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
-    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor) {
+    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
+            JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {
         this.validationErrorsExtractor = validationErrorsExtractor;
+        this.jacksonParsingErrorsExtractor = jacksonParsingErrorsExtractor;
     }
 
     @ExceptionHandler
@@ -59,35 +57,17 @@ public class GenericWebErrorsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleUnparsableJson(HttpMessageNotReadableException error) throws Throwable {
+    public StandardErrorDTO handleUnparsableJson(HttpMessageNotReadableException error) {
+
         if (error.getCause() instanceof MismatchedInputException) {
-            String jsonPath = extractJsonPath((MismatchedInputException) error.getCause());
-            if (error.getCause() instanceof StrictStringDeserializingException) {
-                return StandardErrorDTO
-                        .createForBodyDoesNotMatchSchema(asList(new ValidationErrorDTO(JsonPath.fromJsonPath(jsonPath),
-                                "", ViolationType.VALUE_MUST_BE_STRING)));
-            } else {
-                if (((MismatchedInputException) error.getCause()).getTargetType() == ArrayList.class) {
-                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(new ValidationErrorDTO(
-                            JsonPath.fromJsonPath(jsonPath), "", ViolationType.VALUE_MUST_BE_ARRAY)));
-                } else {
-                    return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(new ValidationErrorDTO(
-                            JsonPath.fromJsonPath(jsonPath), "", ViolationType.VALUE_MUST_BE_OBJECT)));
-                }
+            try {
+                return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(
+                        jacksonParsingErrorsExtractor.extractError((MismatchedInputException) error.getCause())));
+            } catch (JacksonParsingErrorExtractionException e) {
+                return StandardErrorDTO.createUnknownError();
             }
         } else {
             return StandardErrorDTO.createBodyNotParsable();
         }
-    }
-
-    private String extractJsonPath(MismatchedInputException parsingException) {
-        return "$" + parsingException.getPath().stream().map(r -> {
-            if (r.getFrom() instanceof List) {
-                return String.format("[%s]", r.getIndex());
-            } else {
-                return String.format(".%s", r.getFieldName());
-            }
-        }).collect(Collectors.joining());
-
     }
 }

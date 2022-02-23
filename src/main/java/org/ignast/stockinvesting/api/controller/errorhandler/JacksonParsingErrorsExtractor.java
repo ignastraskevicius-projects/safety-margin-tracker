@@ -2,10 +2,12 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.ignast.stockinvesting.strictjackson.StrictStringDeserializingException;
+import org.springframework.boot.jackson.JsonComponent;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
+@JsonComponent
 public class JacksonParsingErrorsExtractor {
     public ValidationErrorDTO extractError(MismatchedInputException exception) {
         JsonPath jsonPath = JsonPath.fromJsonPath(extractJsonPath(exception));
@@ -26,10 +28,10 @@ public class JacksonParsingErrorsExtractor {
     }
 
     private ViolationType toViolationType(MismatchedInputException exception) {
-        if (exception.getTargetType() == null) {
-            throw new JacksonParsingErrorExtractionException("Jackson parsing failed with no target type defined");
-        } else if (exception instanceof StrictStringDeserializingException) {
+        if (exception instanceof StrictStringDeserializingException) {
             return ViolationType.VALUE_MUST_BE_STRING;
+        } else if (exception.getTargetType() == null) {
+            throw new JacksonParsingErrorExtractionException("Jackson parsing failed with no target type defined");
         } else if (List.class.isAssignableFrom(exception.getTargetType())) {
             return ViolationType.VALUE_MUST_BE_ARRAY;
         } else if (exception.getTargetType().getName().endsWith("DTO")) {

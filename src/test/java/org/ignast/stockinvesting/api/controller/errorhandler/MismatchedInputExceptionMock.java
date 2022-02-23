@@ -20,7 +20,6 @@ import static org.mockito.Mockito.*;
 public class MismatchedInputExceptionMock {
     public static MismatchedInputException stringParsingFailedAt(List<Reference> path) {
         return MockitoUtils.mock(StrictStringDeserializingException.class, e -> {
-            doReturn(String.class).when(e).getTargetType();
             when(e.getPath()).thenReturn(path);
         });
     }
@@ -98,7 +97,6 @@ class MismatchedInputExceptionMockTest {
     public void shouldCreateStringInputMismatchException() {
         MismatchedInputException exception = stringParsingFailedAt(null);
         assertThat(exception).isInstanceOf(StrictStringDeserializingException.class);
-        assertThat(exception.getTargetType()).isEqualTo(String.class);
     }
 
     @Test

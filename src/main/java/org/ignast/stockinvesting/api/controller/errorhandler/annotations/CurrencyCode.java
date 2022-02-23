@@ -27,7 +27,7 @@ class CurrencyValidator implements ConstraintValidator<CurrencyCode, String> {
     @Override
     public boolean isValid(String currencyCode, ConstraintValidatorContext constraintValidatorContext) {
         if (isNull(currencyCode)) {
-            return false;
+            return true;
         }
         try {
             Currency.getInstance(currencyCode);

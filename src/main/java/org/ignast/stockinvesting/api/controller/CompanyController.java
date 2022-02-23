@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public class CompanyController {
 
     @PostMapping(consumes = VersionedApiMediaTypes.V1)
-    public HttpEntity<String> defineCompany(@Validated(FieldValidationSequence.class) @RequestBody CompanyDTO company) {
+    public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 

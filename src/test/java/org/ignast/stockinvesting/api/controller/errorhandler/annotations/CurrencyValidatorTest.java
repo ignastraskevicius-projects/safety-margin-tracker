@@ -7,8 +7,8 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class CurrencyValidatorTest {
     @Test
-    public void shouldNotBeValidForNullCurrencyCode() {
-        assertThat(new CurrencyValidator().isValid(null, null)).isFalse();
+    public void shouldBeValidForNullCurrencyCode() {
+        assertThat(new CurrencyValidator().isValid(null, null)).isTrue();
     }
 
     @Test

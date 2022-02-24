@@ -32,13 +32,13 @@ class CompanyControllerTest {
     @Test
     public void shouldCreateCompany() {
         val currencyCode = "USD";
-        val company = new CompanyDTO("anyName", "FR", currencyCode, Collections.emptyList());
+        val company = new CompanyDTO("Santander", "FR", currencyCode, Collections.emptyList());
         val captor = ArgumentCaptor.forClass(Company.class);
 
         controller.defineCompany(company);
 
         verify(companies).create(captor.capture());
-        assertThat(captor.getValue()).isEqualTo(new Company("FR", Currency.getInstance(currencyCode)));
+        assertThat(captor.getValue()).isEqualTo(new Company("Santander", "FR", Currency.getInstance(currencyCode)));
     }
 
 }

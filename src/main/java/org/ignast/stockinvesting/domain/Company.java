@@ -11,8 +11,13 @@ public final class Company {
 
     private final String countryCode;
     private final Currency functionalCurrency;
+    private final String name;
 
-    public Company(@NonNull String countryCode, @NonNull Currency functionalCurrency) {
+    public Company(@NonNull String name, @NonNull String countryCode, @NonNull Currency functionalCurrency) {
+        if (name.isEmpty() || name.length() > 255) {
+            throw new IllegalArgumentException();
+        }
+        this.name = name;
         if (!Locale.getISOCountries(Locale.IsoCountryCode.PART1_ALPHA2).contains(countryCode)) {
             throw new IllegalArgumentException();
         }
@@ -26,5 +31,9 @@ public final class Company {
 
     public String getHomeCountry() {
         return countryCode;
+    }
+
+    public String getName() {
+        return name;
     }
 }

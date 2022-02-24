@@ -23,13 +23,9 @@ public class CompanyController {
 
     @PostMapping(consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
-        if (company.getFunctionalCurrency().equals("EUR") || company.getFunctionalCurrency().equals("USD")) {
-            val currency = Currency.getInstance(company.getFunctionalCurrency());
-            companies.create(new Company(currency));
-            return new ResponseEntity<>("", HttpStatus.CREATED);
-        } else {
-            throw new IllegalArgumentException();
-        }
+        val currency = Currency.getInstance(company.getFunctionalCurrency());
+        companies.create(new Company(currency));
+        return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 
 }

@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import lombok.val;
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CountryCode;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
 
 import javax.validation.Payload;
@@ -128,6 +130,33 @@ public class AnnotationStubs {
             }
         };
         assertThat(annotation.annotationType()).isEqualTo(CurrencyCode.class);
+        return annotation;
+    }
+
+    static CountryCode javaxValidationCountryCode() {
+        val annotation = new CountryCode() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return CountryCode.class;
+            }
+
+            @Override
+            public String message() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<?>[] payload() {
+                return new Class[0];
+            }
+        };
+        assertThat(annotation.annotationType()).isEqualTo(CountryCode.class);
         return annotation;
     }
 

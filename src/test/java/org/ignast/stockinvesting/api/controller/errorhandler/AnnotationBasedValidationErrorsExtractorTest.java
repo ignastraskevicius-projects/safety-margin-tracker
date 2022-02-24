@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -109,11 +110,21 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldExtractFieldErrorRelatedToCurrencyCode() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
-                .withFieldErrorCausedBy(javaxValidationCurrencyCode());
+    public void shouldExtractFieldErrorRelatedToCurrencyCodeValidation() {
+        val exception = MethodArgumentNotValidExceptionMock.withFieldErrorCausedBy(javaxValidationCurrencyCode());
 
-        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        ValidationErrorDTO validationError = validationErrors.get(0);
+        assertThat(validationError.getErrorName()).isEqualTo("valueIsInvalid");
+    }
+
+    @Test
+    public void shouldExtractFieldErrorRelatedToCountryCodeValidation() {
+        val exception = MethodArgumentNotValidExceptionMock.withFieldErrorCausedBy(javaxValidationCountryCode());
+
+        val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
         ValidationErrorDTO validationError = validationErrors.get(0);

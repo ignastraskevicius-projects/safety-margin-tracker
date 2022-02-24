@@ -5,7 +5,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class Companies {
 
-    public void create() {
+    public void create(Company company) {
 
     }
 }

@@ -11,8 +11,8 @@ public class StandardErrorDTO {
         this.errorName = errorName;
     }
 
-    public static StandardErrorDTO createUnknownError() {
-        return new StandardErrorDTO("unknownError");
+    public static StandardErrorDTO createNameless() {
+        return new StandardErrorDTO(null);
     }
 
     public static BodyDoesNotMatchSchemaErrorDTO createForBodyDoesNotMatchSchema(List<ValidationErrorDTO> errors) {

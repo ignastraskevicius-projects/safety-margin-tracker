@@ -18,7 +18,7 @@ public class GenericErrorController implements ErrorController {
             int statusCode = (int) request.getAttribute("javax.servlet.error.status_code");
             return ResponseEntity.status(statusCode).body(StandardErrorDTO.createForResourceNotFound());
         } catch (Exception e) {
-            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(StandardErrorDTO.createUnknownError());
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(StandardErrorDTO.createNameless());
         }
     }
 }

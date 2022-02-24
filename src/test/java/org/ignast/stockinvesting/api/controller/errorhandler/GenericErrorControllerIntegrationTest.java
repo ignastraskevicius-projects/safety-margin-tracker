@@ -1,0 +1,23 @@
+package org.ignast.stockinvesting.api.controller.errorhandler;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.test.web.servlet.MockMvc;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@WebMvcTest(controllers = GenericErrorController.class)
+class GenericErrorControllerIntegrationTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    @Test
+    public void shouldNotFindResource() throws Exception {
+        mockMvc.perform(get("/error").accept("*/*")).andExpect(status().isNotFound())
+                .andExpect(content().string("{\"errorName\":\"resourceNotFound\"}"));
+    }
+}

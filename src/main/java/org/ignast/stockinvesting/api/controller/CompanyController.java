@@ -12,7 +12,11 @@ public class CompanyController {
 
     @PostMapping(consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
-        return new ResponseEntity<>("", HttpStatus.CREATED);
+        if (company.getFunctionalCurrency().equals("EUR") || company.getFunctionalCurrency().equals("USD")) {
+            return new ResponseEntity<>("", HttpStatus.CREATED);
+        } else {
+            throw new IllegalArgumentException();
+        }
     }
 
 }

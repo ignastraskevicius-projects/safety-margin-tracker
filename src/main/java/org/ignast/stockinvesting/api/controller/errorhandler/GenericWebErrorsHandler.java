@@ -54,7 +54,7 @@ public class GenericWebErrorsHandler {
             return StandardErrorDTO.createForBodyDoesNotMatchSchema(
                     validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
         } catch (ValidationErrorsExtractionException e) {
-            return StandardErrorDTO.createUnknownError();
+            return StandardErrorDTO.createNameless();
         }
     }
 
@@ -68,7 +68,7 @@ public class GenericWebErrorsHandler {
                 return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(
                         jacksonParsingErrorsExtractor.extractError((MismatchedInputException) error.getCause())));
             } catch (JacksonParsingErrorExtractionException e) {
-                return StandardErrorDTO.createUnknownError();
+                return StandardErrorDTO.createNameless();
             }
         } else {
             return StandardErrorDTO.createBodyNotParsable();

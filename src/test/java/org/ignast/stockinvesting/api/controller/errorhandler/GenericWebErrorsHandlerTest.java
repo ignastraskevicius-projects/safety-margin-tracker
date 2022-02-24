@@ -41,14 +41,14 @@ class GenericWebErrorsHandlerForInvalidArgumentsTest {
     }
 
     @Test
-    public void validationExtractorFailingToExtractExpectedErrorsShouldResultInUnknownErrorSerialized() {
+    public void validationExtractorFailingToExtractExpectedErrorsShouldResultInNamelessError() {
         MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
         when(javaxErrorExtractor.extractAnnotationBasedErrorsFrom(notNull()))
                 .thenThrow(ValidationErrorsExtractionException.class);
 
         StandardErrorDTO error = handler.handleMethodArgumentNotValidException(exception);
 
-        assertThat(error.getErrorName()).isEqualTo("unknownError");
+        assertThat(error.getErrorName()).isNull();
     }
 
 }
@@ -88,12 +88,12 @@ class GenericWebErrorsHandlerForJacksonParsingTest {
     }
 
     @Test
-    public void failingToExtractJacksonShouldResultInUnknownError() {
+    public void failingToExtractJacksonShouldResultNamelessError() {
         when(jacksonErrorExtractor.extractError(any())).thenThrow(JacksonParsingErrorExtractionException.class);
 
         StandardErrorDTO error = handler.handleUnparsableJson(jacksonFieldLevelError());
 
-        assertThat(error.getErrorName()).isEqualTo("unknownError");
+        assertThat(error.getErrorName()).isNull();
     }
 }
 

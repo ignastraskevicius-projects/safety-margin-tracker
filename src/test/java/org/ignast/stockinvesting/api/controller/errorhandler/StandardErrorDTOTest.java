@@ -11,10 +11,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 class StandardErrorDTOTest {
 
     @Test
-    public void shouldCreateUnknownError() {
-        StandardErrorDTO error = StandardErrorDTO.createUnknownError();
+    public void shouldCreateNamelessError() {
+        StandardErrorDTO error = StandardErrorDTO.createNameless();
 
-        assertThat(error.getErrorName()).isEqualTo("unknownError");
+        assertThat(error.getErrorName()).isNull();
     }
 
     @Test

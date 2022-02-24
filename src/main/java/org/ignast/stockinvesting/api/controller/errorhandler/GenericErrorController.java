@@ -1,17 +1,24 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.springframework.boot.web.servlet.error.ErrorController;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Controller
 public class GenericErrorController implements ErrorController {
 
-    @RequestMapping("/error")
+    private final int INTERNAL_SERVER_ERROR = 500;
 
-    public ResponseEntity<StandardErrorDTO> handleError() {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(StandardErrorDTO.createForResourceNotFound());
+    @RequestMapping("/error")
+    public ResponseEntity<StandardErrorDTO> handleError(HttpServletRequest request) {
+        try {
+            int statusCode = (int) request.getAttribute("javax.servlet.error.status_code");
+            return ResponseEntity.status(statusCode).body(StandardErrorDTO.createForResourceNotFound());
+        } catch (Exception e) {
+            return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(StandardErrorDTO.createUnknownError());
+        }
     }
 }

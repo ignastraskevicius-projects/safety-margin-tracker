@@ -3,6 +3,7 @@ package org.ignast.stockinvesting.api.controller;
 import lombok.val;
 import org.ignast.stockinvesting.domain.Companies;
 import org.ignast.stockinvesting.domain.Company;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
@@ -22,22 +23,22 @@ class CompanyControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "invalidCurrency", "anotherInvalidCurrency" })
-    public void shouldFailToCreateCompanyIfCurrencyIsWrong(String currency) {
+    public void shouldFailToCreateCompanyWithInvalidCurrency(String currency) {
         val company = new CompanyDTO("anyName", "anyHomeCountry", currency, Collections.emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> controller.defineCompany(company));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "EUR", "USD" })
-    public void shouldCreateCompanyWithEurAndUsd(String currency) {
-        val company = new CompanyDTO("anyName", "anyHomeCountry", currency, Collections.emptyList());
+    @Test
+    public void shouldCreateCompany() {
+        val currencyCode = "USD";
+        val company = new CompanyDTO("anyName", "FR", currencyCode, Collections.emptyList());
         val captor = ArgumentCaptor.forClass(Company.class);
 
         controller.defineCompany(company);
 
         verify(companies).create(captor.capture());
-        assertThat(captor.getValue()).isEqualTo(new Company(Currency.getInstance(currency)));
+        assertThat(captor.getValue()).isEqualTo(new Company("FR", Currency.getInstance(currencyCode)));
     }
 
 }

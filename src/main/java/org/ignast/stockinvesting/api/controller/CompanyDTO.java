@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
 
 import javax.validation.Valid;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@Getter
 public class CompanyDTO {
 
     @NotNull
@@ -42,13 +44,5 @@ public class CompanyDTO {
         if (listings != null) {
             this.listings = listings.stream().filter(Objects::nonNull).collect(Collectors.toList());
         }
-    }
-
-    public String getHomeCountry() {
-        return homeCountry;
-    }
-
-    public List<ListingDTO> getListings() {
-        return listings;
     }
 }

@@ -1,48 +1,49 @@
 package org.ignast.stockinvesting.api.controller;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CompanyDTOTest {
 
-    @ParameterizedTest
-    @ValueSource(strings = { "United States", "Germany" })
-    public void shouldPreserveHomeCountry(String country) {
-        assertThat(new CompanyDTO("anyName", country, "United States Dollar",
-                Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"))).getHomeCountry())
-                        .isEqualTo(country);
+    @Test
+    public void shouldPreserveNonNestedAttributes() {
+        val company = new CompanyDTO("Amazon", "United States", "United States Dollar", Collections.emptyList());
+        assertThat(company.getHomeCountry()).isEqualTo("United States");
+        assertThat(company.getName()).isEqualTo("Amazon");
+        assertThat(company.getFunctionalCurrency()).isEqualTo("United States Dollar");
     }
 
     @Test
     public void shouldPreserveListings() {
         List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"));
-        assertThat(new CompanyDTO("anyName", "anyCountry", "United States Dollar", listings).getListings())
-                .isEqualTo(listings);
+        assertThat(anyCompanyWith(listings).getListings()).isEqualTo(listings);
     }
 
     @Test
-    public void shouldPreserveMultiplelistings() {
+    public void shouldPreserveMultipleListings() {
         List<ListingDTO> listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"),
                 new ListingDTO("Hong Kong Stock Exchange", "Amazon"));
-        assertThat(new CompanyDTO("anyName", "anyCountry", "United States Dollar", listings).getListings())
-                .isEqualTo(listings);
+        assertThat(anyCompanyWith(listings).getListings()).isEqualTo(listings);
     }
 
     @Test
     public void shouldDropAnyIndividualNullListing() {
         ListingDTO listing = new ListingDTO("New York Stock Exchange", "Amazon");
-        assertThat(new CompanyDTO("anyName", "anyCountry", "United States Dollar", Arrays.asList(null, listing))
-                .getListings()).isEqualTo(Arrays.asList(listing));
+        assertThat(anyCompanyWith(Arrays.asList(null, listing)).getListings()).isEqualTo(Arrays.asList(listing));
     }
 
     @Test
     public void shouldAllowNullListingsToEnableJavaxValidation() {
-        assertThat(new CompanyDTO("anyName", "anyCountry", "United States Dollar", null).getListings()).isEqualTo(null);
+        assertThat(anyCompanyWith(null).getListings()).isEqualTo(null);
+    }
+
+    private CompanyDTO anyCompanyWith(List<ListingDTO> listings) {
+        return new CompanyDTO("anyName", "anyCountry", "United States Dollar", listings);
     }
 }

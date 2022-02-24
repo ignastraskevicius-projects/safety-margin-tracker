@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 
 import java.util.Collections;
+import java.util.Currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -36,7 +37,7 @@ class CompanyControllerTest {
         controller.defineCompany(company);
 
         verify(companies).create(captor.capture());
-        assertThat(captor.getValue()).isEqualTo(new Company());
+        assertThat(captor.getValue()).isEqualTo(new Company(Currency.getInstance(currency)));
     }
 
 }

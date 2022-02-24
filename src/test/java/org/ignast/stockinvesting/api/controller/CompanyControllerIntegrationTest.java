@@ -1,10 +1,12 @@
 package org.ignast.stockinvesting.api.controller;
 
+import org.ignast.stockinvesting.domain.Companies;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.*;
@@ -18,6 +20,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CompanyControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private Companies companies;
 
     private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
 
@@ -73,6 +78,9 @@ public class CompanyControllerIntegrationTest {
 
 @WebMvcTest
 class CompanyControllerCurrencyParsingIntegrationTest {
+
+    @MockBean
+    private Companies companies;
 
     @Autowired
     private MockMvc mockMvc;
@@ -140,6 +148,9 @@ class CompanyControllerCurrencyParsingIntegrationTest {
 @WebMvcTest
 class CompanyControllerHomeCountryParsingIntegrationTest {
 
+    @MockBean
+    private Companies companies;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -172,6 +183,9 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
 
 @WebMvcTest
 class CompanyControllerNameParsingIntegrationTest {
+
+    @MockBean
+    private Companies companies;
 
     @Autowired
     private MockMvc mockMvc;
@@ -236,6 +250,9 @@ class CompanyControllerNameParsingIntegrationTest {
 
 @WebMvcTest
 class CompanyControllerListingsParsingIntegrationTest {
+
+    @MockBean
+    private Companies companies;
 
     @Autowired
     private MockMvc mockMvc;
@@ -302,6 +319,9 @@ class CompanyControllerListingsParsingIntegrationTest {
 
 @WebMvcTest
 class CompanyControllerTestIndividualListingParsingIntegrationTest {
+
+    @MockBean
+    private Companies companies;
 
     @Autowired
     private MockMvc mockMvc;

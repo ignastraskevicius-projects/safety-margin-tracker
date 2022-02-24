@@ -20,10 +20,10 @@ public class ServiceErrorsTest {
     private TestRestTemplate restTemplate;
 
     @Test
-    public void shouldNotFindResourse() {
+    public void shouldNotFindResource() {
         val response = restTemplate.getForEntity(String.format("http://localhost:%d/notexistent/path", port),
                 String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody()).isEqualTo("{\"errorName\":\"resourceNotFound\"}");
+        assertThat(response.getBody()).isEqualTo("{}");
     }
 }

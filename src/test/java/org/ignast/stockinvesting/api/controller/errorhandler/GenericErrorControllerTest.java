@@ -64,6 +64,7 @@ public class GenericErrorControllerTest {
         val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertThat(response.getBody().getErrorName()).isEqualTo("resourceNotFound");
+        assertThat(response.getBody().getErrorName()).isNull();
+        ;
     }
 }

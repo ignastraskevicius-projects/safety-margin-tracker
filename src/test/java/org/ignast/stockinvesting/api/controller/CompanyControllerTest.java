@@ -103,9 +103,8 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\"")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)",
-                                "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
+                .andExpect(contentMatchesJson(forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters",
+                        "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
     }
 
     @Test
@@ -113,9 +112,8 @@ class CompanyControllerCurrencyParsingTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDOLLAR\"")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters (ISO 4217)",
-                                "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
+                .andExpect(contentMatchesJson(forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters",
+                        "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
     }
 
     @ParameterizedTest

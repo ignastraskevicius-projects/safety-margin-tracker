@@ -2,52 +2,45 @@ package org.ignast.stockinvesting.api.controller;
 
 public class CompanyJsonBodyFactory {
     public String createAmazon() {
-        return "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
+        return "{\"name\":\"Amazon\",\"homeCountry\":\"United States\",\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
     }
 
     public String createWithNameJsonPair(String nameJsonPair) {
         return String.format(
-                "{%s\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
+                "{%s\"homeCountry\":\"United States\",\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(nameJsonPair));
     }
 
     public String createWithoutNameAndCurrency() {
-        return "{\"address\":{\"country\":\"United States\"},\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
+        return "{\"homeCountry\":\"United States\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}";
     }
 
-    public String createWithAddressJsonPair(String addressJsonPair) {
+    public String createWithHomeCountryJsonPair(String homeCountryJsonPair) {
         return String.format(
                 "{\"name\":\"Amazon\",%s\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
-                appendCommaIfNotEmpty(addressJsonPair));
-    }
-
-    public String createWithCountryJsonPair(String countryJsonPair) {
-        return String.format(
-                "{\"name\":\"Amazon\",\"address\":{%s},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
-                countryJsonPair);
+                appendCommaIfNotEmpty(homeCountryJsonPair));
     }
 
     public String createWithListingsJsonPair(String listingsJsonPair) {
-        return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\"%s}",
+        return String.format("{\"name\":\"Amazon\",\"homeCountry\":\"United States\",\"functionalCurrency\":\"USD\"%s}",
                 prependCommaIfNotEmpty(listingsJsonPair));
     }
 
     public String createWithStockExchangeJsonPair(String stockExchangeJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{%s\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"homeCountry\":\"United States\",\"functionalCurrency\":\"USD\",\"listings\":[{%s\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(stockExchangeJsonPair));
     }
 
     public String createWithTickerJsonPair(String jsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"%s}]}",
+                "{\"name\":\"Amazon\",\"homeCountry\":\"United States\",\"functionalCurrency\":\"USD\",\"listings\":[{\"stockExchange\":\"New York Stock Exchange\"%s}]}",
                 prependCommaIfNotEmpty(jsonPair));
     }
 
     public String createWithFunctionalCurrencyJsonPair(String jsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"address\":{\"country\":\"United States\"},%s\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"homeCountry\":\"United States\",%s\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(jsonPair));
     }
 

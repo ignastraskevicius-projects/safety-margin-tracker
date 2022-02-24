@@ -140,7 +140,7 @@ class CompanyControllerCurrencyParsingTest {
 }
 
 @WebMvcTest
-class CompanyControllerAddressParsingTest {
+class CompanyControllerHomeCountryParsingTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -150,48 +150,24 @@ class CompanyControllerAddressParsingTest {
     private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
-    public void shouldRejectCompanyWithoutAddressIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithAddressJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.address")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "\"jsonString\"", "[]" })
-    public void shouldRejectCompanyWithAddressAsNonObjectIndicatingWrongType(String addressValue) throws Exception {
-        String addressJsonPair = "\"address\":" + addressValue;
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithAddressJsonPair(addressJsonPair))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forObjectRequiredAt("$.address")));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithNullAddressIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithAddressJsonPair("\"address\":null"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.address")));
-    }
-
-    @Test
     public void shouldRejectCompanyWithoutCountryIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithCountryJsonPair("")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.address.country")));
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithHomeCountryJsonPair("")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.homeCountry")));
     }
 
     @Test
     public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithCountryJsonPair("\"country\":null"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.address.country")));
+                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":null")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.homeCountry")));
     }
 
     @Test
     public void shouldRejectCompanyWithNonStringAsNonJsonStringIndicatingWrongType() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithCountryJsonPair("\"country\":3"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.address.country")));
+                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":3")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forStringRequiredAt("$.homeCountry")));
     }
 
 }

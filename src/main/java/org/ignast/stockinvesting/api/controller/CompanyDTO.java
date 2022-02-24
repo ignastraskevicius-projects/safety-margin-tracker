@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CountryCode;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
 
 import javax.validation.Valid;
@@ -20,6 +21,9 @@ public class CompanyDTO {
     private String name;
 
     @NotNull
+    @Size(min = 2, max = 2, message = "Must consist of 2 characters")
+    @Pattern(regexp = "^[A-Z]*$", message = "Must contain only uppercase latin characters")
+    @CountryCode
     private String homeCountry;
 
     @NotNull

@@ -179,6 +179,41 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
                 .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forStringRequiredAt("$.homeCountry")));
     }
 
+    @Test
+    public void shouldRejectTooShortCountryCode() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"S\"")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValuesAt("$.homeCountry",
+                        "Must consist of 2 characters", "$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+    }
+
+    @Test
+    public void shouldRejectTooLongCountryCode() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"USA\"")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValuesAt("$.homeCountry",
+                        "Must consist of 2 characters", "$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "12", "us", "ÑÑ" })
+    public void shouldRejectCountryCodesContainingNonUppercaseCharacters(String countryCode) throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
+                bodyFactory.createWithHomeCountryJsonPair(String.format("\"homeCountry\":\"%s\"", countryCode))))
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(
+                        forInvalidValuesAt("$.homeCountry", "Must contain only uppercase latin characters",
+                                "$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+    }
+
+    @Test
+    public void shouldRejectInvalidISO3166alpha2CountryCode() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"AB\"")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
+                        forInvalidValueAt("$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+    }
+
 }
 
 @WebMvcTest

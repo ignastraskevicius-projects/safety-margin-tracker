@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CompanyController.class)
-public class CompanyControllerTest {
+public class CompanyControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
@@ -72,7 +72,7 @@ public class CompanyControllerTest {
 }
 
 @WebMvcTest
-class CompanyControllerCurrencyParsingTest {
+class CompanyControllerCurrencyParsingIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -138,7 +138,7 @@ class CompanyControllerCurrencyParsingTest {
 }
 
 @WebMvcTest
-class CompanyControllerHomeCountryParsingTest {
+class CompanyControllerHomeCountryParsingIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -171,7 +171,7 @@ class CompanyControllerHomeCountryParsingTest {
 }
 
 @WebMvcTest
-class CompanyControllerNameParsingTest {
+class CompanyControllerNameParsingIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -235,7 +235,7 @@ class CompanyControllerNameParsingTest {
 }
 
 @WebMvcTest
-class CompanyControllerListingsParsingTest {
+class CompanyControllerListingsParsingIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -301,7 +301,7 @@ class CompanyControllerListingsParsingTest {
 }
 
 @WebMvcTest
-class CompanyControllerTestIndividualListingParsingTest {
+class CompanyControllerTestIndividualListingParsingIntegrationTest {
 
     @Autowired
     private MockMvc mockMvc;

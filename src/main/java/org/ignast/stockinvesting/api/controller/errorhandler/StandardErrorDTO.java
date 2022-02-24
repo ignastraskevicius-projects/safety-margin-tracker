@@ -35,6 +35,10 @@ public class StandardErrorDTO {
         return new StandardErrorDTO("unsupportedContentType");
     }
 
+    public static StandardErrorDTO createForResourceNotFound() {
+        return new StandardErrorDTO("resourceNotFound");
+    }
+
     public String getErrorName() {
         return errorName;
     }

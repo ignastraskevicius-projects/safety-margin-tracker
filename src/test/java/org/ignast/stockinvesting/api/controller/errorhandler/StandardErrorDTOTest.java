@@ -18,6 +18,13 @@ class StandardErrorDTOTest {
     }
 
     @Test
+    public void shouldCreateResourceNotFound() {
+        StandardErrorDTO error = StandardErrorDTO.createForResourceNotFound();
+
+        assertThat(error.getErrorName()).isEqualTo("resourceNotFound");
+    }
+
+    @Test
     public void shouldCreateMethodNotAllowed() {
         StandardErrorDTO error = StandardErrorDTO.createForMethodNotAllowed();
 

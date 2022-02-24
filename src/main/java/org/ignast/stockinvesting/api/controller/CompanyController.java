@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller;
 
+import lombok.val;
 import org.ignast.stockinvesting.domain.Companies;
 import org.ignast.stockinvesting.domain.Company;
 import org.springframework.http.HttpEntity;
@@ -7,6 +8,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Currency;
 
 @RestController
 @RequestMapping("companies")
@@ -21,7 +24,8 @@ public class CompanyController {
     @PostMapping(consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
         if (company.getFunctionalCurrency().equals("EUR") || company.getFunctionalCurrency().equals("USD")) {
-            companies.create(new Company());
+            val currency = Currency.getInstance(company.getFunctionalCurrency());
+            companies.create(new Company(currency));
             return new ResponseEntity<>("", HttpStatus.CREATED);
         } else {
             throw new IllegalArgumentException();

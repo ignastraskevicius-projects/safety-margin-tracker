@@ -1,13 +1,19 @@
 package org.ignast.stockinvesting.domain;
 
-public class Company {
-    @Override
-    public boolean equals(Object other) {
-        return true;
+import lombok.EqualsAndHashCode;
+
+import java.util.Currency;
+
+@EqualsAndHashCode
+public final class Company {
+
+    private final Currency functionalCurrency;
+
+    public Company(Currency functionalCurrency) {
+        this.functionalCurrency = functionalCurrency;
     }
 
-    @Override
-    public int hashCode() {
-        return 1;
+    public Currency getFunctionalCurrency() {
+        return functionalCurrency;
     }
 }

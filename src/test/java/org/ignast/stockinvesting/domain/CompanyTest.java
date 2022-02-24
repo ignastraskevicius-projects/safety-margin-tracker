@@ -1,14 +1,25 @@
 package org.ignast.stockinvesting.domain;
 
+import lombok.val;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
+import java.util.Currency;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 class CompanyTest {
     @Test
     public void shouldBeEqual() {
-        assertThat(new Company()).isEqualTo(new Company());
-        assertThat(new Company().hashCode()).isEqualTo(new Company().hashCode());
+        EqualsVerifier.forClass(Company.class).verify();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = { "EUR", "USD" })
+    public void shouldHaveFunctionalCurrency(String currencyCode) {
+        val currency = Currency.getInstance(currencyCode);
+        assertThat(new Company(currency).getFunctionalCurrency()).isEqualTo(currency);
     }
 }

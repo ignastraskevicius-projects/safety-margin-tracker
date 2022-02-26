@@ -6,12 +6,13 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.junit5.WireMockRuntimeInfo;
-import com.github.tomakehurst.wiremock.junit5.WireMockTest;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import lombok.Builder;
 import lombok.val;
 import org.json.JSONException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,92 +26,94 @@ import java.util.stream.Collectors;
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.api.fluentjsonassert.JsonAssert.lenientAssertThatJson;
-import static org.ignast.stockinvesting.quotes.AlphaVantageStub.returningPrice;
 import static org.ignast.stockinvesting.quotes.QueryParams.validParamsBuilder;
 
 public class AlphaVantageStub {
-    public static void returningPrice() {
-        stubFor(any(urlPathEqualTo("/query"))
+
+    private WireMockExtension wireMock;
+
+    public AlphaVantageStub(WireMockExtension wireMock) {
+
+        this.wireMock = wireMock;
+    }
+
+    public void returningPrice() {
+        wireMock.stubFor(any(urlPathEqualTo("/query"))
                 .willReturn(ok().withBody("{\"Error Message\":\"Some human-readable error message\"}")));
-        stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
+        wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
                 .withQueryParam("symbol", matching(".+")).withQueryParam("apikey", matching(".+"))
                 .willReturn(ok().withBody("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")));
     }
 }
 
-@WireMockTest
 class AlphaVantageStubTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 
-    @Test
-    public void shouldReturnPrice(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException, JSONException {
-        returningPrice();
+    @RegisterExtension
+    private WireMockExtension wireMock = WireMockExtension.newInstance().build();
 
-        int port = wireMock.getHttpPort();
-        val response = query(port, "/query?" + validParamsBuilder().build().toString());
+    private AlphaVantageStub alphaVantageStub;
+
+    @BeforeEach
+    public void setup() {
+        alphaVantageStub = new AlphaVantageStub(wireMock);
+    }
+
+    @Test
+    public void shouldReturnPrice() throws IOException, InterruptedException, JSONException {
+        alphaVantageStub.returningPrice();
+
+        val response = query("/query?" + validParamsBuilder().build().toString());
 
         assertThat(response.statusCode()).isEqualTo(200);
         lenientAssertThatJson(response.body()).isEqualTo("{\"Global Quote\":{\"05. price\":\"128.5000\"}}");
     }
 
     @Test
-    public void queryingWithoutApiKeyShouldReturnError(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException {
-        returningPrice();
-        int port = wireMock.getHttpPort();
+    public void queryingWithoutApiKeyShouldReturnError() throws IOException, InterruptedException {
+        alphaVantageStub.returningPrice();
 
-        expectError(port, validParamsBuilder().apikey(null).build());
+        expectError(validParamsBuilder().apikey(null).build());
     }
 
     @Test
-    public void queryingWithEmptyApiKeyShouldReturnError(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException {
-        returningPrice();
-        int port = wireMock.getHttpPort();
+    public void queryingWithEmptyApiKeyShouldReturnError() throws IOException, InterruptedException {
+        alphaVantageStub.returningPrice();
 
-        expectError(port, validParamsBuilder().apikey("").build());
+        expectError(validParamsBuilder().apikey("").build());
     }
 
     @Test
-    public void queryingWithoutFunctionParameterShouldReturnError(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException {
-        returningPrice();
-        int port = wireMock.getHttpPort();
+    public void queryingWithoutFunctionParameterShouldReturnError() throws IOException, InterruptedException {
+        alphaVantageStub.returningPrice();
 
-        expectError(port, validParamsBuilder().function(null).build());
+        expectError(validParamsBuilder().function(null).build());
     }
 
     @Test
-    public void queryingNonGlobalQuoteFunctionShouldReturnError(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException {
-        returningPrice();
-        int port = wireMock.getHttpPort();
+    public void queryingNonGlobalQuoteFunctionShouldReturnError() throws IOException, InterruptedException {
+        alphaVantageStub.returningPrice();
 
-        expectError(port, validParamsBuilder().function("unknownFunction").build());
+        expectError(validParamsBuilder().function("unknownFunction").build());
     }
 
     @Test
-    public void queryingWithoutSymbolShouldReturnError(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException {
-        returningPrice();
-        int port = wireMock.getHttpPort();
+    public void queryingWithoutSymbolShouldReturnError() throws IOException, InterruptedException {
+        alphaVantageStub.returningPrice();
 
-        expectError(port, validParamsBuilder().symbol(null).build());
+        expectError(validParamsBuilder().symbol(null).build());
     }
 
     @Test
-    public void queryingWithEmptySymbolShouldReturnError(WireMockRuntimeInfo wireMock)
-            throws IOException, InterruptedException {
-        returningPrice();
-        int port = wireMock.getHttpPort();
+    public void queryingWithEmptySymbolShouldReturnError() throws IOException, InterruptedException {
+        alphaVantageStub.returningPrice();
 
-        expectError(port, validParamsBuilder().symbol("").build());
+        expectError(validParamsBuilder().symbol("").build());
     }
 
-    private void expectError(int port, QueryParams uriQuery) throws IOException, InterruptedException {
-        val response = query(port, String.format("/query?%s", uriQuery.toString()));
+    private void expectError(QueryParams uriQuery) throws IOException, InterruptedException {
+        val response = query(String.format("/query?%s", uriQuery.toString()));
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(jsonAsMap(response).keySet()).contains("Error Message");
@@ -120,10 +123,10 @@ class AlphaVantageStubTest {
         return mapper.readValue(response.body(), HashMap.class);
     }
 
-    private HttpResponse<String> query(int port, String path) throws IOException, InterruptedException {
+    private HttpResponse<String> query(String path) throws IOException, InterruptedException {
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("http://localhost:%d%s", port, path))).build();
+                .uri(URI.create(String.format("http://localhost:%d%s", wireMock.getPort(), path))).build();
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
         return response;
     }

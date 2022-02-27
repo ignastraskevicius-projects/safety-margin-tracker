@@ -124,11 +124,10 @@ class AlphaVantageStubTest {
     }
 
     private HttpResponse<String> query(String path) throws IOException, InterruptedException {
-        HttpClient client = HttpClient.newHttpClient();
-        HttpRequest request = HttpRequest.newBuilder()
+        val client = HttpClient.newHttpClient();
+        val request = HttpRequest.newBuilder()
                 .uri(URI.create(String.format("http://localhost:%d%s", wireMock.getPort(), path))).build();
-        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        return response;
+        return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
 

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 public interface StockQuotes {
 
-    BigDecimal getQuotedPriceOf(Ticker ticker, MarketIdentifierCode mic);
+    BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic);
 
     class QuoteRetrievalFailedException extends RuntimeException {
         public QuoteRetrievalFailedException(String message, Exception e) {

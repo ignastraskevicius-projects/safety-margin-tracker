@@ -10,12 +10,12 @@ class ListingDTOTest {
     @ParameterizedTest
     @ValueSource(strings = { "New York Stock Exchange", "London Stock Exchange" })
     public void shouldPreserveStockExchange(String stockExchange) {
-        assertThat(new ListingDTO(stockExchange, "anyTicker").getStockExchange()).isEqualTo(stockExchange);
+        assertThat(new ListingDTO(stockExchange, "anySymbol").getStockExchange()).isEqualTo(stockExchange);
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "Amazon", "Alibaba" })
-    public void shouldPreserveTicker(String ticker) {
-        assertThat(new ListingDTO("New York Stock Exchange", ticker).getTicker()).isEqualTo(ticker);
+    public void shouldPreserveStockSymbol(String symbol) {
+        assertThat(new ListingDTO("New York Stock Exchange", symbol).getStockSymbol()).isEqualTo(symbol);
     }
 }

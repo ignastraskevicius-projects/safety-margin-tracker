@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.api.acceptance.alphavantage;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -25,8 +25,8 @@ import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.client.WireMock.*;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.api.fluentjsonassert.JsonAssert.lenientAssertThatJson;
-import static org.ignast.stockinvesting.quotes.QueryParams.validParamsBuilder;
+import static org.ignast.stockinvesting.api.fluentjsonassert.JsonAssert.assertThatJson;
+import static org.ignast.stockinvesting.api.acceptance.alphavantage.QueryParams.validParamsBuilder;
 
 public class AlphaVantageStub {
 
@@ -37,12 +37,15 @@ public class AlphaVantageStub {
         this.wireMock = wireMock;
     }
 
-    public void returningPrice() {
+    public void stubPriceForAllSymbolsButAAAA() {
         wireMock.stubFor(any(urlPathEqualTo("/query"))
                 .willReturn(ok().withBody("{\"Error Message\":\"Some human-readable error message\"}")));
         wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
                 .withQueryParam("symbol", matching(".+")).withQueryParam("apikey", matching(".+"))
                 .willReturn(ok().withBody("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")));
+        wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
+                .withQueryParam("symbol", matching("AAAA")).withQueryParam("apikey", matching(".+"))
+                .willReturn(ok().withBody("{\"Global Quote\":{}}")));
     }
 }
 
@@ -62,52 +65,62 @@ class AlphaVantageStubTest {
 
     @Test
     public void shouldReturnPrice() throws IOException, InterruptedException, JSONException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         val response = query("/query?" + validParamsBuilder().build().toString());
 
         assertThat(response.statusCode()).isEqualTo(200);
-        lenientAssertThatJson(response.body()).isEqualTo("{\"Global Quote\":{\"05. price\":\"128.5000\"}}");
+        assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{\"05. price\":\"128.5000\"}}");
+    }
+
+    @Test
+    public void shouldReturnNoPriceForAAAA() throws IOException, InterruptedException, JSONException {
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
+
+        val response = query("/query?" + validParamsBuilder().symbol("AAAA").build().toString());
+
+        assertThat(response.statusCode()).isEqualTo(200);
+        assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{}}");
     }
 
     @Test
     public void queryingWithoutApiKeyShouldReturnError() throws IOException, InterruptedException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         expectError(validParamsBuilder().apikey(null).build());
     }
 
     @Test
     public void queryingWithEmptyApiKeyShouldReturnError() throws IOException, InterruptedException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         expectError(validParamsBuilder().apikey("").build());
     }
 
     @Test
     public void queryingWithoutFunctionParameterShouldReturnError() throws IOException, InterruptedException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         expectError(validParamsBuilder().function(null).build());
     }
 
     @Test
     public void queryingNonGlobalQuoteFunctionShouldReturnError() throws IOException, InterruptedException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         expectError(validParamsBuilder().function("unknownFunction").build());
     }
 
     @Test
     public void queryingWithoutSymbolShouldReturnError() throws IOException, InterruptedException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         expectError(validParamsBuilder().symbol(null).build());
     }
 
     @Test
     public void queryingWithEmptySymbolShouldReturnError() throws IOException, InterruptedException {
-        alphaVantageStub.returningPrice();
+        alphaVantageStub.stubPriceForAllSymbolsButAAAA();
 
         expectError(validParamsBuilder().symbol("").build());
     }

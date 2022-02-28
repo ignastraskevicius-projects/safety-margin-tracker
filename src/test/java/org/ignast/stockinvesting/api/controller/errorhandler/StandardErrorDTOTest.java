@@ -32,6 +32,13 @@ class StandardErrorDTOTest {
     }
 
     @Test
+    public void shouldCreateStockSymbolNotSupported() {
+        StandardErrorDTO error = StandardErrorDTO.createForStockSymbolNotSupported();
+
+        assertThat(error.getErrorName()).isEqualTo("stockSymbolNotSupported");
+    }
+
+    @Test
     public void shouldCreateMediaTypeNotAcceptable() {
         StandardErrorDTO error = StandardErrorDTO.createForMediaTypeNotAcceptable();
 

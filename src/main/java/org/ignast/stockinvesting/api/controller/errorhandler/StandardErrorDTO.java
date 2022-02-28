@@ -39,6 +39,10 @@ public class StandardErrorDTO {
         return new StandardErrorDTO("resourceNotFound");
     }
 
+    public static StandardErrorDTO createForStockSymbolNotSupported() {
+        return new StandardErrorDTO("stockSymbolNotSupported");
+    }
+
     public String getErrorName() {
         return errorName;
     }

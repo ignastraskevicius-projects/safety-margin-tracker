@@ -22,21 +22,23 @@ class StockSymbolTest {
 
     @Test
     public void shouldNotBeEmpty() {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(""));
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(""))
+                .withMessage("Stock Symbol must contain between 1-5 characters");
         assertThat(new StockSymbol("A").get()).isEqualTo("A");
     }
 
     @Test
     public void shouldRejectLongerThan5() {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new StockSymbol("ABCDEF"));
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol("ABCDEF"))
+                .withMessage("Stock Symbol must contain between 1-5 characters");
         assertThat(new StockSymbol("ABCDE").get()).isEqualTo("ABCDE");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "1Aa", "Ñ1A" })
     public void shouldRejectNonAlphanumericUppercaseCharacters(String symbol) {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(symbol));
+        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(symbol))
+                .withMessage("Stock Symbol must contain only uppercase alphanumeric characters");
     }
 
     @ParameterizedTest

@@ -1,7 +1,8 @@
 package org.ignast.stockinvesting.api.controller.errorhandler.annotations;
 
-import org.ignast.stockinvesting.domain.DomainString;
+import org.ignast.stockinvesting.domain.BackedByString;
 import org.ignast.stockinvesting.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.domain.StockSymbol;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -12,6 +13,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.HashMap;
 import java.util.Map;
+
+import static java.lang.String.format;
 
 @Constraint(validatedBy = DomainClassConstraintValidator.class)
 @Target(ElementType.FIELD)
@@ -27,9 +30,10 @@ public @interface DomainClassConstraint {
 }
 
 class DomainClassConstraintValidator implements ConstraintValidator<DomainClassConstraint, String> {
-    private static final Map<Class<? extends DomainString>, DomainStringConstructor> domainStrings = new HashMap<>() {
+    private static final Map<Class<? extends BackedByString>, FromStringConstructor> supportedObjects = new HashMap<>() {
         {
             put(MarketIdentifierCode.class, MarketIdentifierCode::new);
+            put(StockSymbol.class, StockSymbol::new);
         }
     };
 
@@ -49,17 +53,22 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
     }
 
     private boolean validate(String value, ConstraintValidatorContext context) {
-        try {
-            domainStrings.get(domainClass).construct(value);
-            return true;
-        } catch (IllegalArgumentException e) {
-            context.disableDefaultConstraintViolation();
-            context.buildConstraintViolationWithTemplate(e.getMessage()).addConstraintViolation();
-            return false;
+        if (!supportedObjects.keySet().contains(domainClass)) {
+            throw new IllegalArgumentException(
+                    format("DomainClassConstraint is not configured for '%s' class", domainClass.getSimpleName()));
+        } else {
+            try {
+                supportedObjects.get(domainClass).construct(value);
+                return true;
+            } catch (IllegalArgumentException e) {
+                context.disableDefaultConstraintViolation();
+                context.buildConstraintViolationWithTemplate(e.getMessage()).addConstraintViolation();
+                return false;
+            }
         }
     }
 
-    private interface DomainStringConstructor {
-        DomainString construct(String arg);
+    private interface FromStringConstructor {
+        BackedByString construct(String arg);
     }
 }

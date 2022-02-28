@@ -345,8 +345,8 @@ class CompanyControllerListingsParsingIntegrationTest {
 
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
-                "\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}, {\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]")))
+        mockMvc.perform(
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithMultipleListings()))
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forInvalidValueAt("$.listings", "Multiple listings are not supported")));
     }
@@ -421,5 +421,14 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":3"))).andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].stockSymbol")));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\"")))
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].stockSymbol",
+                        "Stock Symbol must contain between 1-5 characters")));
     }
 }

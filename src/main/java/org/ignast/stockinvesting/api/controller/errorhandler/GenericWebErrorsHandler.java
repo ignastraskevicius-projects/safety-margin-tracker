@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -49,6 +50,13 @@ public class GenericWebErrorsHandler {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     @ResponseBody
+    public StandardErrorDTO handleStockSymbolNotSupported(StockSymbolNotSupported e) {
+        return StandardErrorDTO.createForStockSymbolNotSupported();
+    }
+
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    @ExceptionHandler
+    @ResponseBody
     public StandardErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
         try {
             return StandardErrorDTO.createForBodyDoesNotMatchSchema(
@@ -74,4 +82,5 @@ public class GenericWebErrorsHandler {
             return StandardErrorDTO.createBodyNotParsable();
         }
     }
+
 }

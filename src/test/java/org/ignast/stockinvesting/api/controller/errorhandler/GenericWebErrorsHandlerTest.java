@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.ignast.stockinvesting.api.controller.errorhandler.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
+import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
 import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -111,6 +112,12 @@ class GenericWebErrorsHandlerForOtherErrorsTest {
     public void shouldHandleMediaTypeNotAcceptable() {
         assertThat(handler.handleMediaTypeNotAcceptable(mock(HttpMediaTypeNotAcceptableException.class)).getErrorName())
                 .isEqualTo("mediaTypeNotAcceptable");
+    }
+
+    @Test
+    public void shouldHandleSymbolNotSupported() {
+        assertThat(handler.handleStockSymbolNotSupported(mock(StockSymbolNotSupported.class)).getErrorName())
+                .isEqualTo("stockSymbolNotSupported");
     }
 
     @Test

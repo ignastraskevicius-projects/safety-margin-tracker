@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.api.controller;
 
 import org.ignast.stockinvesting.domain.Companies;
+import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -11,6 +12,9 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -430,5 +434,14 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].stockSymbol",
                         "Stock Symbol must contain between 1-5 characters")));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
+        doThrow(StockSymbolNotSupported.class).when(companies).create(any());
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"BBBB\"")))
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson("{\"errorName\":\"stockSymbolNotSupported\"}"));
     }
 }

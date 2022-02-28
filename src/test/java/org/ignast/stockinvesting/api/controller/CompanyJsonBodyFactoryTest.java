@@ -11,31 +11,31 @@ public class CompanyJsonBodyFactoryTest {
     @Test
     public void shouldCreateValidJson() {
         assertThat(factory.createAmazon()).isEqualTo(
-                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutName() {
         assertThat(factory.createWithNameJsonPair("")).isEqualTo(
-                "{\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomNameJsonPair() {
         assertThat(factory.createWithNameJsonPair("\"name\":null")).isEqualTo(
-                "{\"name\":null,\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"name\":null,\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutHomeCountry() {
         assertThat(factory.createWithHomeCountryJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomHomeCountryJsonPair() {
         assertThat(factory.createWithHomeCountryJsonPair("\"homeCountry\":null")).isEqualTo(
-                "{\"name\":\"Amazon\",\"homeCountry\":null,\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"homeCountry\":null,\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
@@ -65,31 +65,31 @@ public class CompanyJsonBodyFactoryTest {
     @Test
     public void shouldCreateListedCompanyWithoutSymbolField() {
         assertThat(factory.createWithSymbolJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\"}]}");
+                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomSymbolField() {
         assertThat(factory.createWithSymbolJsonPair("\"stockSymbol\":\"Amazon\"")).isEqualTo(
-                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutFunctionalCurrency() {
         assertThat(factory.createWithFunctionalCurrencyJsonPair("")).isEqualTo(
-                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomFunctionalCurrency() {
         assertThat(factory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"United Stated Dollar\""))
                 .isEqualTo(
-                        "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"United Stated Dollar\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                        "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"United Stated Dollar\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateWithoutNameAndCurrency() {
         assertThat(factory.createWithoutNameAndCurrency()).isEqualTo(
-                "{\"homeCountry\":\"US\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"homeCountry\":\"US\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 }

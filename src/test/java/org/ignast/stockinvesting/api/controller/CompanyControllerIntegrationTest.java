@@ -346,7 +346,7 @@ class CompanyControllerListingsParsingIntegrationTest {
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
-                "\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}, {\"marketIdentifier\":\"London Stock Exchange\",\"stockSymbol\":\"Amazon\"}]")))
+                "\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}, {\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]")))
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forInvalidValueAt("$.listings", "Multiple listings are not supported")));
     }
@@ -383,12 +383,20 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
-    public void shouldRejectCompanyListedWithNonStringMarketIdIndicatingTypeIsWrong(String stockExchangeValue)
-            throws Exception {
-        String marketIdentifier = "\"marketIdentifier\":" + stockExchangeValue;
+    public void shouldRejectCompanyListedWithNonStringMarketIdIndicatingTypeIsWrong(String marketId) throws Exception {
+        String marketIdentifier = "\"marketIdentifier\":" + marketId;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].marketIdentifier")));
+    }
+
+    @Test
+    public void shouldRejectCompanyListedWithNon4characterMarketId() throws Exception {
+        String marketIdentifier = "\"marketIdentifier\":\"invalid\"";
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].marketIdentifier",
+                        "Market Identifier is not 4 characters long (ISO 10383 standard)")));
     }
 
     @Test

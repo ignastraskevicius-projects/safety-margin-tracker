@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CountryCode;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.DomainClassConstraint;
 import org.springframework.boot.jackson.JsonComponent;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
@@ -39,7 +40,8 @@ public class AnnotationBasedValidationErrorsExtractor {
     private ViolationType toViolationType(Class<? extends Annotation> annotationClass) {
         if (annotationClass == NotNull.class) {
             return FIELD_IS_MISSING;
-        } else if (asList(Size.class, Pattern.class, CurrencyCode.class, CountryCode.class).contains(annotationClass)) {
+        } else if (asList(Size.class, Pattern.class, CurrencyCode.class, CountryCode.class, DomainClassConstraint.class)
+                .contains(annotationClass)) {
             return VALUE_INVALID;
         } else {
             throw new ValidationErrorsExtractionException(String.format(

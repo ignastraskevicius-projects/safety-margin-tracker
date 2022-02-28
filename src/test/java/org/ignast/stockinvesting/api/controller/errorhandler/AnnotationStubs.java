@@ -3,6 +3,7 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 import lombok.val;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CountryCode;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.DomainClassConstraint;
 
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
@@ -130,6 +131,38 @@ public class AnnotationStubs {
             }
         };
         assertThat(annotation.annotationType()).isEqualTo(CurrencyCode.class);
+        return annotation;
+    }
+
+    static DomainClassConstraint javaxValidationDomainClassConstraint() {
+        val annotation = new DomainClassConstraint() {
+
+            @Override
+            public Class<? extends Annotation> annotationType() {
+                return DomainClassConstraint.class;
+            }
+
+            @Override
+            public String message() {
+                return null;
+            }
+
+            @Override
+            public Class<?>[] groups() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<?>[] payload() {
+                return new Class[0];
+            }
+
+            @Override
+            public Class<?> domainClass() {
+                return null;
+            }
+        };
+        assertThat(annotation.annotationType()).isEqualTo(DomainClassConstraint.class);
         return annotation;
     }
 

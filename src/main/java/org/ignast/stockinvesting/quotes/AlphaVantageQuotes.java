@@ -8,8 +8,8 @@ import lombok.ToString;
 import lombok.val;
 import org.ignast.stockinvesting.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.domain.StockQuotes;
-import org.ignast.stockinvesting.domain.Ticker;
-import org.ignast.stockinvesting.domain.TickerNotSupported;
+import org.ignast.stockinvesting.domain.StockSymbol;
+import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -40,10 +40,10 @@ public class AlphaVantageQuotes implements StockQuotes {
     }
 
     @Override
-    public BigDecimal getQuotedPriceOf(Ticker ticker, MarketIdentifierCode mic) {
-        val response = invoke(toUri(ticker)).getBody();
+    public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic) {
+        val response = invoke(toUri(stockSymbol)).getBody();
 
-        return response.getQuote().map(q -> q.getPrice().orElseThrow(() -> tickerNotSupported(ticker, mic)))
+        return response.getQuote().map(q -> q.getPrice().orElseThrow(() -> stockSymbolNotSupported(stockSymbol, mic)))
                 .orElseThrow(() -> {
                     throw quoteRetrievalFailed(response.getError());
                 });
@@ -58,13 +58,13 @@ public class AlphaVantageQuotes implements StockQuotes {
         }
     }
 
-    private String toUri(Ticker ticker) {
-        return url + format("/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", ticker.get(), apikey);
+    private String toUri(StockSymbol stockSymbol) {
+        return url + format("/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", stockSymbol.get(), apikey);
     }
 
-    private TickerNotSupported tickerNotSupported(Ticker ticker, MarketIdentifierCode mic) {
-        return new TickerNotSupported(
-                format("Ticker '%s' in market '%s' is not supported by this service", ticker.get(), mic.get()));
+    private StockSymbolNotSupported stockSymbolNotSupported(StockSymbol stockSymbol, MarketIdentifierCode mic) {
+        return new StockSymbolNotSupported(format("Stock symbol '%s' in market '%s' is not supported by this service",
+                stockSymbol.get(), mic.get()));
     }
 
     private ResponseEntity<QuoteResponseDTO> invoke(String uri) {

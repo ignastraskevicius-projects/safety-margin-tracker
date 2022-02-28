@@ -9,19 +9,19 @@ public class ListingDTO {
     private String stockExchange;
 
     @NotNull
-    private String ticker;
+    private String stockSymbol;
 
     public ListingDTO(@JsonProperty(value = "stockExchange") String stockExchange,
-            @JsonProperty(value = "ticker") String ticker) {
+            @JsonProperty(value = "stockSymbol") String stockSymbol) {
         this.stockExchange = stockExchange;
-        this.ticker = ticker;
+        this.stockSymbol = stockSymbol;
     }
 
     public String getStockExchange() {
         return stockExchange;
     }
 
-    public String getTicker() {
-        return ticker;
+    public String getStockSymbol() {
+        return stockSymbol;
     }
 }

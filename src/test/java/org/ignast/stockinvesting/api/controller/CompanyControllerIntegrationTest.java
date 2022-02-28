@@ -346,7 +346,7 @@ class CompanyControllerListingsParsingIntegrationTest {
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
-                "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"ticker\":\"Amazon\"}, {\"stockExchange\":\"London Stock Exchange\",\"ticker\":\"Amazon\"}]")))
+                "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}, {\"stockExchange\":\"London Stock Exchange\",\"stockSymbol\":\"Amazon\"}]")))
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forInvalidValueAt("$.listings", "Multiple listings are not supported")));
     }
@@ -392,17 +392,17 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
     }
 
     @Test
-    public void shouldRejectCompanyWithoutTickerIndicatingFieldIsMandatory() throws Exception {
+    public void shouldRejectCompanyWithoutSymbolIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithTickerJsonPair("")))
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithSymbolJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].ticker")));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].stockSymbol")));
     }
 
     @Test
-    public void shouldRejectCompanyWithNonStringTickerIndicatingTypeIsWrong() throws Exception {
+    public void shouldRejectCompanyWithNonStringSymbolIndicatingTypeIsWrong() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithTickerJsonPair("\"ticker\":3"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].ticker")));
+                .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":3"))).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].stockSymbol")));
     }
 }

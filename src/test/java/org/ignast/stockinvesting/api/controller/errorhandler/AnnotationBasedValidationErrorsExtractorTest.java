@@ -132,6 +132,18 @@ public class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
+    public void shouldExtractFieldErrorRelatedToDomainClassConstraint() {
+        val exception = MethodArgumentNotValidExceptionMock
+                .withFieldErrorCausedBy(javaxValidationDomainClassConstraint());
+
+        val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+
+        assertThat(validationErrors).hasSize(1);
+        ValidationErrorDTO validationError = validationErrors.get(0);
+        assertThat(validationError.getErrorName()).isEqualTo("valueIsInvalid");
+    }
+
+    @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
         MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaLangOverride());

@@ -2,22 +2,22 @@ package org.ignast.stockinvesting.api.controller;
 
 public class CompanyJsonBodyFactory {
     public String createAmazon() {
-        return "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}";
+        return "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}";
     }
 
     public String createWithNameJsonPair(String nameJsonPair) {
         return String.format(
-                "{%s\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}",
+                "{%s\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(nameJsonPair));
     }
 
     public String createWithoutNameAndCurrency() {
-        return "{\"homeCountry\":\"US\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}";
+        return "{\"homeCountry\":\"US\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}";
     }
 
     public String createWithHomeCountryJsonPair(String homeCountryJsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",%s\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",%s\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(homeCountryJsonPair));
     }
 
@@ -34,13 +34,13 @@ public class CompanyJsonBodyFactory {
 
     public String createWithSymbolJsonPair(String jsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\"%s}]}",
+                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\"%s}]}",
                 prependCommaIfNotEmpty(jsonPair));
     }
 
     public String createWithFunctionalCurrencyJsonPair(String jsonPair) {
         return String.format(
-                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",%s\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}]}",
+                "{\"name\":\"Amazon\",\"homeCountry\":\"US\",%s\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}",
                 appendCommaIfNotEmpty(jsonPair));
     }
 

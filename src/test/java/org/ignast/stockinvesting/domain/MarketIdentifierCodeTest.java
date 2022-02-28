@@ -24,15 +24,18 @@ class MarketIdentifierCodeTest {
     @Test
     public void shouldRejectNon4CharacterMics() {
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MarketIdentifierCode("ABC"));
+                .isThrownBy(() -> new MarketIdentifierCode("ABC"))
+                .withMessage("Market Identifier is not 4 characters long (ISO 10383 standard)");
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MarketIdentifierCode("ABCDE"));
+                .isThrownBy(() -> new MarketIdentifierCode("ABCDE"))
+                .withMessage("Market Identifier is not 4 characters long (ISO 10383 standard)");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "AAAa", "1AAA", "AÑAA" })
     public void shouldRejectNonLatinUppercaseCharacters(String mic) {
         Assertions.assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MarketIdentifierCode(mic));
+                .isThrownBy(() -> new MarketIdentifierCode(mic)).withMessage(
+                        "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)");
     }
 }

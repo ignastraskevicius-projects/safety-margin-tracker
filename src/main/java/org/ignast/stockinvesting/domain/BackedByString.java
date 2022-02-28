@@ -1,4 +1,4 @@
 package org.ignast.stockinvesting.domain;
 
-public interface DomainString {
+public interface BackedByString {
 }

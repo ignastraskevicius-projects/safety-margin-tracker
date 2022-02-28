@@ -3,6 +3,7 @@ package org.ignast.stockinvesting.api.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.DomainClassConstraint;
 import org.ignast.stockinvesting.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.domain.StockSymbol;
 
 import javax.validation.constraints.NotNull;
 
@@ -12,6 +13,7 @@ public class ListingDTO {
     private String marketIdentifier;
 
     @NotNull
+    @DomainClassConstraint(domainClass = StockSymbol.class)
     private String stockSymbol;
 
     public ListingDTO(@JsonProperty(value = "marketIdentifier") String marketIdentifier,

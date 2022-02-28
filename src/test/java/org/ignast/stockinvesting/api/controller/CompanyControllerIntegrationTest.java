@@ -346,7 +346,7 @@ class CompanyControllerListingsParsingIntegrationTest {
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair(
-                "\"listings\":[{\"stockExchange\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}, {\"stockExchange\":\"London Stock Exchange\",\"stockSymbol\":\"Amazon\"}]")))
+                "\"listings\":[{\"marketIdentifier\":\"New York Stock Exchange\",\"stockSymbol\":\"Amazon\"}, {\"marketIdentifier\":\"London Stock Exchange\",\"stockSymbol\":\"Amazon\"}]")))
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(forInvalidValueAt("$.listings", "Multiple listings are not supported")));
     }
@@ -366,29 +366,29 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
     private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
-    public void shouldRejectCompanyListedWithoutStockExchangeIndicatingFieldIsMandatory() throws Exception {
+    public void shouldRejectCompanyListedWithoutMarketIdIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithStockExchangeJsonPair("")))
+                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithMarketIdJsonPair("")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].stockExchange")));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].marketIdentifier")));
     }
 
     @Test
-    public void shouldRejectCompanyListedWithNullStockExchangeIndicatingFieldIsMandatory() throws Exception {
+    public void shouldRejectCompanyListedWithNullMarketIdIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithStockExchangeJsonPair("\"stockExchange\":null")))
+                .content(bodyFactory.createWithMarketIdJsonPair("\"marketIdentifier\":null")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].stockExchange")));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].marketIdentifier")));
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
-    public void shouldRejectCompanyListedWithNonStringStockExchangeIndicatingTypeIsWrong(String stockExchangeValue)
+    public void shouldRejectCompanyListedWithNonStringMarketIdIndicatingTypeIsWrong(String stockExchangeValue)
             throws Exception {
-        String stockExchange = "\"stockExchange\":" + stockExchangeValue;
+        String marketIdentifier = "\"marketIdentifier\":" + stockExchangeValue;
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithStockExchangeJsonPair(stockExchange))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].stockExchange")));
+                .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].marketIdentifier")));
     }
 
     @Test

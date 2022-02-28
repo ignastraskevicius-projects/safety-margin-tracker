@@ -6,19 +6,19 @@ import javax.validation.constraints.NotNull;
 
 public class ListingDTO {
     @NotNull
-    private String stockExchange;
+    private String marketIdentifier;
 
     @NotNull
     private String stockSymbol;
 
-    public ListingDTO(@JsonProperty(value = "stockExchange") String stockExchange,
+    public ListingDTO(@JsonProperty(value = "marketIdentifier") String marketIdentifier,
             @JsonProperty(value = "stockSymbol") String stockSymbol) {
-        this.stockExchange = stockExchange;
+        this.marketIdentifier = marketIdentifier;
         this.stockSymbol = stockSymbol;
     }
 
-    public String getStockExchange() {
-        return stockExchange;
+    public String getMarketIdentifier() {
+        return marketIdentifier;
     }
 
     public String getStockSymbol() {

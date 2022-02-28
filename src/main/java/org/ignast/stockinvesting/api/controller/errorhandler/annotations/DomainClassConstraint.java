@@ -40,19 +40,21 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext constraintValidatorContext) {
+    public boolean isValid(String value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         } else {
-            return validate(value);
+            return validate(value, context);
         }
     }
 
-    private boolean validate(String value) {
+    private boolean validate(String value, ConstraintValidatorContext context) {
         try {
             domainStrings.get(domainClass).construct(value);
             return true;
         } catch (IllegalArgumentException e) {
+            context.disableDefaultConstraintViolation();
+            context.buildConstraintViolationWithTemplate(e.getMessage()).addConstraintViolation();
             return false;
         }
     }

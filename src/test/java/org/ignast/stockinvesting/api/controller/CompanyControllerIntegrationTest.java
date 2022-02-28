@@ -400,6 +400,15 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
     }
 
     @Test
+    public void shouldRejectCompanyListedWithNonUppercaseCharacterMarketId() throws Exception {
+        String marketIdentifier = "\"marketIdentifier\":\"xnys\"";
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].marketIdentifier",
+                        "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)")));
+    }
+
+    @Test
     public void shouldRejectCompanyWithoutSymbolIndicatingFieldIsMandatory() throws Exception {
         mockMvc.perform(
                 post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithSymbolJsonPair("")))

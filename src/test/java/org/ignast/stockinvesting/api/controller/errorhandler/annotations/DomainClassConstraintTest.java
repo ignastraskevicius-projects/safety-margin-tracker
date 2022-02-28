@@ -2,11 +2,15 @@ package org.ignast.stockinvesting.api.controller.errorhandler.annotations;
 
 import lombok.val;
 import org.ignast.stockinvesting.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 
+import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
 class DomainClassConstraintValidatorTest {
 
@@ -22,8 +26,15 @@ class DomainClassConstraintValidatorTest {
     @Test
     public void shouldInvalidateInvalidMIC() {
         validator.initialize(constrainedBy(MarketIdentifierCode.class));
+        val builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
+        val context = MockitoUtils.mock(ConstraintValidatorContext.class,
+                c -> when(c.buildConstraintViolationWithTemplate(any())).thenReturn(builder));
 
-        assertThat(validator.isValid("nont4Characters", null)).isFalse();
+        assertThat(validator.isValid("nont4Characters", context)).isFalse();
+
+        verify(context).buildConstraintViolationWithTemplate(
+                "Market Identifier is not 4 characters long (ISO 10383 standard)");
+        verify(builder).addConstraintViolation();
     }
 
     @Test

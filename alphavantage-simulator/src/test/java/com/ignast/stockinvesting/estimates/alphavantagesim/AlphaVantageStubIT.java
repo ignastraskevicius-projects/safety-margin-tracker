@@ -26,9 +26,8 @@ import java.util.stream.Collectors;
 import static com.ignast.stockinvesting.estimates.alphavantagesim.QueryParams.validParamsBuilder;
 import static com.ignast.stockinvesting.estimates.alphavantagesim.fluentjsonassert.JsonAssert.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-public class AlphaVantageStubTest {
+public class AlphaVantageStubIT {
 
     private ObjectMapper mapper = new ObjectMapper();
 

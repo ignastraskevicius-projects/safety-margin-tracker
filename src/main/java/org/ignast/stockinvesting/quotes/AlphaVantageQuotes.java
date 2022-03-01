@@ -27,16 +27,17 @@ import static java.lang.String.format;
 @Repository
 public class AlphaVantageQuotes implements StockQuotes {
 
-    @Value("${alphavantage.url}")
     private String url;
 
-    @Value("${alphavantage.apikey}")
     private String apikey;
 
     private RestTemplate restTemplate;
 
-    public AlphaVantageQuotes(RestTemplateBuilder builder) {
-        restTemplate = builder.build();
+    public AlphaVantageQuotes(RestTemplateBuilder builder, @Value("${alphavantage.url}") String url,
+            @Value("${alphavantage.apikey}") String apikey) {
+        restTemplate = builder.messageConverters().build();
+        this.url = url;
+        this.apikey = apikey;
     }
 
     @Override

@@ -6,6 +6,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import lombok.Builder;
 import lombok.val;
@@ -39,13 +40,15 @@ public class AlphaVantageStub {
 
     public void stubPriceForAllSymbolsButAAAA() {
         wireMock.stubFor(any(urlPathEqualTo("/query"))
-                .willReturn(ok().withBody("{\"Error Message\":\"Some human-readable error message\"}")));
+                .willReturn(ok().withBody("{\"Error Message\":\"Some human-readable error message\"}")
+                        .withHeader("Content-Type", "application/json")));
         wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
                 .withQueryParam("symbol", matching(".+")).withQueryParam("apikey", matching(".+"))
-                .willReturn(ok().withBody("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")));
+                .willReturn(ok().withBody("{\"Global Quote\":{\"05. price\":\"128.5000\"}}").withHeader("Content-Type",
+                        "application/json")));
         wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
                 .withQueryParam("symbol", matching("AAAA")).withQueryParam("apikey", matching(".+"))
-                .willReturn(ok().withBody("{\"Global Quote\":{}}")));
+                .willReturn(ok().withBody("{\"Global Quote\":{}}").withHeader("Content-Type", "application/json")));
     }
 }
 
@@ -71,6 +74,7 @@ class AlphaVantageStubTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{\"05. price\":\"128.5000\"}}");
+        assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
 
     @Test
@@ -81,6 +85,7 @@ class AlphaVantageStubTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{}}");
+        assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
 
     @Test
@@ -130,6 +135,7 @@ class AlphaVantageStubTest {
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(jsonAsMap(response).keySet()).contains("Error Message");
+        assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
 
     private HashMap jsonAsMap(HttpResponse<String> response) throws JsonProcessingException {

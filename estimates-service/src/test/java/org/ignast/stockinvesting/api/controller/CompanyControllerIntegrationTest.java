@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.api.controller;
 
 import org.ignast.stockinvesting.domain.Companies;
+import org.ignast.stockinvesting.domain.StockQuotes;
 import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +15,6 @@ import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErr
 import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -24,6 +24,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class CompanyControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private StockQuotes quotes;
 
     @MockBean
     private Companies companies;
@@ -85,6 +88,9 @@ class CompanyControllerCurrencyParsingIntegrationTest {
 
     @MockBean
     private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
 
     @Autowired
     private MockMvc mockMvc;
@@ -154,6 +160,9 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
 
     @MockBean
     private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
 
     @Autowired
     private MockMvc mockMvc;
@@ -226,6 +235,9 @@ class CompanyControllerNameParsingIntegrationTest {
     @MockBean
     private Companies companies;
 
+    @MockBean
+    private StockQuotes quotes;
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -292,6 +304,9 @@ class CompanyControllerListingsParsingIntegrationTest {
 
     @MockBean
     private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
 
     @Autowired
     private MockMvc mockMvc;
@@ -361,6 +376,9 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
 
     @MockBean
     private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
 
     @Autowired
     private MockMvc mockMvc;

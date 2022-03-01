@@ -1,7 +1,5 @@
 package org.ignast.stockinvesting.quotes;
 
-import com.github.tomakehurst.wiremock.WireMockServer;
-import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import lombok.val;
 import org.assertj.core.api.Assertions;

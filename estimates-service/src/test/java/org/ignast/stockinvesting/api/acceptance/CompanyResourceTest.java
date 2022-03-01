@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.api.acceptance;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import org.ignast.stockinvesting.api.acceptance.alphavantage.AlphaVantageStub;
+import com.ignast.stockinvesting.estimates.alphavantagesim.AlphaVantageStub;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api.acceptance.alphavantage;
+package com.ignast.stockinvesting.estimates.alphavantagesim;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -23,35 +23,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.ignast.stockinvesting.estimates.alphavantagesim.QueryParams.validParamsBuilder;
+import static com.ignast.stockinvesting.estimates.alphavantagesim.fluentjsonassert.JsonAssert.assertThatJson;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.api.fluentjsonassert.JsonAssert.assertThatJson;
-import static org.ignast.stockinvesting.api.acceptance.alphavantage.QueryParams.validParamsBuilder;
+import static org.junit.jupiter.api.Assertions.*;
 
-public class AlphaVantageStub {
-
-    private WireMockExtension wireMock;
-
-    public AlphaVantageStub(WireMockExtension wireMock) {
-
-        this.wireMock = wireMock;
-    }
-
-    public void stubPriceForAllSymbolsButAAAA() {
-        wireMock.stubFor(any(urlPathEqualTo("/query"))
-                .willReturn(ok().withBody("{\"Error Message\":\"Some human-readable error message\"}")
-                        .withHeader("Content-Type", "application/json")));
-        wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
-                .withQueryParam("symbol", matching(".+")).withQueryParam("apikey", matching(".+"))
-                .willReturn(ok().withBody("{\"Global Quote\":{\"05. price\":\"128.5000\"}}").withHeader("Content-Type",
-                        "application/json")));
-        wireMock.stubFor(any(urlPathEqualTo("/query")).withQueryParam("function", equalTo("GLOBAL_QUOTE"))
-                .withQueryParam("symbol", matching("AAAA")).withQueryParam("apikey", matching(".+"))
-                .willReturn(ok().withBody("{\"Global Quote\":{}}").withHeader("Content-Type", "application/json")));
-    }
-}
-
-class AlphaVantageStubTest {
+public class AlphaVantageStubTest {
 
     private ObjectMapper mapper = new ObjectMapper();
 

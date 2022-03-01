@@ -1,8 +1,8 @@
 package org.ignast.stockinvesting.api.controller;
 
 import lombok.val;
-import org.ignast.stockinvesting.domain.Companies;
-import org.ignast.stockinvesting.domain.Company;
+import org.ignast.stockinvesting.domain.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +17,9 @@ public class CompanyController {
 
     private Companies companies;
 
+    @Autowired
+    private StockQuotes quotes;
+
     public CompanyController(Companies companies) {
         this.companies = companies;
     }
@@ -25,6 +28,9 @@ public class CompanyController {
     public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
         val currency = Currency.getInstance(company.getFunctionalCurrency());
         companies.create(new Company(company.getName(), company.getHomeCountry(), currency));
+        company.getListings().stream().forEach(l -> quotes.getQuotedPriceOf(new StockSymbol(l.getStockSymbol()),
+                new MarketIdentifierCode(l.getMarketIdentifier())));
+
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
 

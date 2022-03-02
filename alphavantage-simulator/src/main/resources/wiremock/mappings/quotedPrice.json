@@ -1,0 +1,62 @@
+{
+  "mappings": [
+    {
+      "request":{
+        "urlPath": "/query"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"Error Message\":\"Some human-readable error message\"}"
+      }
+    },
+    {
+      "request":{
+        "urlPath": "/query",
+        "queryParameters": {
+          "function": {
+            "equalTo": "GLOBAL_QUOTE"
+          },
+          "symbol": {
+            "matches": ".+"
+          },
+          "apikey": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"Global Quote\":{\"05. price\":\"128.5000\"}}"
+      }
+    },
+    {
+      "request":{
+        "urlPath": "/query",
+        "queryParameters": {
+          "function": {
+            "equalTo": "GLOBAL_QUOTE"
+          },
+          "symbol": {
+            "equalTo": "AAAA"
+          },
+          "apikey": {
+            "matches": ".+"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "body": "{\"Global Quote\":{}}"
+      }
+    }
+  ]
+}

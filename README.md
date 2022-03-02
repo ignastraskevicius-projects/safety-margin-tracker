@@ -4,6 +4,7 @@
 
 ### Requirements
 * Java 17
+* Docker Engine 20.10.12
 
 ### Run
 ./mvnw spring-boot:run

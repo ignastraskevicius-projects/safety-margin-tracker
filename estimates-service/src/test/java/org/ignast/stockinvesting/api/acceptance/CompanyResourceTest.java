@@ -12,6 +12,10 @@ import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.lang.String.format;
@@ -20,6 +24,7 @@ import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 @SpringBootTest(webEnvironment = RANDOM_PORT)
+@Testcontainers
 public class CompanyResourceTest {
     @LocalServerPort
     private int port;
@@ -27,12 +32,12 @@ public class CompanyResourceTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
-    @RegisterExtension
-    private static WireMockExtension wireMock = WireMockExtension.newInstance().options(wireMockConfig().usingFilesUnderClasspath("wiremock")).build();
+    @Container
+    private static final GenericContainer alphavantange = new GenericContainer(DockerImageName.parse("estimates/alphavantage-simulator:1.0-SNAPSHOT")).withExposedPorts(8080);
 
     @DynamicPropertySource
     private static void registerWiremockPort(DynamicPropertyRegistry registry) {
-        registry.add("alphavantage.url", () -> format("http://localhost:%d", wireMock.getPort()));
+        registry.add("alphavantage.url", () -> format("http://localhost:%d", alphavantange.getMappedPort(8080)));
     }
 
     @Test

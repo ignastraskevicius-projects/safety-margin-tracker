@@ -12,6 +12,10 @@ import lombok.val;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
+import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.junit.jupiter.Container;
+import org.testcontainers.junit.jupiter.Testcontainers;
+import org.testcontainers.utility.DockerImageName;
 
 import java.io.IOException;
 import java.net.URI;
@@ -25,6 +29,7 @@ import java.util.stream.Collectors;
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.ignast.stockinvesting.estimates.alphavantagesim.QueryParams.validParamsBuilder;
 import static com.ignast.stockinvesting.estimates.alphavantagesim.fluentjsonassert.JsonAssert.assertThatJson;
+import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class AlphaVantageStubIT {
@@ -83,7 +88,7 @@ public class AlphaVantageStubIT {
     }
 
     private void expectError(QueryParams uriQuery) throws IOException, InterruptedException {
-        val response = query(String.format("/query?%s", uriQuery.toString()));
+        val response = query(format("/query?%s", uriQuery.toString()));
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(jsonAsMap(response).keySet()).contains("Error Message");
@@ -97,8 +102,27 @@ public class AlphaVantageStubIT {
     private HttpResponse<String> query(String path) throws IOException, InterruptedException {
         val client = HttpClient.newHttpClient();
         val request = HttpRequest.newBuilder()
-                .uri(URI.create(String.format("http://localhost:%d%s", wireMock.getPort(), path))).build();
+                .uri(URI.create(format("http://localhost:%d%s", wireMock.getPort(), path))).build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
+    }
+}
+
+@Testcontainers
+class DockerizedAlphaVantageStubIT {
+
+    @Container
+    public static final GenericContainer container = new GenericContainer(DockerImageName.parse("estimates/alphavantage-simulator:1.0-SNAPSHOT")).withExposedPorts(8080);
+
+    @Test
+    public void shouldContainQuotedPrices() throws IOException, InterruptedException {
+        val client = HttpClient.newHttpClient();
+        val port = container.getMappedPort(8080);
+        val uri = format("http://localhost:%d/query?%s", port, validParamsBuilder().build().toString());
+        val request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
+
+        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertThat(response.body().toString()).startsWith("{\"Global Quote");
     }
 }
 
@@ -122,7 +146,7 @@ class QueryParams {
     @Override
     public String toString() {
         return new ObjectMapper().convertValue(this, new TypeReference<Map<String, String>>() {
-        }).entrySet().stream().map(e -> String.format("%s=%s", e.getKey(), e.getValue()))
+        }).entrySet().stream().map(e -> format("%s=%s", e.getKey(), e.getValue()))
                 .collect(Collectors.joining("&"));
     }
 }

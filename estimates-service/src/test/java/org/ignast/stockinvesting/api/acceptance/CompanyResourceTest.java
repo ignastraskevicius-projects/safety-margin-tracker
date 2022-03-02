@@ -1,10 +1,8 @@
 package org.ignast.stockinvesting.api.acceptance;
 
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
-import com.ignast.stockinvesting.estimates.alphavantagesim.AlphaVantageStub;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +13,7 @@ import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
@@ -29,23 +28,15 @@ public class CompanyResourceTest {
     private TestRestTemplate restTemplate;
 
     @RegisterExtension
-    private static WireMockExtension wireMock = WireMockExtension.newInstance().build();
+    private static WireMockExtension wireMock = WireMockExtension.newInstance().options(wireMockConfig().usingFilesUnderClasspath("wiremock")).build();
 
     @DynamicPropertySource
     private static void registerWiremockPort(DynamicPropertyRegistry registry) {
         registry.add("alphavantage.url", () -> format("http://localhost:%d", wireMock.getPort()));
     }
 
-    private AlphaVantageStub alphaVantage;
-
-    @BeforeEach
-    public void setup() {
-        alphaVantage = new AlphaVantageStub(wireMock);
-    }
-
     @Test
     public void shouldDefineCompany() throws JSONException {
-        alphaVantage.stubPriceForAllSymbolsButAAAA();
         ResponseEntity<String> rootResponse = restTemplate.exchange(rootResourceOn(port), HttpMethod.GET, acceptV1(),
                 String.class);
         assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);

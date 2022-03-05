@@ -1,1 +1,0 @@
-CREATE TABLE IF NOT EXISTS company (id uuid PRIMARY KEY);

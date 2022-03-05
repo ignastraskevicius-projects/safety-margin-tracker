@@ -6,7 +6,7 @@
     <modules>
         <module>estimates-service</module>
         <module>alphavantage-simulator</module>
-        <module>cassandra-migration</module>
+        <module>db-migration</module>
     </modules>
     <packaging>pom</packaging>
 

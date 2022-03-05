@@ -10,7 +10,7 @@ interface Migration {
     void migrate(CqlSession session, String keyspace);
 }
 
-class CognitorLibCassandraMigration implements Migration {
+public class CognitorLibCassandraMigration implements Migration {
     @Override
     public void migrate(CqlSession session, String keyspace) {
         Database database = new Database(session, new MigrationConfiguration().withKeyspaceName(keyspace));

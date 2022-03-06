@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.estimates.dbmigration;
 
 import lombok.val;
+import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,7 +14,7 @@ import javax.sql.DataSource;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.estimates.dbmigration.MySQLContainers.getDataSourceTo;
+import static org.ignast.stockinvesting.estimates.dbmigration.AppDbContainer.getDataSourceTo;
 
 class FlywayIdempotentMigration {
     private final JdbcTemplate jdbcTemplate;
@@ -45,11 +46,22 @@ class FlywayIdempotentMigration {
     }
 }
 
+interface MysqlMigration {
+    void migrate(DataSource dataSource);
+}
+
+class FlywayMigration implements MysqlMigration {
+
+    public void migrate(DataSource dataSource) {
+        Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).load().migrate();
+    }
+}
+
 @Testcontainers
 class FlywayIdempotentMigrationTest {
 
     @Container
-    private static MySQLContainer mysql = MySQLContainers.singleton();
+    private static MySQLContainer mysql = AppDbContainer.singleton();
 
     private static final String FLYWAY_METADATA_TABLE = "flyway_schema_history";
 
@@ -60,6 +72,9 @@ class FlywayIdempotentMigrationTest {
     public void setup() {
         db = new JdbcTemplate(getDataSourceTo(mysql));
         db.execute(format("DROP TABLE IF EXISTS %s;", FLYWAY_METADATA_TABLE));
+
+        Flyway.configure().dataSource(getDataSourceTo(mysql)).target(ProductionDatabaseMigrationVersion.version);
+
         idempotentMigration = new FlywayIdempotentMigration(getDataSourceTo(mysql));
     }
 
@@ -68,6 +83,7 @@ class FlywayIdempotentMigrationTest {
         idempotentMigration.migrateTwice(new FlywayMigration());
 
         MysqlAssert.assertThat(db).containsTable(FLYWAY_METADATA_TABLE);
+        FlywayAssert.assertThat(db).hasJustMigrated("3");
     }
 
     @Test
@@ -83,3 +99,4 @@ class FlywayIdempotentMigrationTest {
         }
     }
 }
+

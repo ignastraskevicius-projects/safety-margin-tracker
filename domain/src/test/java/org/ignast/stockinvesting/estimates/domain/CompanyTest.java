@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.estimates.domain;
 
 import lombok.val;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -14,7 +15,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 class CompanyTest {
     @Test
     public void shouldBeEqual() {
-        EqualsVerifier.forClass(Company.class).verify();
+        EqualsVerifier.forClass(Company.class).suppress(Warning.SURROGATE_KEY).verify();
     }
 
     @ParameterizedTest

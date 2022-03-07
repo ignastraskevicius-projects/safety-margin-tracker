@@ -6,7 +6,6 @@
     <modules>
         <module>estimates-service</module>
         <module>alphavantage-simulator</module>
-        <module>db-migration</module>
         <module>domain</module>
         <module>persistence</module>
     </modules>

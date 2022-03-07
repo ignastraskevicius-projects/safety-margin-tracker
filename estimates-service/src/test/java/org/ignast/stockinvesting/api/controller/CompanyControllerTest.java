@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.api.controller;
 
 import lombok.val;
 import org.ignast.stockinvesting.domain.Companies;
-import org.ignast.stockinvesting.domain.Company;
+import org.ignast.stockinvesting.estimates.domain.Company;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

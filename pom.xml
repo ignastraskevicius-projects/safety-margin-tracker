@@ -7,6 +7,7 @@
         <module>estimates-service</module>
         <module>alphavantage-simulator</module>
         <module>db-migration</module>
+        <module>domain</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -26,6 +27,7 @@
         <mockito.version>4.3.1</mockito.version>
         <lombok.version>1.18.22</lombok.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
+        <equalsverifier.version>3.9</equalsverifier.version>
     </properties>
 
     <dependencies>
@@ -37,6 +39,11 @@
 
     <dependencyManagement>
         <dependencies>
+            <dependency>
+                <groupId>org.ignast.stock-investing</groupId>
+                <artifactId>domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
@@ -87,6 +94,12 @@
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-params</artifactId>
                 <version>${junit.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>nl.jqno.equalsverifier</groupId>
+                <artifactId>equalsverifier</artifactId>
+                <version>${equalsverifier.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

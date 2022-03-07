@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;

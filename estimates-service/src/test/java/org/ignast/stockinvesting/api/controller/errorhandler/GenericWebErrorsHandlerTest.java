@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.ignast.stockinvesting.api.controller.errorhandler.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
-import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
 import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;

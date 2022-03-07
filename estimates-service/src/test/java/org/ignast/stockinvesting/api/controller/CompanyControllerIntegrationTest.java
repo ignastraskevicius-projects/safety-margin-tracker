@@ -1,8 +1,8 @@
 package org.ignast.stockinvesting.api.controller;
 
 import org.ignast.stockinvesting.domain.Companies;
-import org.ignast.stockinvesting.domain.StockQuotes;
-import org.ignast.stockinvesting.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.estimates.domain.StockQuotes;
+import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

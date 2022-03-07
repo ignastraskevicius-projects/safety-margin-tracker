@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.domain;
+package org.ignast.stockinvesting.estimates.domain;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;

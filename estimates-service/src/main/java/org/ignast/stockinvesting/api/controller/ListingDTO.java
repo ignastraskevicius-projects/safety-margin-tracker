@@ -2,8 +2,8 @@ package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.DomainClassConstraint;
-import org.ignast.stockinvesting.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.domain.StockSymbol;
+import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.estimates.domain.StockSymbol;
 
 import javax.validation.constraints.NotNull;
 

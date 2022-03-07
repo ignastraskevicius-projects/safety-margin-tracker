@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.domain;
+package org.ignast.stockinvesting.estimates.domain;
 
 import lombok.NonNull;
 

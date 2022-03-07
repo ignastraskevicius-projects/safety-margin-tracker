@@ -1,8 +1,8 @@
 package org.ignast.stockinvesting.api.controller.errorhandler.annotations;
 
 import lombok.val;
-import org.ignast.stockinvesting.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.domain.StockSymbol;
+import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.estimates.domain.StockSymbol;
 import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 

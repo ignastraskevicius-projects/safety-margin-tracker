@@ -1,8 +1,8 @@
 package org.ignast.stockinvesting.api.controller.errorhandler.annotations;
 
-import org.ignast.stockinvesting.domain.BackedByString;
-import org.ignast.stockinvesting.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.domain.StockSymbol;
+import org.ignast.stockinvesting.estimates.domain.BackedByString;
+import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.estimates.domain.StockSymbol;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;

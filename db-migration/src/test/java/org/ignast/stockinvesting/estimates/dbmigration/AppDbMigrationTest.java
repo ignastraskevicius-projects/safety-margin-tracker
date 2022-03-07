@@ -71,7 +71,7 @@ public class AppDbMigrationTest {
 
         @Test
         public void shouldAcceptCompany() {
-            val insertAmazon = "INSERT INTO company (id, name, country, company_json) " +
+            val insertAmazon = "INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','Amazon','US','{}')";
             db.execute(insertAmazon);
         }
@@ -79,9 +79,9 @@ public class AppDbMigrationTest {
         @Test
         public void shouldRejectCompanyWithSameId() {
             val id = "34ab52b2-a169-4ef0-82e9-bb3ce6183124";
-            val insertAmazon = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertAmazon = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('%s','Amazon','US','{}')", id);
-            val insertSantander = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertSantander = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('%s','Santander','UK','{}')", id);
 
             db.execute(insertAmazon);
@@ -94,9 +94,9 @@ public class AppDbMigrationTest {
         public void shouldRejectCompanyWithAlreadyExistingNameInTheCountry() {
             val name = "Amazon";
             val country = "US";
-            val insertAmazonInUs = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertAmazonInUs = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','%s','%s','{}')", name, country);
-            val insertAnotherAmazonInUs = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertAnotherAmazonInUs = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183127','%s','%s','{}')", name, country);
 
             db.execute(insertAmazonInUs);
@@ -107,9 +107,9 @@ public class AppDbMigrationTest {
         @Test
         public void shouldAcceptCompaniesWithSameNameInDifferentCountries() {
             val name = "Santander";
-            val insertSantanderInUk = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertSantanderInUk = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','%s','UK','{}')", name);
-            val insertSantanderInSpain = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertSantanderInSpain = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183127','%s','ES','{}')", name);
 
             db.execute(insertSantanderInUk);
@@ -119,9 +119,9 @@ public class AppDbMigrationTest {
         @Test
         public void shouldAcceptCompaniesWithDifferentNamesInOneCountry() {
             val county = "US";
-            val insertAmazon = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertAmazon = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','Amazon','%s','{}')", county);
-            val insertMicrosoft = format("INSERT INTO company (id, name, country, company_json) " +
+            val insertMicrosoft = format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183127','Microsoft','ES','{}')", county);
 
             db.execute(insertAmazon);
@@ -131,15 +131,15 @@ public class AppDbMigrationTest {
         @Test
         public void shouldPermitLongEnoughCompanyNames() {
             val notTooLongName = "c".repeat(255);
-            db.execute(format("INSERT INTO company (id, name, country, company_json) " +
+            db.execute(format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183125','%s','FR','{}')", notTooLongName));
         }
 
         @Test
         public void shouldPermitLongEnoughJson() {
             val notTooLongName = "c".repeat(255);
-            val notTooLongJson = format("{\"id\":\"34ab52b2-a169-4ef0-82e9-bb3ce6183126\",\"name\":\"%s\",\"country\":\"US\",\"functionalCurrency\":\"USD\",\"marketIdentifierCode\":\"XNYS\",\"ticker\":\"AMZNW\"}", notTooLongName);
-            db.execute(format("INSERT INTO company (id, name, country, company_json) " +
+            val notTooLongJson = format("{\"id\":\"34ab52b2-a169-4ef0-82e9-bb3ce6183126\",\"name\":\"%s\",\"country_code\":\"US\",\"functionalCurrency\":\"USD\",\"marketIdentifierCode\":\"XNYS\",\"ticker\":\"AMZNW\"}", notTooLongName);
+            db.execute(format("INSERT INTO company (id, name, country_code, company_json) " +
                     "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183126','Santander','ES','%s')", notTooLongJson));
         }
     }

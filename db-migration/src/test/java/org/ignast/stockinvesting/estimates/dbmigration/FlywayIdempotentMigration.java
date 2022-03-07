@@ -76,7 +76,7 @@ class FlywayIdempotentMigrationTest {
         db = new JdbcTemplate(getDataSourceTo(mysql));
         db.execute(format("DROP TABLE IF EXISTS %s;", FLYWAY_METADATA_TABLE));
 
-        Flyway.configure().dataSource(getDataSourceTo(mysql)).baselineOnMigrate(true).target(ProductionDatabaseMigrationVersion.version.toString());
+        Flyway.configure().dataSource(getDataSourceTo(mysql)).baselineOnMigrate(true).target(ProductionDatabaseMigrationVersions.CURRENT);
 
         idempotentMigration = new FlywayIdempotentMigration(getDataSourceTo(mysql));
     }

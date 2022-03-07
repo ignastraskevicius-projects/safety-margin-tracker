@@ -8,6 +8,7 @@
         <module>alphavantage-simulator</module>
         <module>db-migration</module>
         <module>domain</module>
+        <module>persistence</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -21,6 +22,7 @@
         <maven.compiler.target>${java.version}</maven.compiler.target>
         <springboot.version>2.6.3</springboot.version>
         <springframework.version>5.3.15</springframework.version>
+        <springdata.version>2.6.1</springdata.version>
         <testcontainers.version>1.16.3</testcontainers.version>
         <assertj.version>3.21.0</assertj.version>
         <junit.version>5.8.2</junit.version>
@@ -28,6 +30,9 @@
         <lombok.version>1.18.22</lombok.version>
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <equalsverifier.version>3.9</equalsverifier.version>
+        <h2.version>2.1.210</h2.version>
+        <javax.persistence.api.version>1.0.2</javax.persistence.api.version>
+        <flyway.version>8.5.2</flyway.version>
     </properties>
 
     <dependencies>
@@ -43,6 +48,42 @@
                 <groupId>org.ignast.stock-investing</groupId>
                 <artifactId>domain</artifactId>
                 <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ignast.stock-investing</groupId>
+                <artifactId>db-migration</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-hateoas</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-test</artifactId>
+                <scope>test</scope>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-validation</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-data-jpa</artifactId>
+                <version>${springboot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.data</groupId>
+                <artifactId>spring-data-commons</artifactId>
+                <version>${springdata.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
@@ -100,6 +141,30 @@
                 <groupId>nl.jqno.equalsverifier</groupId>
                 <artifactId>equalsverifier</artifactId>
                 <version>${equalsverifier.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <scope>test</scope>
+                <version>${h2.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.persistence</groupId>
+                <artifactId>persistence-api</artifactId>
+                <scope>provided</scope>
+                <version>${javax.persistence.api.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-core</artifactId>
+                <version>${flyway.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-mysql</artifactId>
+                <version>${flyway.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>
@@ -161,21 +226,6 @@
                             </goals>
                         </execution>
                     </executions>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <classesDirectory>${project.build.outputDirectory}</classesDirectory>
-                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>

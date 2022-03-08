@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -16,12 +15,12 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import static java.util.Arrays.asList;
 
 @ControllerAdvice
-public class GenericWebErrorsHandler {
+public class ControllerAdviceForGenericErrors {
     private AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
     private JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
-    public GenericWebErrorsHandler(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
-            JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {
+    public ControllerAdviceForGenericErrors(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
+                                            JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {
         this.validationErrorsExtractor = validationErrorsExtractor;
         this.jacksonParsingErrorsExtractor = jacksonParsingErrorsExtractor;
     }
@@ -45,13 +44,6 @@ public class GenericWebErrorsHandler {
     @ResponseBody
     public StandardErrorDTO handleUnsupportedContentType(HttpMediaTypeNotSupportedException error) {
         return StandardErrorDTO.createForUnsupportedContentType();
-    }
-
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    @ExceptionHandler
-    @ResponseBody
-    public StandardErrorDTO handleStockSymbolNotSupported(StockSymbolNotSupported e) {
-        return StandardErrorDTO.createForStockSymbolNotSupported();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)

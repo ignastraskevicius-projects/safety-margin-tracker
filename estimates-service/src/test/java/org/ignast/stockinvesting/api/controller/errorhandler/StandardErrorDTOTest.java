@@ -32,10 +32,10 @@ class StandardErrorDTOTest {
     }
 
     @Test
-    public void shouldCreateStockSymbolNotSupported() {
-        StandardErrorDTO error = StandardErrorDTO.createForStockSymbolNotSupported();
+    public void shouldCreateBusinessError() {
+        StandardErrorDTO error = StandardErrorDTO.createForBusinessError(() -> "someBusinessError");
 
-        assertThat(error.getErrorName()).isEqualTo("stockSymbolNotSupported");
+        assertThat(error.getErrorName()).isEqualTo("someBusinessError");
     }
 
     @Test

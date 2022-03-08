@@ -2,7 +2,6 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.ignast.stockinvesting.api.controller.errorhandler.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
-import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
 import org.ignast.stockinvesting.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -21,12 +20,12 @@ import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class GenericWebErrorsHandlerForInvalidArgumentsTest {
+class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
     private AnnotationBasedValidationErrorsExtractor javaxErrorExtractor = mock(
             AnnotationBasedValidationErrorsExtractor.class);
 
-    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(javaxErrorExtractor,
+    private ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(javaxErrorExtractor,
             mock(JacksonParsingErrorsExtractor.class));
 
     @Test
@@ -54,10 +53,10 @@ class GenericWebErrorsHandlerForInvalidArgumentsTest {
 
 }
 
-class GenericWebErrorsHandlerForJacksonParsingTest {
+class ControllerAdviceForGenericErrorsForJacksonParsingTest {
     private JacksonParsingErrorsExtractor jacksonErrorExtractor = mock(JacksonParsingErrorsExtractor.class);
 
-    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(
+    private ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
             mock(AnnotationBasedValidationErrorsExtractor.class), jacksonErrorExtractor);
 
     @Test
@@ -98,8 +97,8 @@ class GenericWebErrorsHandlerForJacksonParsingTest {
     }
 }
 
-class GenericWebErrorsHandlerForOtherErrorsTest {
-    private GenericWebErrorsHandler handler = new GenericWebErrorsHandler(
+class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
+    private ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
             mock(AnnotationBasedValidationErrorsExtractor.class), mock(JacksonParsingErrorsExtractor.class));
 
     @Test
@@ -112,12 +111,6 @@ class GenericWebErrorsHandlerForOtherErrorsTest {
     public void shouldHandleMediaTypeNotAcceptable() {
         assertThat(handler.handleMediaTypeNotAcceptable(mock(HttpMediaTypeNotAcceptableException.class)).getErrorName())
                 .isEqualTo("mediaTypeNotAcceptable");
-    }
-
-    @Test
-    public void shouldHandleSymbolNotSupported() {
-        assertThat(handler.handleStockSymbolNotSupported(mock(StockSymbolNotSupported.class)).getErrorName())
-                .isEqualTo("stockSymbolNotSupported");
     }
 
     @Test

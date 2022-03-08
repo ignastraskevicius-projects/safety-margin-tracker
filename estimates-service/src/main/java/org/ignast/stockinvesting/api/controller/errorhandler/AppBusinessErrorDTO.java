@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
+import org.ignast.stockinvesting.util.errorhandling.api.BusinessErrorDTO;
+
 public class AppBusinessErrorDTO implements BusinessErrorDTO {
 
     private String errorName;

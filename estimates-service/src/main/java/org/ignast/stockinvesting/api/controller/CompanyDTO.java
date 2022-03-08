@@ -2,12 +2,12 @@ package org.ignast.stockinvesting.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
-import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CountryCode;
-import org.ignast.stockinvesting.api.controller.errorhandler.annotations.CurrencyCode;
+import org.ignast.stockinvesting.estimates.domain.CountryCode;
+import org.ignast.stockinvesting.estimates.domain.CurrencyCode;
+import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
@@ -21,15 +21,11 @@ public class CompanyDTO {
     private String name;
 
     @NotNull
-    @Size(min = 2, max = 2, message = "Must consist of 2 characters")
-    @Pattern(regexp = "^[A-Z]*$", message = "Must contain only uppercase latin characters")
-    @CountryCode
+    @DomainClassConstraint(domainClass = CountryCode.class)
     private String homeCountry;
 
     @NotNull
-    @Size(min = 3, max = 3, message = "Currency must have 3 letters")
-    @Pattern(regexp = "^[A-Z]*$", message = "Currency must contain only uppercase latin characters")
-    @CurrencyCode
+    @DomainClassConstraint(domainClass = CurrencyCode.class)
     private String functionalCurrency;
 
     @NotNull

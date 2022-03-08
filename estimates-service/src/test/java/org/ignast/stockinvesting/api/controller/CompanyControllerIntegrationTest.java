@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.api.controller;
 
+import org.ignast.stockinvesting.api.controller.errorhandler.GenericErrorHandlingConfiguration;
+import org.ignast.stockinvesting.api.controller.errorhandler.annotations.AppErrorsHandlingConfiguration;
 import org.ignast.stockinvesting.domain.Companies;
 import org.ignast.stockinvesting.estimates.domain.StockQuotes;
 import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
@@ -8,7 +10,9 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.*;
@@ -21,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CompanyController.class)
+@Import(AppErrorsHandlingConfiguration.class)
 public class CompanyControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
@@ -84,6 +89,7 @@ public class CompanyControllerIntegrationTest {
 }
 
 @WebMvcTest
+@Import(AppErrorsHandlingConfiguration.class)
 class CompanyControllerCurrencyParsingIntegrationTest {
 
     @MockBean
@@ -156,6 +162,7 @@ class CompanyControllerCurrencyParsingIntegrationTest {
 }
 
 @WebMvcTest
+@Import(AppErrorsHandlingConfiguration.class)
 class CompanyControllerHomeCountryParsingIntegrationTest {
 
     @MockBean
@@ -230,6 +237,7 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
 }
 
 @WebMvcTest
+@Import(AppErrorsHandlingConfiguration.class)
 class CompanyControllerNameParsingIntegrationTest {
 
     @MockBean
@@ -300,6 +308,7 @@ class CompanyControllerNameParsingIntegrationTest {
 }
 
 @WebMvcTest
+@Import(AppErrorsHandlingConfiguration.class)
 class CompanyControllerListingsParsingIntegrationTest {
 
     @MockBean
@@ -372,6 +381,7 @@ class CompanyControllerListingsParsingIntegrationTest {
 }
 
 @WebMvcTest
+@Import(AppErrorsHandlingConfiguration.class)
 class CompanyControllerTestIndividualListingParsingIntegrationTest {
 
     @MockBean

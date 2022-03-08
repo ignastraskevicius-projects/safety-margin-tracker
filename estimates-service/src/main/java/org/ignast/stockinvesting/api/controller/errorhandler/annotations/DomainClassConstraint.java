@@ -82,13 +82,3 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
         BackedByString construct(String arg);
     }
 }
-
-@JsonComponent
-class JavaxValidationConfig {
-
-    @Bean
-    public DomainClassConstraintValidator.SupportedTypes supportedTypes() {
-        return DomainClassConstraintValidator.SupportedTypes.supporting(Map.of(MarketIdentifierCode.class, MarketIdentifierCode::new, StockSymbol.class, StockSymbol::new));
-    }
-
-}

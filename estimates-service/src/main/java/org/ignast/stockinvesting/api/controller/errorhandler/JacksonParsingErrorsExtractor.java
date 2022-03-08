@@ -7,7 +7,6 @@ import org.springframework.boot.jackson.JsonComponent;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@JsonComponent
 public class JacksonParsingErrorsExtractor {
     public ValidationErrorDTO extractError(MismatchedInputException exception) {
         JsonPath jsonPath = JsonPath.fromJsonPath(extractJsonPath(exception));

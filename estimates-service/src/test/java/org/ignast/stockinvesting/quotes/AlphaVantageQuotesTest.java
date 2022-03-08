@@ -108,7 +108,6 @@ class AlphaVantageCasesUnableToCoverWithSpringTest {
 
     @Test
     public void shouldThrowIfResponseContentTypeUnexpected() {
-        Assertions.setMaxStackTraceElementsDisplayed(300);
         wireMock.stubFor(get(urlPathEqualTo("/query")).willReturn(ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
                 .withHeader("Content-Type", "application/octet-stream")));
         val wireMockUrl = "http://localhost:" + wireMock.getPort();

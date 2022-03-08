@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

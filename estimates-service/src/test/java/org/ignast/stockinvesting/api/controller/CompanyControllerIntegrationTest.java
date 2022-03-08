@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.api.controller;
 
-import org.ignast.stockinvesting.api.controller.errorhandler.GenericErrorHandlingConfiguration;
 import org.ignast.stockinvesting.api.controller.errorhandler.annotations.AppErrorsHandlingConfiguration;
 import org.ignast.stockinvesting.domain.Companies;
 import org.ignast.stockinvesting.estimates.domain.StockQuotes;
@@ -8,16 +7,16 @@ import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
+import org.mockito.ArgumentMatchers;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.ignast.stockinvesting.api.controller.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.api.controller.NonExtensibleContentMatchers.contentMatchesJson;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.doThrow;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -127,8 +126,7 @@ class CompanyControllerCurrencyParsingIntegrationTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\"")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters",
-                        "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters")));
     }
 
     @Test
@@ -136,8 +134,7 @@ class CompanyControllerCurrencyParsingIntegrationTest {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDOLLAR\"")))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValuesAt("$.functionalCurrency", "Currency must have 3 letters",
-                        "$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters")));
     }
 
     @ParameterizedTest
@@ -147,9 +144,8 @@ class CompanyControllerCurrencyParsingIntegrationTest {
                 .content(bodyFactory.createWithFunctionalCurrencyJsonPair(
                         String.format("\"functionalCurrency\":\"%s\"", currencyCode))))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValuesAt("$.functionalCurrency",
-                        "Currency must contain only uppercase latin characters", "$.functionalCurrency",
-                        "Currency must be a valid ISO 4217 code")));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency",
+                        "Currency must contain only uppercase latin characters")));
     }
 
     @Test
@@ -203,16 +199,16 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
     public void shouldRejectTooShortCountryCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"S\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValuesAt("$.homeCountry",
-                        "Must consist of 2 characters", "$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValueAt("$.homeCountry",
+                        "Must consist of 2 characters")));
     }
 
     @Test
     public void shouldRejectTooLongCountryCode() throws Exception {
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"USA\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValuesAt("$.homeCountry",
-                        "Must consist of 2 characters", "$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValueAt("$.homeCountry",
+                        "Must consist of 2 characters")));
     }
 
     @ParameterizedTest
@@ -222,8 +218,7 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
                 bodyFactory.createWithHomeCountryJsonPair(String.format("\"homeCountry\":\"%s\"", countryCode))))
                 .andExpect(status().isBadRequest())
                 .andExpect(contentMatchesJson(
-                        forInvalidValuesAt("$.homeCountry", "Must contain only uppercase latin characters",
-                                "$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+                        forInvalidValueAt("$.homeCountry", "Must contain only uppercase latin characters")));
     }
 
     @Test
@@ -466,7 +461,7 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
 
     @Test
     public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
-        doThrow(StockSymbolNotSupported.class).when(companies).create(any());
+        doThrow(StockSymbolNotSupported.class).when(companies).create(ArgumentMatchers.any());
         mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
                 .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"BBBB\"")))
                 .andExpect(status().isBadRequest())

@@ -6,12 +6,13 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 class StockSymbolTest {
 
     @Test
     public void shouldNotBeNull() {
-        Assertions.assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new StockSymbol(null));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new StockSymbol(null));
     }
 
     @ParameterizedTest
@@ -22,14 +23,14 @@ class StockSymbolTest {
 
     @Test
     public void shouldNotBeEmpty() {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(""))
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(""))
                 .withMessage("Stock Symbol must contain between 1-5 characters");
         assertThat(new StockSymbol("A").get()).isEqualTo("A");
     }
 
     @Test
     public void shouldRejectLongerThan5() {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol("ABCDEF"))
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol("ABCDEF"))
                 .withMessage("Stock Symbol must contain between 1-5 characters");
         assertThat(new StockSymbol("ABCDE").get()).isEqualTo("ABCDE");
     }
@@ -37,7 +38,7 @@ class StockSymbolTest {
     @ParameterizedTest
     @ValueSource(strings = { "1Aa", "Ñ1A" })
     public void shouldRejectNonAlphanumericUppercaseCharacters(String symbol) {
-        Assertions.assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(symbol))
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(symbol))
                 .withMessage("Stock Symbol must contain only uppercase alphanumeric characters");
     }
 

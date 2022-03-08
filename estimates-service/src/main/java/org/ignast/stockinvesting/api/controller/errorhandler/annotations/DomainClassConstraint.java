@@ -1,8 +1,13 @@
 package org.ignast.stockinvesting.api.controller.errorhandler.annotations;
 
+import lombok.*;
 import org.ignast.stockinvesting.estimates.domain.BackedByString;
 import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.estimates.domain.StockSymbol;
+import org.springframework.boot.jackson.JsonComponent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.stereotype.Component;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -30,14 +35,13 @@ public @interface DomainClassConstraint {
 }
 
 class DomainClassConstraintValidator implements ConstraintValidator<DomainClassConstraint, String> {
-    private static final Map<Class<? extends BackedByString>, FromStringConstructor> supportedObjects = new HashMap<>() {
-        {
-            put(MarketIdentifierCode.class, MarketIdentifierCode::new);
-            put(StockSymbol.class, StockSymbol::new);
-        }
-    };
+    private final Map<Class<? extends BackedByString>, FromStringConstructor> supportedObjects;
 
     private Class<?> domainClass;
+
+    public DomainClassConstraintValidator(SupportedTypes supportedObjects) {
+        this.supportedObjects = supportedObjects.getSupportedObjects();
+    }
 
     public void initialize(DomainClassConstraint constraint) {
         this.domainClass = constraint.domainClass();
@@ -68,7 +72,23 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
         }
     }
 
-    private interface FromStringConstructor {
+    @Getter
+    @RequiredArgsConstructor(staticName = "supporting")
+    static class SupportedTypes {
+        @NonNull private final Map<Class<? extends BackedByString>, FromStringConstructor> supportedObjects;
+    }
+
+    interface FromStringConstructor {
         BackedByString construct(String arg);
     }
+}
+
+@JsonComponent
+class JavaxValidationConfig {
+
+    @Bean
+    public DomainClassConstraintValidator.SupportedTypes supportedTypes() {
+        return DomainClassConstraintValidator.SupportedTypes.supporting(Map.of(MarketIdentifierCode.class, MarketIdentifierCode::new, StockSymbol.class, StockSymbol::new));
+    }
+
 }

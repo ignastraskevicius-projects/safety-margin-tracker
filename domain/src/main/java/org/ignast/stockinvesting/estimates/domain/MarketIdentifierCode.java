@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.estimates.domain;
 
 import lombok.NonNull;
 
-public class MarketIdentifierCode implements BackedByString {
+public class MarketIdentifierCode {
     private String code;
 
     public MarketIdentifierCode(@NonNull String code) {

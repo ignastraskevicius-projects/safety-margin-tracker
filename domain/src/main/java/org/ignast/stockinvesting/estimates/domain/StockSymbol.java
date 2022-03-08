@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.estimates.domain;
 
 import lombok.NonNull;
 
-public class StockSymbol implements BackedByString {
+public class StockSymbol {
     private String code;
 
     public StockSymbol(@NonNull String code) {

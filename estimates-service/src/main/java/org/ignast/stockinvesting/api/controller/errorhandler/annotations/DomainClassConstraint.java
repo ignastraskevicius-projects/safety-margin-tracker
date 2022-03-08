@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.api.controller.errorhandler.annotations;
 
 import lombok.*;
-import org.ignast.stockinvesting.estimates.domain.BackedByString;
 import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.estimates.domain.StockSymbol;
 import org.springframework.boot.jackson.JsonComponent;
@@ -35,7 +34,7 @@ public @interface DomainClassConstraint {
 }
 
 class DomainClassConstraintValidator implements ConstraintValidator<DomainClassConstraint, String> {
-    private final Map<Class<? extends BackedByString>, FromStringConstructor> supportedObjects;
+    private final Map<Class<?>, FromStringConstructor> supportedObjects;
 
     private Class<?> domainClass;
 
@@ -75,10 +74,10 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
     @Getter
     @RequiredArgsConstructor(staticName = "supporting")
     static class SupportedTypes {
-        @NonNull private final Map<Class<? extends BackedByString>, FromStringConstructor> supportedObjects;
+        @NonNull private final Map<Class<?>, FromStringConstructor> supportedObjects;
     }
 
     interface FromStringConstructor {
-        BackedByString construct(String arg);
+        Object construct(String arg);
     }
 }

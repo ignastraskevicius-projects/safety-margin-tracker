@@ -8,15 +8,26 @@ import org.junit.jupiter.api.Test;
 
 import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.api.controller.errorhandler.annotations.DomainClassConstraintValidator.SupportedTypes.supporting;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 class DomainClassConstraintValidatorTest {
 
-    private DomainClassConstraintValidator validator = new DomainClassConstraintValidator();
+    private DomainClassConstraintValidator validator = new DomainClassConstraintValidator(supporting(emptyMap()));
+
+    @Test
+    public void shouldFailToConstructWithNull() {
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new DomainClassConstraintValidator(null));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new DomainClassConstraintValidator(supporting(null)));
+    }
 
     @Test
     public void shouldBeValidForNullFieldToGivePreferenceToJavaxNonNullAnnotation() {
@@ -27,15 +38,17 @@ class DomainClassConstraintValidatorTest {
 
     @Test
     public void shouldThrowForUnsupportedTypes() {
-        validator.initialize(constrainedBy(Object.class));
+        validator = new DomainClassConstraintValidator(supporting(Map.of(MarketIdentifierCode.class, MarketIdentifierCode::new)));
+        validator.initialize(constrainedBy(StockSymbol.class));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> validator.isValid("objectIsNotSupported", null))
-                .withMessage("DomainClassConstraint is not configured for 'Object' class");
+                .withMessage("DomainClassConstraint is not configured for 'StockSymbol' class");
     }
 
     @Test
-    public void shouldInvalidateInvalidMIC() {
+    public void shouldInvalidateInvalidButSupportedType() {
+        validator = new DomainClassConstraintValidator(supporting(Map.of(MarketIdentifierCode.class, MarketIdentifierCode::new)));
         validator.initialize(constrainedBy(MarketIdentifierCode.class));
         val builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
         val context = MockitoUtils.mock(ConstraintValidatorContext.class,
@@ -48,30 +61,11 @@ class DomainClassConstraintValidatorTest {
     }
 
     @Test
-    public void shouldValidateValidMIC() {
+    public void shouldValidateValidSupportedType() {
+        validator = new DomainClassConstraintValidator(supporting(Map.of(MarketIdentifierCode.class, MarketIdentifierCode::new)));
         validator.initialize(constrainedBy(MarketIdentifierCode.class));
 
         assertThat(validator.isValid("XNYS", null)).isTrue();
-    }
-
-    @Test
-    public void shouldInvalidateInvalidSymbol() {
-        validator.initialize(constrainedBy(StockSymbol.class));
-        val builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
-        val context = MockitoUtils.mock(ConstraintValidatorContext.class,
-                c -> when(c.buildConstraintViolationWithTemplate(any())).thenReturn(builder));
-
-        assertThat(validator.isValid("TOOLONG", context)).isFalse();
-
-        verify(context).buildConstraintViolationWithTemplate(startsWith("Stock Symbol"));
-        verify(builder).addConstraintViolation();
-    }
-
-    @Test
-    public void shouldInvalidateValidateValidSymbol() {
-        validator.initialize(constrainedBy(StockSymbol.class));
-
-        assertThat(validator.isValid("AMZN", null)).isTrue();
     }
 
     private DomainClassConstraint constrainedBy(Class<?> domainClass) {

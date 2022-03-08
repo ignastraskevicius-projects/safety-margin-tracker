@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api.interceptor;
+package org.ignast.stockinvesting.util.errorhandling.api.interceptor;
 
 import org.springframework.web.servlet.HandlerInterceptor;
 

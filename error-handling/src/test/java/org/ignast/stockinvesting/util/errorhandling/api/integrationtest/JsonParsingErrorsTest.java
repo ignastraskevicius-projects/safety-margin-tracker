@@ -3,7 +3,6 @@ package org.ignast.stockinvesting.util.errorhandling.api.integrationtest;
 import lombok.Getter;
 import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.SupportedTypes;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -122,8 +121,8 @@ class JsonStringFieldErrorsTest {
         }
 
         @Bean
-        public SupportedTypes supportedTypes() {
-            return SupportedTypes.supporting(Map.of(TestDomain.class, TestDomain::new));
+        public DomainClassConstraint.SupportedTypes supportedTypes() {
+            return DomainClassConstraint.SupportedTypes.supporting(Map.of(TestDomain.class, TestDomain::new));
         }
     }
 

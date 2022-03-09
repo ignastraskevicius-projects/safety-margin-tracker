@@ -28,7 +28,7 @@ public class CompanyController {
         this.companies = companies;
     }
 
-    @PostMapping(consumes = VersionedApiMediaTypes.V1)
+    @PutMapping(consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
         val currency = Currency.getInstance(company.getFunctionalCurrency());
         companies.create(new Company(company.getName(), company.getHomeCountry(), currency));

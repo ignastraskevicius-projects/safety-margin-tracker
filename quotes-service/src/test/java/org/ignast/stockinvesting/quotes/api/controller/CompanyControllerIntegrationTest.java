@@ -1,25 +1,18 @@
-package org.ignast.stockinvesting.api.controller;
+package org.ignast.stockinvesting.quotes.api.controller;
 
-import org.ignast.stockinvesting.api.controller.errorhandler.AppErrorsHandlingConfiguration;
-import org.ignast.stockinvesting.domain.Companies;
-import org.ignast.stockinvesting.estimates.domain.StockQuotes;
-import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppErrorsHandlingConfiguration;
+import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.*;
-import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
-import static org.mockito.Mockito.doThrow;
+import static org.ignast.stockinvesting.quotes.util.test.api.BodySchemaMismatchJsonErrors.*;
+import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @Import(AppErrorsHandlingConfiguration.class)
@@ -29,7 +22,7 @@ abstract class CompanyControllerIntegrationTestBase {
     @Autowired
     protected MockMvc mockMvc;
 
-    protected String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+    protected String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
 
     void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)
@@ -39,13 +32,6 @@ abstract class CompanyControllerIntegrationTestBase {
 }
 
 public class CompanyControllerIntegrationTest extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private StockQuotes quotes;
-
-    @MockBean
-    private Companies companies;
-
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)).andExpect(status().isBadRequest())
@@ -85,18 +71,12 @@ public class CompanyControllerIntegrationTest extends CompanyControllerIntegrati
 
     @Test
     public void shouldAbleToPreserveErrorsFromMultipleFields() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithoutNameAndCurrency(), forTwoMissingFieldsAt("$.name", "$.functionalCurrency"));
+        rejectsAsBadRequest(bodyFactory.createWithoutNameAndId(), forTwoMissingFieldsAt("$.name", "$.id"));
     }
 }
 
 
 class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
 
     @Test
     public void shouldRejectCompanyWithoutIdIndicatingFieldIsMandatory() throws Exception {
@@ -114,85 +94,7 @@ class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegra
     }
 }
 
-class CompanyControllerCurrencyParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
-
-    @Test
-    public void shouldRejectCompanyWithoutCurrencyIndicatingFieldIsMandatory() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithFunctionalCurrencyJsonPair(""), forMissingFieldAt("$.functionalCurrency"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithCurrencyAsNonStringIndicatingWrongType() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":3"), forStringRequiredAt("$.functionalCurrency"));
-    }
-
-    @Test
-    public void shouldRejectInvalidCurrencyCode() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\""), forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters"));
-    }
-}
-
-class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
-
-    @Test
-    public void shouldRejectCompanyWithoutCountryIndicatingFieldIsMandatory() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair(""), forMissingFieldAt("$.homeCountry"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":null"), forMissingFieldAt("$.homeCountry"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithNonStringAsNonJsonStringIndicatingWrongType() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":3"), forStringRequiredAt("$.homeCountry"));
-    }
-
-    @Test
-    public void shouldRejectTooShortCountryCode() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"S\""), forInvalidValueAt("$.homeCountry",
-                        "Must consist of 2 characters"));
-    }
-
-    @Test
-    public void shouldRejectTooLongCountryCode() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"USA\""), forInvalidValueAt("$.homeCountry",
-                        "Must consist of 2 characters"));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "12", "us", "ÑÑ" })
-    public void shouldRejectCountryCodesContainingNonUppercaseCharacters(String countryCode) throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair(String.format("\"homeCountry\":\"%s\"", countryCode)), forInvalidValueAt("$.homeCountry", "Must contain only uppercase latin characters"));
-    }
-
-    @Test
-    public void shouldRejectInvalidISO3166alpha2CountryCode() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"AB\""), forInvalidValueAt("$.homeCountry", "Must be a valid ISO 3166 alpha-2 code"));
-    }
-
-}
-
 class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
 
     @Test
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
@@ -234,12 +136,6 @@ class CompanyControllerNameParsingIntegrationTest extends CompanyControllerInteg
 
 class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
-
     @Test
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair(""), forMissingFieldAt("$.listings"));
@@ -273,12 +169,6 @@ class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerI
 
 class CompanyControllerTestIndividualListingParsingIntegrationTest extends CompanyControllerIntegrationTestBase{
 
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
-
     @Test
     public void shouldRejectCompanyListedWithoutMarketIdIndicatingFieldIsMandatory() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithMarketIdJsonPair(""), forMissingFieldAt("$.listings[0].marketIdentifier"));
@@ -309,11 +199,5 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest extends Compa
     public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""), forInvalidValueAt("$.listings[0].stockSymbol",
                         "Stock Symbol must contain between 1-5 characters"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
-        doThrow(StockSymbolNotSupported.class).when(companies).create(ArgumentMatchers.any());
-        rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"BBBB\""), "{\"errorName\":\"stockSymbolNotSupported\"}");
     }
 }

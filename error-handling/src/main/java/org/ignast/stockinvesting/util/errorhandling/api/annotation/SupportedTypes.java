@@ -6,9 +6,3 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.Map;
 
-@Getter
-@RequiredArgsConstructor(staticName = "supporting")
-public class SupportedTypes {
-    @NonNull
-    private final Map<Class<?>, FromStringConstructor> supportedObjects;
-}

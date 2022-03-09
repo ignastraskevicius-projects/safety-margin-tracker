@@ -24,6 +24,13 @@ public @interface DomainClassConstraint {
     Class<?>[] payload() default {};
 
     Class<?> domainClass();
+
+    @Getter
+    @RequiredArgsConstructor(staticName = "supporting")
+    class SupportedTypes {
+        @NonNull
+        private final Map<Class<?>, FromStringConstructor> constructableTypes;
+    }
 }
 
 class DomainClassConstraintValidator implements ConstraintValidator<DomainClassConstraint, String> {
@@ -31,8 +38,8 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
 
     private Class<?> domainClass;
 
-    public DomainClassConstraintValidator(SupportedTypes supportedObjects) {
-        this.supportedObjects = supportedObjects.getSupportedObjects();
+    public DomainClassConstraintValidator(DomainClassConstraint.SupportedTypes supportedObjects) {
+        this.supportedObjects = supportedObjects.getConstructableTypes();
     }
 
     public void initialize(DomainClassConstraint constraint) {

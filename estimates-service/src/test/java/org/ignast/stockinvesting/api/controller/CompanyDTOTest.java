@@ -13,7 +13,7 @@ class CompanyDTOTest {
 
     @Test
     public void shouldPreserveNonNestedAttributes() {
-        val company = new CompanyDTO("Amazon", "United States", "United States Dollar", Collections.emptyList());
+        val company = new CompanyDTO("someId", "Amazon", "United States", "United States Dollar", Collections.emptyList());
         assertThat(company.getHomeCountry()).isEqualTo("United States");
         assertThat(company.getName()).isEqualTo("Amazon");
         assertThat(company.getFunctionalCurrency()).isEqualTo("United States Dollar");
@@ -44,6 +44,6 @@ class CompanyDTOTest {
     }
 
     private CompanyDTO anyCompanyWith(List<ListingDTO> listings) {
-        return new CompanyDTO("anyName", "anyCountry", "United States Dollar", listings);
+        return new CompanyDTO("anyId","anyName", "anyCountry", "United States Dollar", listings);
     }
 }

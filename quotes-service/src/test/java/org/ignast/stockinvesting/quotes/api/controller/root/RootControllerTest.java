@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller.root;
 
-import org.ignast.stockinvesting.util.errorhandling.api.ControllerAdviceForGenericErrors;
+import org.ignast.stockinvesting.quotes.api.controller.HalConfig;
 import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,14 +9,14 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
+import static org.ignast.stockinvesting.quotes.util.test.api.HateoasJsonMatchers.hasRel;
 import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({ RootController.class })
-@Import(GenericErrorHandlingConfiguration.class)
+@WebMvcTest({ RootController.class, HalConfig.class, GenericErrorHandlingConfiguration.class })
 public class RootControllerTest {
 
     private @Autowired MockMvc mockMvc;
@@ -26,7 +26,8 @@ public class RootControllerTest {
     @Test
     public void rootResourceShouldLinkToCompanies() throws Exception {
         ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
-        root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE));
+        root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE))
+                .andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
     }
 
     @Test

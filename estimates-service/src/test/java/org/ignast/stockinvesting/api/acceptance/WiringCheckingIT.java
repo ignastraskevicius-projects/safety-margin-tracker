@@ -1,7 +1,10 @@
 package org.ignast.stockinvesting.api.acceptance;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
 
@@ -16,13 +19,16 @@ import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WebErrorsTests {
+public class WiringCheckingIT {
 
     @LocalServerPort
     private int port;
 
+    @Autowired
+    private TestRestTemplate restTemplate;
+
     @Test
-    public void GETRequestsMustHaveAcceptHeaderInOrderToAlwaysProvideExplicitVersionAndNeverBreakClientOnVersionBumps()
+    public void shouldWireInInterceptorEnsuringGETRequestsHaveAcceptHeaderInOrderToRequireExplicitApiVersionAndNeverBreakClientOnVersionBumps()
             throws Exception {
         HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(rootResourceOn(port))).build();
 
@@ -32,7 +38,7 @@ public class WebErrorsTests {
     }
 
     @Test
-    public void errorsShouldBePresentedInStandardAppFormat() throws IOException, InterruptedException {
+    public void shouldWireInCustomErrorSerialization() throws IOException, InterruptedException {
         HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(""))
                 .uri(URI.create(rootResourceOn(port))).build();
 
@@ -41,4 +47,13 @@ public class WebErrorsTests {
         assertThat(response.statusCode()).isEqualTo(METHOD_NOT_ALLOWED.value());
         assertThat(response.body()).isEqualTo("{\"errorName\":\"methodNotAllowed\"}");
     }
+
+    @Test
+    public void jacksonShouldNotSerializeNullErrorNamesWhereErrorCodeIsSelfExplanatory() {
+        val response = restTemplate.getForEntity(String.format("http://localhost:%d/notexistent/path", port),
+                String.class);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertThat(response.getBody()).isEqualTo("{}");
+    }
 }
+

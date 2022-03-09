@@ -22,21 +22,30 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(CompanyController.class)
+@WebMvcTest
 @Import(AppErrorsHandlingConfiguration.class)
-public class CompanyControllerIntegrationTest {
+abstract class CompanyControllerIntegrationTestBase {
+    protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
     @Autowired
-    private MockMvc mockMvc;
+    protected MockMvc mockMvc;
+
+    protected String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                        .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
+    }
+}
+
+public class CompanyControllerIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private StockQuotes quotes;
 
     @MockBean
     private Companies companies;
-
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
-
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
@@ -46,9 +55,7 @@ public class CompanyControllerIntegrationTest {
 
     @Test
     public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content("not-a-json-object"))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
+        rejectsAsBadRequest("not-a-json-object", "{\"errorName\":\"bodyNotParsable\"}");
     }
 
     @Test
@@ -79,127 +86,36 @@ public class CompanyControllerIntegrationTest {
 
     @Test
     public void shouldAbleToPreserveErrorsFromMultipleFields() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithoutNameAndCurrency()))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forTwoMissingFieldsAt("$.name", "$.functionalCurrency")));
+        rejectsAsBadRequest(bodyFactory.createWithoutNameAndCurrency(), forTwoMissingFieldsAt("$.name", "$.functionalCurrency"));
     }
 }
 
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-class CompanyControllerCurrencyParsingIntegrationTest {
+
+class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
 
     @MockBean
     private StockQuotes quotes;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
-
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
-
-    @Test
-    public void shouldRejectCompanyWithoutCurrencyIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair(""))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.functionalCurrency")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
-    public void shouldRejectCompanyWithCurrencyAsNonStringIndicatingWrongType(String currency) throws Exception {
-        String currencyJsonPair = "\"functionalCurrency\":" + currency;
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair(currencyJsonPair)))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.functionalCurrency")));
-    }
-
-    @Test
-    public void shouldRejectTooShortCurrencyCode() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\"")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters")));
-    }
-
-    @Test
-    public void shouldRejectTooLongCurrencyCode() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"USDOLLAR\"")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "123", "usd", "ÑÑÑ" })
-    public void shouldRejectCurrencyCodesContainingNonUppercaseCharacters(String currencyCode) throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair(
-                        String.format("\"functionalCurrency\":\"%s\"", currencyCode))))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.functionalCurrency",
-                        "Currency must contain only uppercase latin characters")));
-    }
-
-    @Test
-    public void shouldRejectInvalidISO4217Currency() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"ABC\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.functionalCurrency", "Currency must be a valid ISO 4217 code")));
-    }
-}
-
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-class CompanyControllerIdParsingIntegrationTest {
-
-    @MockBean
-    private Companies companies;
-
-    @MockBean
-    private StockQuotes quotes;
-
-    @Autowired
-    private MockMvc mockMvc;
-
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
-
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     @Test
     public void shouldRejectCompanyWithoutIdIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                        post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithIdJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.id")));
+        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair(""), forMissingFieldAt("$.id"));
     }
 
     @Test
     public void shouldRejectCompanyWithNonStringIdIndicatingWrongType() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                        .content(bodyFactory.createWithIdJsonPair("\"id\":3")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forStringRequiredAt("$.id")));
+        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":3"), forStringRequiredAt("$.id"));
     }
 
     @Test
     public void shouldRejectCompaniesWithUnparsableIdAsUUID() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
-                        bodyFactory.createWithIdJsonPair("\"id\":\"19c56404-73c6-4cd1-96a4-aae7962b643z\"")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.id", "Must consist of hyphens (-) and a,b,c,d,e,f and numeric characters only")));
+        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":\"19c56404-73c6-4cd1-96a4-aae7962b643z\""), forInvalidValueAt("$.id", "Must consist of hyphens (-) and a,b,c,d,e,f and numeric characters only"));
     }
 }
 
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-class CompanyControllerHomeCountryParsingIntegrationTest {
+class CompanyControllerCurrencyParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -207,73 +123,71 @@ class CompanyControllerHomeCountryParsingIntegrationTest {
     @MockBean
     private StockQuotes quotes;
 
-    @Autowired
-    private MockMvc mockMvc;
+    @Test
+    public void shouldRejectCompanyWithoutCurrencyIndicatingFieldIsMandatory() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithFunctionalCurrencyJsonPair(""), forMissingFieldAt("$.functionalCurrency"));
+    }
 
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+    @Test
+    public void shouldRejectCompanyWithCurrencyAsNonStringIndicatingWrongType() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":3"), forStringRequiredAt("$.functionalCurrency"));
+    }
 
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+    @Test
+    public void shouldRejectInvalidCurrencyCode() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithFunctionalCurrencyJsonPair("\"functionalCurrency\":\"US\""), forInvalidValueAt("$.functionalCurrency", "Currency must have 3 letters"));
+    }
+}
+
+class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+
+    @MockBean
+    private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
 
     @Test
     public void shouldRejectCompanyWithoutCountryIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithHomeCountryJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.homeCountry")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair(""), forMissingFieldAt("$.homeCountry"));
     }
 
     @Test
     public void shouldRejectCompanyWithNullCountryIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":null")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.homeCountry")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":null"), forMissingFieldAt("$.homeCountry"));
     }
 
     @Test
     public void shouldRejectCompanyWithNonStringAsNonJsonStringIndicatingWrongType() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":3")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forStringRequiredAt("$.homeCountry")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":3"), forStringRequiredAt("$.homeCountry"));
     }
 
     @Test
     public void shouldRejectTooShortCountryCode() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"S\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValueAt("$.homeCountry",
-                        "Must consist of 2 characters")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"S\""), forInvalidValueAt("$.homeCountry",
+                        "Must consist of 2 characters"));
     }
 
     @Test
     public void shouldRejectTooLongCountryCode() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"USA\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forInvalidValueAt("$.homeCountry",
-                        "Must consist of 2 characters")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"USA\""), forInvalidValueAt("$.homeCountry",
+                        "Must consist of 2 characters"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "12", "us", "ÑÑ" })
     public void shouldRejectCountryCodesContainingNonUppercaseCharacters(String countryCode) throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
-                bodyFactory.createWithHomeCountryJsonPair(String.format("\"homeCountry\":\"%s\"", countryCode))))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.homeCountry", "Must contain only uppercase latin characters")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair(String.format("\"homeCountry\":\"%s\"", countryCode)), forInvalidValueAt("$.homeCountry", "Must contain only uppercase latin characters"));
     }
 
     @Test
     public void shouldRejectInvalidISO3166alpha2CountryCode() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"AB\"")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.homeCountry", "Must be a valid ISO 3166 alpha-2 code")));
+        rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair("\"homeCountry\":\"AB\""), forInvalidValueAt("$.homeCountry", "Must be a valid ISO 3166 alpha-2 code"));
     }
 
 }
 
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-class CompanyControllerNameParsingIntegrationTest {
+class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -281,40 +195,19 @@ class CompanyControllerNameParsingIntegrationTest {
     @MockBean
     private StockQuotes quotes;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
-
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
-
     @Test
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithNameJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.name")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
-    public void shouldRejectCompanyWithNameAsNonJsonStringIndicatingWrongType(String nameValue) throws Exception {
-        String nameJsonPair = "\"name\":" + nameValue;
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithNameJsonPair(nameJsonPair))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.name")));
+        rejectsAsBadRequest(bodyFactory.createWithNameJsonPair(""), forMissingFieldAt("$.name"));
     }
 
     @Test
-    public void shouldRejectCompanyWithNullNameIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithNameJsonPair("\"name\":null"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.name")));
+    public void shouldRejectCompanyWithNameAsNonJsonStringIndicatingWrongType() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithNameJsonPair("\"name\":false"), forStringRequiredAt("$.name"));
     }
 
     @Test
     public void shouldRejectCompanyWithEmptyName() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(0)))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.name", "Company name must be between 1-255 characters")));
+        rejectsAsBadRequest(companyWithNameOfLength(0), forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
     }
 
     @Test
@@ -325,9 +218,7 @@ class CompanyControllerNameParsingIntegrationTest {
 
     @Test
     public void shouldRejectCompanyWithTooLongName() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(256)))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.name", "Company name must be between 1-255 characters")));
+        rejectsAsBadRequest(companyWithNameOfLength(256), forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
     }
 
     @Test
@@ -342,9 +233,7 @@ class CompanyControllerNameParsingIntegrationTest {
     }
 }
 
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-class CompanyControllerListingsParsingIntegrationTest {
+class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -352,72 +241,38 @@ class CompanyControllerListingsParsingIntegrationTest {
     @MockBean
     private StockQuotes quotes;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
-
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
-
     @Test
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithListingsJsonPair("")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
+        rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair(""), forMissingFieldAt("$.listings"));
     }
 
     @Test
-    public void companyWithNullListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "\"jsonString\"" })
     public void companyWithNonArrayListingShouldBeRejectedIndicatingWrongType() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithListingsJsonPair("\"listings\":3"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forArrayRequiredAt("$.listings")));
+        rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair("\"listings\":3"), forArrayRequiredAt("$.listings"));
     }
 
     @Test
     public void companyWithZeroListingsShouldBeRejected() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithListingsJsonPair("\"listings\":[]"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange")));
+        rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[]"), forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange"));
     }
 
     @Test
     public void companyWithNullListingShouldBeRejected() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithListingsJsonPair("\"listings\":[null]")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(
-                        forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange")));
+        rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[null]"), forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange"));
     }
 
-    @ParameterizedTest
-    @ValueSource(strings = { "true", "false", "3", "3.3", "\"someString\", []" })
-    public void companyWithIndividualListingAsNonObjectShouldBeRejectedIndicatedWrongType(String listingOfWrongType)
-            throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
-                bodyFactory.createWithListingsJsonPair(String.format("\"listings\":[%s]", listingOfWrongType))))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forObjectRequiredAt("$.listings[0]")));
+    @Test
+    public void companyWithIndividualListingAsNonObjectShouldBeRejectedIndicatedWrongType() throws Exception {
+        rejectsAsBadRequest("\"listings\":[3.3]", forObjectRequiredAt("$.listings[0]"));
     }
 
     @Test
     public void shouldNotSupportMultipleListings() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithMultipleListings()))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings", "Multiple listings are not supported")));
+        rejectsAsBadRequest(bodyFactory.createWithMultipleListings(), forInvalidValueAt("$.listings", "Multiple listings are not supported"));
     }
 }
 
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-class CompanyControllerTestIndividualListingParsingIntegrationTest {
+class CompanyControllerTestIndividualListingParsingIntegrationTest extends CompanyControllerIntegrationTestBase{
 
     @MockBean
     private Companies companies;
@@ -425,86 +280,41 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest {
     @MockBean
     private StockQuotes quotes;
 
-    @Autowired
-    private MockMvc mockMvc;
-
-    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
-
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
-
     @Test
     public void shouldRejectCompanyListedWithoutMarketIdIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithMarketIdJsonPair("")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].marketIdentifier")));
+        rejectsAsBadRequest(bodyFactory.createWithMarketIdJsonPair(""), forMissingFieldAt("$.listings[0].marketIdentifier"));
     }
 
     @Test
-    public void shouldRejectCompanyListedWithNullMarketIdIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithMarketIdJsonPair("\"marketIdentifier\":null")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].marketIdentifier")));
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
-    public void shouldRejectCompanyListedWithNonStringMarketIdIndicatingTypeIsWrong(String marketId) throws Exception {
-        String marketIdentifier = "\"marketIdentifier\":" + marketId;
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].marketIdentifier")));
+    public void shouldRejectCompanyListedWithNonStringMarketIdIndicatingTypeIsWrong() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithMarketIdJsonPair("\"marketIdentifier\":true"), forStringRequiredAt("$.listings[0].marketIdentifier"));
     }
 
     @Test
-    public void shouldRejectCompanyListedWithNon4characterMarketId() throws Exception {
-        String marketIdentifier = "\"marketIdentifier\":\"invalid\"";
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].marketIdentifier",
-                        "Market Identifier is not 4 characters long (ISO 10383 standard)")));
-    }
-
-    @Test
-    public void shouldRejectCompanyListedWithNonUppercaseCharacterMarketId() throws Exception {
-        String marketIdentifier = "\"marketIdentifier\":\"xnys\"";
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithMarketIdJsonPair(marketIdentifier))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].marketIdentifier",
-                        "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)")));
+    public void shouldRejectCompanyListedWithInvalidMarketId() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithMarketIdJsonPair("\"marketIdentifier\":\"invalid\""), forInvalidValueAt("$.listings[0].marketIdentifier",
+                        "Market Identifier is not 4 characters long (ISO 10383 standard)"));
     }
 
     @Test
     public void shouldRejectCompanyWithoutSymbolIndicatingFieldIsMandatory() throws Exception {
-        mockMvc.perform(
-                post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithSymbolJsonPair("")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forMissingFieldAt("$.listings[0].stockSymbol")));
+        rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair(""), forMissingFieldAt("$.listings[0].stockSymbol"));
     }
 
     @Test
     public void shouldRejectCompanyWithNonStringSymbolIndicatingTypeIsWrong() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":3"))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forStringRequiredAt("$.listings[0].stockSymbol")));
+        rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":3"), forStringRequiredAt("$.listings[0].stockSymbol"));
     }
 
     @Test
     public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\"")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson(forInvalidValueAt("$.listings[0].stockSymbol",
-                        "Stock Symbol must contain between 1-5 characters")));
+        rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""), forInvalidValueAt("$.listings[0].stockSymbol",
+                        "Stock Symbol must contain between 1-5 characters"));
     }
 
     @Test
     public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
         doThrow(StockSymbolNotSupported.class).when(companies).create(ArgumentMatchers.any());
-        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
-                .content(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"BBBB\"")))
-                .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"stockSymbolNotSupported\"}"));
+        rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"BBBB\""), "{\"errorName\":\"stockSymbolNotSupported\"}");
     }
 }

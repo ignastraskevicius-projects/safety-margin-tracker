@@ -158,6 +158,47 @@ class CompanyControllerCurrencyParsingIntegrationTest {
 
 @WebMvcTest
 @Import(AppErrorsHandlingConfiguration.class)
+class CompanyControllerIdParsingIntegrationTest {
+
+    @MockBean
+    private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    private CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
+    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
+    @Test
+    public void shouldRejectCompanyWithoutIdIndicatingFieldIsMandatory() throws Exception {
+        mockMvc.perform(
+                        post("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createWithIdJsonPair("")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.id")));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithNonStringIdIndicatingWrongType() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE)
+                        .content(bodyFactory.createWithIdJsonPair("\"id\":3")))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forStringRequiredAt("$.id")));
+    }
+
+    @Test
+    public void shouldRejectCompaniesWithUnparsableIdAsUUID() throws Exception {
+        mockMvc.perform(post("/companies/").contentType(V1_MEDIA_TYPE).content(
+                        bodyFactory.createWithIdJsonPair("\"id\":\"19c56404-73c6-4cd1-96a4-aae7962b643z\"")))
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson(
+                        forInvalidValueAt("$.id", "Must consist of hyphens (-) and a,b,c,d,e,f and numeric characters only")));
+    }
+}
+
+@WebMvcTest
+@Import(AppErrorsHandlingConfiguration.class)
 class CompanyControllerHomeCountryParsingIntegrationTest {
 
     @MockBean

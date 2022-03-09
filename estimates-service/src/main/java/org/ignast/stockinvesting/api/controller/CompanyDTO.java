@@ -11,10 +11,15 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
 public class CompanyDTO {
+
+    @NotNull
+    @DomainClassConstraint(domainClass = UUID.class)
+    private String id;
 
     @NotNull
     @Size(min = 1, max = 255, message = "Company name must be between {min}-{max} characters")
@@ -34,10 +39,13 @@ public class CompanyDTO {
     @Valid
     private List<ListingDTO> listings;
 
-    public CompanyDTO(@JsonProperty(value = "name") String name,
+    public CompanyDTO(
+            @JsonProperty(value = "id") String id,
+            @JsonProperty(value = "name") String name,
             @JsonProperty(value = "homeCountry") String homeCountry,
             @JsonProperty("functionalCurrency") String functionalCurrency,
             @JsonProperty(value = "listings") List<ListingDTO> listings) {
+        this.id = id;
         this.name = name;
         this.homeCountry = homeCountry;
         this.functionalCurrency = functionalCurrency;

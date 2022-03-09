@@ -10,6 +10,7 @@
 	    <module>persistence</module>
 	    <module>error-handling</module>
 	    <module>quotes-service</module>
+	    <module>quotes-domain</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -48,6 +49,11 @@
             <dependency>
                 <groupId>org.ignast.stock-investing</groupId>
                 <artifactId>domain</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ignast.stock-investing.quotes</groupId>
+                <artifactId>quotes-domain</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

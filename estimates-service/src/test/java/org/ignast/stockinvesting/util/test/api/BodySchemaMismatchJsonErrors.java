@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api.controller;
+package org.ignast.stockinvesting.util.test.api;
 
 import org.junit.jupiter.api.Test;
 

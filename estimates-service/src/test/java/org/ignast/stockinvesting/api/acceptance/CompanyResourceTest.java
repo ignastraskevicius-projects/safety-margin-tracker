@@ -48,7 +48,7 @@ public class CompanyResourceTest {
         JSONObject root = new JSONObject(rootResponse.getBody());
 
         String companiesHref = root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
-        ResponseEntity<String> companyDefinition = restTemplate.exchange(companiesHref, HttpMethod.POST, contentTypeV1(
+        ResponseEntity<String> companyDefinition = restTemplate.exchange(companiesHref, HttpMethod.PUT, contentTypeV1(
                 "{\"id\":\"19c56404-73c6-4cd1-96a4-aae7962b6435\",\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}"),
                 String.class);
         assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);

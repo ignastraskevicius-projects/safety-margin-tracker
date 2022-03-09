@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.api.controller;
+package org.ignast.stockinvesting.quotes.api.controller;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -13,11 +13,9 @@ class CompanyDTOTest {
 
     @Test
     public void shouldPreserveNonNestedAttributes() {
-        val company = new CompanyDTO("someId", "Amazon", "United States", "United States Dollar", Collections.emptyList());
+        val company = new CompanyDTO("someId", "Amazon", Collections.emptyList());
         assertThat(company.getId()).isEqualTo("someId");
-        assertThat(company.getHomeCountry()).isEqualTo("United States");
         assertThat(company.getName()).isEqualTo("Amazon");
-        assertThat(company.getFunctionalCurrency()).isEqualTo("United States Dollar");
     }
 
     @Test
@@ -41,7 +39,7 @@ class CompanyDTOTest {
 
     @Test
     public void shouldAllowNullFieldsToEnableJavaxValidation() {
-        val company = new CompanyDTO(null, null, null, null, null);
+        val company = new CompanyDTO(null, null, null);
         assertThat(company.getListings()).isNull();
         assertThat(company.getId()).isNull();
         assertThat(company.getName()).isNull();
@@ -51,8 +49,7 @@ class CompanyDTOTest {
         assertThat(listing.getStockSymbol()).isNull();
     }
 
-
     private CompanyDTO anyCompanyWith(List<ListingDTO> listings) {
-        return new CompanyDTO("anyId","anyName", "anyCountry", "United States Dollar", listings);
+        return new CompanyDTO("anyId","anyName", listings);
     }
 }

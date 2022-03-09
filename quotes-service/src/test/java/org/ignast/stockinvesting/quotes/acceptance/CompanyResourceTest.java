@@ -27,8 +27,11 @@ public class CompanyResourceTest {
         assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
         JSONObject root = new JSONObject(rootResponse.getBody());
 
-        String companiesHref = root.getJSONObject("_links").getJSONObject("stocks:company").getString("href");
-        assertThat(companiesHref).isNotNull();
+        String companiesHref = root.getJSONObject("_links").getJSONObject("quotes:company").getString("href");
+        ResponseEntity<String> companyDefinition = restTemplate.exchange(companiesHref, HttpMethod.POST, contentTypeV1(
+                        "{\"id\":\"19c56404-73c6-4cd1-96a4-aae7962b6435\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}"),
+                String.class);
+        assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);
 
     }
 
@@ -37,5 +40,12 @@ public class CompanyResourceTest {
         HttpHeaders headers = new HttpHeaders();
         headers.add("Accept", v1MediaType.toString());
         return new HttpEntity<>(headers);
+    }
+
+    private HttpEntity<String> contentTypeV1(String content) {
+        MediaType v1MediaType = MediaType.valueOf("application/vnd.stockinvesting.quotes-v1.hal+json");
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-Type", v1MediaType.toString());
+        return new HttpEntity<>(content, headers);
     }
 }

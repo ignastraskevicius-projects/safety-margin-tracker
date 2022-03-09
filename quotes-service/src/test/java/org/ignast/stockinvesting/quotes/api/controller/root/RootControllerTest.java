@@ -27,7 +27,7 @@ public class RootControllerTest {
     public void rootResourceShouldLinkToCompanies() throws Exception {
         ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
         root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE))
-                .andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
+                .andExpect(content().string(hasRel("quotes:company").withHrefContaining("/companies")));
     }
 
     @Test

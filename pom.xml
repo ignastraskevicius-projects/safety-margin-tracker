@@ -9,6 +9,7 @@
         <module>domain</module>
 	    <module>persistence</module>
 	    <module>error-handling</module>
+	    <module>quotes-service</module>
     </modules>
     <packaging>pom</packaging>
 

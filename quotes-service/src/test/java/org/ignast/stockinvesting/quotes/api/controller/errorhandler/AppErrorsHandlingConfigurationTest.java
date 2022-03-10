@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
 import lombok.val;
 import org.assertj.core.api.ObjectAssert;
+import org.ignast.stockinvesting.quotes.CompanyName;
 import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.StockSymbol;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.FromStringConstructor;
@@ -23,7 +24,9 @@ class AppErrorsHandlingConfigurationTest {
         val countOfTypesSupported = asList(
                 checkConstructedType(MarketIdentifierCode.class, t -> t.construct("XNYS")),
                 checkConstructedType(StockSymbol.class, t -> t.construct("AMZN")),
-                checkConstructedType(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300"))
+                checkConstructedType(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300")),
+                checkConstructedType(CompanyName.class, t -> t.construct("Amazon"))
+
         ).size();
 
         assertThat(types).hasSize(countOfTypesSupported);

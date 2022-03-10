@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.quotes;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -23,15 +24,15 @@ class StockSymbolTest {
     @Test
     public void shouldNotBeEmpty() {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(""))
-                .withMessage("Stock Symbol must contain between 1-5 characters");
+                .withMessage("Stock Symbol must contain between 1-6 characters");
         assertThat(new StockSymbol("A").get()).isEqualTo("A");
     }
 
     @Test
-    public void shouldRejectLongerThan5() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol("ABCDEF"))
-                .withMessage("Stock Symbol must contain between 1-5 characters");
-        assertThat(new StockSymbol("ABCDE").get()).isEqualTo("ABCDE");
+    public void shouldRejectLongerThan6() {
+        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol("ABCDEFG"))
+                .withMessage("Stock Symbol must contain between 1-6 characters");
+        assertThat(new StockSymbol("ABCDEF").get()).isEqualTo("ABCDEF");
     }
 
     @ParameterizedTest
@@ -45,5 +46,10 @@ class StockSymbolTest {
     @ValueSource(strings = { "11", "AA", "2B", "C3" })
     public void shouldAcceptUppercaseAlphanumeric(String symbol) {
         assertThat(new StockSymbol(symbol).get()).isEqualTo(symbol);
+    }
+
+    @Test
+    public void shouldBeEqualToSameStockSymbol() {
+        EqualsVerifier.forClass(StockSymbol.class).verify();
     }
 }

@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.quotes;
 
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,5 +38,10 @@ class MarketIdentifierCodeTest {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new MarketIdentifierCode(mic)).withMessage(
                         "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)");
+    }
+
+    @Test
+    public void shouldEqualToSameMic() {
+        EqualsVerifier.forClass(MarketIdentifierCode.class).verify();
     }
 }

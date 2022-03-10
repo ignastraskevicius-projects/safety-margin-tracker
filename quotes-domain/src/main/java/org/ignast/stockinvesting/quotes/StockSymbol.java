@@ -1,13 +1,15 @@
 package org.ignast.stockinvesting.quotes;
 
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-public class StockSymbol {
-    private String code;
+@EqualsAndHashCode
+public final class StockSymbol {
+    private final String code;
 
     public StockSymbol(@NonNull String code) {
-        if (code.isEmpty() || code.length() > 5) {
-            throw new IllegalArgumentException("Stock Symbol must contain between 1-5 characters");
+        if (code.isEmpty() || code.length() > 6) {
+            throw new IllegalArgumentException("Stock Symbol must contain between 1-6 characters");
         }
         if (!code.matches("^[A-Z0-9]*$")) {
             throw new IllegalArgumentException("Stock Symbol must contain only uppercase alphanumeric characters");

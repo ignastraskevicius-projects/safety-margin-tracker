@@ -1,9 +1,11 @@
 package org.ignast.stockinvesting.quotes;
 
+import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
-public class MarketIdentifierCode {
-    private String code;
+@EqualsAndHashCode
+public final class MarketIdentifierCode {
+    private final String code;
 
     public MarketIdentifierCode(@NonNull String code) {
         if (code.length() != 4) {

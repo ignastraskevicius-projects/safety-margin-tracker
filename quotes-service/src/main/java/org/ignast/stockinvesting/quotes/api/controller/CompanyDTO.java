@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.quotes.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
+import org.ignast.stockinvesting.quotes.CompanyName;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
 import javax.validation.Valid;
@@ -20,7 +21,7 @@ public class CompanyDTO {
     private String id;
 
     @NotNull
-    @Size(min = 1, max = 255, message = "Company name must be between {min}-{max} characters")
+    @DomainClassConstraint(domainClass = CompanyName.class)
     private String name;
 
     @NotNull

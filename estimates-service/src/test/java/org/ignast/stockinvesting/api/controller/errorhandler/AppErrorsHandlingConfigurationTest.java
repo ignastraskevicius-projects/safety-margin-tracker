@@ -2,10 +2,7 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 
 import lombok.val;
 import org.assertj.core.api.ObjectAssert;
-import org.ignast.stockinvesting.estimates.domain.CountryCode;
-import org.ignast.stockinvesting.estimates.domain.CurrencyCode;
-import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.estimates.domain.StockSymbol;
+import org.ignast.stockinvesting.estimates.domain.*;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.FromStringConstructor;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +24,8 @@ class AppErrorsHandlingConfigurationTest {
                 checkConstructedType(StockSymbol.class, t -> t.construct("AMZN")),
                 checkConstructedType(CountryCode.class, t -> t.construct("US")),
                 checkConstructedType(CurrencyCode.class, t -> t.construct("USD")),
-                checkConstructedType(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300"))
+                checkConstructedType(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300")),
+                checkConstructedType(CompanyName.class, t -> t.construct("Microsoft"))
         ).size();
 
         assertThat(types).hasSize(countOfTypesSupported);

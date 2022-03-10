@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.quotes;
 
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 
 public interface QuotesRepository {
@@ -15,5 +17,13 @@ public interface QuotesRepository {
             super(message);
         }
     }
+}
 
+@Service
+class FakeQuotesRepository implements QuotesRepository {
+
+    @Override
+    public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic) {
+        return BigDecimal.ZERO;
+    }
 }

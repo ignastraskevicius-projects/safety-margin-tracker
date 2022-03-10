@@ -1,15 +1,21 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
+import org.ignast.stockinvesting.quotes.Companies;
+import org.ignast.stockinvesting.quotes.StockExchange;
+import org.ignast.stockinvesting.quotes.StockExchanges;
 import org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppErrorsHandlingConfiguration;
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.ignast.stockinvesting.quotes.util.test.api.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -18,6 +24,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(AppErrorsHandlingConfiguration.class)
 abstract class CompanyControllerIntegrationTestBase {
     protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
+
+    @MockBean
+    protected Companies companies;
+
+    @MockBean
+    protected StockExchanges stockExchanges;
 
     @Autowired
     protected MockMvc mockMvc;
@@ -44,7 +56,8 @@ public class CompanyControllerIntegrationTest extends CompanyControllerIntegrati
     }
 
     @Test
-    public void shouldDefineCompany() throws Exception {
+    public void shouldCreateCompany() throws Exception {
+        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createAmazon()))
                 .andExpect(status().isCreated());
     }
@@ -107,25 +120,9 @@ class CompanyControllerNameParsingIntegrationTest extends CompanyControllerInteg
     }
 
     @Test
-    public void shouldRejectCompanyWithEmptyName() throws Exception {
+    public void shouldRejectCompanyWithInvalidName() throws Exception {
+        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
         rejectsAsBadRequest(companyWithNameOfLength(0), forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
-    }
-
-    @Test
-    public void shouldCreateCompanyWithAtLeast1Character() throws Exception {
-        mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(1)))
-                .andExpect(status().isCreated());
-    }
-
-    @Test
-    public void shouldRejectCompanyWithTooLongName() throws Exception {
-        rejectsAsBadRequest(companyWithNameOfLength(256), forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
-    }
-
-    @Test
-    public void shouldCreateCompanyWithWithNamesOfRelativelyReasonableLength() throws Exception {
-        mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(255)))
-                .andExpect(status().isCreated());
     }
 
     private String companyWithNameOfLength(int length) {

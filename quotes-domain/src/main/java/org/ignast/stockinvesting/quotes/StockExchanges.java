@@ -1,10 +1,12 @@
 package org.ignast.stockinvesting.quotes;
 
 import lombok.NonNull;
+import org.springframework.stereotype.Service;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
+@Service
 public class StockExchanges {
     private final Map<MarketIdentifierCode, StockExchange> supportedStockExchanges;
     public StockExchanges(QuotesRepository quotes) {

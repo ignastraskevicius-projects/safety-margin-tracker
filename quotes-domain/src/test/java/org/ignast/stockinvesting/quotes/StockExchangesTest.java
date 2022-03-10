@@ -4,6 +4,8 @@ import lombok.val;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Test;
 
+import java.math.BigDecimal;
+
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -80,6 +82,17 @@ class StockExchangesTest {
         Money price = stockExchanges.getFor(nasdaqMic).getQuotedPrice(appleSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "USD"));
+    }
+
+    @Test
+    public void LondonStockExchangeShouldBeSupported() {
+        val astrazenecaSymbol = new StockSymbol("AZN");
+        val lseMic = new MarketIdentifierCode("XLON");
+        when(quotes.getQuotedPriceOf(astrazenecaSymbol, lseMic)).thenReturn(new BigDecimal(100));
+
+        Money price = stockExchanges.getFor(lseMic).getQuotedPrice(astrazenecaSymbol);
+
+        assertThat(price).isEqualTo(Money.of(ONE, "GBP"));
     }
 
     @Test

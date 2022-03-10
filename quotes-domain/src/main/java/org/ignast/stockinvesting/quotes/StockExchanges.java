@@ -14,12 +14,13 @@ public class StockExchanges {
                 newStockExchange(new MarketIdentifierCode("XTSE"), new CurrencyCode("CAD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XHKG"), new CurrencyCode("HKD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XASX"), new CurrencyCode("AUD"), quotes),
-                newStockExchange(new MarketIdentifierCode("XNAS"), new CurrencyCode("USD"), quotes)
+                newStockExchange(new MarketIdentifierCode("XNAS"), new CurrencyCode("USD"), quotes),
+                newStockExchange(new MarketIdentifierCode("XLON"), new CurrencyCode("GBP"), quotes)
         );
     }
 
     private AbstractMap.SimpleEntry<MarketIdentifierCode, StockExchange> newStockExchange(MarketIdentifierCode mic, CurrencyCode currency, QuotesRepository quotes) {
-        return new AbstractMap.SimpleEntry<>(mic, new StockExchange(mic, currency, quotes));
+        return new AbstractMap.SimpleEntry<>(mic, StockExchange.create(mic, currency, quotes));
     }
 
     public StockExchange getFor(@NonNull MarketIdentifierCode mic) {

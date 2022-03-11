@@ -3,9 +3,18 @@ package org.ignast.stockinvesting.quotes;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+
 @EqualsAndHashCode
+@Embeddable
 public final class MarketIdentifierCode {
-    private final String code;
+    @Column(name = "market_identifier_code")
+    private String code;
+
+    protected MarketIdentifierCode() {
+        //JPA requirement to have default constructor
+    }
 
     public MarketIdentifierCode(@NonNull String code) {
         if (code.length() != 4) {

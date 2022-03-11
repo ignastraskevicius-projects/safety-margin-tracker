@@ -11,6 +11,7 @@
 	    <module>error-handling</module>
 	    <module>quotes-service</module>
 	    <module>quotes-domain</module>
+	    <module>quotes-persistence</module>
     </modules>
     <packaging>pom</packaging>
 

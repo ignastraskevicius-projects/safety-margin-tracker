@@ -1,0 +1,1 @@
+CREATE TABLE IF NOT EXISTS company (id varchar(36) PRIMARY KEY, company_name varchar(255), stock_symbol varchar(6), market_identifier_code varchar(4), CONSTRAINT unique_listing UNIQUE(stock_symbol, market_identifier_code));

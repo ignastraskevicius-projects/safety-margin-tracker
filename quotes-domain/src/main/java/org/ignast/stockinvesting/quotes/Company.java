@@ -4,16 +4,27 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.javamoney.moneta.Money;
 
+import javax.persistence.Embedded;
 import javax.persistence.Entity;
+import javax.persistence.Id;
 import java.util.UUID;
 
-@EqualsAndHashCode
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public class Company {
+    @Id
+    @EqualsAndHashCode.Include
     private UUID id;
+    @Embedded
     private CompanyName name;
+    @Embedded
     private StockSymbol symbol;
+    @Embedded
     private StockExchange stockExchange;
+
+    protected Company() {
+        //constructor for JPA
+    }
 
     public Company(@NonNull UUID id, @NonNull CompanyName name, @NonNull StockSymbol symbol, @NonNull StockExchange stockExchange) {
         this.id = id;

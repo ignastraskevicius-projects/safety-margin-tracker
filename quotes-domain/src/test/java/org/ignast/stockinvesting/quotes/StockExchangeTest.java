@@ -3,6 +3,8 @@ package org.ignast.stockinvesting.quotes;
 import lombok.val;
 import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 import java.math.BigDecimal;
 
@@ -41,6 +43,14 @@ class StockExchangeTest {
         val stockExchange = create(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes);
 
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> stockExchange.getQuotedPrice(new StockSymbol("AMZN")));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"XNYS", "XNAS"})
+    public void shouldPreserveMarketIdentifierCode(String micStr) {
+        val mic = new MarketIdentifierCode(micStr);
+
+        assertThat(create(mic, new CurrencyCode("USD"), quotes).getMarketIdentifierCode()).isEqualTo(mic);
     }
 
     @Test

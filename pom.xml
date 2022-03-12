@@ -34,7 +34,7 @@
         <apache.commons.lang3.version>3.12.0</apache.commons.lang3.version>
         <equalsverifier.version>3.9</equalsverifier.version>
         <h2.version>2.1.210</h2.version>
-        <javax.persistence.api.version>1.0.2</javax.persistence.api.version>
+        <javax.persistence.api.version>2.2</javax.persistence.api.version>
         <flyway.version>8.5.2</flyway.version>
     </properties>
 
@@ -176,7 +176,7 @@
             </dependency>
             <dependency>
                 <groupId>javax.persistence</groupId>
-                <artifactId>persistence-api</artifactId>
+                <artifactId>javax.persistence-api</artifactId>
                 <scope>provided</scope>
                 <version>${javax.persistence.api.version}</version>
             </dependency>

@@ -4,6 +4,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import org.javamoney.moneta.Money;
 
+import javax.persistence.Convert;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -13,6 +14,7 @@ import java.util.UUID;
 @Entity
 public class Company {
     @Id
+    @Convert(converter = UuidConverter.class)
     @EqualsAndHashCode.Include
     private UUID id;
     @Embedded

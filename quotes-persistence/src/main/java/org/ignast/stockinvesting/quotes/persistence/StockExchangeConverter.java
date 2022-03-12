@@ -13,10 +13,6 @@ public class StockExchangeConverter implements AttributeConverter<StockExchange,
 
     private StockExchanges stockExchanges;
 
-    protected StockExchangeConverter() {
-        //constructor necessary for JPA
-    }
-
     public StockExchangeConverter(@NonNull StockExchanges stockExchanges) {
         this.stockExchanges = stockExchanges;
     }

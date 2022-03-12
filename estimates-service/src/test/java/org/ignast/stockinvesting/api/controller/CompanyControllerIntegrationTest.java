@@ -14,9 +14,11 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -33,8 +35,8 @@ abstract class CompanyControllerIntegrationTestBase {
 
     void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)
-                        .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
+                        .content(requestBody))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(expectedResponse));
     }
 }
 
@@ -262,7 +264,7 @@ class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerI
 
     @Test
     public void companyWithIndividualListingAsNonObjectShouldBeRejectedIndicatedWrongType() throws Exception {
-        rejectsAsBadRequest("\"listings\":[3.3]", forObjectRequiredAt("$.listings[0]"));
+        rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[3.3]"), forObjectRequiredAt("$.listings[0]"));
     }
 
     @Test
@@ -315,5 +317,21 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest extends Compa
     public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
         doThrow(StockSymbolNotSupported.class).when(companies).create(ArgumentMatchers.any());
         rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"BBBB\""), "{\"errorName\":\"stockSymbolNotSupported\"}");
+    }
+}
+
+class CompanyControllerIntegrationTestBaseTest extends CompanyControllerIntegrationTestBase {
+
+    @MockBean
+    private Companies companies;
+
+    @MockBean
+    private StockQuotes quotes;
+
+
+    @Test
+    public void shouldNotRejectGoodRequest()  {
+        assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> rejectsAsBadRequest(bodyFactory.createAmazon(), "shouldNotBeBadRequest"))
+                .withMessage("Status expected:<400> but was:<201>");
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.util.test.api.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.mockito.ArgumentMatchers.any;
@@ -192,5 +193,15 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest extends Compa
     public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""), forInvalidValueAt("$.listings[0].stockSymbol",
                         "Stock Symbol must contain between 1-6 characters"));
+    }
+}
+
+class CompanyControllerIntegrationTestBaseTest extends CompanyControllerIntegrationTestBase {
+
+    @Test
+    public void shouldNotRejectGoodRequest()  {
+        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
+        assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> rejectsAsBadRequest(bodyFactory.createAmazon(), "shouldNotBeBadRequest"))
+                .withMessage("Status expected:<400> but was:<201>");
     }
 }

@@ -18,7 +18,7 @@ class JacksonParsingErrorsExtractorTest {
 
     @Test
     public void shouldFailToExtractErrorsForNullPath() {
-        asList(stringParsingFailedAt(null), dtoParsingFailedAt(null), listParsingFailedAt(null)).stream()
+        asList(integerParsingFailedAt(null), stringParsingFailedAt(null), dtoParsingFailedAt(null), listParsingFailedAt(null)).stream()
                 .forEach(e -> assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
                         .isThrownBy(() -> extractor.extractError(e))
                         .withMessage("Jackson parsing failed without target type"));
@@ -26,7 +26,7 @@ class JacksonParsingErrorsExtractorTest {
 
     @Test
     public void shouldExtractErrorsForRootPath() {
-        asList(stringParsingFailedAt(asList()), dtoParsingFailedAt(asList()), listParsingFailedAt(asList())).stream()
+        asList(integerParsingFailedAt(asList()), stringParsingFailedAt(asList()), dtoParsingFailedAt(asList()), listParsingFailedAt(asList())).stream()
                 .forEach(e -> assertThat(extractor.extractError(e).getJsonPath()).isEqualTo("$"));
     }
 
@@ -35,6 +35,13 @@ class JacksonParsingErrorsExtractorTest {
         ValidationErrorDTO validationError = extractor.extractError(stringParsingFailedAt(asList()));
 
         assertThat(validationError.getErrorName()).isEqualTo("valueMustBeString");
+    }
+
+    @Test
+    public void shouldExtractErrorRequiringValueToBeNumber() {
+        ValidationErrorDTO validationError = extractor.extractError(integerParsingFailedAt(asList()));
+
+        assertThat(validationError.getErrorName()).isEqualTo("valueMustBeInteger");
     }
 
     @Test
@@ -69,7 +76,7 @@ class JacksonParsingErrorsExtractorTest {
     public void shouldPreserveJsonPathForFields() {
         List<Reference> path = asList(toField(new CityDTO(), "population"));
 
-        asList(stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
+        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
                 .map(e -> extractor.extractError(e))
                 .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population"));
     }
@@ -78,7 +85,7 @@ class JacksonParsingErrorsExtractorTest {
     public void shouldPreserveJsonPathForNestedFields() {
         List<Reference> path = asList(toField(new CityDTO(), "population"), toField(new PopulationDTO(), "growth"));
 
-        asList(stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
+        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
                 .map(e -> extractor.extractError(e))
                 .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population.growth"));
     }
@@ -87,7 +94,7 @@ class JacksonParsingErrorsExtractorTest {
     public void shouldPreserveJsonPathForArrays() {
         List<Reference> path = asList(ReferenceMock.toIndex(new ArrayList(), 5));
 
-        asList(stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
+        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
                 .map(e -> extractor.extractError(e)).forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$[5]"));
     }
 

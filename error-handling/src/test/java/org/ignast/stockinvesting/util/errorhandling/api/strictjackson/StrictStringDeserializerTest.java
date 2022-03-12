@@ -70,6 +70,7 @@ class StrictStringDeserializerTest {
             mapper.readValue("3", String.class);
         });
 
+        assertThat(throwable).isNotNull();
         assertThat(throwable).isExactlyInstanceOf(StrictStringDeserializingException.class)
                 .isInstanceOf(StrictDeserializingException.class);
     }

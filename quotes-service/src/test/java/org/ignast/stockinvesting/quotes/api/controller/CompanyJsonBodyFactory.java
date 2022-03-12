@@ -6,7 +6,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class CompanyJsonBodyFactory {
     public String createAmazon() {
-        return "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}";
+        return "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}";
     }
 
     public String createWithIdJsonPair(String jsonPair) {
@@ -15,7 +15,7 @@ public class CompanyJsonBodyFactory {
 
     public String createWithNameJsonPair(String nameJsonPair) {
         return String.format(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",%s\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}",
+                "{\"id\":-1,%s\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}",
                 appendCommaIfNotEmpty(nameJsonPair));
     }
 
@@ -29,19 +29,19 @@ public class CompanyJsonBodyFactory {
     }
 
     public String createWithListingsJsonPair(String listingsJsonPair) {
-        return String.format("{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\"%s}",
+        return String.format("{\"id\":-1,\"name\":\"Amazon\"%s}",
                 prependCommaIfNotEmpty(listingsJsonPair));
     }
 
     public String createWithMarketIdJsonPair(String marketIdJsonPair) {
         return String.format(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{%s\"stockSymbol\":\"AMZN\"}]}",
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{%s\"stockSymbol\":\"AMZN\"}]}",
                 appendCommaIfNotEmpty(marketIdJsonPair));
     }
 
     public String createWithSymbolJsonPair(String jsonPair) {
         return String.format(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\"%s}]}",
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\"%s}]}",
                 prependCommaIfNotEmpty(jsonPair));
     }
 
@@ -63,7 +63,7 @@ class CompanyJsonBodyFactoryTest {
     @Test
     public void shouldCreateValidJson() {
         assertThat(factory.createAmazon()).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
 
@@ -83,55 +83,55 @@ class CompanyJsonBodyFactoryTest {
     @Test
     public void shouldCreateCompanyWithoutName() {
         assertThat(factory.createWithNameJsonPair("")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
+                "{\"id\":-1,\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomNameJsonPair() {
         assertThat(factory.createWithNameJsonPair("\"name\":null")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":null,\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
+                "{\"id\":-1,\"name\":null,\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutListingsField() {
         assertThat(factory.createWithListingsJsonPair(""))
-                .isEqualTo("{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\"}");
+                .isEqualTo("{\"id\":-1,\"name\":\"Amazon\"}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomListingsJsonPair() {
         assertThat(factory.createWithListingsJsonPair("\"listings\":null")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":null}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":null}");
     }
 
     @Test
     public void shouldCreateCompanyWithMultipleListings() {
         assertThat(factory.createWithMultipleListings()).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"},{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"},{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithoutMarketIdField() {
         assertThat(factory.createWithMarketIdJsonPair("")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"stockSymbol\":\"AMZN\"}]}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomMarketIdField() {
         assertThat(factory.createWithMarketIdJsonPair("\"marketIdentifier\":\"London Stock Exchange\"")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"London Stock Exchange\",\"stockSymbol\":\"AMZN\"}]}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"London Stock Exchange\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithoutSymbolField() {
         assertThat(factory.createWithSymbolJsonPair("")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\"}]}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomSymbolField() {
         assertThat(factory.createWithSymbolJsonPair("\"stockSymbol\":\"Amazon\"")).isEqualTo(
-                "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
+                "{\"id\":-1,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test

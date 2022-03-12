@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
-import java.util.UUID;
 
 @RestController
 public class CompanyController {
@@ -27,7 +26,7 @@ public class CompanyController {
     @PutMapping(value = "/companies", consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> createCompany(@Valid @RequestBody CompanyDTO companyDTO){
         Company company = companyDTO.getListings().stream().findFirst().map(l -> {
-            val id = UUID.fromString(companyDTO.getId());
+            val id = companyDTO.getId();
             val name = new CompanyName(companyDTO.getName());
             val symbol = new StockSymbol(l.getStockSymbol());
             val stockExchange = stockExchanges.getFor(new MarketIdentifierCode(l.getMarketIdentifier()));

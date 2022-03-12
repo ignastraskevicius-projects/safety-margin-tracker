@@ -71,33 +71,33 @@ public class AppDbMigrationTest {
 
         @Test
         public void shouldAcceptCompany() {
-            val insertAmazon = "INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','Amazon','AMZN','XNYS')";
+            val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1,'Amazon','AMZN','XNYS')";
             db.execute(insertAmazon);
         }
 
         @Test
-        public void shouldRejectCompanyWithSameId() {
-            val id = "34ab52b2-a169-4ef0-82e9-bb3ce6183124";
-            val insertAmazon = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('%s','Amazon','AMZN','XNYS')", id);
-            val insertHsbc = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('%s','Santander','HSBC','XLON')", id);
+        public void shouldRejectCompanyWithSameExternalId() {
+            val externalId = 1;
+            val insertAmazon = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (%d,'Amazon','AMZN','XNYS')", externalId);
+            val insertHsbc = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (%d,'Santander','HSBC','XLON')", externalId);
 
             db.execute(insertAmazon);
             assertThatExceptionOfType(DuplicateKeyException.class).isThrownBy(() ->
                             db.execute(insertHsbc)).withRootCauseInstanceOf(SQLIntegrityConstraintViolationException.class)
-                    .havingRootCause().withMessageContaining("Duplicate entry '34ab52b2-a169-4ef0-82e9-bb3ce6183124' for key 'company.PRIMARY'");
+                    .havingRootCause().withMessageContaining("Duplicate entry '1' for key 'company.unique_external_id'");
         }
 
         @Test
         public void shouldRejectCompanyWithAlreadyExistingListing() {
             val symbol = "AMZN";
             val mic = "XNYS";
-            val insertAmazonInUs = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','Amazon','%s','%s')", symbol, mic);
-            val insertAnotherAmazonInUs = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183127','Microsoft','%s','%s')", symbol, mic);
+            val insertAmazonInUs = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1,'Amazon','%s','%s')", symbol, mic);
+            val insertAnotherAmazonInUs = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (2,'Microsoft','%s','%s')", symbol, mic);
 
             db.execute(insertAmazonInUs);
             assertThatExceptionOfType(DuplicateKeyException.class).isThrownBy(() -> db.execute(insertAnotherAmazonInUs))
@@ -107,10 +107,10 @@ public class AppDbMigrationTest {
         @Test
         public void shouldAcceptCompaniesWithSameSymbolInDifferentMarkets() {
             val symbol = "X";
-            val insertXsymbolInTse = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','TMX group','%s','XTSX')", symbol);
-            val insertXsymbolInNyse = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183127','United States steel corporation','%s','XNYS')", symbol);
+            val insertXsymbolInTse = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1,'TMX group','%s','XTSX')", symbol);
+            val insertXsymbolInNyse = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (2,'United States steel corporation','%s','XNYS')", symbol);
 
             db.execute(insertXsymbolInTse);
             db.execute(insertXsymbolInNyse);
@@ -119,10 +119,10 @@ public class AppDbMigrationTest {
         @Test
         public void shouldAcceptCompaniesWithDifferentSymbolsInOneMarket() {
             val mic = "XNAS";
-            val insertAmazon = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183124','Amazon','AMZN','%s')", mic);
-            val insertMicrosoft = format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183127','Microsoft','MSFT','%s')", mic);
+            val insertAmazon = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1,'Amazon','AMZN','%s')", mic);
+            val insertMicrosoft = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (2,'Microsoft','MSFT','%s')", mic);
 
             db.execute(insertAmazon);
             db.execute(insertMicrosoft);
@@ -131,15 +131,15 @@ public class AppDbMigrationTest {
         @Test
         public void shouldPermitLongEnoughCompanyNames() {
             val notTooLongName = "c".repeat(255);
-            db.execute(format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183125','%s','FR','{}')", notTooLongName));
+            db.execute(format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1,'%s','FR','{}')", notTooLongName));
         }
 
         @Test
         public void shouldPermit6charStockSymbols() {
             val notTooLongSymbol = "123456";
-            db.execute(format("INSERT INTO company (id, company_name, stock_symbol, market_identifier_code) " +
-                    "VALUES ('34ab52b2-a169-4ef0-82e9-bb3ce6183126','AMZN','%s','XNAS')", notTooLongSymbol));
+            db.execute(format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1,'AMZN','%s','XNAS')", notTooLongSymbol));
         }
     }
 

@@ -24,6 +24,12 @@ public class BodySchemaMismatchJsonErrors {
                 jsonPath);
     }
 
+    public static String forIntegerRequiredAt(String jsonPath) {
+        return String.format(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeInteger\",\"jsonPath\":\"%s\"}]}",
+                jsonPath);
+    }
+
     public static String forObjectRequiredAt(String jsonPath) {
         return String.format(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeObject\",\"jsonPath\":\"%s\"}]}",
@@ -66,6 +72,12 @@ class BodySchemaMismatchJsonErrorsTest {
     public void shouldCreateErrorJsonForStringRequiredField() {
         assertThat(BodySchemaMismatchJsonErrors.forStringRequiredAt("someJsonPath")).isEqualTo(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"someJsonPath\"}]}");
+    }
+
+    @Test
+    public void shouldCreateErrorJsonForIntegerRequiredField() {
+        assertThat(BodySchemaMismatchJsonErrors.forIntegerRequiredAt("someJsonPath")).isEqualTo(
+                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeInteger\",\"jsonPath\":\"someJsonPath\"}]}");
     }
 
     @Test

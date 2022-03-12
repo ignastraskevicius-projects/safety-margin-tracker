@@ -10,15 +10,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Getter
 public class CompanyDTO {
 
     @NotNull
-    @DomainClassConstraint(domainClass = UUID.class)
-    private String id;
+    private Integer id;
 
     @NotNull
     @DomainClassConstraint(domainClass = CompanyName.class)
@@ -31,7 +29,7 @@ public class CompanyDTO {
     private List<ListingDTO> listings;
 
     public CompanyDTO(
-            @JsonProperty(value = "id") String id,
+            @JsonProperty(value = "id") Integer id,
             @JsonProperty(value = "name") String name,
             @JsonProperty(value = "listings") List<ListingDTO> listings) {
         this.id = id;

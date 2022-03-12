@@ -23,21 +23,23 @@ class CompanyControllerTest {
     @Test
     public void shouldCreateCompany() {
         val stockExchange = mock(StockExchange.class);
-        when(stockExchanges.getFor(new MarketIdentifierCode("XNYS"))).thenReturn(stockExchange);
-        val id = "48f70e54-c66a-4c87-9f02-81bdc84c63b3";
-        val company = new CompanyDTO(id, "Microsoft", asList(new ListingDTO("XNYS", "MSFT")));
+        when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(stockExchange);
+        val companyDto = new CompanyDTO(5, "Microsoft", asList(new ListingDTO("XNAS", "MSFT")));
         val captor = ArgumentCaptor.forClass(Company.class);
 
-        controller.createCompany(company);
+        controller.createCompany(companyDto);
 
         verify(companies).create(captor.capture());
-        assertThat(captor.getValue()).isEqualTo(new Company(UUID.fromString(id), new CompanyName("Microsoft"), new StockSymbol("MSFT"), stockExchange));
+        val company = captor.getValue();
+        assertThat(company.getExternalId()).isEqualTo(5);
+        assertThat(company.getName()).isEqualTo(new CompanyName("Microsoft"));
+        assertThat(company.getStockSymbol()).isEqualTo(new StockSymbol("MSFT"));
+        assertThat(company.getStockExchange()).isEqualTo(stockExchange);
     }
 
     @Test
     public void shouldRejectDtoWithoutListings() {
-        val id = "48f70e54-c66a-4c87-9f02-81bdc84c63b3";
-        val company = new CompanyDTO(id, "Microsoft", asList());
+        val company = new CompanyDTO(1, "Microsoft", asList());
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> controller.createCompany(company)).withMessage("Company to be created was expected to have one listing, but zero was found");
     }

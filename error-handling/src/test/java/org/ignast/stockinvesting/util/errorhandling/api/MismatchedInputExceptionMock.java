@@ -2,11 +2,10 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.assertj.core.api.Assertions;
+import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictIntegerDeserializingException;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializingException;
 import org.ignast.stockinvesting.util.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -22,6 +21,12 @@ import static org.mockito.Mockito.*;
 public class MismatchedInputExceptionMock {
     public static MismatchedInputException stringParsingFailedAt(List<Reference> path) {
         return MockitoUtils.mock(StrictStringDeserializingException.class, e -> {
+            when(e.getPath()).thenReturn(path);
+        });
+    }
+
+    public static MismatchedInputException integerParsingFailedAt(List<Reference> path) {
+        return MockitoUtils.mock(StrictIntegerDeserializingException.class, e -> {
             when(e.getPath()).thenReturn(path);
         });
     }
@@ -102,6 +107,12 @@ class MismatchedInputExceptionMockTest {
     }
 
     @Test
+    public void shouldCreateIntegerInputMismatchException() {
+        MismatchedInputException exception = integerParsingFailedAt(null);
+        assertThat(exception).isInstanceOf(StrictIntegerDeserializingException.class);
+    }
+
+    @Test
     public void shouldCreateListInputMismatchException() {
         MismatchedInputException exception = listParsingFailedAt(null);
         assertThat(exception).isInstanceOf(MismatchedInputException.class)
@@ -135,16 +146,17 @@ class MismatchedInputExceptionMockTest {
 
     @Test
     public void shouldCreateMismatchedInputExceptionsWithNullPath() {
-        asList(stringParsingFailedAt(null), listParsingFailedAt(null), dtoParsingFailedAt(null)).stream()
+        asList(integerParsingFailedAt(null), stringParsingFailedAt(null), listParsingFailedAt(null), dtoParsingFailedAt(null)).stream()
                 .map(MismatchedInputException::getPath).forEach(p -> assertThat(p).isNull());
     }
+
 
     @Test
     public void shouldCreateMismatchedInputExceptionsWithPath() {
         City sourceObject = new City();
         String field = "population";
         List<Reference> path = asList(toField(sourceObject, field));
-        asList(stringParsingFailedAt(path), listParsingFailedAt(path), dtoParsingFailedAt(path)).stream()
+        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), listParsingFailedAt(path), dtoParsingFailedAt(path)).stream()
                 .map(MismatchedInputException::getPath).forEach(p -> {
                     assertThat(p).isNotNull().hasSize(1);
                     assertThat(p.get(0).getFrom()).isSameAs(sourceObject);

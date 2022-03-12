@@ -14,10 +14,6 @@ public class DomainFactoryForTests {
         return new MarketIdentifierCode("XNYS");
     }
 
-    public static UUID anyId() {
-        return CompanyId.toUUID("55f20234-0f0f-4d61-ae84-44e5428e17c1");
-    }
-
     public static CompanyName anyCompanyName() {
         return new CompanyName("any");
     }

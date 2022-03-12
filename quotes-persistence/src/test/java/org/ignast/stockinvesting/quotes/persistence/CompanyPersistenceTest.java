@@ -9,6 +9,10 @@ import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomiz
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.context.transaction.TestTransaction;
+
+import java.util.Map;
 
 import static java.util.UUID.randomUUID;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -21,12 +25,19 @@ class CompanyPersistenceTest {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
     @Test
     public void test() {
         val stockExchanges = new StockExchanges(mock(QuotesRepository.class));
-        val id = randomUUID();
-        companyRepository.save(new Company(id, anyCompanyName(), anySymbol(), stockExchanges.getFor(anyMIC())));
-        assertThat(companyRepository.findById(id)).isNotNull();
+        companyRepository.save(new Company(6, anyCompanyName(), anySymbol(), stockExchanges.getFor(anyMIC())));
+        TestTransaction.flagForCommit();
+        TestTransaction.end();
+        val result = jdbcTemplate.queryForMap("SELECT external_id FROM company;");
+        assertThat(result.get("external_id"));
+
+        assertThat(companyRepository.findById(6)).isNotNull();
     }
 
     @TestConfiguration

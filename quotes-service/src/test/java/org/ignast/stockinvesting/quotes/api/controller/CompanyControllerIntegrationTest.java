@@ -18,6 +18,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
@@ -38,8 +39,8 @@ abstract class CompanyControllerIntegrationTestBase {
 
     void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)
-                        .content(bodyFactory.createWithListingsJsonPair("\"listings\":null")))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forMissingFieldAt("$.listings")));
+                        .content(requestBody))
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(expectedResponse));
     }
 }
 
@@ -97,13 +98,8 @@ class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegra
     }
 
     @Test
-    public void shouldRejectCompanyWithNonStringIdIndicatingWrongType() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":3"), forStringRequiredAt("$.id"));
-    }
-
-    @Test
-    public void shouldRejectCompaniesWithUnparsableIdAsUUID() throws Exception {
-        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":\"19c56404-73c6-4cd1-96a4-aae7962b643z\""), forInvalidValueAt("$.id", "Must consist of hyphens (-) and a,b,c,d,e,f and numeric characters only"));
+    public void shouldRejectCompanyWithNonIntegerIdIndicatingWrongType() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":\"nonInteger\""), forIntegerRequiredAt("$.id"));
     }
 }
 
@@ -155,7 +151,7 @@ class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerI
 
     @Test
     public void companyWithIndividualListingAsNonObjectShouldBeRejectedIndicatedWrongType() throws Exception {
-        rejectsAsBadRequest("\"listings\":[3.3]", forObjectRequiredAt("$.listings[0]"));
+        rejectsAsBadRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[3.3]"), forObjectRequiredAt("$.listings[0]"));
     }
 
     @Test
@@ -195,6 +191,6 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest extends Compa
     @Test
     public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""), forInvalidValueAt("$.listings[0].stockSymbol",
-                        "Stock Symbol must contain between 1-5 characters"));
+                        "Stock Symbol must contain between 1-6 characters"));
     }
 }

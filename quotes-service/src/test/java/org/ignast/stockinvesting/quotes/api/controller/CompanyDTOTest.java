@@ -13,8 +13,8 @@ class CompanyDTOTest {
 
     @Test
     public void shouldPreserveNonNestedAttributes() {
-        val company = new CompanyDTO("someId", "Amazon", Collections.emptyList());
-        assertThat(company.getId()).isEqualTo("someId");
+        val company = new CompanyDTO(3, "Amazon", Collections.emptyList());
+        assertThat(company.getId()).isEqualTo(3);
         assertThat(company.getName()).isEqualTo("Amazon");
     }
 
@@ -50,6 +50,6 @@ class CompanyDTOTest {
     }
 
     private CompanyDTO anyCompanyWith(List<ListingDTO> listings) {
-        return new CompanyDTO("anyId","anyName", listings);
+        return new CompanyDTO(4,"anyName", listings);
     }
 }

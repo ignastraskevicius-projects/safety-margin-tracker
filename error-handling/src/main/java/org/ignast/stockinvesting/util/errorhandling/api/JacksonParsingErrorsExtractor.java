@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictIntegerDeserializingException;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializingException;
 
 import java.util.List;
@@ -28,6 +29,8 @@ public class JacksonParsingErrorsExtractor {
     private ViolationType toViolationType(MismatchedInputException exception) {
         if (exception instanceof StrictStringDeserializingException) {
             return ViolationType.VALUE_MUST_BE_STRING;
+        } else if (exception instanceof StrictIntegerDeserializingException) {
+            return ViolationType.VALUE_MUST_BE_INTEGER;
         } else if (exception.getTargetType() == null) {
             throw new JacksonParsingErrorExtractionException("Jackson parsing failed with no target type defined");
         } else if (List.class.isAssignableFrom(exception.getTargetType())) {

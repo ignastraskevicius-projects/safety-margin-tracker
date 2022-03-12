@@ -154,6 +154,64 @@ class JsonStringFieldErrorsTest {
 }
 
 @WebMvcTest(GenericErrorHandlingConfiguration.class)
+class JsonIntegerFieldErrorsTest {
+
+    @Autowired
+    private MockMvc mockMvc;
+
+    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
+    @Test
+    public void shouldRejectRequestWithoutMandatoryField() throws Exception {
+        mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
+                        .content("{}")).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.integerField\"}]}"));
+    }
+
+    @Test
+    public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
+        mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
+                        .content("{\"integerField\":null}")).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.integerField\"}]}"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {"3.3", "\"nonInteger\"", "true", "false", "{}", "[]"})
+    public void shouldRejectRequestIndicatingWrongTypeWhereIntegerIsRequired(String wrongType) throws Exception {
+        mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
+                        .content(format("{\"integerField\":%s}", wrongType))).andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeInteger\",\"jsonPath\":\"$.integerField\"}]}"));
+    }
+
+    @TestConfiguration
+    static class TestControllerConfig {
+        @Bean
+        public TestController testController() {
+            return new TestController();
+        }
+    }
+
+    @RestController
+    static class TestController {
+
+        static String rootResourceOn(int port) {
+            return "http://localhost:" + port + "/";
+        }
+
+        @PostMapping(value = "/", consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
+        public HttpEntity<String> updateTest(@Valid @RequestBody TestDTO dto) {
+            return new HttpEntity<>("");
+        }
+    }
+
+    @Getter
+    static class TestDTO {
+        @NotNull
+        private Integer integerField;
+    }
+}
+
+@WebMvcTest(GenericErrorHandlingConfiguration.class)
 class JsonCollectionErrorsTest {
 
     @Autowired

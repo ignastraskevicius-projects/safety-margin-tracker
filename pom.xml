@@ -19,13 +19,15 @@
     <artifactId>estimates</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+
+
     <properties>
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <springboot.version>2.6.3</springboot.version>
-        <springframework.version>5.3.15</springframework.version>
-        <springdata.version>2.6.1</springdata.version>
+        <springboot.version>2.6.4</springboot.version>
+        <springframework.version>5.3.16</springframework.version>
+        <springdata.version>2.6.2</springdata.version>
         <testcontainers.version>1.16.3</testcontainers.version>
         <assertj.version>3.21.0</assertj.version>
         <junit.version>5.8.2</junit.version>

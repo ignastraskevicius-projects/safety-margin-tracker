@@ -25,26 +25,26 @@ class CompanyTest {
 
     @ParameterizedTest
     @ValueSource(ints = { 2, 5 })
-    public void shouldHaveId(int externalId) {
-        assertThat(new Company(externalId, anyCompanyName(), anySymbol(), anyStockExchange()).getExternalId()).isEqualTo(externalId);
+    public void shouldHaveExternalId(int externalId) {
+        assertThat(new Company(new PositiveNumber(externalId), anyCompanyName(), anySymbol(), anyStockExchange()).getExternalId()).isEqualTo(new PositiveNumber(externalId));
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "Amazon", "Microsoft" })
     public void shouldHaveName(String name) {
-        assertThat(new Company(1, new CompanyName(name), anySymbol(), anyStockExchange()).getName()).isEqualTo(new CompanyName(name));
+        assertThat(new Company(anyId(), new CompanyName(name), anySymbol(), anyStockExchange()).getName()).isEqualTo(new CompanyName(name));
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "AMZN", "MSFT" })
     public void shouldHaveStockSymbol(String symbol) {
-        assertThat(new Company(1, anyCompanyName(), new StockSymbol(symbol), anyStockExchange()).getStockSymbol()).isEqualTo(new StockSymbol(symbol));
+        assertThat(new Company(anyId(), anyCompanyName(), new StockSymbol(symbol), anyStockExchange()).getStockSymbol()).isEqualTo(new StockSymbol(symbol));
     }
 
     @Test
     public void shouldHaveStockExchange() {
         val stockExchange =  Mockito.mock(StockExchange.class);
-        assertThat(new Company(1, anyCompanyName(), anySymbol(), stockExchange).getStockExchange()).isEqualTo(stockExchange);
+        assertThat(new Company(anyId(), anyCompanyName(), anySymbol(), stockExchange).getStockExchange()).isEqualTo(stockExchange);
     }
 
     @Test
@@ -52,15 +52,16 @@ class CompanyTest {
         StockSymbol symbol = new StockSymbol("AMZN");
         val tenUsd = Money.of(BigDecimal.TEN, "USD");
         val stockExchange = mock(StockExchange.class, e -> when(e.getQuotedPrice(symbol)).thenReturn(tenUsd));
-        val company = new Company(1, anyCompanyName(), symbol, stockExchange);
+        val company = new Company(anyId(), anyCompanyName(), symbol, stockExchange);
 
         assertThat(company.getQuotedPrice()).isEqualTo(tenUsd);
     }
 
     @Test
     public void shouldNotHaveNullField() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(1, null, anySymbol(), anyStockExchange()));
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(1, new CompanyName("name"), null, anyStockExchange()));
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(1, new CompanyName("name"), anySymbol(), null));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(null, anyCompanyName(), anySymbol(), anyStockExchange()));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(anyId(), null, anySymbol(), anyStockExchange()));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(anyId(), anyCompanyName(), null, anyStockExchange()));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new Company(anyId(), anyCompanyName(), anySymbol(), null));
     }
 }

@@ -10,8 +10,10 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.sql.SQLIntegrityConstraintViolationException;
+import java.util.Map;
 
 import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.dbmigration.AppDbContainer.getDataSourceTo;
 
@@ -74,6 +76,36 @@ public class AppDbMigrationTest {
             val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'Amazon','AMZN','XNYS')";
             db.execute(insertAmazon);
+        }
+
+        @Test
+        public void shouldAutoincrementId() {
+            val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (15,'Amazon','AMZN','XNAS')";
+            val insertMicrosoft = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (16,'Microsoft','MSFT','XNAS')";
+            db.execute(insertAmazon);
+            db.execute(insertMicrosoft);
+
+            Integer amazonId = db.queryForObject("SELECT id FROM company WHERE external_id = 15", Integer.class);
+            Integer microsoftId = db.queryForObject("SELECT id FROM company WHERE external_id = 16", Integer.class);
+            assertThat(amazonId).isGreaterThan(0);
+            assertThat(microsoftId).isGreaterThan(0);
+            assertThat(amazonId + 1).isEqualTo(microsoftId);
+        }
+
+        @Test
+        public void shouldRejectCompanyWithSameInternalId() {
+            val externalId = 1;
+            val insertAmazon = format("INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1, 2,'Amazon','AMZN','XNAS')", externalId);
+            val insertHsbc = format("INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) " +
+                    "VALUES (1, 3,'Santander','HSBC','XLON')", externalId);
+
+            db.execute(insertAmazon);
+            assertThatExceptionOfType(DuplicateKeyException.class).isThrownBy(() ->
+                            db.execute(insertHsbc)).withRootCauseInstanceOf(SQLIntegrityConstraintViolationException.class)
+                    .havingRootCause().withMessageContaining("Duplicate entry '1' for key 'company.PRIMARY'");
         }
 
         @Test

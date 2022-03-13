@@ -3,6 +3,7 @@ package org.ignast.stockinvesting.quotes.api.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import org.ignast.stockinvesting.quotes.CompanyName;
+import org.ignast.stockinvesting.quotes.PositiveNumber;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
 import javax.validation.Valid;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 public class CompanyDTO {
 
     @NotNull
+    @DomainClassConstraint(domainClass = PositiveNumber.class)
     private Integer id;
 
     @NotNull

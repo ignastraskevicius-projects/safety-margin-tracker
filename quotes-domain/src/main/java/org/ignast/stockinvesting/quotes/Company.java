@@ -3,21 +3,24 @@ package org.ignast.stockinvesting.quotes;
 import lombok.*;
 import org.javamoney.moneta.Money;
 
-import javax.persistence.Embedded;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-@AllArgsConstructor
+@RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //JPA requirement for entities
 @Entity
 public class Company {
 
     @Id
     @EqualsAndHashCode.Include
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
     @NonNull
     @Getter
-    private int externalId;
+    @Embedded
+    @AttributeOverride(name = "number", column = @Column(name = "externalId"))
+    private PositiveNumber externalId;
 
     @Embedded
     @NonNull

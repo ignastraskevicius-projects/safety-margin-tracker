@@ -3,7 +3,7 @@ package org.ignast.stockinvesting.api.controller.errorhandler;
 import lombok.val;
 import org.assertj.core.api.ObjectAssert;
 import org.ignast.stockinvesting.estimates.domain.*;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.FromStringConstructor;
+import org.ignast.stockinvesting.util.errorhandling.api.annotation.From1ParamConstructor;
 import org.junit.jupiter.api.Test;
 
 import java.util.Map;
@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 class AppErrorsHandlingConfigurationTest {
 
-    private Map<Class<?>, FromStringConstructor> types = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getConstructableTypes();
+    private Map<Class<?>, From1ParamConstructor<String>> types = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromString();
 
 
     @Test
@@ -36,6 +36,6 @@ class AppErrorsHandlingConfigurationTest {
     }
 
     private interface FromConstructorToObject {
-        Object construct(FromStringConstructor constructor);
+        Object construct(From1ParamConstructor constructor);
     }
 }

@@ -1,6 +1,8 @@
 package org.ignast.stockinvesting.util.errorhandling.api.annotation;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 
 import javax.validation.Constraint;
 import javax.validation.ConstraintValidator;
@@ -13,11 +15,12 @@ import java.util.Map;
 
 import static java.lang.String.format;
 
-@Constraint(validatedBy = DomainClassConstraintValidator.class)
+@Constraint(validatedBy = {DomainClassConstraintValidator.BackedByInteger.class, DomainClassConstraintValidator.BackedByString.class})
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface DomainClassConstraint {
-    String message() default "Market Identifier is not 4 characters long (ISO 10383 standard)";
+
+    String message() default "";
 
     Class<?>[] groups() default {};
 
@@ -27,19 +30,23 @@ public @interface DomainClassConstraint {
 
     @Getter
     @RequiredArgsConstructor(staticName = "supporting")
-    class SupportedTypes {
+    public static class SupportedTypes {
         @NonNull
-        private final Map<Class<?>, FromStringConstructor> constructableTypes;
+        private final Map<Class<?>, From1ParamConstructor<String>> typesConstructableFromString;
+        private final Map<Class<?>, From1ParamConstructor<Integer>> typesConstructableFromInteger;
     }
 }
 
-class DomainClassConstraintValidator implements ConstraintValidator<DomainClassConstraint, String> {
-    private final Map<Class<?>, FromStringConstructor> supportedObjects;
+
+
+
+abstract class DomainClassConstraintValidator<T> implements ConstraintValidator<DomainClassConstraint, T> {
+    private final Map<Class<?>, From1ParamConstructor<T>> supportedObjects;
 
     private Class<?> domainClass;
 
-    public DomainClassConstraintValidator(DomainClassConstraint.SupportedTypes supportedObjects) {
-        this.supportedObjects = supportedObjects.getConstructableTypes();
+    private DomainClassConstraintValidator(Map<Class<?>, From1ParamConstructor<T>> supportedObjects) {
+        this.supportedObjects = supportedObjects;
     }
 
     public void initialize(DomainClassConstraint constraint) {
@@ -47,7 +54,7 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
     }
 
     @Override
-    public boolean isValid(String value, ConstraintValidatorContext context) {
+    public boolean isValid(T value, ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         } else {
@@ -55,7 +62,7 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
         }
     }
 
-    private boolean validate(String value, ConstraintValidatorContext context) {
+    private boolean validate(T value, ConstraintValidatorContext context) {
         if (!supportedObjects.keySet().contains(domainClass)) {
             throw new IllegalArgumentException(
                     format("DomainClassConstraint is not configured for '%s' class", domainClass.getSimpleName()));
@@ -70,4 +77,17 @@ class DomainClassConstraintValidator implements ConstraintValidator<DomainClassC
             }
         }
     }
+
+    static class BackedByInteger extends DomainClassConstraintValidator<Integer> {
+        public BackedByInteger(DomainClassConstraint.SupportedTypes supportedObjects) {
+            super(supportedObjects.getTypesConstructableFromInteger());
+        }
+    }
+
+    static class BackedByString extends DomainClassConstraintValidator<String> {
+        public BackedByString(DomainClassConstraint.SupportedTypes supportedObjects) {
+            super(supportedObjects.getTypesConstructableFromString());
+        }
+    }
 }
+

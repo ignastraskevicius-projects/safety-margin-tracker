@@ -5,8 +5,6 @@ import org.ignast.stockinvesting.quotes.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.UUID;
-
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -31,7 +29,7 @@ class CompanyControllerTest {
 
         verify(companies).create(captor.capture());
         val company = captor.getValue();
-        assertThat(company.getExternalId()).isEqualTo(5);
+        assertThat(company.getExternalId()).isEqualTo(new PositiveNumber(5));
         assertThat(company.getName()).isEqualTo(new CompanyName("Microsoft"));
         assertThat(company.getStockSymbol()).isEqualTo(new StockSymbol("MSFT"));
         assertThat(company.getStockExchange()).isEqualTo(stockExchange);

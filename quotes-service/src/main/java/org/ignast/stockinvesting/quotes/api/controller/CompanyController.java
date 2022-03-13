@@ -5,9 +5,7 @@ import org.ignast.stockinvesting.quotes.*;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
@@ -23,8 +21,10 @@ public class CompanyController {
         this.stockExchanges = stockExchanges;
     }
 
+    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseBody
     @PutMapping(value = "/companies", consumes = VersionedApiMediaTypes.V1)
-    public HttpEntity<String> createCompany(@Valid @RequestBody CompanyDTO companyDTO){
+    public CompanyDTO createCompany(@Valid @RequestBody CompanyDTO companyDTO){
         Company company = companyDTO.getListings().stream().findFirst().map(l -> {
             val externalId = new PositiveNumber(companyDTO.getId());
             val name = new CompanyName(companyDTO.getName());
@@ -34,6 +34,6 @@ public class CompanyController {
         }).orElseThrow(() -> new IllegalArgumentException("Company to be created was expected to have one listing, but zero was found"));
 
         companies.create(company);
-        return new ResponseEntity("", HttpStatus.CREATED);
+        return companyDTO;
     }
 }

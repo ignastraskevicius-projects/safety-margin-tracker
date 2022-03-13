@@ -4,6 +4,7 @@ import lombok.val;
 import org.ignast.stockinvesting.quotes.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import org.springframework.http.HttpEntity;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +26,7 @@ class CompanyControllerTest {
         val companyDto = new CompanyDTO(5, "Microsoft", asList(new ListingDTO("XNAS", "MSFT")));
         val captor = ArgumentCaptor.forClass(Company.class);
 
-        controller.createCompany(companyDto);
+        val createdCompanyDto = controller.createCompany(companyDto);
 
         verify(companies).create(captor.capture());
         val company = captor.getValue();
@@ -33,6 +34,8 @@ class CompanyControllerTest {
         assertThat(company.getName()).isEqualTo(new CompanyName("Microsoft"));
         assertThat(company.getStockSymbol()).isEqualTo(new StockSymbol("MSFT"));
         assertThat(company.getStockExchange()).isEqualTo(stockExchange);
+
+        assertThat(createdCompanyDto).isEqualTo(companyDto);
     }
 
     @Test

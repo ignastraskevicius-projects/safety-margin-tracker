@@ -61,7 +61,7 @@ public class CompanyControllerIntegrationTest extends CompanyControllerIntegrati
     public void shouldCreateCompany() throws Exception {
         when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createAmazon()))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated()).andExpect(contentMatchesJson(bodyFactory.createAmazon()));
     }
 
     @Test

@@ -13,16 +13,19 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.SingleConnectionDataSource;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.transaction.TestTransaction;
 
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.persistence.DomainFactoryForTests.*;
 import static org.mockito.Mockito.mock;
 
 @DataJpaTest
+@DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 class CompanyPersistenceTest {
 
     @Autowired
@@ -53,6 +56,22 @@ class CompanyPersistenceTest {
         assertThat(result.get("company_name")).isEqualTo("Amazon");
         assertThat(result.get("stock_symbol")).isEqualTo("AMZN");
         assertThat(result.get("market_identifier_code")).isEqualTo("XNAS");
+    }
+
+    @Test
+    public void shouldFindCompanyByExternalId() {
+        jdbcTemplate.execute("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+                "VALUES (16, 'Amazon', 'AMZN', 'XNAS')");
+
+        Optional<Company> company = companyRepository.findByExternalId(new PositiveNumber(16));
+        assertThat(company).isPresent();
+        company.stream().forEach(c -> {
+            assertThat(c.getExternalId()).isEqualTo(new PositiveNumber(16));
+            assertThat(c.getName()).isEqualTo(new CompanyName("Amazon"));
+            assertThat(c.getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
+            assertThat(c.getStockExchange().getMarketIdentifierCode()).isEqualTo(new MarketIdentifierCode("XNAS"));
+
+        });
     }
 
     private void commit() {

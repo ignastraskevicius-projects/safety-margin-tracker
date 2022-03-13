@@ -60,6 +60,11 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.ignast.stock-investing.quotes</groupId>
+                <artifactId>quotes-persistence</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.ignast.stock-investing</groupId>
                 <artifactId>error-handling</artifactId>
                 <version>${project.version}</version>

@@ -26,11 +26,11 @@ public class CompanyController {
     @PutMapping(value = "/companies", consumes = VersionedApiMediaTypes.V1)
     public HttpEntity<String> createCompany(@Valid @RequestBody CompanyDTO companyDTO){
         Company company = companyDTO.getListings().stream().findFirst().map(l -> {
-            val id = companyDTO.getId();
+            val externalId = new PositiveNumber(companyDTO.getId());
             val name = new CompanyName(companyDTO.getName());
             val symbol = new StockSymbol(l.getStockSymbol());
             val stockExchange = stockExchanges.getFor(new MarketIdentifierCode(l.getMarketIdentifier()));
-            return new Company(id, name, symbol, stockExchange);
+            return new Company(externalId, name, symbol, stockExchange);
         }).orElseThrow(() -> new IllegalArgumentException("Company to be created was expected to have one listing, but zero was found"));
 
         companies.create(company);

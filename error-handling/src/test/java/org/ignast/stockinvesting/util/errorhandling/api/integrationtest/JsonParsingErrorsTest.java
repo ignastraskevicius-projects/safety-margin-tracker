@@ -25,8 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static java.util.Collections.emptyMap;
 import static org.ignast.stockinvesting.util.errorhandling.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(GenericErrorHandlingConfiguration.class)
@@ -122,7 +124,7 @@ class JsonStringFieldErrorsTest {
 
         @Bean
         public DomainClassConstraint.SupportedTypes supportedTypes() {
-            return DomainClassConstraint.SupportedTypes.supporting(Map.of(TestDomain.class, TestDomain::new));
+            return DomainClassConstraint.SupportedTypes.supporting(Map.of(TestDomain.class, TestDomain::new), emptyMap());
         }
     }
 
@@ -183,11 +185,24 @@ class JsonIntegerFieldErrorsTest {
                 .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeInteger\",\"jsonPath\":\"$.integerField\"}]}"));
     }
 
+    @Test
+    public void shouldRejectRequestsNotComplyingWithBusinessRequirements() throws Exception {
+        mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
+                        .content("{\"integerField\":5}"))
+                .andExpect(status().isBadRequest())
+                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"$.integerField\",\"message\":\"failed with test domain requirement\"}]}"));
+    }
+
     @TestConfiguration
     static class TestControllerConfig {
         @Bean
         public TestController testController() {
             return new TestController();
+        }
+
+        @Bean
+        public DomainClassConstraint.SupportedTypes supportedTypes() {
+            return DomainClassConstraint.SupportedTypes.supporting(emptyMap(), Map.of(TestDomain.class, TestDomain::new));
         }
     }
 
@@ -207,7 +222,14 @@ class JsonIntegerFieldErrorsTest {
     @Getter
     static class TestDTO {
         @NotNull
+        @DomainClassConstraint(domainClass = TestDomain.class)
         private Integer integerField;
+    }
+
+    static class TestDomain {
+        TestDomain(Integer arg) {
+            throw new IllegalArgumentException("failed with test domain requirement");
+        }
     }
 }
 

@@ -102,6 +102,11 @@ class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegra
     public void shouldRejectCompanyWithNonIntegerIdIndicatingWrongType() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":\"nonInteger\""), forIntegerRequiredAt("$.id"));
     }
+
+    @Test
+    public void shouldRejectCompanyWithInvalidId() throws Exception {
+        rejectsAsBadRequest(bodyFactory.createWithIdJsonPair("\"id\":-5"), forInvalidValueAt("$.id", "Must be positive"));
+    }
 }
 
 class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {

@@ -1,11 +1,14 @@
 package org.ignast.stockinvesting.quotes;
 
 import java.math.BigDecimal;
-import java.util.UUID;
 
 import static org.mockito.Mockito.mock;
 
 public class DomainFactoryForTests {
+    public static PositiveNumber anyId() {
+        return new PositiveNumber(15);
+    }
+
     public static StockSymbol anySymbol() {
         return new StockSymbol("ANY");
     }

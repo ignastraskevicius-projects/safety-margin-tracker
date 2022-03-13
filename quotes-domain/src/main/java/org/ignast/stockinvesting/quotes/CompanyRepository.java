@@ -8,5 +8,5 @@ import java.util.UUID;
 public interface CompanyRepository extends Repository<Company, Integer> {
     Company save(Company company);
 
-    Optional<Company> findById(Integer id);
+    Optional<Company> findByExternalId(PositiveNumber externalId);
 }

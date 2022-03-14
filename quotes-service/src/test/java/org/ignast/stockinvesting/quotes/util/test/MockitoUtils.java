@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.util.test.api;
+package org.ignast.stockinvesting.quotes.util.test;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;

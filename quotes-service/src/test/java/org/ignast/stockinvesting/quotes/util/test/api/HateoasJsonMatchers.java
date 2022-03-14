@@ -26,6 +26,10 @@ public class HateoasJsonMatchers {
             return new ExistsRelWithHrefContainingString(relName, hrefSubstring);
         }
 
+        public TypeSafeMatcher<String> withHref() {
+            return new ExistsRelWithHref(relName);
+        }
+
         static class ExistsRelWithHrefContainingString extends TypeSafeMatcher<String> {
             private String relName;
             private String hrefSubstring;
@@ -52,10 +56,35 @@ public class HateoasJsonMatchers {
                                 relName, hrefSubstring));
             }
         }
+
+        static class ExistsRelWithHref extends TypeSafeMatcher<String> {
+            private String relName;
+
+            public ExistsRelWithHref(String relName) {
+                this.relName = relName;
+            }
+
+            @Override
+            protected boolean matchesSafely(String hateoasJson) {
+                try {
+                    new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href");
+                    return true;
+                } catch (JSONException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            public void describeTo(Description description) {
+                description.appendText(
+                        String.format("HATEOAS json should contain a '%s' rel with a href",
+                                relName));
+            }
+        }
     }
 }
 
-class HateoasJsonMatcheresTest {
+class HateoasJsonMatchersForRelAndHrefTest {
     private Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHrefContaining("contextPath");
 
     @Test
@@ -97,4 +126,43 @@ class HateoasJsonMatcheresTest {
         assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com/contextPath\"}}}"))
                 .isTrue();
     }
+}
+
+class HateoasJsonMatchersForRelTest {
+    private Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHref();
+
+    @Test
+    public void messageShouldIndicateExpectationAndActualOutcome() {
+        String testJson = "{}";
+        StringDescription desc = new StringDescription();
+
+        matcher.describeTo(desc);
+        matcher.describeMismatch(testJson, desc);
+
+        assertThat(desc.toString())
+                .contains(
+                        "HATEOAS json should contain a 'link:link' rel with a href")
+                .contains(testJson);
+    }
+
+    @Test
+    public void shouldNotMatchJsonWithoutHateoasLinks() {
+        assertThat(matcher.matches("{}")).isFalse();
+    }
+
+    @Test
+    public void shouldNotMatchJsonWithoutSpecifiedLinks() {
+        assertThat(matcher.matches("{\"_links\":{}}")).isFalse();
+    }
+
+    @Test
+    public void shouldNotMatchJsonHavingRelWithoutHref() {
+        assertThat(matcher.matches("{\"_links\":{\"link:link\":{}}}")).isFalse();
+    }
+
+    @Test
+    public void shouldMatchAnyHrefs() {
+        assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"any\"}}}")).isTrue();
+    }
+
 }

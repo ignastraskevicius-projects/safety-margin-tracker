@@ -1,11 +1,8 @@
-package org.ignast.stockinvesting.quotes.acceptance.traversor;
+package org.ignast.stockinvesting.quotes.util.test.api.traversor;
 
 import lombok.NonNull;
 import lombok.val;
-import org.ignast.stockinvesting.quotes.acceptance.traversor.Hop.TraversableHop;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.ArgumentCaptor;
 import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
@@ -13,8 +10,7 @@ import org.springframework.web.client.RestTemplate;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.acceptance.traversor.HateoasLink.anyLink;
-import static org.ignast.stockinvesting.quotes.acceptance.traversor.HateoasLink.link;
+import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;

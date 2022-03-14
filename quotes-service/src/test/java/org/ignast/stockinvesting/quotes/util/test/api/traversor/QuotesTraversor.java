@@ -1,8 +1,8 @@
-package org.ignast.stockinvesting.quotes.acceptance.traversor;
+package org.ignast.stockinvesting.quotes.util.test.api.traversor;
 
 import lombok.NonNull;
 import lombok.val;
-import org.ignast.stockinvesting.quotes.acceptance.traversor.Hop.TraversableHop;
+import org.ignast.stockinvesting.quotes.util.test.api.traversor.Hop.TraversableHop;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
@@ -10,6 +10,7 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.test.web.client.response.MockRestResponseCreators;
 
 import java.util.List;
 import java.util.function.BinaryOperator;
@@ -21,8 +22,8 @@ import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.acceptance.traversor.HateoasLink.link;
-import static org.ignast.stockinvesting.quotes.acceptance.traversor.Hop.TraversableHop.APP_MEDIA_TYPE;
+import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
+import static org.ignast.stockinvesting.quotes.util.test.api.traversor.Hop.TraversableHop.APP_MEDIA_TYPE;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.MediaType.APPLICATION_JSON;

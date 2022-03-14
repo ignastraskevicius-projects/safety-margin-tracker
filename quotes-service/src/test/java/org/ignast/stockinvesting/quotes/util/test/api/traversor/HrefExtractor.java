@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.acceptance.traversor;
+package org.ignast.stockinvesting.quotes.util.test.api.traversor;
 
 import lombok.val;
 import org.hamcrest.MatcherAssert;
@@ -16,13 +16,12 @@ import static java.util.Arrays.asList;
 import static java.util.Objects.isNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.acceptance.traversor.HateoasLink.anyLink;
-import static org.ignast.stockinvesting.quotes.acceptance.traversor.HateoasLink.link;
 import static org.ignast.stockinvesting.quotes.util.test.api.HateoasJsonMatchers.hasRel;
+import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.anyLink;
+import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.status;

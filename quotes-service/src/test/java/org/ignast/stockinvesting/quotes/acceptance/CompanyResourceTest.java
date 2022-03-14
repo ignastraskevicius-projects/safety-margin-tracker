@@ -1,14 +1,13 @@
 package org.ignast.stockinvesting.quotes.acceptance;
 
+import lombok.val;
+import org.ignast.stockinvesting.quotes.acceptance.traversor.QuotesTraversor;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.*;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.MySQLContainer;
@@ -19,6 +18,8 @@ import org.testcontainers.utility.DockerImageName;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.acceptance.Uris.rootResourceOn;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.springframework.http.HttpStatus.CREATED;
+import static org.springframework.http.HttpStatus.OK;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -32,6 +33,9 @@ public class CompanyResourceTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private QuotesTraversor.Factory quotesTraversors;
+
     @DynamicPropertySource
     private static void registedDatasource(DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", () -> mysql.getJdbcUrl().replace("/test", "/quotes"));
@@ -40,32 +44,17 @@ public class CompanyResourceTest {
     }
 
     @Test
+    public void rootShouldBeProvided() {
+        val root = quotesTraversors.startAt(rootResourceOn(port)).perform();
+        assertThat(root.getStatusCode()).isEqualTo(OK);
+    }
+
+    @Test
     public void shouldCreateCompany() throws JSONException {
-        ResponseEntity<String> rootResponse = restTemplate.exchange(rootResourceOn(port), HttpMethod.GET, acceptV1(),
-                String.class);
-        assertThat(rootResponse.getStatusCode()).isEqualTo(HttpStatus.OK);
-        JSONObject root = new JSONObject(rootResponse.getBody());
-
-        String companiesHref = root.getJSONObject("_links").getJSONObject("quotes:company").getString("href");
-        ResponseEntity<String> companyDefinition = restTemplate.exchange(companiesHref, HttpMethod.PUT, contentTypeV1(
-                        "{\"id\":4,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}"),
-                String.class);
-        assertThat(companyDefinition.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertEquals("should create company", companyDefinition.getBody(), "{\"id\":4,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}", false);
-
-    }
-
-    private HttpEntity<String> acceptV1() {
-        MediaType v1MediaType = MediaType.valueOf("application/vnd.stockinvesting.quotes-v1.hal+json");
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Accept", v1MediaType.toString());
-        return new HttpEntity<>(headers);
-    }
-
-    private HttpEntity<String> contentTypeV1(String content) {
-        MediaType v1MediaType = MediaType.valueOf("application/vnd.stockinvesting.quotes-v1.hal+json");
-        HttpHeaders headers = new HttpHeaders();
-        headers.add("Content-Type", v1MediaType.toString());
-        return new HttpEntity<>(content, headers);
+        val company = quotesTraversors.startAt(rootResourceOn(port))
+                .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}"))
+                .perform();
+        assertThat(company.getStatusCode()).isEqualTo(CREATED);
+        assertEquals("should create company", company.getBody(), "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}", false);
     }
 }

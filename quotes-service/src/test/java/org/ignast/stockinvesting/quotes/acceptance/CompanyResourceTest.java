@@ -44,17 +44,21 @@ public class CompanyResourceTest {
     }
 
     @Test
-    public void rootShouldBeProvided() {
-        val root = quotesTraversors.startAt(rootResourceOn(port)).perform();
-        assertThat(root.getStatusCode()).isEqualTo(OK);
-    }
-
-    @Test
     public void shouldCreateCompany() throws JSONException {
         val company = quotesTraversors.startAt(rootResourceOn(port))
                 .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}"))
                 .perform();
         assertThat(company.getStatusCode()).isEqualTo(CREATED);
-        assertEquals("should create company", company.getBody(), "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}", false);
+        assertEquals("should create company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}", company.getBody(), false);
+    }
+
+    @Test
+    public void shouldRetrieveCreatedCompany() throws JSONException {
+        val company = quotesTraversors.startAt(rootResourceOn(port))
+                .hop(f -> f.put("quotes:company", "{\"id\":4,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}"))
+                .hop(f -> f.get("self"))
+                .perform();
+        assertThat(company.getStatusCode()).isEqualTo(OK);
+        assertEquals("should create company", "{\"id\":4,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}", company.getBody(), false);
     }
 }

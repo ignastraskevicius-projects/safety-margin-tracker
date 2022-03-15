@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import static org.ignast.stockinvesting.quotes.util.test.api.HateoasJsonMatchers.hasRel;
-import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
+import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.bodyMatchesJson;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -32,18 +32,18 @@ public class RootControllerTest {
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
         mockMvc.perform(get("/").accept("application/hal+json")).andExpect(status().isNotAcceptable())
-                .andExpect(contentMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable())
-                .andExpect(contentMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
     public void shouldNotBeModifiableResource() throws Exception {
         mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed())
-                .andExpect(contentMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }
 }

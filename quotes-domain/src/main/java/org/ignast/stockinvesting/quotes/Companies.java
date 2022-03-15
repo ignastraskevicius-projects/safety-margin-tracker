@@ -9,7 +9,11 @@ import org.springframework.stereotype.Service;
 public class Companies {
     @NonNull private CompanyRepository repository;
 
-    public void create(Company company) {
+    public void create(@NonNull Company company) {
         repository.save(company);
+    }
+
+    public Company findByExternalId(@NonNull PositiveNumber id) {
+        return repository.findByExternalId(id).orElseThrow(() -> new CompanyNotFound(id));
     }
 }

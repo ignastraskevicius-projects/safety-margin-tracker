@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.ignast.stockinvesting.quotes.CompanyName;
 import org.ignast.stockinvesting.quotes.PositiveNumber;
@@ -13,22 +14,23 @@ import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+@EqualsAndHashCode
 @Getter
-public class CompanyDTO {
+public final class CompanyDTO {
 
     @NotNull
     @DomainClassConstraint(domainClass = PositiveNumber.class)
-    private Integer id;
+    private final Integer id;
 
     @NotNull
     @DomainClassConstraint(domainClass = CompanyName.class)
-    private String name;
+    private final String name;
 
     @NotNull
     @Size(min = 1, message = "Company must be listed on at least 1 stock exchange")
     @Size(max = 1, message = "Multiple listings are not supported")
     @Valid
-    private List<ListingDTO> listings;
+    private final List<ListingDTO> listings;
 
     public CompanyDTO(
             @JsonProperty(value = "id") Integer id,
@@ -36,8 +38,6 @@ public class CompanyDTO {
             @JsonProperty(value = "listings") List<ListingDTO> listings) {
         this.id = id;
         this.name = name;
-        if (listings != null) {
-            this.listings = listings.stream().filter(Objects::nonNull).collect(Collectors.toList());
-        }
+        this.listings = listings != null ? listings.stream().filter(Objects::nonNull).collect(Collectors.toList()) : null;
     }
 }

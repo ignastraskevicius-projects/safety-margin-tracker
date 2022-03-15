@@ -1,6 +1,8 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
 import lombok.val;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.ignast.stockinvesting.quotes.Company;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
@@ -10,6 +12,11 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 
 class CompanyDTOTest {
+
+    @Test
+    public void shouldBeEqual() {
+        EqualsVerifier.forClass(CompanyDTO.class).verify();
+    }
 
     @Test
     public void shouldPreserveNonNestedAttributes() {

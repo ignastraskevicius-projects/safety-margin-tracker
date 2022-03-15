@@ -7,12 +7,12 @@ import static java.lang.String.format;
 import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.anyLink;
 import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
 
-class HateoasLink {
-    static String link(String rel, String href) {
+public class HateoasLink {
+    public static String link(String rel, String href) {
         return format("{\"_links\":{\"%s\":{\"href\":\"%s\"}}}", rel, href);
     }
 
-    static String anyLink() {
+    public static String anyLink() {
         return "{\"_links\":{\"any\":{\"href\":\"any\"}}}";
     }
 }

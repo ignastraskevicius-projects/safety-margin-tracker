@@ -23,6 +23,11 @@ class PositiveNumberTest {
         assertThat(new PositiveNumber(id).get()).isEqualTo(id);
     }
 
+    @Test
+    public void shouldHaveStringRepresentation() {
+        assertThat(new PositiveNumber(4).toString()).contains("4");
+    }
+
     @ParameterizedTest
     @ValueSource(ints = { 0, -1, -2000000} )
     public void shouldNotBeNegativeOrZero(Integer id) {

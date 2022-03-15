@@ -1,12 +1,14 @@
 package org.ignast.stockinvesting.quotes;
 
 import lombok.EqualsAndHashCode;
+import lombok.ToString;
 
 import javax.persistence.Embeddable;
 import java.io.Serializable;
 
 @EqualsAndHashCode
 @Embeddable
+@ToString
 public final class PositiveNumber implements Serializable {
     private int number;
 

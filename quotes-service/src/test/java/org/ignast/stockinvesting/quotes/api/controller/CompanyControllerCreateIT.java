@@ -1,55 +1,24 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
-import org.ignast.stockinvesting.quotes.Companies;
 import org.ignast.stockinvesting.quotes.StockExchange;
-import org.ignast.stockinvesting.quotes.StockExchanges;
-import org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppErrorsHandlingConfiguration;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.web.servlet.MockMvc;
 
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.util.test.api.BodySchemaMismatchJsonErrors.*;
-import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
+import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.*;
+import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest
-@Import(AppErrorsHandlingConfiguration.class)
-abstract class CompanyControllerIntegrationTestBase {
-    protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
 
-    @MockBean
-    protected Companies companies;
-
-    @MockBean
-    protected StockExchanges stockExchanges;
-
-    @Autowired
-    protected MockMvc mockMvc;
-
-    protected String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
-
-    void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
-        mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)
-                        .content(requestBody))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(expectedResponse));
-    }
-}
-
-public class CompanyControllerIntegrationTest extends CompanyControllerIntegrationTestBase {
+public class CompanyControllerCreateIT extends CompanyControllerITBase {
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
-        mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
+        mockMvc.perform(put("/companies/").contentType(V1_QUOTES)).andExpect(status().isBadRequest())
+                .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test
@@ -60,28 +29,37 @@ public class CompanyControllerIntegrationTest extends CompanyControllerIntegrati
     @Test
     public void shouldCreateCompany() throws Exception {
         when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
-        mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE).content(bodyFactory.createAmazon()))
-                .andExpect(status().isCreated()).andExpect(contentMatchesJson(bodyFactory.createAmazon()));
+        mockMvc.perform(put("/companies/").contentType(V1_QUOTES).content(bodyFactory.createAmazon()))
+                .andExpect(status().isCreated()).andExpect(header().string("Content-Type", V1_QUOTES))
+                .andExpect(resourceContentMatchesJson(bodyFactory.createAmazon()));
+    }
+
+    @Test
+    public void createdCompanyShouldContainLinkToItself() throws Exception {
+        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
+        mockMvc.perform(put("/companies/").contentType(V1_QUOTES).content(bodyFactory.createAmazon()))
+                .andExpect(status().isCreated()).andExpect(header().string("Content-Type", V1_QUOTES))
+                .andExpect(resourceLinksMatchesJson(link("self", "http://localhost/companies/6")));
     }
 
     @Test
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(put("/companies/").contentType("application/json"))
                 .andExpect(status().isUnsupportedMediaType())
-                .andExpect(contentMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
         mockMvc.perform(put("/companies/").contentType("application/hal+json"))
                 .andExpect(status().isUnsupportedMediaType())
-                .andExpect(contentMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldIndicateResourceNotReadable() throws Exception {
         mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
-                .andExpect(contentMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }
 
     @Test
@@ -90,8 +68,7 @@ public class CompanyControllerIntegrationTest extends CompanyControllerIntegrati
     }
 }
 
-
-class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+class CompanyControllerIdParsingIT extends CompanyControllerITBase {
 
     @Test
     public void shouldRejectCompanyWithoutIdIndicatingFieldIsMandatory() throws Exception {
@@ -109,7 +86,7 @@ class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegra
     }
 }
 
-class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+class CompanyControllerNameParsingIT extends CompanyControllerITBase {
 
     @Test
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
@@ -133,7 +110,7 @@ class CompanyControllerNameParsingIntegrationTest extends CompanyControllerInteg
     }
 }
 
-class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+class CompanyControllerListingsParsingIT extends CompanyControllerITBase {
 
     @Test
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
@@ -166,7 +143,7 @@ class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerI
     }
 }
 
-class CompanyControllerTestIndividualListingParsingIntegrationTest extends CompanyControllerIntegrationTestBase{
+class CompanyControllerTestIndividualListingParsingIT extends CompanyControllerITBase {
 
     @Test
     public void shouldRejectCompanyListedWithoutMarketIdIndicatingFieldIsMandatory() throws Exception {
@@ -198,15 +175,5 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest extends Compa
     public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""), forInvalidValueAt("$.listings[0].stockSymbol",
                         "Stock Symbol must contain between 1-6 characters"));
-    }
-}
-
-class CompanyControllerIntegrationTestBaseTest extends CompanyControllerIntegrationTestBase {
-
-    @Test
-    public void shouldNotRejectGoodRequest()  {
-        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> rejectsAsBadRequest(bodyFactory.createAmazon(), "shouldNotBeBadRequest"))
-                .withMessage("Status expected:<400> but was:<201>");
     }
 }

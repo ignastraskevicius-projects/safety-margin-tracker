@@ -9,6 +9,7 @@
         <module>domain</module>
 	    <module>persistence</module>
 	    <module>error-handling</module>
+	    <module>api-test-util</module>
 	    <module>quotes-service</module>
 	    <module>quotes-domain</module>
 	    <module>quotes-persistence</module>
@@ -41,6 +42,7 @@
         <flyway.version>8.5.2</flyway.version>
         <jackson.version>2.13.1</jackson.version>
         <wiremock.version>2.32.0</wiremock.version>
+        <hamcrest.version>2.2</hamcrest.version>
     </properties>
 
     <dependencies>
@@ -70,6 +72,16 @@
             <dependency>
                 <groupId>org.ignast.stock-investing</groupId>
                 <artifactId>error-handling</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ignast.stock-investing.quotes</groupId>
+                <artifactId>quotes-alphavantage-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ignast.stock-investing</groupId>
+                <artifactId>api-test-util</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -216,6 +228,18 @@
                 <groupId>com.github.tomakehurst</groupId>
                 <artifactId>wiremock-jre8</artifactId>
                 <version>${wiremock.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.hamcrest</groupId>
+                <artifactId>hamcrest</artifactId>
+                <version>${hamcrest.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.skyscreamer</groupId>
+                <artifactId>jsonassert</artifactId>
+                <version>1.5.0</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

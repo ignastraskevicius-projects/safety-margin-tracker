@@ -3,9 +3,9 @@ package org.ignast.stockinvesting.quotes.api.controller;
 import org.ignast.stockinvesting.quotes.StockExchange;
 import org.junit.jupiter.api.Test;
 
-import static org.ignast.stockinvesting.quotes.util.test.api.BodySchemaMismatchJsonErrors.*;
-import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.*;
-import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.*;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.*;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

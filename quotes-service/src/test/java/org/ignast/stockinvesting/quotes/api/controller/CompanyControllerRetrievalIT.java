@@ -5,9 +5,8 @@ import org.ignast.stockinvesting.quotes.CompanyNotFound;
 import org.junit.jupiter.api.Test;
 
 import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTests.amazon;
-import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.*;
-import static org.ignast.stockinvesting.quotes.util.test.api.NonExtensibleContentMatchers.bodyMatchesJson;
-import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.*;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;

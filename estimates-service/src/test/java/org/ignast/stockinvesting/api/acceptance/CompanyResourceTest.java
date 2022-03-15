@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.api.acceptance;
 
-import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
@@ -17,7 +16,6 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
@@ -31,14 +29,6 @@ public class CompanyResourceTest {
 
     @Autowired
     private TestRestTemplate restTemplate;
-
-    @Container
-    private static final GenericContainer alphavantange = new GenericContainer(DockerImageName.parse("estimates/alphavantage-simulator:1.0-SNAPSHOT")).withExposedPorts(8080);
-
-    @DynamicPropertySource
-    private static void registerWiremockPort(DynamicPropertyRegistry registry) {
-        registry.add("alphavantage.url", () -> format("http://localhost:%d", alphavantange.getMappedPort(8080)));
-    }
 
     @Test
     public void shouldDefineCompany() throws JSONException {

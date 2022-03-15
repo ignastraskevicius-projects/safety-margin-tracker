@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.alphavantage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -6,10 +6,10 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.val;
-import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.estimates.domain.StockQuotes;
-import org.ignast.stockinvesting.estimates.domain.StockSymbol;
-import org.ignast.stockinvesting.estimates.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.quotes.QuotesRepository;
+import org.ignast.stockinvesting.quotes.StockSymbolNotSupported;
+import org.ignast.stockinvesting.quotes.StockSymbol;
+import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;
@@ -25,7 +25,7 @@ import java.util.Optional;
 import static java.lang.String.format;
 
 @Repository
-public class AlphaVantageQuotes implements StockQuotes {
+public class AlphaVantageQuotes implements QuotesRepository {
 
     private String url;
 

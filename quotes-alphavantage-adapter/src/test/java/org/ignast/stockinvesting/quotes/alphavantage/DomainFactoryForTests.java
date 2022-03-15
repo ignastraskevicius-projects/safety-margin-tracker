@@ -1,4 +1,7 @@
-package org.ignast.stockinvesting.estimates.domain;
+package org.ignast.stockinvesting.quotes.alphavantage;
+
+import org.ignast.stockinvesting.quotes.StockSymbol;
+import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
 
 public class DomainFactoryForTests {
     public static StockSymbol anySymbol() {

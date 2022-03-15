@@ -1,10 +1,14 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.alphavantage;
 
+import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import lombok.val;
-import org.assertj.core.api.Assertions;
-import org.ignast.stockinvesting.estimates.domain.*;
-import org.ignast.stockinvesting.estimates.domain.StockQuotes.QuoteRetrievalFailedException;
+import org.ignast.stockinvesting.quotes.QuotesRepository;
+import org.ignast.stockinvesting.quotes.QuotesRepository.QuoteRetrievalFailedException;
+import org.ignast.stockinvesting.quotes.StockSymbolNotSupported;
+import org.ignast.stockinvesting.quotes.StockSymbol;
+import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.ApplicationException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.RegisterExtension;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -18,13 +22,14 @@ import org.springframework.test.web.client.MockRestServiceServer;
 
 import java.math.BigDecimal;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.*;
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.hamcrest.Matchers.anything;
-import static org.ignast.stockinvesting.estimates.domain.DomainFactoryForTests.anyMIC;
-import static org.ignast.stockinvesting.estimates.domain.DomainFactoryForTests.anySymbol;
+import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anyMIC;
+import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anySymbol;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
@@ -33,7 +38,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 class AlphaVantageQuotesTest {
 
     @Autowired
-    private StockQuotes alphaVantageQuotes;
+    private QuotesRepository alphaVantageQuotes;
 
     @Autowired
     private MockRestServiceServer mockServer;
@@ -108,7 +113,7 @@ class AlphaVantageCasesUnableToCoverWithSpringTest {
 
     @Test
     public void shouldThrowIfResponseContentTypeUnexpected() {
-        wireMock.stubFor(get(urlPathEqualTo("/query")).willReturn(ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
+        wireMock.stubFor(get(urlPathEqualTo("/query")).willReturn(WireMock.ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
                 .withHeader("Content-Type", "application/octet-stream")));
         val wireMockUrl = "http://localhost:" + wireMock.getPort();
         val alphaVantageQuotes = new AlphaVantageQuotes(new RestTemplateBuilder(), wireMockUrl, "anyApiKey");

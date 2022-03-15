@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.quotes.acceptance;
 
 import lombok.val;
-import org.ignast.stockinvesting.quotes.util.test.api.traversor.QuotesTraversor;
+import org.ignast.stockinvesting.testutil.api.traversor.QuotesTraversor;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

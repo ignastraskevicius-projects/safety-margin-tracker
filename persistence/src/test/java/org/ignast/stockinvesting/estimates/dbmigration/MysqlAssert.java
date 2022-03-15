@@ -2,7 +2,6 @@ package org.ignast.stockinvesting.estimates.dbmigration;
 
 import lombok.val;
 import org.assertj.core.api.AbstractAssert;
-import org.jetbrains.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
@@ -12,7 +11,6 @@ import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;

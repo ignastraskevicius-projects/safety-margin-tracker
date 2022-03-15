@@ -1,16 +1,12 @@
-package org.ignast.stockinvesting.quotes.util.test.api;
+package org.ignast.stockinvesting.testutil.api;
 
 import lombok.NonNull;
 import lombok.val;
-import org.jetbrains.annotations.NotNull;
+import org.assertj.core.api.Assertions;
 import org.json.JSONException;
-import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.web.servlet.MvcResult;
-import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
@@ -18,38 +14,10 @@ import java.util.function.BiConsumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.util.test.MockitoUtils.mock;
-import static org.ignast.stockinvesting.quotes.util.test.api.MatcherWrapper.actualMatchingExpected;
-import static org.ignast.stockinvesting.quotes.util.test.api.MvcResultStubs.stubbedBody;
+import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
+import static org.ignast.stockinvesting.testutil.api.MatcherWrapper.actualMatchingExpected;
+import static org.ignast.stockinvesting.testutil.api.MvcResultStubs.stubbedBody;
 import static org.mockito.Mockito.when;
-
-public class NonExtensibleContentMatchers {
-    public static ResultMatcher bodyMatchesJson(String expectedJson) {
-        return (result) -> {
-            String actualJson = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
-            JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.NON_EXTENSIBLE);
-        };
-    }
-
-    public static ResultMatcher resourceContentMatchesJson(String expectedJson) {
-        return (result) -> {
-            val expected = new JSONObject(expectedJson);
-            val actualJson = new JSONObject(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
-            actualJson.remove("_links");
-            JSONAssert.assertEquals(expected, actualJson, JSONCompareMode.NON_EXTENSIBLE);
-        };
-    }
-
-    public static ResultMatcher resourceLinksMatchesJson(String expectedJson) {
-        return (result) -> {
-            val expected = new JSONObject(expectedJson);
-            val actualJson = new JSONObject(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
-            val actualJsonLinksOnly = new JSONObject();
-            actualJsonLinksOnly.put("_links", actualJson.get("_links"));
-            JSONAssert.assertEquals(expected, actualJsonLinksOnly, JSONCompareMode.NON_EXTENSIBLE);
-        };
-    }
-}
 
 class NonExtensibleContentMatchersTest {
 
@@ -163,14 +131,12 @@ class NonExtensibleEntityLinksMatchersTest {
     }
 }
 
-
 class MvcResultStubs {
     static MvcResult stubbedBody(String content) {
         val response = mock(MockHttpServletResponse.class, re -> when(getUtf8Content(re)).thenReturn(content));
         return mock(MvcResult.class, r -> when(r.getResponse()).thenReturn(response));
     }
 
-    @NotNull
     private static String getUtf8Content(MockHttpServletResponse m) {
         try {
             return m.getContentAsString(StandardCharsets.UTF_8);
@@ -183,7 +149,7 @@ class MvcResultStubs {
 class MvcResultStubsTest {
     @Test
     public void shouldReturnUtf8Content() throws UnsupportedEncodingException {
-        assertThat(stubbedBody("abc").getResponse().getContentAsString(StandardCharsets.UTF_8)).isEqualTo("abc");
+        Assertions.assertThat(stubbedBody("abc").getResponse().getContentAsString(StandardCharsets.UTF_8)).isEqualTo("abc");
     }
 }
 

@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.util.test.api.traversor;
+package org.ignast.stockinvesting.testutil.api.traversor;
 
 import lombok.NonNull;
 import lombok.val;
@@ -10,7 +10,6 @@ import org.springframework.web.client.RestTemplate;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.util.test.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
@@ -18,82 +17,6 @@ import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.status;
-
-public interface Hop {
-
-    abstract class TraversableHop implements Hop {
-        static final MediaType APP_MEDIA_TYPE = MediaType.parseMediaType("application/vnd.stockinvesting.quotes-v1.hal+json");
-
-        abstract ResponseEntity<String> traverse(ResponseEntity<String> response);
-    }
-
-    class Factory {
-        private RestTemplate restTemplate;
-
-        private HrefExtractor hrefExtractor;
-
-        Factory(@NonNull RestTemplate restTemplate, @NonNull HrefExtractor hrefExtractor) {
-            this.hrefExtractor = hrefExtractor;
-            this.restTemplate = restTemplate;
-        }
-
-        public TraversableHop put(String rel, String body) {
-            return new PutHop(restTemplate, hrefExtractor, rel, body);
-        }
-
-        public TraversableHop get(String rel) {
-            return new GetHop(restTemplate, hrefExtractor, rel);
-        }
-
-        private static class PutHop extends TraversableHop {
-            private RestTemplate restTemplate;
-            private HrefExtractor hrefExtractor;
-            private String rel;
-            private String body;
-
-            private PutHop(RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel, @NonNull String body) {
-                this.restTemplate = restTemplate;
-                this.hrefExtractor = hrefExtractor;
-                this.rel = rel;
-                this.body = body;
-            }
-
-            @Override
-            public ResponseEntity<String> traverse(@NonNull ResponseEntity<String> response) {
-                return restTemplate.exchange(hrefExtractor.extractHref(response, rel), HttpMethod.PUT, contentTypeV1(body), String.class);
-            }
-
-            private HttpEntity<String> contentTypeV1(String content) {
-                HttpHeaders headers = new HttpHeaders();
-                headers.add("Content-Type", APP_MEDIA_TYPE.toString());
-                return new HttpEntity<>(content, headers);
-            }
-        }
-
-        private static class GetHop extends TraversableHop {
-            private RestTemplate restTemplate;
-            private HrefExtractor hrefExtractor;
-            private String rel;
-
-            private GetHop(RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel) {
-                this.restTemplate = restTemplate;
-                this.hrefExtractor = hrefExtractor;
-                this.rel = rel;
-            }
-
-            @Override
-            ResponseEntity<String> traverse(@NonNull ResponseEntity<String> previousResponse) {
-                return restTemplate.exchange(hrefExtractor.extractHref(previousResponse, rel), GET, acceptV1(), String.class);
-            }
-
-            private HttpEntity<String> acceptV1() {
-                HttpHeaders headers = new HttpHeaders();
-                headers.add("Accept", APP_MEDIA_TYPE.toString());
-                return new HttpEntity<>(headers);
-            }
-        }
-    }
-}
 
 class HopTest {
 
@@ -136,7 +59,7 @@ class HopTest {
     @Test
     public void shouldTraverseGetHop() {
         when(restTemplate.exchange(any(String.class), any(), any(), any(Class.class))).thenReturn(status(OK).body("hopResponse"));
-        val responseWithLinkToCompany = status(OK).contentType(QUOTES_V1).body(link("company", "companyUri"));
+        val responseWithLinkToCompany = status(OK).contentType(QUOTES_V1).body(HateoasLink.link("company", "companyUri"));
         when(hrefExtractor.extractHref(responseWithLinkToCompany, "company")).thenReturn("companyUri");
 
         val companyResponse = hopFactory.get("company").traverse(responseWithLinkToCompany);

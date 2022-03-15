@@ -1,0 +1,13 @@
+package org.ignast.stockinvesting.testutil.api.traversor;
+
+import static java.lang.String.format;
+
+public class HateoasLink {
+    public static String link(String rel, String href) {
+        return format("{\"_links\":{\"%s\":{\"href\":\"%s\"}}}", rel, href);
+    }
+
+    public static String anyLink() {
+        return "{\"_links\":{\"any\":{\"href\":\"any\"}}}";
+    }
+}

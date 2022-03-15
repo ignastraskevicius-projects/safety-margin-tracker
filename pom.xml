@@ -12,6 +12,7 @@
 	    <module>quotes-service</module>
 	    <module>quotes-domain</module>
 	    <module>quotes-persistence</module>
+	    <module>quotes-alphavantage-adapter</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -38,6 +39,8 @@
         <h2.version>2.1.210</h2.version>
         <javax.persistence.api.version>2.2</javax.persistence.api.version>
         <flyway.version>8.5.2</flyway.version>
+        <jackson.version>2.13.1</jackson.version>
+        <wiremock.version>2.32.0</wiremock.version>
     </properties>
 
     <dependencies>
@@ -96,6 +99,11 @@
                 <version>${springboot.version}</version>
             </dependency>
             <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-web</artifactId>
+                <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-commons</artifactId>
                 <version>${springdata.version}</version>
@@ -116,6 +124,11 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
                 <version>${springframework.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.core</groupId>
+                <artifactId>jackson-databind</artifactId>
+                <version>${jackson.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.testcontainers</groupId>
@@ -197,6 +210,12 @@
                 <groupId>org.flywaydb</groupId>
                 <artifactId>flyway-mysql</artifactId>
                 <version>${flyway.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>com.github.tomakehurst</groupId>
+                <artifactId>wiremock-jre8</artifactId>
+                <version>${wiremock.version}</version>
                 <scope>test</scope>
             </dependency>
         </dependencies>

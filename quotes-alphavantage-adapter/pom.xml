@@ -10,7 +10,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.ignast.stock-investing.quotes</groupId>
-    <artifactId>quotes-service</artifactId>
+    <artifactId>quotes-alphavantage-adapter</artifactId>
 
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
@@ -23,34 +23,12 @@
             <artifactId>quotes-domain</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.ignast.stock-investing.quotes</groupId>
-            <artifactId>quotes-alphavantage-adapter</artifactId>
-            <version>1.0-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>org.ignast.stock-investing.quotes</groupId>
-            <artifactId>quotes-persistence</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ignast.stock-investing</groupId>
-            <artifactId>error-handling</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-hateoas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.javamoney</groupId>
-            <artifactId>moneta</artifactId>
-            <type>pom</type>
+            <artifactId>spring-boot-starter-test</artifactId>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -61,10 +39,6 @@
             <artifactId>assertj-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>nl.jqno.equalsverifier</groupId>
-            <artifactId>equalsverifier</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>
@@ -73,12 +47,8 @@
             <artifactId>commons-lang3</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>junit-jupiter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
+            <groupId>com.github.tomakehurst</groupId>
+            <artifactId>wiremock-jre8</artifactId>
         </dependency>
     </dependencies>
 </project>

@@ -40,9 +40,9 @@ public class DockerizedDevMysqlIT {
 
     @Test
     public void shouldCreateCompany() {
-        companyRepository.save(new Company(new PositiveNumber(3), new CompanyName("Amazon"), new StockSymbol("AMZN"), new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"))));
+        companyRepository.save(new Company(new CompanyExternalId(3), new CompanyName("Amazon"), new StockSymbol("AMZN"), new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"))));
         commit();
-        val result = companyRepository.findByExternalId(new PositiveNumber(3));
+        val result = companyRepository.findByExternalId(new CompanyExternalId(3));
 
         assertThat(result.isPresent());
         result.stream().forEach(c -> assertThat(c.getName().get()).isEqualTo("Amazon"));

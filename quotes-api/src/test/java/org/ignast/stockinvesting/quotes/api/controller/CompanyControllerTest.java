@@ -5,12 +5,8 @@ import org.ignast.stockinvesting.quotes.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
-import java.util.Optional;
-
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Optional.empty;
-import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTests.amazon;
@@ -36,7 +32,7 @@ class CompanyControllerTest {
 
         verify(companies).create(captor.capture());
         val company = captor.getValue();
-        assertThat(company.getExternalId()).isEqualTo(new PositiveNumber(5));
+        assertThat(company.getExternalId()).isEqualTo(new CompanyExternalId(5));
         assertThat(company.getName()).isEqualTo(new CompanyName("Microsoft"));
         assertThat(company.getStockSymbol()).isEqualTo(new StockSymbol("MSFT"));
         assertThat(company.getStockExchange()).isEqualTo(stockExchange);
@@ -69,7 +65,7 @@ class CompanyControllerTest {
     @Test
     public void shouldRetrieveCompany() {
         val amazonExternalId = amazon().getExternalId().get();
-        when(companies.findByExternalId(new PositiveNumber(amazonExternalId))).thenReturn(amazon());
+        when(companies.findByExternalId(new CompanyExternalId(amazonExternalId))).thenReturn(amazon());
 
         val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
 
@@ -79,7 +75,7 @@ class CompanyControllerTest {
     @Test
     public void retrievedCompanyShouldLinkToItself() {
         val amazonExternalId = amazon().getExternalId().get();
-        when(companies.findByExternalId(new PositiveNumber(amazonExternalId))).thenReturn(amazon());
+        when(companies.findByExternalId(new CompanyExternalId(amazonExternalId))).thenReturn(amazon());
 
         val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
 

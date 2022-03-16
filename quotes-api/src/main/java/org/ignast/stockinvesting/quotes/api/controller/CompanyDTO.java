@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.ignast.stockinvesting.quotes.CompanyName;
-import org.ignast.stockinvesting.quotes.PositiveNumber;
+import org.ignast.stockinvesting.quotes.CompanyExternalId;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
 import javax.validation.Valid;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 public final class CompanyDTO {
 
     @NotNull
-    @DomainClassConstraint(domainClass = PositiveNumber.class)
+    @DomainClassConstraint(domainClass = CompanyExternalId.class)
     private final Integer id;
 
     @NotNull

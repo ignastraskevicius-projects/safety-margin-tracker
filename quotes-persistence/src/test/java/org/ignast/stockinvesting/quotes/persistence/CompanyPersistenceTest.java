@@ -1,13 +1,11 @@
 package org.ignast.stockinvesting.quotes.persistence;
 
 import lombok.val;
-import org.h2.tools.Server;
 import org.ignast.stockinvesting.quotes.*;
 import org.ignast.stockinvesting.quotes.dbmigration.ProductionDatabaseMigrationVersions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -62,7 +60,7 @@ class CompanyPersistenceTest {
     public void shouldInsertCompany() {
         StockExchange nasdaq = new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"));
 
-        companyRepository.save(new Company(new PositiveNumber(6), new CompanyName("Amazon"), new StockSymbol("AMZN"), nasdaq));
+        companyRepository.save(new Company(new CompanyExternalId(6), new CompanyName("Amazon"), new StockSymbol("AMZN"), nasdaq));
         commit();
 
         val result = jdbcTemplate.queryForMap("SELECT * FROM company;");
@@ -78,10 +76,10 @@ class CompanyPersistenceTest {
         jdbcTemplate.execute("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                 "VALUES (16, 'Amazon', 'AMZN', 'XNAS')");
 
-        Optional<Company> company = companyRepository.findByExternalId(new PositiveNumber(16));
+        Optional<Company> company = companyRepository.findByExternalId(new CompanyExternalId(16));
         assertThat(company).isPresent();
         company.stream().forEach(c -> {
-            assertThat(c.getExternalId()).isEqualTo(new PositiveNumber(16));
+            assertThat(c.getExternalId()).isEqualTo(new CompanyExternalId(16));
             assertThat(c.getName()).isEqualTo(new CompanyName("Amazon"));
             assertThat(c.getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
             assertThat(c.getStockExchange().getMarketIdentifierCode()).isEqualTo(new MarketIdentifierCode("XNAS"));
@@ -93,8 +91,8 @@ class CompanyPersistenceTest {
     public void shouldRejectCompanyUnderExistingListing() {
         val nasdaq = new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"));
         val amazonSymbol = new StockSymbol("AMZN");
-        val amazon1 = new Company(new PositiveNumber(6), new CompanyName("Amazon1"), amazonSymbol, nasdaq);
-        val amazon2 = new Company(new PositiveNumber(6), new CompanyName("Amazon2"), amazonSymbol, nasdaq);
+        val amazon1 = new Company(new CompanyExternalId(6), new CompanyName("Amazon1"), amazonSymbol, nasdaq);
+        val amazon2 = new Company(new CompanyExternalId(6), new CompanyName("Amazon2"), amazonSymbol, nasdaq);
 
         companyRepository.save(amazon1);
         assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(() -> companyRepository.save(amazon2))
@@ -103,7 +101,7 @@ class CompanyPersistenceTest {
 
     @Test
     public void shouldRejectCompanyWithExistingExternalId() {
-        val externalId = new PositiveNumber(6);
+        val externalId = new CompanyExternalId(6);
         val hkex = new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XHKG"));
         val amazon1 = new Company(externalId, new CompanyName("Alibaba1"), new StockSymbol("BABA"), hkex);
         val amazon2 = new Company(externalId, new CompanyName("Alibaba2"), new StockSymbol("9988"), hkex);

@@ -4,7 +4,7 @@ import lombok.val;
 import org.assertj.core.api.ObjectAssert;
 import org.ignast.stockinvesting.quotes.CompanyName;
 import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
-import org.ignast.stockinvesting.quotes.PositiveNumber;
+import org.ignast.stockinvesting.quotes.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.StockSymbol;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.From1ParamConstructor;
 import org.junit.jupiter.api.Test;
@@ -37,7 +37,7 @@ class AppErrorsHandlingConfigurationTest {
     @Test
     public void shouldHaveClassCorrectlyAssignedForTypeConstructorsFromInteger() {
         val countOfTypesSupported = asList(
-                checkConstructedTypeFromInteger(PositiveNumber.class, t -> t.construct(7))
+                checkConstructedTypeFromInteger(CompanyExternalId.class, t -> t.construct(7))
         ).size();
 
         assertThat(typesBackedByInteger).hasSize(countOfTypesSupported);

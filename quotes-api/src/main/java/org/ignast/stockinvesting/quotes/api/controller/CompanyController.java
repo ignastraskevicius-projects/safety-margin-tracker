@@ -3,13 +3,10 @@ package org.ignast.stockinvesting.quotes.api.controller;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.*;
 import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-
-import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.ignast.stockinvesting.quotes.api.controller.VersionedApiMediaTypes.V1;
@@ -39,7 +36,7 @@ public class CompanyController {
 
     @GetMapping(value = "/{id}", produces = V1)
     public EntityModel<CompanyDTO> retrieveCompanyById(@PathVariable int id) {
-        val company = companies.findByExternalId(new PositiveNumber(id));
+        val company = companies.findByExternalId(new CompanyExternalId(id));
         val selfLink = linkTo(CompanyController.class).slash(id).withSelfRel();
 
         return EntityModel.of(mapToDto(company), selfLink);
@@ -47,7 +44,7 @@ public class CompanyController {
 
     private Company mapFromDto(CompanyDTO companyDTO) {
         Company company = companyDTO.getListings().stream().findFirst().map(l -> {
-            val externalId = new PositiveNumber(companyDTO.getId());
+            val externalId = new CompanyExternalId(companyDTO.getId());
             val name = new CompanyName(companyDTO.getName());
             val symbol = new StockSymbol(l.getStockSymbol());
             val stockExchange = stockExchanges.getFor(new MarketIdentifierCode(l.getMarketIdentifier()));

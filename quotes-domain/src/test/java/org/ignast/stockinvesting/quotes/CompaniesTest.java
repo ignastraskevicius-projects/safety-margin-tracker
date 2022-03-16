@@ -3,8 +3,6 @@ package org.ignast.stockinvesting.quotes;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import java.util.Optional;
-
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -39,7 +37,7 @@ class CompaniesTest {
     @Test
     public void shouldFindCreatedCompanyByExternalId() {
         val company = mock(Company.class);
-        val externalId = new PositiveNumber(5);
+        val externalId = new CompanyExternalId(5);
         when(repository.findByExternalId(externalId)).thenReturn(of(company));
 
         val retrievedCompany = companies.findByExternalId(externalId);
@@ -49,7 +47,7 @@ class CompaniesTest {
 
     @Test
     public void shouldNotFindNonexistentCompanyByExternalId() {
-        val externalId = new PositiveNumber(5);
+        val externalId = new CompanyExternalId(5);
         when(repository.findByExternalId(externalId)).thenReturn(empty());
 
         assertThatExceptionOfType(CompanyNotFound.class)

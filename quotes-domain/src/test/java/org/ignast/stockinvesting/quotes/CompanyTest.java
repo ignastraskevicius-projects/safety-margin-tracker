@@ -26,7 +26,7 @@ class CompanyTest {
     @ParameterizedTest
     @ValueSource(ints = { 2, 5 })
     public void shouldHaveExternalId(int externalId) {
-        assertThat(new Company(new PositiveNumber(externalId), anyCompanyName(), anySymbol(), anyStockExchange()).getExternalId()).isEqualTo(new PositiveNumber(externalId));
+        assertThat(new Company(new CompanyExternalId(externalId), anyCompanyName(), anySymbol(), anyStockExchange()).getExternalId()).isEqualTo(new CompanyExternalId(externalId));
     }
 
     @ParameterizedTest

@@ -20,7 +20,7 @@ public class Company {
     @Getter
     @Embedded
     @AttributeOverride(name = "number", column = @Column(name = "externalId"))
-    private PositiveNumber externalId;
+    private CompanyExternalId externalId;
 
     @Embedded
     @NonNull

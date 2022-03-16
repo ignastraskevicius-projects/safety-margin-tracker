@@ -7,9 +7,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 class AppBusinessErrorDTOTest {
 
     @Test
-    public void shouldCreateCompanyNotFound() {
+    public void shouldCreateForCompanyNotFound() {
         AppBusinessErrorDTO error = AppBusinessErrorDTO.createForCompanyNotFound();
 
         assertThat(error.getErrorName()).isNull();
+    }
+
+    @Test
+    public void shouldCreateForStockSymbolNotSupportedInTheMarket() {
+        AppBusinessErrorDTO error = AppBusinessErrorDTO.createForStockSymbolNotSupportedInThisMarket();
+
+        assertThat(error.getErrorName()).isEqualTo("stockSymbolNotSupportedInThisMarket");
     }
 }

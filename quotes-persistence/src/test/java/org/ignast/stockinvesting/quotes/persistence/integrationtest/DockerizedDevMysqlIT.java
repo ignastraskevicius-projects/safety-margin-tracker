@@ -18,6 +18,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
 import static org.mockito.Mockito.mock;
 
 @Testcontainers
@@ -40,7 +41,8 @@ public class DockerizedDevMysqlIT {
 
     @Test
     public void shouldCreateCompany() {
-        companyRepository.save(new Company(new CompanyExternalId(3), new CompanyName("Amazon"), new StockSymbol("AMZN"), new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"))));
+        companyRepository.save(Company.create(new CompanyExternalId(3), new CompanyName("Amazon"), new StockSymbol("AMZN"),
+                new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"))));
         commit();
         val result = companyRepository.findByExternalId(new CompanyExternalId(3));
 

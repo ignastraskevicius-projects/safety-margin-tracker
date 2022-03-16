@@ -23,8 +23,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.acceptance.Uris.rootResourceOn;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.springframework.http.HttpStatus.CREATED;
-import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.HttpStatus.*;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -59,6 +58,15 @@ public class CompanyResourceTest {
                 .perform();
         assertThat(company.getStatusCode()).isEqualTo(CREATED);
         assertEquals("should create company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}", company.getBody(), false);
+    }
+
+    @Test
+    public void shouldNotCreateCompaniesForUnsupportedSymbols() throws JSONException {
+        val company = quotesTraversors.startAt(rootResourceOn(port))
+                .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AAAA\"}]}"))
+                .perform();
+        assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertEquals("should create company", "{\"errorName\":\"stockSymbolNotSupportedInThisMarket\"}", company.getBody(), false);
     }
 
     @Test

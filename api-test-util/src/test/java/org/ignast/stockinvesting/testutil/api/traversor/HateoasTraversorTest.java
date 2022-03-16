@@ -16,14 +16,17 @@ import org.springframework.web.client.RestTemplate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.testutil.api.traversor.RestTemplateBuilderStubs.stub;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
 
 @RestClientTest(HateoasTraversor.Factory.class)
 public class HateoasTraversorTest {
@@ -100,6 +103,27 @@ public class HateoasTraversorTest {
         assertThat(response.getBody()).contains("http://any");
     }
 
+    @Test
+    public void shouldHandleClientErrors() {
+        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withBadRequest().contentType(APPLICATION_JSON).body("someResponse"));
+
+        val response = traversors.startAt("http://root").perform();
+
+        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response.getBody()).isEqualTo("someResponse");
+    }
+
+
+    @Test
+    public void shouldHandleServerErrors() {
+        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withServerError().contentType(APPLICATION_JSON).body("someResponse"));
+
+        val response = traversors.startAt("http://root").perform();
+
+        assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getBody()).isEqualTo("someResponse");
+    }
+
     @TestConfiguration
     static class AppMediaTypeConfiguration {
         @Bean
@@ -111,8 +135,10 @@ public class HateoasTraversorTest {
 
 class RestTemplateBuilderStubs {
     static RestTemplateBuilder stub() {
-        val restTemplate = mock(RestTemplate.class);
-        return MockitoUtils.mock(RestTemplateBuilder.class, r -> when(r.build()).thenReturn(restTemplate));
+        val builder = mock(RestTemplateBuilder.class);
+        when(builder.errorHandler(any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(RestTemplate.class));
+        return builder;
     }
 }
 

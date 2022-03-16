@@ -37,6 +37,16 @@ public class Company {
     @Getter
     private StockExchange stockExchange;
 
+    public static Company create(CompanyExternalId externalId, CompanyName name, StockSymbol stockSymbol, StockExchange stockExchange) {
+        val company = new Company(externalId, name, stockSymbol, stockExchange);
+        verifyStockSymbolIsSupported(company);
+        return company;
+    }
+
+    private static void verifyStockSymbolIsSupported(Company company) {
+        company.getQuotedPrice();
+    }
+
     public Money getQuotedPrice() {
         return stockExchange.getQuotedPrice(stockSymbol);
     }

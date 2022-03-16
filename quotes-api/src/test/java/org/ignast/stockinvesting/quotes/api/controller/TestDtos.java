@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTests.amazon;
+import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 
 public class TestDtos {
 

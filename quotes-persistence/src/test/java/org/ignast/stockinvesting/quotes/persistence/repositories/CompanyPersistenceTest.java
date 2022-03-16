@@ -1,8 +1,8 @@
-package org.ignast.stockinvesting.quotes.persistence;
+package org.ignast.stockinvesting.quotes.persistence.repositories;
 
 import lombok.val;
 
-import org.ignast.stockinvesting.quotes.dbmigration.ProductionDatabaseMigrationVersions;
+import org.ignast.stockinvesting.quotes.persistence.dbmigration.ProductionDatabaseMigrationVersions;
 import org.ignast.stockinvesting.quotes.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

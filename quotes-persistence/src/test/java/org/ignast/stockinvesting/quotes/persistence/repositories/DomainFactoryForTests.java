@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.persistence;
+package org.ignast.stockinvesting.quotes.persistence.repositories;
 
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;

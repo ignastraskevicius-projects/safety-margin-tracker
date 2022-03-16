@@ -1,13 +1,14 @@
-package org.ignast.stockinvesting.quotes.persistence;
+package org.ignast.stockinvesting.quotes.persistence.repositories;
 
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
+import org.ignast.stockinvesting.quotes.persistence.repositories.StockExchangeConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.util.mockito.MockitoUtils.mock;
+import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.mockito.Mockito.when;
 
 class StockExchangeConverterTest {

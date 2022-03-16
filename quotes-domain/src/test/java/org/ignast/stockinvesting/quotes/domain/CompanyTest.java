@@ -14,7 +14,7 @@ import java.math.BigDecimal;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.*;
-import static org.ignast.stockinvesting.quotes.domain.testutil.MockitoUtils.mock;
+import static org.ignast.stockinvesting.testutil.testutil.MockitoUtils.mock;
 import static org.mockito.Mockito.when;
 
 class CompanyTest {

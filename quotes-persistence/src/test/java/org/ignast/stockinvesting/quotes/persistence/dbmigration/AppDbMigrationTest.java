@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.dbmigration;
+package org.ignast.stockinvesting.quotes.persistence.dbmigration;
 
 import lombok.val;
 import org.flywaydb.core.Flyway;
@@ -10,12 +10,11 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.sql.SQLIntegrityConstraintViolationException;
-import java.util.Map;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.dbmigration.AppDbContainer.getDataSourceTo;
+import static org.ignast.stockinvesting.quotes.persistence.dbmigration.AppDbContainer.getDataSourceTo;
 
 @Testcontainers
 public class AppDbMigrationTest {

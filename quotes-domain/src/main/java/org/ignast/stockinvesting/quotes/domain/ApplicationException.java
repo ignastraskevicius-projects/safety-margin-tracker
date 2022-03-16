@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.domain;
 
 public class ApplicationException extends RuntimeException {
     ApplicationException(String message) {

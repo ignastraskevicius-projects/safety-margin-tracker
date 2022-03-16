@@ -1,6 +1,4 @@
-package org.ignast.stockinvesting.quotes;
-
-import org.springframework.stereotype.Service;
+package org.ignast.stockinvesting.quotes.domain;
 
 import java.math.BigDecimal;
 

@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.domain;
 
 import lombok.val;
 import nl.jqno.equalsverifier.EqualsVerifier;
@@ -13,8 +13,8 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.DomainFactoryForTests.*;
-import static org.ignast.stockinvesting.quotes.mockito.utils.MockitoUtils.mock;
+import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.*;
+import static org.ignast.stockinvesting.quotes.domain.testutil.MockitoUtils.mock;
 import static org.mockito.Mockito.when;
 
 class CompanyTest {

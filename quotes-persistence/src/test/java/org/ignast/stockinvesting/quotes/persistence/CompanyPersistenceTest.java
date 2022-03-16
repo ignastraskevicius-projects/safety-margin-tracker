@@ -1,8 +1,9 @@
 package org.ignast.stockinvesting.quotes.persistence;
 
 import lombok.val;
-import org.ignast.stockinvesting.quotes.*;
+
 import org.ignast.stockinvesting.quotes.dbmigration.ProductionDatabaseMigrationVersions;
+import org.ignast.stockinvesting.quotes.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
@@ -22,7 +23,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.persistence.DomainFactoryForTests.*;
+
 import static org.mockito.Mockito.mock;
 
 @DataJpaTest

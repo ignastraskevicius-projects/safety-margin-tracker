@@ -1,10 +1,9 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.domain;
 
 import lombok.NonNull;
 import lombok.val;
 import org.javamoney.moneta.Money;
 
-import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Transient;

@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.domain;
 
 import lombok.NonNull;
 import org.springframework.stereotype.Service;

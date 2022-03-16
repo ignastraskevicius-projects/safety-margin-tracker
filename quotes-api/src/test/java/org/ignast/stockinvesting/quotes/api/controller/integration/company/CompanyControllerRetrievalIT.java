@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
 
-import org.ignast.stockinvesting.quotes.CompanyNotFound;
+import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.junit.jupiter.api.Test;
 
 import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTests.amazon;

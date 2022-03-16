@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes;
+package org.ignast.stockinvesting.quotes.domain;
 
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;

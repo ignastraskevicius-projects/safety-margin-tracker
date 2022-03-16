@@ -2,7 +2,6 @@ package org.ignast.stockinvesting.quotes.api.controller;
 
 import lombok.val;
 import nl.jqno.equalsverifier.EqualsVerifier;
-import org.ignast.stockinvesting.quotes.Company;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;

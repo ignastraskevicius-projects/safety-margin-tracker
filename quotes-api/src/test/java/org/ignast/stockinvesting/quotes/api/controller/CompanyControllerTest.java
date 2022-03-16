@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
 import lombok.val;
-import org.ignast.stockinvesting.quotes.*;
+import org.ignast.stockinvesting.quotes.domain.*;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 

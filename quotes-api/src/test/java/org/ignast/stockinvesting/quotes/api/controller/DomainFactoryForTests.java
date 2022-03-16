@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
-import org.ignast.stockinvesting.quotes.*;
+import org.ignast.stockinvesting.quotes.domain.*;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

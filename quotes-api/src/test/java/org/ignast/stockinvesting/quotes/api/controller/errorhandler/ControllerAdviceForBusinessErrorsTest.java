@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
-import org.ignast.stockinvesting.quotes.CompanyNotFound;
+import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;

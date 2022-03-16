@@ -1,4 +1,4 @@
-cd estimates-service
+cd quotes-service
 export ALPHAVANTAGE_PORT=8082
 docker-compose down
 docker-compose up -d

@@ -1,4 +1,4 @@
-package com.ignast.stockinvesting.estimates.alphavantagesim;
+package com.ignast.stockinvesting.quotes.alphavantagesim;
 
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.ignast.stockinvesting.estimates.alphavantagesim.QueryParams.validParamsBuilder;
-import static com.ignast.stockinvesting.estimates.alphavantagesim.fluentjsonassert.JsonAssert.assertThatJson;
+import static com.ignast.stockinvesting.quotes.alphavantagesim.QueryParams.validParamsBuilder;
+import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -109,9 +109,10 @@ public class AlphaVantageStubIT {
 
 @Testcontainers
 class DockerizedAlphaVantageStubIT {
+    private static final String dockerImageName = System.getProperty("docker.image");
 
     @Container
-    public static final GenericContainer container = new GenericContainer(DockerImageName.parse("estimates/alphavantage-simulator:1.0-SNAPSHOT")).withExposedPorts(8080);
+    public static final GenericContainer container = new GenericContainer(DockerImageName.parse(dockerImageName)).withExposedPorts(8080);
 
     @Test
     public void shouldContainQuotedPrices() throws IOException, InterruptedException {

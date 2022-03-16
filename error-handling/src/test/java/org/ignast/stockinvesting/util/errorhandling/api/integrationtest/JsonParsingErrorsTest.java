@@ -1,7 +1,8 @@
 package org.ignast.stockinvesting.util.errorhandling.api.integrationtest;
 
 import lombok.Getter;
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
+import org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors;
+import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -26,12 +27,12 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Collections.emptyMap;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.util.errorhandling.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(GenericErrorHandlingConfiguration.class)
+@WebMvcTest(ErrorExtractorConfiguration.class)
 class UnparsableJsonErrorsTest {
 
     @Autowired
@@ -77,7 +78,7 @@ class UnparsableJsonErrorsTest {
     }
 }
 
-@WebMvcTest(GenericErrorHandlingConfiguration.class)
+@WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonStringFieldErrorsTest {
 
     @Autowired
@@ -89,14 +90,14 @@ class JsonStringFieldErrorsTest {
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.testField\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.testField")));
     }
 
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testField\":null}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.testField\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.testField")));
     }
 
     @ParameterizedTest
@@ -104,7 +105,7 @@ class JsonStringFieldErrorsTest {
     public void shouldRejectRequestWithWrongTypeWhereStringIsRequired(String wrongType) throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content(format("{\"testField\":%s}", wrongType))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"$.testField\"}]}"));
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.testField")));
     }
 
     @Test
@@ -112,7 +113,7 @@ class JsonStringFieldErrorsTest {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testField\":\"someValue\"}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"$.testField\",\"message\":\"failed with test domain requirement\"}]}"));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.testField", "failed with test domain requirement")));
     }
 
     @TestConfiguration
@@ -155,7 +156,7 @@ class JsonStringFieldErrorsTest {
     }
 }
 
-@WebMvcTest(GenericErrorHandlingConfiguration.class)
+@WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonIntegerFieldErrorsTest {
 
     @Autowired
@@ -167,14 +168,14 @@ class JsonIntegerFieldErrorsTest {
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.integerField\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.integerField")));
     }
 
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"integerField\":null}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.integerField\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.integerField")));
     }
 
     @ParameterizedTest
@@ -182,7 +183,7 @@ class JsonIntegerFieldErrorsTest {
     public void shouldRejectRequestIndicatingWrongTypeWhereIntegerIsRequired(String wrongType) throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content(format("{\"integerField\":%s}", wrongType))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeInteger\",\"jsonPath\":\"$.integerField\"}]}"));
+                .andExpect(contentMatchesJson(forIntegerRequiredAt("$.integerField")));
     }
 
     @Test
@@ -190,7 +191,7 @@ class JsonIntegerFieldErrorsTest {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"integerField\":5}"))
                 .andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"$.integerField\",\"message\":\"failed with test domain requirement\"}]}"));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.integerField", "failed with test domain requirement")));
     }
 
     @TestConfiguration
@@ -233,7 +234,7 @@ class JsonIntegerFieldErrorsTest {
     }
 }
 
-@WebMvcTest(GenericErrorHandlingConfiguration.class)
+@WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonCollectionErrorsTest {
 
     @Autowired
@@ -245,14 +246,14 @@ class JsonCollectionErrorsTest {
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.testList\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.testList")));
     }
 
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testList\":null}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.testList\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.testList")));
     }
 
     @ParameterizedTest
@@ -260,21 +261,21 @@ class JsonCollectionErrorsTest {
     public void shouldRejectRequestWithWrongTypeWhereStringIsRequired(String wrongType) throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content(format("{\"testList\":%s}", wrongType))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"$.testList\"}]}"));
+                .andExpect(contentMatchesJson(forArrayRequiredAt("$.testList")));
     }
 
     @Test
     public void shouldRejectRequestContainingLessElementsThanRequired() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testList\":[]}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"$.testList\",\"message\":\"message for too few\"}]}"));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.testList", "message for too few")));
     }
 
     @Test
     public void shouldRejectRequestsContainingMoreElementsThanRequired() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testList\":[{},{}]}"))
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"$.testList\",\"message\":\"message for too many\"}]}"));
+                .andExpect(contentMatchesJson(forInvalidValueAt("$.testList", "message for too many")));
     }
 
     @ParameterizedTest
@@ -282,7 +283,7 @@ class JsonCollectionErrorsTest {
     public void shouldRejectRequestsContainingElementsOfWrongTypeWhereObjectIsRequired(String listingOfWrongType)
             throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content(format("{\"testList\":[%s]}", listingOfWrongType)))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeObject\",\"jsonPath\":\"$.testList[0]\"}]}"));
+                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(forObjectRequiredAt("$.testList[0]")));
     }
 
     @TestConfiguration
@@ -317,7 +318,7 @@ class JsonCollectionErrorsTest {
     static class TestElementDTO {}
 }
 
-@WebMvcTest(GenericErrorHandlingConfiguration.class)
+@WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonNestedStringFieldErrorsTest {
 
     @Autowired
@@ -329,14 +330,14 @@ class JsonNestedStringFieldErrorsTest {
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testList\":[{}]}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.testList[0].testField\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.testList[0].testField")));
     }
 
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content("{\"testList\":[{\"testField\":null}]}")).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"$.testList[0].testField\"}]}"));
+                .andExpect(contentMatchesJson(forMissingFieldAt("$.testList[0].testField")));
     }
 
     @ParameterizedTest
@@ -344,7 +345,7 @@ class JsonNestedStringFieldErrorsTest {
     public void shouldRejectRequestWithNestedWrongTypeWhereStringIsRequired(String wrongType) throws Exception {
         mockMvc.perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                         .content(format("{\"testList\":[{\"testField\":%s}]}}", wrongType))).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"$.testList[0].testField\"}]}"));
+                .andExpect(contentMatchesJson(forStringRequiredAt("$.testList[0].testField")));
     }
 
     @TestConfiguration

@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.api.controller;
+package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
 import lombok.val;
 import org.ignast.stockinvesting.quotes.CompanyName;
@@ -6,7 +6,6 @@ import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.PositiveNumber;
 import org.ignast.stockinvesting.quotes.StockSymbol;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.ObjectMapper;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -67,8 +66,6 @@ public class CompanyJsonBodyFactory {
 class CompanyJsonBodyFactoryTest {
 
     private CompanyJsonBodyFactory factory = new CompanyJsonBodyFactory();
-
-    private ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void shouldCreateValidJsonRepresentingDomain() {

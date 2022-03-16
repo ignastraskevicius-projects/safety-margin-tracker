@@ -20,7 +20,7 @@
     <dependencies>
         <dependency>
             <groupId>org.ignast.stock-investing.quotes</groupId>
-            <artifactId>quotes-domain</artifactId>
+            <artifactId>quotes-api</artifactId>
         </dependency>
         <dependency>
             <groupId>org.ignast.stock-investing.quotes</groupId>
@@ -32,28 +32,11 @@
         </dependency>
         <dependency>
             <groupId>org.ignast.stock-investing</groupId>
-            <artifactId>error-handling</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.ignast.stock-investing</groupId>
             <artifactId>api-test-util</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-hateoas</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.javamoney</groupId>
-            <artifactId>moneta</artifactId>
-            <type>pom</type>
         </dependency>
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -78,6 +61,12 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.core</groupId>
+                    <artifactId>jackson-annotations</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>

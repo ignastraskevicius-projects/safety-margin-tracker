@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api.integrationtest;
 
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
+import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,7 +18,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({GenericErrorHandlingConfiguration.class})
+@WebMvcTest({ErrorExtractorConfiguration.class})
 class GetMethodRelatedErrorsTest {
 
     private @Autowired MockMvc mockMvc;
@@ -66,7 +66,7 @@ class GetMethodRelatedErrorsTest {
     }
 }
 
-@WebMvcTest({GenericErrorHandlingConfiguration.class})
+@WebMvcTest({ErrorExtractorConfiguration.class})
 class WriteMethodRelatedErrorsTest {
 
     private @Autowired MockMvc mockMvc;

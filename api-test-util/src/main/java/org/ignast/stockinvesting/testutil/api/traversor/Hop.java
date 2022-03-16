@@ -9,36 +9,39 @@ import static org.springframework.http.HttpMethod.GET;
 public interface Hop {
 
     abstract class TraversableHop implements Hop {
-        static final MediaType APP_MEDIA_TYPE = MediaType.parseMediaType("application/vnd.stockinvesting.quotes-v1.hal+json");
-
         abstract ResponseEntity<String> traverse(ResponseEntity<String> response);
     }
 
     class Factory {
         private RestTemplate restTemplate;
 
+        private MediaType appMediaType;
+
         private HrefExtractor hrefExtractor;
 
-        Factory(@NonNull RestTemplate restTemplate, @NonNull HrefExtractor hrefExtractor) {
+        Factory(@NonNull MediaType appMediaType, @NonNull RestTemplate restTemplate, @NonNull HrefExtractor hrefExtractor) {
+            this.appMediaType = appMediaType;
             this.hrefExtractor = hrefExtractor;
             this.restTemplate = restTemplate;
         }
 
         public TraversableHop put(String rel, String body) {
-            return new PutHop(restTemplate, hrefExtractor, rel, body);
+            return new PutHop(appMediaType, restTemplate, hrefExtractor, rel, body);
         }
 
         public TraversableHop get(String rel) {
-            return new GetHop(restTemplate, hrefExtractor, rel);
+            return new GetHop(appMediaType, restTemplate, hrefExtractor, rel);
         }
 
         private static class PutHop extends TraversableHop {
-            private RestTemplate restTemplate;
-            private HrefExtractor hrefExtractor;
-            private String rel;
-            private String body;
+            private final MediaType appMediaType;
+            private final RestTemplate restTemplate;
+            private final HrefExtractor hrefExtractor;
+            private final String rel;
+            private final String body;
 
-            private PutHop(RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel, @NonNull String body) {
+            private PutHop(MediaType appMediaType, RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel, @NonNull String body) {
+                this.appMediaType = appMediaType;
                 this.restTemplate = restTemplate;
                 this.hrefExtractor = hrefExtractor;
                 this.rel = rel;
@@ -52,17 +55,19 @@ public interface Hop {
 
             private HttpEntity<String> contentTypeV1(String content) {
                 HttpHeaders headers = new HttpHeaders();
-                headers.add("Content-Type", APP_MEDIA_TYPE.toString());
+                headers.add("Content-Type", appMediaType.toString());
                 return new HttpEntity<>(content, headers);
             }
         }
 
         private static class GetHop extends TraversableHop {
-            private RestTemplate restTemplate;
-            private HrefExtractor hrefExtractor;
-            private String rel;
+            private final MediaType appMediaType;
+            private final RestTemplate restTemplate;
+            private final HrefExtractor hrefExtractor;
+            private final String rel;
 
-            private GetHop(RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel) {
+            private GetHop(MediaType appMediaType, RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel) {
+                this.appMediaType = appMediaType;
                 this.restTemplate = restTemplate;
                 this.hrefExtractor = hrefExtractor;
                 this.rel = rel;
@@ -75,7 +80,7 @@ public interface Hop {
 
             private HttpEntity<String> acceptV1() {
                 HttpHeaders headers = new HttpHeaders();
-                headers.add("Accept", APP_MEDIA_TYPE.toString());
+                headers.add("Accept", appMediaType.toString());
                 return new HttpEntity<>(headers);
             }
         }

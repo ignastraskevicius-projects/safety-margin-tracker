@@ -1,10 +1,12 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
+import lombok.NonNull;
 import lombok.val;
 import org.hamcrest.MatcherAssert;
 import org.ignast.stockinvesting.testutil.api.HateoasJsonMatchers;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import static java.lang.String.format;
@@ -14,6 +16,12 @@ import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.OK;
 
 public class HrefExtractor {
+    private final MediaType appMediaType;
+
+    public HrefExtractor(@NonNull MediaType appMediaType) {
+        this.appMediaType = appMediaType;
+    }
+
     protected String extractHref(ResponseEntity<String> previousResponse, String rel) {
         return new Extractor(previousResponse, rel).extract();
     }
@@ -63,7 +71,7 @@ public class HrefExtractor {
             if (isNull(previousResponse.getHeaders().getContentType())) {
                 throw new IllegalArgumentException(format("Hop to '%s' failed: previous response has no content-type specified", rel));
             }
-            if (!Hop.TraversableHop.APP_MEDIA_TYPE.equals(previousResponse.getHeaders().getContentType())) {
+            if (!appMediaType.equals(previousResponse.getHeaders().getContentType())) {
                 throw new IllegalArgumentException(format("Hop to '%s' failed: previous response has unsupported content-type specified", rel));
             }
         }

@@ -1,13 +1,16 @@
 package org.ignast.stockinvesting.quotes.acceptance;
 
 import lombok.val;
-import org.ignast.stockinvesting.testutil.api.traversor.QuotesTraversor;
+import org.ignast.stockinvesting.testutil.api.traversor.HateoasTraversor;
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
@@ -39,7 +42,7 @@ public class CompanyResourceTest {
     private TestRestTemplate restTemplate;
 
     @Autowired
-    private QuotesTraversor.Factory quotesTraversors;
+    private HateoasTraversor.Factory quotesTraversors;
 
     @DynamicPropertySource
     private static void registedDatasource(DynamicPropertyRegistry registry) {
@@ -66,5 +69,13 @@ public class CompanyResourceTest {
                 .perform();
         assertThat(company.getStatusCode()).isEqualTo(OK);
         assertEquals("should create company", "{\"id\":4,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}", company.getBody(), false);
+    }
+
+    @TestConfiguration
+    static class AppMediaTypeConfig {
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.parseMediaType("application/vnd.stockinvesting.quotes-v1.hal+json");
+        }
     }
 }

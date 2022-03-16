@@ -1,12 +1,11 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import org.ignast.stockinvesting.util.errorhandling.api.AnnotationBasedValidationErrorsExtractor;
-import org.ignast.stockinvesting.util.errorhandling.api.JacksonParsingErrorsExtractor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
 @Configuration
-public class GenericErrorHandlingConfiguration {
+public class ErrorExtractorConfiguration {
 
     @Bean
     public JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor() {

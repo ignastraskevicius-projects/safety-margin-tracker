@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller.root;
 
 import org.ignast.stockinvesting.quotes.api.controller.HalConfig;
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
+import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,7 +15,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest({ RootController.class, HalConfig.class, GenericErrorHandlingConfiguration.class })
+@WebMvcTest({ RootController.class, HalConfig.class, ErrorExtractorConfiguration.class })
 public class RootControllerTest {
 
     private @Autowired MockMvc mockMvc;

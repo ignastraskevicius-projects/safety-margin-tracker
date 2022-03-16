@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
 import org.ignast.stockinvesting.quotes.*;
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorHandlingConfiguration;
+import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,7 +11,7 @@ import java.util.Map;
 import java.util.UUID;
 
 @Configuration
-@Import(GenericErrorHandlingConfiguration.class)
+@Import(ErrorExtractorConfiguration.class)
 public class AppErrorsHandlingConfiguration {
 
     @Bean

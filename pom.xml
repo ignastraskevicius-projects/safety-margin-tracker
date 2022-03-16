@@ -11,6 +11,7 @@
 	    <module>error-handling</module>
 	    <module>api-test-util</module>
 	    <module>quotes-service</module>
+	    <module>quotes-api</module>
 	    <module>quotes-domain</module>
 	    <module>quotes-persistence</module>
 	    <module>quotes-alphavantage-adapter</module>
@@ -76,6 +77,11 @@
             </dependency>
             <dependency>
                 <groupId>org.ignast.stock-investing.quotes</groupId>
+                <artifactId>quotes-api</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ignast.stock-investing.quotes</groupId>
                 <artifactId>quotes-alphavantage-adapter</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -83,6 +89,7 @@
                 <groupId>org.ignast.stock-investing</groupId>
                 <artifactId>api-test-util</artifactId>
                 <version>${project.version}</version>
+                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework.boot</groupId>
@@ -252,6 +259,9 @@
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <version>2.22.2</version>
+                    <configuration>
+                        <trimStackTrace>false</trimStackTrace>
+                    </configuration>
                 </plugin>
                 <plugin>
                     <groupId>org.springframework.boot</groupId>

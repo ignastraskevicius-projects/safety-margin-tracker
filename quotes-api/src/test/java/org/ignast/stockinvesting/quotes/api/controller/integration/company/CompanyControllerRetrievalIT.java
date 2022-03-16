@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.api.controller;
+package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
 
 import org.ignast.stockinvesting.quotes.CompanyNotFound;

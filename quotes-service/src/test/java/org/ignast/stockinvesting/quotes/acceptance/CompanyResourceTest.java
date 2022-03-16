@@ -3,6 +3,7 @@ package org.ignast.stockinvesting.quotes.acceptance;
 import lombok.val;
 import org.ignast.stockinvesting.testutil.api.traversor.HateoasTraversor;
 import org.json.JSONException;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,6 +12,7 @@ import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.testcontainers.containers.GenericContainer;
@@ -38,10 +40,15 @@ public class CompanyResourceTest {
     private int port;
 
     @Autowired
-    private TestRestTemplate restTemplate;
+    private JdbcTemplate jdbcTemplate;
 
     @Autowired
     private HateoasTraversor.Factory quotesTraversors;
+
+    @AfterEach
+    public void cleanupDatabase() {
+        jdbcTemplate.execute("DELETE FROM company;");
+    }
 
     @DynamicPropertySource
     private static void registedDatasource(DynamicPropertyRegistry registry) {
@@ -72,11 +79,11 @@ public class CompanyResourceTest {
     @Test
     public void shouldRetrieveCreatedCompany() throws JSONException {
         val company = quotesTraversors.startAt(rootResourceOn(port))
-                .hop(f -> f.put("quotes:company", "{\"id\":4,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}"))
+                .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}"))
                 .hop(f -> f.get("self"))
                 .perform();
         assertThat(company.getStatusCode()).isEqualTo(OK);
-        assertEquals("should create company", "{\"id\":4,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}", company.getBody(), false);
+        assertEquals("should create company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}", company.getBody(), false);
     }
 
     @TestConfiguration

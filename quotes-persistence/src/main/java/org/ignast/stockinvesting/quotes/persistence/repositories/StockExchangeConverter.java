@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.persistence;
+package org.ignast.stockinvesting.quotes.persistence.repositories;
 
 import lombok.NonNull;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;

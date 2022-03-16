@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.integrationtest;
+package org.ignast.stockinvesting.quotes.persistence.integrationtest;
 
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.*;

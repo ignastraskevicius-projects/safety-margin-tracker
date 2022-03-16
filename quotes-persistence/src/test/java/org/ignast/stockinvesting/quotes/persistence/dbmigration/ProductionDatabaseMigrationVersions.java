@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.dbmigration;
+package org.ignast.stockinvesting.quotes.persistence.dbmigration;
 
 public class ProductionDatabaseMigrationVersions {
     public static final String CURRENT = "1";

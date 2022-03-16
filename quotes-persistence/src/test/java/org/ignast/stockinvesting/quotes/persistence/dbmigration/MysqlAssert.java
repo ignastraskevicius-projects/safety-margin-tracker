@@ -1,4 +1,4 @@
-package org.ignast.stockinvesting.quotes.dbmigration;
+package org.ignast.stockinvesting.quotes.persistence.dbmigration;
 
 import lombok.val;
 import org.assertj.core.api.AbstractAssert;

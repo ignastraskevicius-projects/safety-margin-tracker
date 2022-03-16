@@ -1,8 +1,8 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
-import org.ignast.stockinvesting.quotes.Companies;
-import org.ignast.stockinvesting.quotes.StockExchange;
-import org.ignast.stockinvesting.quotes.StockExchanges;
+import org.ignast.stockinvesting.quotes.domain.Companies;
+import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.api.controller.HalConfig;
 import org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppErrorsHandlingConfiguration;
 import org.junit.jupiter.api.Test;

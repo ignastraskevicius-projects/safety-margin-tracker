@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
-import org.ignast.stockinvesting.quotes.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.junit.jupiter.api.Test;
 
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.*;

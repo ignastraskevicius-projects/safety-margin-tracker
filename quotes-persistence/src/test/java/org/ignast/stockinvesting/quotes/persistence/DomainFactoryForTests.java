@@ -1,9 +1,8 @@
 package org.ignast.stockinvesting.quotes.persistence;
 
-import org.ignast.stockinvesting.quotes.*;
-
-import java.math.BigDecimal;
-import java.util.UUID;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 
 public class DomainFactoryForTests {
     public static StockSymbol anySymbol() {

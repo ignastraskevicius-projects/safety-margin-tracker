@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
-import org.ignast.stockinvesting.quotes.CompanyNotFound;
+import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;

@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
-import org.ignast.stockinvesting.quotes.*;
+import org.ignast.stockinvesting.quotes.domain.*;
 import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 import org.springframework.context.annotation.Bean;

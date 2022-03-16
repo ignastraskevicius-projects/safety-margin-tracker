@@ -1,8 +1,8 @@
 package org.ignast.stockinvesting.quotes.persistence;
 
-import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
-import org.ignast.stockinvesting.quotes.StockExchange;
-import org.ignast.stockinvesting.quotes.StockExchanges;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

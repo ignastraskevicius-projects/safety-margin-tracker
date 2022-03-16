@@ -5,7 +5,7 @@
     <modelVersion>4.0.0</modelVersion>
     <modules>
         <module>estimates-service</module>
-        <module>alphavantage-simulator</module>
+        <module>quotes-alphavantage-simulator</module>
         <module>domain</module>
 	    <module>persistence</module>
 	    <module>error-handling</module>
@@ -28,6 +28,9 @@
         <java.version>17</java.version>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
+
+        <alphavantage.dockerimage>org.ignast.stock-investing.quotes/alphavantage-simulator:${project.version}</alphavantage.dockerimage>
+
         <springboot.version>2.6.4</springboot.version>
         <springframework.version>5.3.16</springframework.version>
         <springdata.version>2.6.2</springdata.version>
@@ -83,6 +86,11 @@
             <dependency>
                 <groupId>org.ignast.stock-investing.quotes</groupId>
                 <artifactId>quotes-alphavantage-adapter</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.ignast.stock-investing.quotes</groupId>
+                <artifactId>quotes-alphavantage-simulator</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

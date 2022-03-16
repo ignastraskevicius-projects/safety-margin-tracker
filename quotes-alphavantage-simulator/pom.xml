@@ -9,7 +9,8 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>alphavantage-simulator</artifactId>
+    <groupId>org.ignast.stock-investing.quotes</groupId>
+    <artifactId>quotes-alphavantage-simulator</artifactId>
 
     <dependencies>
         <dependency>
@@ -40,12 +41,24 @@
             <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ignast.stock-investing</groupId>
+            <artifactId>api-test-util</artifactId>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
+                <configuration>
+                    <systemProperties>
+                        <property>
+                            <name>docker.image</name>
+                            <value>${alphavantage.dockerimage}</value>
+                        </property>
+                    </systemProperties>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
@@ -64,7 +77,7 @@
                             <arguments>
                                 <argument>build</argument>
                                 <argument>-t</argument>
-                                <argument>estimates/${project.artifactId}:${project.version}</argument>
+                                <argument>${alphavantage.dockerimage}</argument>
                                 <argument>.</argument>
                             </arguments>
                         </configuration>

@@ -27,7 +27,7 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CompanyResourceTest {
     @Container
-    private static final GenericContainer alphavantange = new GenericContainer(DockerImageName.parse("estimates/alphavantage-simulator:1.0-SNAPSHOT")).withExposedPorts(8080);
+    private static final GenericContainer alphavantange = new GenericContainer(DockerImageName.parse(System.getProperty("alphavantage.image"))).withExposedPorts(8080);
 
     @Container
     private static final MySQLContainer mysql = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");

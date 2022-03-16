@@ -3,4 +3,4 @@ services:
   alphavantage-simulator:
     ports: 
       - "${ALPHAVANTAGE_PORT}:8080"
-    image: estimates/alphavantage-simulator:1.0-SNAPSHOT
+    image: "org.ignast.stock-investing.quotes/alphavantage-simulator:1.0-SNAPSHOT"

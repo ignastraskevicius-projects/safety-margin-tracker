@@ -10,7 +10,7 @@ import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTe
 
 public class DomainFactoryForTests {
     public static Company amazon() {
-        return new Company(new PositiveNumber(6), new CompanyName("Amazon"), new StockSymbol("AMZN"),
+        return new Company(new CompanyExternalId(6), new CompanyName("Amazon"), new StockSymbol("AMZN"),
                 new StockExchanges(new StubQuotesRepository()).getFor(new MarketIdentifierCode("XNAS")));
     }
 
@@ -27,7 +27,7 @@ class DomainFactoryForTestsTest {
 
     @Test
     public void shouldCreateAmazon() {
-        assertThat(amazon().getExternalId()).isEqualTo(new PositiveNumber(6));
+        assertThat(amazon().getExternalId()).isEqualTo(new CompanyExternalId(6));
         assertThat(amazon().getName()).isEqualTo(new CompanyName("Amazon"));
         assertThat(amazon().getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
         assertThat(amazon().getStockExchange().getMarketIdentifierCode()).isEqualTo(new MarketIdentifierCode("XNAS"));

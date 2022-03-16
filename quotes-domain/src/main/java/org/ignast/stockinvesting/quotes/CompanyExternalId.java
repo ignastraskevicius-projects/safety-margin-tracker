@@ -9,14 +9,14 @@ import java.io.Serializable;
 @EqualsAndHashCode
 @Embeddable
 @ToString
-public final class PositiveNumber implements Serializable {
+public final class CompanyExternalId implements Serializable {
     private int number;
 
-    protected PositiveNumber() {
+    protected CompanyExternalId() {
         //JPA requirement for entities
     }
 
-    public PositiveNumber(int number) {
+    public CompanyExternalId(int number) {
         this.number = number;
         if (number <= 0) {
             throw new IllegalArgumentException("Must be positive");

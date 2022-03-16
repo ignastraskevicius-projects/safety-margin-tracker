@@ -13,7 +13,7 @@ public class Companies {
         repository.save(company);
     }
 
-    public Company findByExternalId(@NonNull PositiveNumber id) {
+    public Company findByExternalId(@NonNull CompanyExternalId id) {
         return repository.findByExternalId(id).orElseThrow(() -> new CompanyNotFound(id));
     }
 }

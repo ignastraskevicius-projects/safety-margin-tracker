@@ -3,7 +3,7 @@ package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.CompanyName;
 import org.ignast.stockinvesting.quotes.MarketIdentifierCode;
-import org.ignast.stockinvesting.quotes.PositiveNumber;
+import org.ignast.stockinvesting.quotes.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.StockSymbol;
 import org.junit.jupiter.api.Test;
 
@@ -76,7 +76,7 @@ class CompanyJsonBodyFactoryTest {
         assertThat(factory.createAmazon()).isEqualTo(format(
                 "{\"id\":%d,\"name\":\"%s\",\"listings\":[{\"marketIdentifier\":\"%s\",\"stockSymbol\":\"%s\"}]}",
                 externalId, name, mic, symbol));
-        assertThat(amazon().getExternalId()).isEqualTo(new PositiveNumber(externalId));
+        assertThat(amazon().getExternalId()).isEqualTo(new CompanyExternalId(externalId));
         assertThat(amazon().getName()).isEqualTo(new CompanyName(name));
         assertThat(amazon().getStockSymbol()).isEqualTo(new StockSymbol(symbol));
         assertThat(amazon().getStockExchange().getMarketIdentifierCode()).isEqualTo(new MarketIdentifierCode(mic));

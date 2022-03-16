@@ -17,7 +17,7 @@ public class AppErrorsHandlingConfiguration {
     @Bean
     public DomainClassConstraint.SupportedTypes domainClassConstraintSupportedTypes() {
         return DomainClassConstraint.SupportedTypes.supporting(Map.of(MarketIdentifierCode.class, MarketIdentifierCode::new, StockSymbol.class, StockSymbol::new, UUID.class, CompanyId::toUUID, CompanyName.class, CompanyName::new),
-                Map.of(PositiveNumber.class, PositiveNumber::new));
+                Map.of(CompanyExternalId.class, CompanyExternalId::new));
     }
 
 }

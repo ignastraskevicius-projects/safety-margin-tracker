@@ -5,8 +5,8 @@ import java.math.BigDecimal;
 import static org.mockito.Mockito.mock;
 
 public class DomainFactoryForTests {
-    public static PositiveNumber anyId() {
-        return new PositiveNumber(15);
+    public static CompanyExternalId anyId() {
+        return new CompanyExternalId(15);
     }
 
     public static StockSymbol anySymbol() {

@@ -48,7 +48,7 @@ public class CompanyController {
             val name = new CompanyName(companyDTO.getName());
             val symbol = new StockSymbol(l.getStockSymbol());
             val stockExchange = stockExchanges.getFor(new MarketIdentifierCode(l.getMarketIdentifier()));
-            return new Company(externalId, name, symbol, stockExchange);
+            return Company.create(externalId, name, symbol, stockExchange);
         }).orElseThrow(() -> new IllegalArgumentException("Company to be created was expected to have one listing, but zero was found"));
         return company;
     }

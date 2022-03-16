@@ -39,7 +39,7 @@ class StockExchangeTest {
 
     @Test
     public void shouldFailOnNullPrice() {
-        when(quotes.getQuotedPriceOf(any(), any())).thenThrow(NullPointerException.class);
+        when(quotes.getQuotedPriceOf(any(), any())).thenReturn(null);
         val stockExchange = create(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes);
 
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> stockExchange.getQuotedPrice(new StockSymbol("AMZN")));

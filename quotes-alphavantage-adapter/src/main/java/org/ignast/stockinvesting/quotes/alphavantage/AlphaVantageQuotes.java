@@ -7,7 +7,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
-import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.springframework.beans.factory.annotation.Value;
@@ -63,8 +63,8 @@ public class AlphaVantageQuotes implements QuotesRepository {
         return url + format("/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", stockSymbol.get(), apikey);
     }
 
-    private StockSymbolNotSupported stockSymbolNotSupported(StockSymbol stockSymbol, MarketIdentifierCode mic) {
-        return new StockSymbolNotSupported(format("Stock symbol '%s' in market '%s' is not supported by this service",
+    private StockSymbolNotSupportedInThisMarket stockSymbolNotSupported(StockSymbol stockSymbol, MarketIdentifierCode mic) {
+        return new StockSymbolNotSupportedInThisMarket(format("Stock symbol '%s' in market '%s' is not supported by this service",
                 stockSymbol.get(), mic.get()));
     }
 

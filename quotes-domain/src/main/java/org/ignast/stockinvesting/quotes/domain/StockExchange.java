@@ -44,7 +44,7 @@ public class StockExchange {
         return stockExchange;
     }
 
-    Money getQuotedPrice(@NonNull StockSymbol symbol) {
+    public Money getQuotedPrice(@NonNull StockSymbol symbol) {
         val numericPriceValue = quotes.getQuotedPriceOf(symbol, marketIdentifierCode);
         val price = Money.of(numericPriceValue, quoteCurrency.get());
         return getStockExchangeSpecificBehaviour().transformPrice(price);

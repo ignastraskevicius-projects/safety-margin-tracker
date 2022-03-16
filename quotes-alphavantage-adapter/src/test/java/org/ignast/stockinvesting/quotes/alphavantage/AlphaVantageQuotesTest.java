@@ -5,7 +5,7 @@ import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
 import org.ignast.stockinvesting.quotes.domain.QuotesRepository.QuoteRetrievalFailedException;
-import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupported;
+import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.ApplicationException;
@@ -69,7 +69,7 @@ class AlphaVantageQuotesTest {
         mockServer.expect(requestTo(anything()))
                 .andRespond(withSuccess(format("{\"Global Quote\":{}}"), MediaType.APPLICATION_JSON));
 
-        assertThatExceptionOfType(StockSymbolNotSupported.class).isThrownBy(
+        assertThatExceptionOfType(StockSymbolNotSupportedInThisMarket.class).isThrownBy(
                 () -> alphaVantageQuotes.getQuotedPriceOf(new StockSymbol("A"), new MarketIdentifierCode("XNYS")))
                 .withMessage("Stock symbol 'A' in market 'XNYS' is not supported by this service")
                 .isInstanceOf(ApplicationException.class);

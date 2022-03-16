@@ -14,6 +14,10 @@ public class AppBusinessErrorDTO implements BusinessErrorDTO {
         return new AppBusinessErrorDTO(null);
     }
 
+    public static AppBusinessErrorDTO createForStockSymbolNotSupportedInThisMarket() {
+        return new AppBusinessErrorDTO("stockSymbolNotSupportedInThisMarket");
+    }
+
     @Override
     public String getErrorName() {
         return errorName;

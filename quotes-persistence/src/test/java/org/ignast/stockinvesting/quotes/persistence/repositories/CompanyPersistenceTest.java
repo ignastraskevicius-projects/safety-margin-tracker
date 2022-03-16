@@ -24,6 +24,8 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 
 @DataJpaTest
@@ -59,9 +61,9 @@ class CompanyPersistenceTest {
 
     @Test
     public void shouldInsertCompany() {
-        StockExchange nasdaq = new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"));
+        StockExchange nasdaq = new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"));
 
-        companyRepository.save(new Company(new CompanyExternalId(6), new CompanyName("Amazon"), new StockSymbol("AMZN"), nasdaq));
+        companyRepository.save(Company.create(new CompanyExternalId(6), new CompanyName("Amazon"), new StockSymbol("AMZN"), nasdaq));
         commit();
 
         val result = jdbcTemplate.queryForMap("SELECT * FROM company;");
@@ -90,10 +92,10 @@ class CompanyPersistenceTest {
 
     @Test
     public void shouldRejectCompanyUnderExistingListing() {
-        val nasdaq = new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XNAS"));
+        val nasdaq = new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"));
         val amazonSymbol = new StockSymbol("AMZN");
-        val amazon1 = new Company(new CompanyExternalId(6), new CompanyName("Amazon1"), amazonSymbol, nasdaq);
-        val amazon2 = new Company(new CompanyExternalId(6), new CompanyName("Amazon2"), amazonSymbol, nasdaq);
+        val amazon1 = Company.create(new CompanyExternalId(6), new CompanyName("Amazon1"), amazonSymbol, nasdaq);
+        val amazon2 = Company.create(new CompanyExternalId(6), new CompanyName("Amazon2"), amazonSymbol, nasdaq);
 
         companyRepository.save(amazon1);
         assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(() -> companyRepository.save(amazon2))
@@ -103,9 +105,9 @@ class CompanyPersistenceTest {
     @Test
     public void shouldRejectCompanyWithExistingExternalId() {
         val externalId = new CompanyExternalId(6);
-        val hkex = new StockExchanges(mock(QuotesRepository.class)).getFor(new MarketIdentifierCode("XHKG"));
-        val amazon1 = new Company(externalId, new CompanyName("Alibaba1"), new StockSymbol("BABA"), hkex);
-        val amazon2 = new Company(externalId, new CompanyName("Alibaba2"), new StockSymbol("9988"), hkex);
+        val hkex = new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XHKG"));
+        val amazon1 = Company.create(externalId, new CompanyName("Alibaba1"), new StockSymbol("BABA"), hkex);
+        val amazon2 = Company.create(externalId, new CompanyName("Alibaba2"), new StockSymbol("9988"), hkex);
 
         companyRepository.save(amazon1);
         assertThatExceptionOfType(DataIntegrityViolationException.class).isThrownBy(() -> companyRepository.save(amazon2))

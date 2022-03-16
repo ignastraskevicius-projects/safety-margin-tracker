@@ -4,7 +4,7 @@ package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.junit.jupiter.api.Test;
 
-import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTests.amazon;
+import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.*;
 import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;

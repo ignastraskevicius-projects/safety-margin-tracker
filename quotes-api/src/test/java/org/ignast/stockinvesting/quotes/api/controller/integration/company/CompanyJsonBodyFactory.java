@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.quotes.api.controller.DomainFactoryForTests.amazon;
+import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 
 public class CompanyJsonBodyFactory {
     public String createAmazon() {

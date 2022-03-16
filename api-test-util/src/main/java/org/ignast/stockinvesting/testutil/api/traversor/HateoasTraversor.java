@@ -6,8 +6,11 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.ResponseErrorHandler;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
@@ -54,11 +57,23 @@ public class HateoasTraversor {
 
         public Factory(RestTemplateBuilder builder, MediaType appMediaType) {
             this.appMediaType = appMediaType;
-            hopFactory = new Hop.Factory(appMediaType, builder.build(), new HrefExtractor(appMediaType));
+            val restTemplate = builder.errorHandler(new NoSpecialHandling()).build();
+            hopFactory = new Hop.Factory(appMediaType, restTemplate, new HrefExtractor(appMediaType));
         }
 
         public HateoasTraversor startAt(@NonNull String rootUri) {
             return new HateoasTraversor(appMediaType, hopFactory, rootUri, emptyList());
+        }
+
+        private class NoSpecialHandling implements ResponseErrorHandler {
+            @Override
+            public boolean hasError(ClientHttpResponse response) {
+                return false;
+            }
+
+            @Override
+            public void handleError(ClientHttpResponse response) {
+            }
         }
     }
 }

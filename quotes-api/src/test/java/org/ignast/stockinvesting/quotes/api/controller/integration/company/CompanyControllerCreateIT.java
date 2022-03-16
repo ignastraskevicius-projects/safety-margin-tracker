@@ -1,8 +1,10 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
-import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import lombok.val;
+import org.ignast.stockinvesting.quotes.domain.*;
 import org.junit.jupiter.api.Test;
 
+import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.exchangeNotSupportingAnySymbol;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.*;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.*;
 import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
@@ -175,5 +177,12 @@ class CompanyControllerTestIndividualListingParsingIT extends CompanyControllerI
     public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""), forInvalidValueAt("$.listings[0].stockSymbol",
                         "Stock Symbol must contain between 1-6 characters"));
+    }
+
+    @Test
+    public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
+        val exchange = exchangeNotSupportingAnySymbol();
+        when(stockExchanges.getFor(any())).thenReturn(exchange);
+        rejectsAsBadRequest(bodyFactory.createAmazon(), "{\"errorName\":\"stockSymbolNotSupportedInThisMarket\"}");
     }
 }

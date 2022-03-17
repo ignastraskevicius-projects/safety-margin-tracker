@@ -317,6 +317,11 @@
                 <version>3.1.2</version>
                 <dependencies>
                     <dependency>
+                        <groupId>com.puppycrawl.tools</groupId>
+                        <artifactId>checkstyle</artifactId>
+                        <version>9.3</version>
+                    </dependency>
+                    <dependency>
                         <groupId>org.ignast.stock-investing</groupId>
                         <artifactId>static-analysis</artifactId>
                         <version>${project.version}</version>

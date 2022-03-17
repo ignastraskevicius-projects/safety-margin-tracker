@@ -33,7 +33,7 @@ import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTest
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
-@RestClientTest({ AlphaVantageQuotes.class })
+@RestClientTest(AlphaVantageQuotes.class)
 @TestPropertySource(properties = { "alphavantage.url=https://test.uri.com", "alphavantage.apikey=testApiKey" })
 class AlphaVantageQuotesTest {
 

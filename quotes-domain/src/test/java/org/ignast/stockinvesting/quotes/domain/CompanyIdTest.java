@@ -39,7 +39,7 @@ class CompanyIdTest {
                              "00112233-4455-6677-8899-GGGGGGGGGGGG",
                              "00112233-4455-6677-8899-gggggggggggg",
                              "00112233-4455-6677-8899-abcdefabcd  "})
-    public void shouldRejectNonNumericAndNonABCDEandFCharacters(String id) {
+    public void shouldRejectNonNumericAndNonAbcdefCharacters(String id) {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> CompanyId.toUUID(id))
                 .withMessage("Must consist of hyphens (-) and a,b,c,d,e,f and numeric characters only");
     }

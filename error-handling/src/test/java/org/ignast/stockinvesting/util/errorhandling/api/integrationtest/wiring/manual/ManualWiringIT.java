@@ -2,7 +2,6 @@ package org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.
 
 import lombok.Getter;
 import lombok.val;
-
 import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.skyscreamer.jsonassert.JSONCompareMode;
@@ -21,13 +20,14 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forIntegerRequiredAt;

@@ -5,9 +5,10 @@ import org.ignast.stockinvesting.util.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
-import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.Annotation;
 import java.util.Map;
+
+import javax.validation.ConstraintValidatorContext;
 
 import static java.util.Collections.emptyMap;
 import static org.assertj.core.api.Assertions.assertThat;

@@ -3,8 +3,9 @@ package org.ignast.stockinvesting.quotes.domain;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
-import javax.persistence.Embeddable;
 import java.io.Serializable;
+
+import javax.persistence.Embeddable;
 
 @EqualsAndHashCode
 @Embeddable

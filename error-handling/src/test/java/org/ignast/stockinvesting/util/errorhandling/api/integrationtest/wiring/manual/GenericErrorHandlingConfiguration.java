@@ -6,8 +6,8 @@ import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfigurat
 import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorController;
 import org.ignast.stockinvesting.util.errorhandling.api.JacksonParsingErrorsExtractor;
 import org.ignast.stockinvesting.util.errorhandling.api.interceptor.MediaTypeInterceptorConfig;
-import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializer;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictIntegerDeserializer;
+import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Bean;

@@ -3,7 +3,6 @@ package org.ignast.stockinvesting.quotes.persistence.repositories;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
-import org.ignast.stockinvesting.quotes.persistence.repositories.StockExchangeConverter;
 import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;

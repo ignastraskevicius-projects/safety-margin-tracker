@@ -3,16 +3,17 @@ package org.ignast.stockinvesting.quotes.api.controller;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
-import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
+
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 @EqualsAndHashCode
 @Getter

@@ -6,14 +6,14 @@ import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 
-public class TestDtos {
+public final class TestDtos {
 
     public static CompanyDTO amazonDto() {
         return new CompanyDTO(6, "Amazon", asList(new ListingDTO("XNAS", "AMZN")));
     }
 }
 
-class TestDtosTest {
+final class TestDtosTest {
     @Test
     public void shouldCreateAmazonDto() {
         assertThat(TestDtos.amazonDto().getId()).isEqualTo(amazon().getExternalId().get());

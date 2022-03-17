@@ -19,7 +19,7 @@ import static java.util.Objects.requireNonNull;
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.VALUE_INVALID;
 
-public class AnnotationBasedValidationErrorsExtractor {
+public final class AnnotationBasedValidationErrorsExtractor {
     public List<ValidationErrorDTO> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
         if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {
             throw new ValidationErrorsExtractionException(

@@ -11,7 +11,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 
-public class CompanyJsonBodyFactory {
+public final class CompanyJsonBodyFactory {
     public String createAmazon() {
         return "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}";
     }
@@ -69,7 +69,7 @@ public class CompanyJsonBodyFactory {
     }
 }
 
-class CompanyJsonBodyFactoryTest {
+final class CompanyJsonBodyFactoryTest {
 
     private CompanyJsonBodyFactory factory = new CompanyJsonBodyFactory();
 

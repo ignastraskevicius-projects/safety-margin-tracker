@@ -6,8 +6,8 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class HateoasJsonMatchersForRelAndHrefTest {
-    private Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHrefContaining("contextPath");
+final class HateoasJsonMatchersForRelAndHrefTest {
+    private final Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHrefContaining("contextPath");
 
     @Test
     public void messageShouldIndicateExpectationAndActualOutcome() {
@@ -50,8 +50,8 @@ class HateoasJsonMatchersForRelAndHrefTest {
     }
 }
 
-class HateoasJsonMatchersForRelTest {
-    private Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHref();
+final class HateoasJsonMatchersForRelTest {
+    private final Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHref();
 
     @Test
     public void messageShouldIndicateExpectationAndActualOutcome() {

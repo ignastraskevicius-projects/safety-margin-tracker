@@ -3,7 +3,7 @@ package org.ignast.stockinvesting.quotes.alphavantage;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 
-public class DomainFactoryForTests {
+public final class DomainFactoryForTests {
     public static StockSymbol anySymbol() {
         return new StockSymbol("ANY");
     }

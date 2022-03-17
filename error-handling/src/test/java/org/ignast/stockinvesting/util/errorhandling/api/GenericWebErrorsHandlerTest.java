@@ -22,12 +22,12 @@ import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
+final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
-    private AnnotationBasedValidationErrorsExtractor javaxErrorExtractor = mock(
+    private final AnnotationBasedValidationErrorsExtractor javaxErrorExtractor = mock(
             AnnotationBasedValidationErrorsExtractor.class);
 
-    private ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(javaxErrorExtractor,
+    private final ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(javaxErrorExtractor,
             mock(JacksonParsingErrorsExtractor.class));
 
     @Test
@@ -55,10 +55,10 @@ class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
 }
 
-class ControllerAdviceForGenericErrorsForJacksonParsingTest {
-    private JacksonParsingErrorsExtractor jacksonErrorExtractor = mock(JacksonParsingErrorsExtractor.class);
+final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
+    private final JacksonParsingErrorsExtractor jacksonErrorExtractor = mock(JacksonParsingErrorsExtractor.class);
 
-    private ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
+    private final ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
             mock(AnnotationBasedValidationErrorsExtractor.class), jacksonErrorExtractor);
 
     @Test
@@ -99,8 +99,8 @@ class ControllerAdviceForGenericErrorsForJacksonParsingTest {
     }
 }
 
-class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
-    private ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
+final class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
+    private final ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
             mock(AnnotationBasedValidationErrorsExtractor.class), mock(JacksonParsingErrorsExtractor.class));
 
     @Test
@@ -122,7 +122,7 @@ class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
     }
 }
 
-class HttpMessageNotReadableExceptionMock {
+final class HttpMessageNotReadableExceptionMock {
 
     public static HttpMessageNotReadableException jacksonFieldLevelError() {
         return MockitoUtils.mock(HttpMessageNotReadableException.class,
@@ -139,7 +139,7 @@ class HttpMessageNotReadableExceptionMock {
     }
 }
 
-class HttpMessageNotReadableExceptionMockTest {
+final class HttpMessageNotReadableExceptionMockTest {
     @Test
     public void shouldReturnWithCauseIndicatingFieldLevelError() {
         assertThat(jacksonFieldLevelError()).hasCauseInstanceOf(MismatchedInputException.class);

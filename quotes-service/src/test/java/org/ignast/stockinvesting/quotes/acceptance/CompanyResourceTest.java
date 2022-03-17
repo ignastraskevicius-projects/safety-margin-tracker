@@ -30,7 +30,7 @@ import static org.springframework.http.HttpStatus.OK;
 
 @Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CompanyResourceTest {
+public final class CompanyResourceTest {
     @Container
     private static final GenericContainer ALPHAVANTAGE = new GenericContainer(DockerImageName.parse(System.getProperty("alphavantage.image"))).withExposedPorts(8080);
 

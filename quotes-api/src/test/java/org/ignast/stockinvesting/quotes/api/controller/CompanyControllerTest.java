@@ -22,7 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class CompanyControllerTest {
+public final class CompanyControllerTest {
 
     private StockExchanges stockExchanges = mock(StockExchanges.class);
 

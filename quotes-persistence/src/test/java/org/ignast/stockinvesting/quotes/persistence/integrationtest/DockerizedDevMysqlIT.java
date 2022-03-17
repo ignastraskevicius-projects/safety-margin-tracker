@@ -29,7 +29,7 @@ import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactor
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-public class DockerizedDevMysqlIT {
+public final class DockerizedDevMysqlIT {
 
     @Container
     public static final MySQLContainer MYSQL = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");

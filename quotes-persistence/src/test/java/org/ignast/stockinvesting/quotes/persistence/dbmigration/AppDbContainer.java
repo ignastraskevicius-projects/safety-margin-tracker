@@ -6,7 +6,7 @@ import org.testcontainers.containers.MySQLContainer;
 
 import javax.sql.DataSource;
 
-public class AppDbContainer {
+public final class AppDbContainer {
 
 
     private static final String USERNAME = "test";

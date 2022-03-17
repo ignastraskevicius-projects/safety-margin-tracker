@@ -7,7 +7,7 @@ import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStri
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class JacksonParsingErrorsExtractor {
+public final class JacksonParsingErrorsExtractor {
     public ValidationErrorDTO extractError(MismatchedInputException exception) {
         JsonPath jsonPath = JsonPath.fromJsonPath(extractJsonPath(exception));
         return new ValidationErrorDTO(jsonPath, "", toViolationType(exception));

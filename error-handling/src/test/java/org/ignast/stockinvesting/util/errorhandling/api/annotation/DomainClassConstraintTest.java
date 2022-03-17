@@ -19,9 +19,8 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class DomainClassBackedByStringValidatorTest {
+final class DomainClassBackedByStringValidatorTest {
 
-    private DomainClassConstraintValidator validator = new DomainClassConstraintValidator.BackedByString(supporting(emptyMap(), emptyMap()));
 
     @Test
     public void shouldFailToConstructWithNull() {
@@ -31,6 +30,7 @@ class DomainClassBackedByStringValidatorTest {
 
     @Test
     public void shouldBeValidForNullFieldToGivePreferenceToJavaxNonNullAnnotation() {
+        val validator = new DomainClassConstraintValidator.BackedByString(supporting(emptyMap(), emptyMap()));
         validator.initialize(constrainedBy(ClassA.class));
 
         assertThat(validator.isValid(null, null)).isTrue();
@@ -38,7 +38,7 @@ class DomainClassBackedByStringValidatorTest {
 
     @Test
     public void shouldThrowForUnsupportedTypes() {
-        validator = new DomainClassConstraintValidator.BackedByString(supporting(Map.of(ClassA.class, ClassA::new), emptyMap()));
+        val validator = new DomainClassConstraintValidator.BackedByString(supporting(Map.of(ClassA.class, ClassA::new), emptyMap()));
         validator.initialize(constrainedBy(ClassB.class));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -48,7 +48,7 @@ class DomainClassBackedByStringValidatorTest {
 
     @Test
     public void shouldInvalidateInvalidButSupportedType() {
-        validator = new DomainClassConstraintValidator.BackedByString(supporting(Map.of(ClassAlwaysInvalid.class, ClassAlwaysInvalid::new), emptyMap()));
+        val validator = new DomainClassConstraintValidator.BackedByString(supporting(Map.of(ClassAlwaysInvalid.class, ClassAlwaysInvalid::new), emptyMap()));
         validator.initialize(constrainedBy(ClassAlwaysInvalid.class));
         val builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
         val context = MockitoUtils.mock(ConstraintValidatorContext.class,
@@ -62,7 +62,7 @@ class DomainClassBackedByStringValidatorTest {
 
     @Test
     public void shouldValidateValidSupportedType() {
-        validator = new DomainClassConstraintValidator.BackedByString(supporting(Map.of(ClassA.class, ClassA::new), emptyMap()));
+        val validator = new DomainClassConstraintValidator.BackedByString(supporting(Map.of(ClassA.class, ClassA::new), emptyMap()));
         validator.initialize(constrainedBy(ClassA.class));
 
         assertThat(validator.isValid("argument", null)).isTrue();
@@ -101,26 +101,24 @@ class DomainClassBackedByStringValidatorTest {
         return constraint;
     }
 
-    class ClassA {
+    final class ClassA {
         public ClassA(String arg) {
         }
     }
 
-    class ClassB {
+    final class ClassB {
         public ClassB(String arg){
         }
     }
 
-    class ClassAlwaysInvalid {
+    final class ClassAlwaysInvalid {
         public ClassAlwaysInvalid(String arg) {
             throw new IllegalArgumentException("this class is always invalid");
         }
     }
 }
 
-class DomainClassBackedByIntegerValidatorTest {
-
-    private DomainClassConstraintValidator validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), emptyMap()));
+final class DomainClassBackedByIntegerValidatorTest {
 
     @Test
     public void shouldFailToConstructWithNull() {
@@ -130,6 +128,7 @@ class DomainClassBackedByIntegerValidatorTest {
 
     @Test
     public void shouldBeValidForNullFieldToGivePreferenceToJavaxNonNullAnnotation() {
+        val validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), emptyMap()));
         validator.initialize(constrainedBy(ClassA.class));
 
         assertThat(validator.isValid(null, null)).isTrue();
@@ -137,17 +136,17 @@ class DomainClassBackedByIntegerValidatorTest {
 
     @Test
     public void shouldThrowForUnsupportedTypes() {
-        validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), Map.of(ClassA.class, ClassA::new)));
+        val validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), Map.of(ClassA.class, ClassA::new)));
         validator.initialize(constrainedBy(ClassB.class));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> validator.isValid("objectIsNotSupported", null))
+                .isThrownBy(() -> validator.isValid(4, null))
                 .withMessage("DomainClassConstraint is not configured for 'ClassB' class");
     }
 
     @Test
     public void shouldInvalidateInvalidButSupportedType() {
-        validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), Map.of(ClassAlwaysInvalid.class, ClassAlwaysInvalid::new)));
+        val validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), Map.of(ClassAlwaysInvalid.class, ClassAlwaysInvalid::new)));
         validator.initialize(constrainedBy(ClassAlwaysInvalid.class));
         val builder = mock(ConstraintValidatorContext.ConstraintViolationBuilder.class);
         val context = MockitoUtils.mock(ConstraintValidatorContext.class,
@@ -161,7 +160,7 @@ class DomainClassBackedByIntegerValidatorTest {
 
     @Test
     public void shouldValidateValidSupportedType() {
-        validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), Map.of(ClassA.class, ClassA::new)));
+        val validator = new DomainClassConstraintValidator.BackedByInteger(supporting(emptyMap(), Map.of(ClassA.class, ClassA::new)));
         validator.initialize(constrainedBy(ClassA.class));
 
         assertThat(validator.isValid(4, null)).isTrue();

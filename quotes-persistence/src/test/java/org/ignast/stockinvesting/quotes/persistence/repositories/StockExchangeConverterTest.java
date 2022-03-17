@@ -10,12 +10,12 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOf
 import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.mockito.Mockito.when;
 
-class StockExchangeConverterTest {
+final class StockExchangeConverterTest {
 
-    private MarketIdentifierCode nasdaqMic = new MarketIdentifierCode("XNAS");
-    private StockExchange nasdaqStockExchange = mock(StockExchange.class, e ->
+    private final MarketIdentifierCode nasdaqMic = new MarketIdentifierCode("XNAS");
+    private final StockExchange nasdaqStockExchange = mock(StockExchange.class, e ->
             when(e.getMarketIdentifierCode()).thenReturn(nasdaqMic));
-    private StockExchanges stockExchanges = mock(StockExchanges.class, s ->
+    private final StockExchanges stockExchanges = mock(StockExchanges.class, s ->
             when(s.getFor(nasdaqMic)).thenReturn(nasdaqStockExchange));
 
     @Test

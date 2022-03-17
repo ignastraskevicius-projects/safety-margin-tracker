@@ -2,5 +2,5 @@ package org.ignast.stockinvesting.api.controller;
 
 import org.springframework.hateoas.RepresentationModel;
 
-public class Root extends RepresentationModel<Root> {
+public final class Root extends RepresentationModel<Root> {
 }

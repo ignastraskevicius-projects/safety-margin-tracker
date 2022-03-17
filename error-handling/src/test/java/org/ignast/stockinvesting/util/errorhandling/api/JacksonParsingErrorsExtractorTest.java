@@ -17,9 +17,9 @@ import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputEx
 import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.unexpectedTypeParsingFailed;
 import static org.ignast.stockinvesting.util.errorhandling.api.ReferenceMock.toField;
 
-class JacksonParsingErrorsExtractorTest {
+final class JacksonParsingErrorsExtractorTest {
 
-    private JacksonParsingErrorsExtractor extractor = new JacksonParsingErrorsExtractor();
+    private final JacksonParsingErrorsExtractor extractor = new JacksonParsingErrorsExtractor();
 
     @Test
     public void shouldFailToExtractErrorsForNullPath() {

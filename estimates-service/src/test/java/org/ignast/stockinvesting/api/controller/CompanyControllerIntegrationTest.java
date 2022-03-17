@@ -41,7 +41,7 @@ abstract class CompanyControllerIntegrationTestBase {
     }
 }
 
-public class CompanyControllerIntegrationTest extends CompanyControllerIntegrationTestBase {
+public final class CompanyControllerIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -90,7 +90,7 @@ public class CompanyControllerIntegrationTest extends CompanyControllerIntegrati
 }
 
 
-class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+final class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -111,7 +111,7 @@ class CompanyControllerIdParsingIntegrationTest extends CompanyControllerIntegra
     }
 }
 
-class CompanyControllerCurrencyParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+final class CompanyControllerCurrencyParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -132,7 +132,7 @@ class CompanyControllerCurrencyParsingIntegrationTest extends CompanyControllerI
     }
 }
 
-class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+final class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -177,7 +177,7 @@ class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyControll
 
 }
 
-class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+final class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -220,7 +220,7 @@ class CompanyControllerNameParsingIntegrationTest extends CompanyControllerInteg
     }
 }
 
-class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
+final class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;
@@ -256,7 +256,7 @@ class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerI
     }
 }
 
-class CompanyControllerTestIndividualListingParsingIntegrationTest extends CompanyControllerIntegrationTestBase{
+final class CompanyControllerTestIndividualListingParsingIntegrationTest extends CompanyControllerIntegrationTestBase{
 
     @MockBean
     private Companies companies;
@@ -294,7 +294,7 @@ class CompanyControllerTestIndividualListingParsingIntegrationTest extends Compa
     }
 }
 
-class CompanyControllerIntegrationTestBaseTest extends CompanyControllerIntegrationTestBase {
+final class CompanyControllerIntegrationTestBaseTest extends CompanyControllerIntegrationTestBase {
 
     @MockBean
     private Companies companies;

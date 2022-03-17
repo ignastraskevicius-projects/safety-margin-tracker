@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import static java.util.Arrays.asList;
 
 @ControllerAdvice
-public class ControllerAdviceForGenericErrors {
-    private AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
-    private JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
+public final class ControllerAdviceForGenericErrors {
+    private final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
+    private final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
     public ControllerAdviceForGenericErrors(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
                                             JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {

@@ -26,11 +26,11 @@ import static java.lang.String.format;
 @Repository
 public class AlphaVantageQuotes implements QuotesRepository {
 
-    private String url;
+    private final String url;
 
-    private String apikey;
+    private final String apikey;
 
-    private RestTemplate restTemplate;
+    private final RestTemplate restTemplate;
 
     public AlphaVantageQuotes(RestTemplateBuilder builder, @Value("${alphavantage.url}") String url,
             @Value("${alphavantage.apikey}") String apikey) {
@@ -40,6 +40,7 @@ public class AlphaVantageQuotes implements QuotesRepository {
     }
 
     @Override
+    @SuppressWarnings("checkstyle:designforextension")
     public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic) {
         val response = invoke(toUri(stockSymbol)).getBody();
 
@@ -78,11 +79,11 @@ public class AlphaVantageQuotes implements QuotesRepository {
 }
 
 @ToString
-class QuoteResponseDTO {
+final class QuoteResponseDTO {
     @Getter
-    private Optional<QuoteDTO> quote;
+    private final Optional<QuoteDTO> quote;
     @Getter
-    private Optional<String> error;
+    private final Optional<String> error;
 
     public QuoteResponseDTO(@NonNull @JsonProperty("Global Quote") Optional<QuoteDTO> quote,
             @NonNull @JsonProperty("Error Message") Optional<String> error) {
@@ -92,9 +93,9 @@ class QuoteResponseDTO {
 }
 
 @ToString
-class QuoteDTO {
+final class QuoteDTO {
     @Getter
-    private Optional<BigDecimal> price;
+    private final Optional<BigDecimal> price;
 
     public QuoteDTO(@NonNull @JsonProperty(value = "05. price") Optional<BigDecimal> price) {
         this.price = price;

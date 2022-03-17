@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.springframework.http.HttpStatus.OK;
 
-public class HrefExtractorTest {
+public final class HrefExtractorTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
 

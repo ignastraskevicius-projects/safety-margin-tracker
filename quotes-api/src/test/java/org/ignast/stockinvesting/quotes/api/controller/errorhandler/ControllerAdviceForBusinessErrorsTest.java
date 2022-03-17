@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
-class ControllerAdviceForBusinessErrorsTest {
+public final class ControllerAdviceForBusinessErrorsTest {
     private ControllerAdviceForBusinessErrors errorHandler = new ControllerAdviceForBusinessErrors();
     @Test
     public void shouldHandleSymbolNotSupported() {

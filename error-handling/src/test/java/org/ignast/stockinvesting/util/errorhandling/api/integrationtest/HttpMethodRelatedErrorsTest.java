@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class GetMethodRelatedErrorsTest {
+final class GetMethodRelatedErrorsTest {
 
     private @Autowired MockMvc mockMvc;
 
@@ -67,7 +67,7 @@ class GetMethodRelatedErrorsTest {
 }
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class WriteMethodRelatedErrorsTest {
+final class WriteMethodRelatedErrorsTest {
 
     private @Autowired MockMvc mockMvc;
 

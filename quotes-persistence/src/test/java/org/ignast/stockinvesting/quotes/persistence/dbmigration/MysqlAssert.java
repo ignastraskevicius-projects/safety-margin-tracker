@@ -18,7 +18,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MysqlAssert extends AbstractAssert<MysqlAssert, JdbcTemplate> {
+public final class MysqlAssert extends AbstractAssert<MysqlAssert, JdbcTemplate> {
     private static JdbcTemplate database;
 
     MysqlAssert(JdbcTemplate database) {
@@ -73,7 +73,7 @@ public class MysqlAssert extends AbstractAssert<MysqlAssert, JdbcTemplate> {
 
 }
 
-class MysqlAssertContainsTableTest {
+final class MysqlAssertContainsTableTest {
 
     private JdbcTemplate database = mock(JdbcTemplate.class);
 

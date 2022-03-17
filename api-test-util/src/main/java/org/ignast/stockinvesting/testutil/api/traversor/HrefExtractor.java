@@ -22,6 +22,7 @@ public class HrefExtractor {
         this.appMediaType = appMediaType;
     }
 
+    @SuppressWarnings("checkstyle:designforextension")
     protected String extractHref(ResponseEntity<String> previousResponse, String rel) {
         return new Extractor(previousResponse, rel).extract();
     }

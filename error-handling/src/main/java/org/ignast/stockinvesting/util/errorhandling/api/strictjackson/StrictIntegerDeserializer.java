@@ -11,7 +11,7 @@ import org.springframework.boot.jackson.JsonComponent;
 import java.io.IOException;
 
 @JsonComponent
-public class StrictIntegerDeserializer extends StdScalarDeserializer<Integer> {
+public final class StrictIntegerDeserializer extends StdScalarDeserializer<Integer> {
 
     public StrictIntegerDeserializer() {
         super(Integer.class);

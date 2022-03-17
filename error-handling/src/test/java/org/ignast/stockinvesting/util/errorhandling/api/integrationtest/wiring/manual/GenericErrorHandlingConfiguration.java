@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Import;
 
 @TestConfiguration
 @Import({MediaTypeInterceptorConfig.class, ErrorExtractorConfiguration.class})
-class GenericErrorHandlingConfiguration {
+final class GenericErrorHandlingConfiguration {
 
     @Bean
     public ErrorController errorController() {

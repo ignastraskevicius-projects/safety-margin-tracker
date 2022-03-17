@@ -16,9 +16,9 @@ import java.util.UUID;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-class AppErrorsHandlingConfigurationTest {
+final class AppErrorsHandlingConfigurationTest {
 
-    private Map<Class<?>, From1ParamConstructor<String>> types = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromString();
+    private final Map<Class<?>, From1ParamConstructor<String>> types = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromString();
 
 
     @Test

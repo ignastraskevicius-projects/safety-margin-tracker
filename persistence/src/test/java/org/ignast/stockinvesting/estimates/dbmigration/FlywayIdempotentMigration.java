@@ -17,7 +17,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.estimates.dbmigration.AppDbContainer.getDataSourceTo;
 
-class FlywayIdempotentMigration {
+public final class FlywayIdempotentMigration {
     private final JdbcTemplate jdbcTemplate;
     private final DataSource dataSource;
 
@@ -52,7 +52,7 @@ interface MysqlMigration {
     void migrate(String version, DataSource dataSource);
 }
 
-class FlywayMigration implements MysqlMigration {
+final class FlywayMigration implements MysqlMigration {
 
     public void migrate(String version, DataSource dataSource) {
         Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).target(version).load().migrate();
@@ -60,7 +60,7 @@ class FlywayMigration implements MysqlMigration {
 }
 
 @Testcontainers
-class FlywayIdempotentMigrationTest {
+final class FlywayIdempotentMigrationTest {
 
     @Container
     private static MySQLContainer mysql = AppDbContainer.singleton();

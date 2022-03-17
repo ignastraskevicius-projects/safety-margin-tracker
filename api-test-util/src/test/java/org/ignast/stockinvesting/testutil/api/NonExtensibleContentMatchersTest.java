@@ -18,7 +18,7 @@ import static org.ignast.stockinvesting.testutil.api.MatcherWrapper.actualMatchi
 import static org.ignast.stockinvesting.testutil.api.MvcResultStubs.stubbedBody;
 import static org.mockito.Mockito.when;
 
-class NonExtensibleContentMatchersTest {
+final class NonExtensibleContentMatchersTest {
 
     private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected((actual, expected) ->
             actualMatchingExpected(actual, expected));
@@ -50,7 +50,7 @@ class NonExtensibleContentMatchersTest {
     }
 }
 
-class NonExtensibleEntityContentMatchersTest {
+final class NonExtensibleEntityContentMatchersTest {
     private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected((actual, expected) ->
             actualMatchingExpected(actual, expected));
 
@@ -90,7 +90,7 @@ class NonExtensibleEntityContentMatchersTest {
     }
 }
 
-class NonExtensibleEntityLinksMatchersTest {
+final class NonExtensibleEntityLinksMatchersTest {
     private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected((actual, expected) ->
             actualMatchingExpected(actual, expected));
 
@@ -130,7 +130,7 @@ class NonExtensibleEntityLinksMatchersTest {
     }
 }
 
-class MvcResultStubs {
+final class MvcResultStubs {
     static MvcResult stubbedBody(String content) {
         val response = mock(MockHttpServletResponse.class, re -> when(getUtf8Content(re)).thenReturn(content));
         return mock(MvcResult.class, r -> when(r.getResponse()).thenReturn(response));
@@ -145,16 +145,15 @@ class MvcResultStubs {
     }
 }
 
-class MvcResultStubsTest {
+final class MvcResultStubsTest {
     @Test
     public void shouldReturnUtf8Content() throws UnsupportedEncodingException {
         Assertions.assertThat(stubbedBody("abc").getResponse().getContentAsString(StandardCharsets.UTF_8)).isEqualTo("abc");
     }
 }
 
-class MatcherWrapper {
+final class MatcherWrapper {
     private final BiConsumer<String, String> underlyingMatcherActualExpected;
-    private String actual;
 
     private MatcherWrapper(@NonNull BiConsumer<String, String> underlyingMatcherActualExpected) {
         this.underlyingMatcherActualExpected = underlyingMatcherActualExpected;
@@ -165,7 +164,6 @@ class MatcherWrapper {
     }
 
     public MatcherPerformer assertThat(String actual) {
-        this.actual = actual;
         return new MatcherPerformer(underlyingMatcherActualExpected, actual);
     }
 
@@ -184,7 +182,7 @@ class MatcherWrapper {
     }
 }
 
-class MatcherWrapperTest {
+final class MatcherWrapperTest {
 
     @Test
     public void shouldNotInitiateWithNullMatcher() {

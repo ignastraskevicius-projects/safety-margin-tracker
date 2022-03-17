@@ -8,15 +8,14 @@ import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.From1ParamConstructor;
 import org.junit.jupiter.api.Test;
-import org.springframework.context.annotation.Configuration;
 
 import java.util.Map;
 import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-@Configuration
-class AppErrorsHandlingConfigurationTest {
+
+public final class AppErrorsHandlingConfigurationTest {
 
     private Map<Class<?>, From1ParamConstructor<String>> typesBackedByString = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromString();
 

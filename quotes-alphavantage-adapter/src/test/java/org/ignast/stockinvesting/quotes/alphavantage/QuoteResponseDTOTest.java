@@ -10,7 +10,7 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class QuoteResponseDTOTest {
+public final class QuoteResponseDTOTest {
     @Test
     public void shouldPreserveError() {
         val error = new QuoteResponseDTO(empty(), of("humal-readable-message"));

@@ -41,7 +41,7 @@ import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class AnnotationScanWiringIT {
+final class AnnotationScanWiringIT {
 
     @LocalServerPort
     private int port;

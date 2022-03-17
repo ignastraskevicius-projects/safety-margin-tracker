@@ -7,7 +7,7 @@ import java.util.function.Consumer;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class MockitoUtils {
+public final class MockitoUtils {
 
     public static <T> T mock(Class<? extends T> classToMock, Consumer<T> customizer) {
         T mock = Mockito.mock(classToMock);
@@ -16,7 +16,7 @@ public class MockitoUtils {
     }
 }
 
-class MockitoUtilsTest {
+final class MockitoUtilsTest {
     @Test
     public void shouldCreateEmptyMock() {
         TicketMachine machine = MockitoUtils.mock(TicketMachine.class, m -> {

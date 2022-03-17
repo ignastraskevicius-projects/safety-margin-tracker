@@ -13,7 +13,7 @@ import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @JsonTest
-public class DeserializationTest {
+public final class DeserializationTest {
 
     @Autowired
     private ObjectMapper mapper;

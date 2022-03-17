@@ -37,9 +37,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class UnparsableJsonErrorsTest {
+final class UnparsableJsonErrorsTest {
 
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+    private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -83,9 +83,9 @@ class UnparsableJsonErrorsTest {
 }
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class JsonStringFieldErrorsTest {
+final class JsonStringFieldErrorsTest {
 
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+    private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -161,9 +161,9 @@ class JsonStringFieldErrorsTest {
 }
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class JsonIntegerFieldErrorsTest {
+final class JsonIntegerFieldErrorsTest {
 
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+    private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -239,9 +239,9 @@ class JsonIntegerFieldErrorsTest {
 }
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class JsonCollectionErrorsTest {
+final class JsonCollectionErrorsTest {
 
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+    private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
     private MockMvc mockMvc;
@@ -323,9 +323,9 @@ class JsonCollectionErrorsTest {
 }
 
 @WebMvcTest(ErrorExtractorConfiguration.class)
-class JsonNestedStringFieldErrorsTest {
+final class JsonNestedStringFieldErrorsTest {
 
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+    private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
     private MockMvc mockMvc;

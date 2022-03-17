@@ -5,12 +5,12 @@ import org.hamcrest.TypeSafeMatcher;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class HateoasJsonMatchers {
+public final class HateoasJsonMatchers {
     public static HasRel hasRel(String relName) {
         return new HasRel(relName);
     }
 
-    public static class HasRel {
+    public static final class HasRel {
         private final String relName;
 
         public HasRel(String relName) {
@@ -26,8 +26,8 @@ public class HateoasJsonMatchers {
         }
 
         static class ExistsRelWithHrefContainingString extends TypeSafeMatcher<String> {
-            private String relName;
-            private String hrefSubstring;
+            private final String relName;
+            private final String hrefSubstring;
 
             public ExistsRelWithHrefContainingString(String relName, String hrefSubstring) {
                 this.relName = relName;
@@ -53,7 +53,7 @@ public class HateoasJsonMatchers {
         }
 
         static class ExistsRelWithHref extends TypeSafeMatcher<String> {
-            private String relName;
+            private final String relName;
 
             public ExistsRelWithHref(String relName) {
                 this.relName = relName;

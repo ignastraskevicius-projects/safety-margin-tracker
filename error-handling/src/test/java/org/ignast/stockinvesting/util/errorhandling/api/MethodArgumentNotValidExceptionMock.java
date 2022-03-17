@@ -29,7 +29,7 @@ import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNot
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class ExpectationsForMethodArgumentNotValidExceptionTest {
+final class ExpectationsForMethodArgumentNotValidExceptionTest {
 
     @Test
     public void exceptionShouldAlwaysContainBindingResult() throws NoSuchMethodException {
@@ -72,7 +72,7 @@ class ExpectationsForMethodArgumentNotValidExceptionTest {
     }
 }
 
-public class MethodArgumentNotValidExceptionMock {
+public final class MethodArgumentNotValidExceptionMock {
     public static MethodArgumentNotValidException withFieldErrors(List<FieldError> fieldErrors) {
         return new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(fieldErrors));
     }
@@ -163,7 +163,7 @@ public class MethodArgumentNotValidExceptionMock {
     }
 }
 
-class MethodArgumentNotValidExceptionMockTest {
+final class MethodArgumentNotValidExceptionMockTest {
 
     @Test
     public void shouldCreateMockWithNullFieldErrors() {

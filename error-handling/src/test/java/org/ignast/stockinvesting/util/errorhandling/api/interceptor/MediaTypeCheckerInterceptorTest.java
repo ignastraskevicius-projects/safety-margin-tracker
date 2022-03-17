@@ -10,7 +10,7 @@ import org.springframework.web.servlet.HandlerInterceptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class MediaTypeCheckerInterceptorTest {
+final class MediaTypeCheckerInterceptorTest {
     private final HandlerInterceptor interceptor = new MediaTypeCheckerInterceptor();
 
     @ParameterizedTest

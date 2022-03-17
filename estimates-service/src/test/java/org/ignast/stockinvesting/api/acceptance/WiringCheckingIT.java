@@ -19,7 +19,7 @@ import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class WiringCheckingIT {
+public final class WiringCheckingIT {
 
     @LocalServerPort
     private int port;

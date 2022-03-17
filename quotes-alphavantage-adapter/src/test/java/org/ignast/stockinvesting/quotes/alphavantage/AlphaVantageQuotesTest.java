@@ -35,7 +35,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 @RestClientTest(AlphaVantageQuotes.class)
 @TestPropertySource(properties = { "alphavantage.url=https://test.uri.com", "alphavantage.apikey=testApiKey" })
-class AlphaVantageQuotesTest {
+public final class AlphaVantageQuotesTest {
 
     @Autowired
     private QuotesRepository alphaVantageQuotes;
@@ -106,7 +106,7 @@ class AlphaVantageQuotesTest {
     }
 }
 
-class AlphaVantageCasesUnableToCoverWithSpringTest {
+final class AlphaVantageCasesUnableToCoverWithSpringTest {
 
     @RegisterExtension
     private static WireMockExtension wireMock = WireMockExtension.newInstance().build();

@@ -43,6 +43,7 @@ public class StandardErrorDTO {
         return new StandardErrorDTO(error.getErrorName());
     }
 
+    @SuppressWarnings("checkstyle:designforextension")
     public String getErrorName() {
         return errorName;
     }

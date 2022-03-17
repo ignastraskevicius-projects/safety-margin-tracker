@@ -16,12 +16,10 @@ public interface Hop {
         abstract ResponseEntity<String> traverse(ResponseEntity<String> response);
     }
 
-    class Factory {
-        private RestTemplate restTemplate;
-
-        private MediaType appMediaType;
-
-        private HrefExtractor hrefExtractor;
+    final class Factory {
+        private final RestTemplate restTemplate;
+        private final MediaType appMediaType;
+        private final HrefExtractor hrefExtractor;
 
         Factory(@NonNull MediaType appMediaType, @NonNull RestTemplate restTemplate, @NonNull HrefExtractor hrefExtractor) {
             this.appMediaType = appMediaType;

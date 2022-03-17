@@ -17,23 +17,23 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
 @Getter
-public class CompanyDTO {
+public final class CompanyDTO {
 
     @NotNull
     @DomainClassConstraint(domainClass = UUID.class)
-    private String id;
+    private final String id;
 
     @NotNull
     @DomainClassConstraint(domainClass = CompanyName.class)
-    private String name;
+    private final String name;
 
     @NotNull
     @DomainClassConstraint(domainClass = CountryCode.class)
-    private String homeCountry;
+    private final String homeCountry;
 
     @NotNull
     @DomainClassConstraint(domainClass = CurrencyCode.class)
-    private String functionalCurrency;
+    private final String functionalCurrency;
 
     @NotNull
     @Size(min = 1, message = "Company must be listed on at least 1 stock exchange")

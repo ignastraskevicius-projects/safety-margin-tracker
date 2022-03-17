@@ -34,7 +34,7 @@ import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactor
 
 @DataJpaTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-class CompanyPersistenceTest {
+final class CompanyPersistenceTest {
 
     @Autowired
     private CompanyRepository companyRepository;

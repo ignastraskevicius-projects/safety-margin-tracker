@@ -9,9 +9,9 @@ import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
 @Converter(autoApply = true)
-public class StockExchangeConverter implements AttributeConverter<StockExchange, String> {
+public final class StockExchangeConverter implements AttributeConverter<StockExchange, String> {
 
-    private StockExchanges stockExchanges;
+    private final StockExchanges stockExchanges;
 
     public StockExchangeConverter(@NonNull StockExchanges stockExchanges) {
         this.stockExchanges = stockExchanges;

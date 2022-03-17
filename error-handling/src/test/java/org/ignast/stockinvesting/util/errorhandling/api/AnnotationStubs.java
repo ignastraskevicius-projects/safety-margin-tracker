@@ -14,7 +14,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AnnotationStubs {
     static Override javaLangOverride() {
-        Override annotation = new Override() {
+        final val annotation = new Override() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -26,7 +26,7 @@ public final class AnnotationStubs {
     }
 
     static SuppressWarnings javaLangSuppressWarning() {
-        SuppressWarnings annotation = new SuppressWarnings() {
+        final val annotation = new SuppressWarnings() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -44,7 +44,7 @@ public final class AnnotationStubs {
 
     @SuppressWarnings("checkstyle:anoninnerlength")
     static NotNull javaxValidationNotNull() {
-        NotNull annotation = new NotNull() {
+        final val annotation = new NotNull() {
 
             @Override
             public String message() {
@@ -72,7 +72,7 @@ public final class AnnotationStubs {
 
     @SuppressWarnings("checkstyle:anoninnerlength")
     static Pattern javaxValidationPattern() {
-        Pattern annotation = new Pattern() {
+        final val annotation = new Pattern() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -110,7 +110,7 @@ public final class AnnotationStubs {
 
     @SuppressWarnings("checkstyle:anoninnerlength")
     static DomainClassConstraint javaxValidationDomainClassConstraint() {
-        val annotation = new DomainClassConstraint() {
+        final val annotation = new DomainClassConstraint() {
 
             @Override
             public Class<? extends Annotation> annotationType() {
@@ -143,7 +143,7 @@ public final class AnnotationStubs {
 
     @SuppressWarnings("checkstyle:anoninnerlength")
     static Size javaxValidationSize() {
-        Size annotation = new Size() {
+        final val annotation = new Size() {
 
             @Override
             public Class<? extends Annotation> annotationType() {

@@ -31,7 +31,7 @@ public @interface DomainClassConstraint {
 
     @Getter
     @RequiredArgsConstructor(staticName = "supporting")
-    public static class SupportedTypes {
+    class SupportedTypes {
         @NonNull
         private final Map<Class<?>, From1ParamConstructor<String>> typesConstructableFromString;
 
@@ -47,16 +47,16 @@ abstract class DomainClassConstraintValidator<T> implements ConstraintValidator<
 
     private Class<?> domainClass;
 
-    private DomainClassConstraintValidator(Map<Class<?>, From1ParamConstructor<T>> supportedObjects) {
+    private DomainClassConstraintValidator(final Map<Class<?>, From1ParamConstructor<T>> supportedObjects) {
         this.supportedObjects = supportedObjects;
     }
 
-    public void initialize(DomainClassConstraint constraint) {
+    public void initialize(final DomainClassConstraint constraint) {
         this.domainClass = constraint.domainClass();
     }
 
     @Override
-    public boolean isValid(T value, ConstraintValidatorContext context) {
+    public boolean isValid(final T value, final ConstraintValidatorContext context) {
         if (value == null) {
             return true;
         } else {
@@ -64,8 +64,8 @@ abstract class DomainClassConstraintValidator<T> implements ConstraintValidator<
         }
     }
 
-    private boolean validate(T value, ConstraintValidatorContext context) {
-        if (!supportedObjects.keySet().contains(domainClass)) {
+    private boolean validate(final T value, final ConstraintValidatorContext context) {
+        if (!supportedObjects.containsKey(domainClass)) {
             throw new IllegalArgumentException(
                     format("DomainClassConstraint is not configured for '%s' class", domainClass.getSimpleName()));
         } else {
@@ -81,13 +81,13 @@ abstract class DomainClassConstraintValidator<T> implements ConstraintValidator<
     }
 
     static class BackedByInteger extends DomainClassConstraintValidator<Integer> {
-        public BackedByInteger(DomainClassConstraint.SupportedTypes supportedObjects) {
+        public BackedByInteger(final DomainClassConstraint.SupportedTypes supportedObjects) {
             super(supportedObjects.getTypesConstructableFromInteger());
         }
     }
 
     static class BackedByString extends DomainClassConstraintValidator<String> {
-        public BackedByString(DomainClassConstraint.SupportedTypes supportedObjects) {
+        public BackedByString(final DomainClassConstraint.SupportedTypes supportedObjects) {
             super(supportedObjects.getTypesConstructableFromString());
         }
     }

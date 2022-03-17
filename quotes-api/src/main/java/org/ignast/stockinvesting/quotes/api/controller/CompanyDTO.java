@@ -34,17 +34,17 @@ public final class CompanyDTO {
     private final List<ListingDTO> listings;
 
     public CompanyDTO(
-            @JsonProperty(value = "id") Integer id,
-            @JsonProperty(value = "name") String name,
-            @JsonProperty(value = "listings") List<ListingDTO> listings) {
+            @JsonProperty(value = "id") final Integer id,
+            @JsonProperty(value = "name") final String name,
+            @JsonProperty(value = "listings") final List<ListingDTO> listings) {
         this.id = id;
         this.name = name;
         this.listings = withoutNullElements(listings);
     }
 
-    private List<ListingDTO> withoutNullElements(List<ListingDTO> listings) {
-        if (listings != null) {
-            return listings.stream().filter(Objects::nonNull).collect(Collectors.toList());
+    private List<ListingDTO> withoutNullElements(final List<ListingDTO> listingsContainingNulls) {
+        if (listingsContainingNulls != null) {
+            return listingsContainingNulls.stream().filter(Objects::nonNull).collect(Collectors.toList());
         } else {
             return null;
         }

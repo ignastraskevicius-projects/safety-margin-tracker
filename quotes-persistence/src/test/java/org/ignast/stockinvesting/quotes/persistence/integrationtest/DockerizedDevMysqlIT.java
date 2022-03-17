@@ -38,7 +38,7 @@ public final class DockerizedDevMysqlIT {
     private CompanyRepository companyRepository;
 
     @DynamicPropertySource
-    private static void registerDatasource(DynamicPropertyRegistry registry) {
+    private static void registerDatasource(final DynamicPropertyRegistry registry) {
         registry.add("spring.datasource.url", () -> MYSQL.getJdbcUrl().replaceFirst("/test", "/quotes"));
         registry.add("spring.datasource.username", () -> "root");
         registry.add("spring.datasource.password", () -> "test");
@@ -49,10 +49,10 @@ public final class DockerizedDevMysqlIT {
         companyRepository.save(Company.create(new CompanyExternalId(3), new CompanyName("Amazon"), new StockSymbol("AMZN"),
                 new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"))));
         commit();
-        val result = companyRepository.findByExternalId(new CompanyExternalId(3));
+        final val result = companyRepository.findByExternalId(new CompanyExternalId(3));
 
         assertThat(result.isPresent());
-        result.stream().forEach(c -> assertThat(c.getName().get()).isEqualTo("Amazon"));
+        result.ifPresent(c -> assertThat(c.getName().get()).isEqualTo("Amazon"));
     }
 
     private void commit() {

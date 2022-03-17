@@ -30,19 +30,19 @@ public final class WiringCheckingIT {
     @Test
     public void shouldWireInInterceptorEnsuringGETRequestsHaveAcceptHeaderInOrderToRequireExplicitApiVersionAndNeverBreakClientOnVersionBumps()
             throws Exception {
-        HttpRequest request = HttpRequest.newBuilder().GET().uri(URI.create(rootResourceOn(port))).build();
+        final val request = HttpRequest.newBuilder().GET().uri(URI.create(rootResourceOn(port))).build();
 
-        HttpClient client = HttpClient.newBuilder().build();
-        HttpResponse<String> rootResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
+        final val client = HttpClient.newBuilder().build();
+        final val rootResponse = client.send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(rootResponse.statusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
     }
 
     @Test
     public void shouldWireInCustomErrorSerialization() throws IOException, InterruptedException {
-        HttpRequest request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(""))
+        final val request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(""))
                 .uri(URI.create(rootResourceOn(port))).build();
 
-        HttpResponse<String> response = HttpClient.newBuilder().build().send(request,
+        final val response = HttpClient.newBuilder().build().send(request,
                 HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).isEqualTo(METHOD_NOT_ALLOWED.value());
         assertThat(response.body()).isEqualTo("{\"errorName\":\"methodNotAllowed\"}");
@@ -50,7 +50,7 @@ public final class WiringCheckingIT {
 
     @Test
     public void jacksonShouldNotSerializeNullErrorNamesWhereErrorCodeIsSelfExplanatory() {
-        val response = restTemplate.getForEntity(String.format("http://localhost:%d/notexistent/path", port),
+        final val response = restTemplate.getForEntity(String.format("http://localhost:%d/notexistent/path", port),
                 String.class);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isEqualTo("{}");

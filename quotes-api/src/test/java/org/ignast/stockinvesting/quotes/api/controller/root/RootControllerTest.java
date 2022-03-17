@@ -1,12 +1,12 @@
 package org.ignast.stockinvesting.quotes.api.controller.root;
 
+import lombok.val;
 import org.ignast.stockinvesting.quotes.api.controller.HalConfig;
 import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
 import static org.ignast.stockinvesting.testutil.api.HateoasJsonMatchers.hasRel;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
@@ -20,13 +20,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest({ RootController.class, HalConfig.class, ErrorExtractorConfiguration.class })
 public final class RootControllerTest {
 
-    private @Autowired MockMvc mockMvc;
+    private static final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
 
-    private final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
+    private @Autowired MockMvc mockMvc;
 
     @Test
     public void rootResourceShouldLinkToCompanies() throws Exception {
-        ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
+        final val root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
         root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE))
                 .andExpect(content().string(hasRel("quotes:company").withHrefContaining("/companies")));
     }

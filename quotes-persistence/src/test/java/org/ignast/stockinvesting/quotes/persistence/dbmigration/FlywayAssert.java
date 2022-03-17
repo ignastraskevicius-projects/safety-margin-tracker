@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.quotes.persistence.dbmigration;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -20,62 +21,51 @@ public final class FlywayAssert {
 
     private final JdbcTemplate db;
 
-    public static FlywayAssert assertThat(JdbcTemplate db) {
+    public static FlywayAssert assertThat(final JdbcTemplate db) {
         return new FlywayAssert(db);
     }
 
-    public void hasNotJustMigrated(String expectedVersion) {
-        final LastMigration lastMigration = queryLastMigration();
+    public void hasNotJustMigrated(final String expectedVersion) {
+        final val lastMigration = queryLastMigration();
         expectNotSqlOperationo(lastMigration);
         expectVersion(expectedVersion, lastMigration);
     }
 
-    public void hasJustMigrated(String expectedVersion) {
-        final LastMigration lastMigration = queryLastMigration();
+    public void hasJustMigrated(final String expectedVersion) {
+        final val lastMigration = queryLastMigration();
         expectSqlOperation(lastMigration);
         expectVersion(expectedVersion, lastMigration);
     }
 
     private LastMigration queryLastMigration() {
-        val results = db.queryForMap("SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;");
+        final val results = db.queryForMap("SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;");
         return new LastMigration(results.get("type").toString(), results.get("version").toString());
     }
 
-    private void expectVersion(String expectedVersion, LastMigration lastMigration) {
+    private void expectVersion(final String expectedVersion, final LastMigration lastMigration) {
         if (!expectedVersion.equals(lastMigration.getVersion())) {
             throw new AssertionError(format("Expected last flyway migration to be '%s' version migration but was '%s'", expectedVersion, lastMigration.getVersion()));
         }
     }
 
-    private void expectSqlOperation(LastMigration lastMigration) {
+    private void expectSqlOperation(final LastMigration lastMigration) {
         if (!"SQL".equals(lastMigration.getType())) {
             throw new AssertionError(format("Expected last flyway migration type to be 'SQL' but was '%s'", lastMigration.getType()));
         }
     }
 
-    private void expectNotSqlOperationo(LastMigration lastMigration) {
+    private void expectNotSqlOperationo(final LastMigration lastMigration) {
         if ("SQL".equals(lastMigration.getType())) {
             throw new AssertionError(format("Expected last flyway migration type not to be 'SQL' but was '%s'", lastMigration.getType()));
         }
     }
 
+    @Getter
+    @RequiredArgsConstructor
     static class LastMigration {
         private final String type;
 
         private final String version;
-
-        LastMigration(String type, String version) {
-            this.type = type;
-            this.version = version;
-        }
-
-        public String getVersion() {
-            return version;
-        }
-
-        public String getType() {
-            return type;
-        }
     }
 }
 
@@ -105,7 +95,7 @@ final class FlywayAssertLastMigrationTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"UNDO_SQL", "OTHER_TYPE"})
-    public void assertingLastMigrationShouldFailIfLastOperationWasNotSql(String nonSqlType) {
+    public void assertingLastMigrationShouldFailIfLastOperationWasNotSql(final String nonSqlType) {
         when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION)).thenReturn(Map.of("type", nonSqlType, "version", "ANY"));
 
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> FlywayAssert.assertThat(db)
@@ -137,12 +127,12 @@ final class FlywayAssertLastMigrationTest {
 
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> FlywayAssert.assertThat(db)
                 .hasNotJustMigrated("anyVersion"))
-                .withMessage(format("Expected last flyway migration type not to be 'SQL' but was 'SQL'"));
+                .withMessage("Expected last flyway migration type not to be 'SQL' but was 'SQL'");
     }
 
-    private void with2DistinctVersions(TwoVersionsConsumer consumer) {
-        String v1 = "V" + RandomStringUtils.randomNumeric(1);
-        String v2 = "V" + RandomStringUtils.randomNumeric(2);
+    private void with2DistinctVersions(final TwoVersionsConsumer consumer) {
+        final val v1 = "V" + RandomStringUtils.randomNumeric(1);
+        final val v2 = "V" + RandomStringUtils.randomNumeric(2);
         consumer.consume(v1, v2);
     }
 

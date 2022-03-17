@@ -13,17 +13,17 @@ public final class StockExchangeConverter implements AttributeConverter<StockExc
 
     private final StockExchanges stockExchanges;
 
-    public StockExchangeConverter(@NonNull StockExchanges stockExchanges) {
+    public StockExchangeConverter(@NonNull final StockExchanges stockExchanges) {
         this.stockExchanges = stockExchanges;
     }
 
     @Override
-    public String convertToDatabaseColumn(StockExchange stockExchange) {
+    public String convertToDatabaseColumn(final StockExchange stockExchange) {
         return stockExchange.getMarketIdentifierCode().get();
     }
 
     @Override
-    public StockExchange convertToEntityAttribute(String marketIdentifierCode) {
+    public StockExchange convertToEntityAttribute(final String marketIdentifierCode) {
         return stockExchanges.getFor(new MarketIdentifierCode(marketIdentifierCode));
     }
 }

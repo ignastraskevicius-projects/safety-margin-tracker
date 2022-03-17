@@ -1,14 +1,13 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import lombok.val;
+import org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.ViolationMockBuilder;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaLangOverride;
@@ -24,8 +23,8 @@ public final class AnnotationBasedValidationErrorsExtractorTest {
     private final AnnotationBasedValidationErrorsExtractor errorsExtractor = new AnnotationBasedValidationErrorsExtractor();
 
     @Test
-    public void shouldThrowIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock.withFieldErrors(null);
+    public void shouldThrowIfExceptionContainsNullFieldErrors() {
+        final val exception = MethodArgumentNotValidExceptionMock.withFieldErrors(null);
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
                 .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
@@ -33,8 +32,8 @@ public final class AnnotationBasedValidationErrorsExtractorTest {
     }
 
     @Test
-    public void shouldThrowIfExceptionContainsNoFieldErrors() throws NoSuchMethodException {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+    public void shouldThrowIfExceptionContainsNoFieldErrors() {
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrors(new ArrayList<>());
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
@@ -44,7 +43,7 @@ public final class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldThrowIfFieldErrorSourceIsNotConstraintViolation() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorSourceNotBeingConstraintViolation();
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
@@ -56,79 +55,77 @@ public final class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldThrowIfAnyViolationIsNotCausedByJavaxAnnotation() {
-        MethodArgumentNotValidException withoutDescriptor = withErrorFieldViolation(b -> {
+        final val withoutDescriptor = withErrorFieldViolation(b -> {
         });
-        MethodArgumentNotValidException withoutAnnotation = withErrorFieldViolation(b -> b.withDescriptor());
-        MethodArgumentNotValidException withoutAnnotationType = withErrorFieldViolation(
+        final val withoutAnnotation = withErrorFieldViolation(ViolationMockBuilder::withDescriptor);
+        final val withoutAnnotationType = withErrorFieldViolation(
                 b -> b.withDescriptor().withAnnotation());
-        asList(withoutDescriptor, withoutAnnotation, withoutAnnotationType).stream().forEach(exception -> {
-
-            assertThatExceptionOfType(ValidationErrorsExtractionException.class)
-                    .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
-                    .withMessage(
-                            "Extraction of javax.validation error was caused by violation not defined via annotation")
-                    .withCauseInstanceOf(NullPointerException.class);
-        });
+        Stream.of(withoutDescriptor, withoutAnnotation, withoutAnnotationType).forEach(exception ->
+                assertThatExceptionOfType(ValidationErrorsExtractionException.class)
+                .isThrownBy(() -> errorsExtractor.extractAnnotationBasedErrorsFrom(exception))
+                .withMessage(
+                        "Extraction of javax.validation error was caused by violation not defined via annotation")
+                .withCauseInstanceOf(NullPointerException.class));
     }
 
     @Test
     public void ensureThatUnderlyingFieldNameIsNeverNull() {
-        String fieldName = null;
+        final String fieldName = null;
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new FieldError("company", fieldName, "message"));
     }
 
     @Test
     public void shouldExtractMissingFieldError() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationNotNull());
 
-        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        final val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationErrorDTO validationError = validationErrors.get(0);
+        final val validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("fieldIsMissing");
     }
 
     @Test
     public void shouldExtractFieldErrorRelatedToSizeRestrictions() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationSize());
 
-        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        final val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationErrorDTO validationError = validationErrors.get(0);
+        final val validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("valueIsInvalid");
     }
 
     @Test
     public void shouldExtractFieldErrorRelatedToPatternRestrictions() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationPattern());
 
-        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        final val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationErrorDTO validationError = validationErrors.get(0);
+        final val validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("valueIsInvalid");
     }
 
     @Test
     public void shouldExtractFieldErrorRelatedToDomainClassConstraint() {
-        val exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaxValidationDomainClassConstraint());
 
-        val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        final val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(1);
-        ValidationErrorDTO validationError = validationErrors.get(0);
+        final val validationError = validationErrors.get(0);
         assertThat(validationError.getErrorName()).isEqualTo("valueIsInvalid");
     }
 
     @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeOverride() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaLangOverride());
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
@@ -138,7 +135,7 @@ public final class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldDropFieldErrorRelatedToUnexpectedAnnotationsLikeSuppressWarning() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock
+        final val exception = MethodArgumentNotValidExceptionMock
                 .withFieldErrorCausedBy(javaLangSuppressWarning());
 
         assertThatExceptionOfType(ValidationErrorsExtractionException.class)
@@ -148,14 +145,14 @@ public final class AnnotationBasedValidationErrorsExtractorTest {
 
     @Test
     public void shouldExtractMultipleFieldErrors() {
-        MethodArgumentNotValidException exception = MethodArgumentNotValidExceptionMock.withMultipleFields("path1",
+        final val exception = MethodArgumentNotValidExceptionMock.withMultipleFields("path1",
                 "message1", javaxValidationNotNull(), "path2", "message2", javaxValidationSize());
 
-        List<ValidationErrorDTO> validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
+        final val validationErrors = errorsExtractor.extractAnnotationBasedErrorsFrom(exception);
 
         assertThat(validationErrors).hasSize(2);
-        ValidationErrorDTO validationError1 = validationErrors.get(0);
-        ValidationErrorDTO validationError2 = validationErrors.get(1);
+        final val validationError1 = validationErrors.get(0);
+        final val validationError2 = validationErrors.get(1);
         assertThat(validationError1.getJsonPath()).isEqualTo("$.path1");
         assertThat(validationError1.getMessage()).isNull();
         assertThat(validationError1.getErrorName()).isEqualTo("fieldIsMissing");

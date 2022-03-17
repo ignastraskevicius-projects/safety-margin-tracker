@@ -20,7 +20,7 @@ public final class DeserializationTest {
 
     @Test
     public void shouldDeserializeError() throws JsonProcessingException {
-        QuoteResponseDTO response = mapper.readValue("{\"Error Message\":\"Some human-readable error message\"}",
+        final val response = mapper.readValue("{\"Error Message\":\"Some human-readable error message\"}",
                 QuoteResponseDTO.class);
 
         assertThat(response.getError()).isEqualTo(of("Some human-readable error message"));
@@ -28,7 +28,7 @@ public final class DeserializationTest {
 
     @Test
     public void shouldNotDeserializeNullFields() throws JsonProcessingException {
-        QuoteResponseDTO response = mapper.readValue("{\"Error Message\":null,\"Global Quote\":null}",
+        final val response = mapper.readValue("{\"Error Message\":null,\"Global Quote\":null}",
                 QuoteResponseDTO.class);
 
         assertThat(response.getError()).isEmpty();
@@ -37,7 +37,7 @@ public final class DeserializationTest {
 
     @Test
     public void shouldNotDeserializeIfResponseIsEmpty() throws JsonProcessingException {
-        QuoteResponseDTO response = mapper.readValue("{}", QuoteResponseDTO.class);
+        final val response = mapper.readValue("{}", QuoteResponseDTO.class);
 
         assertThat(response.getError()).isEmpty();
         assertThat(response.getQuote()).isEmpty();
@@ -45,7 +45,7 @@ public final class DeserializationTest {
 
     @Test
     public void shouldDeserializeQuote() throws JsonProcessingException {
-        val response = mapper.readValue("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", QuoteResponseDTO.class);
+        final val response = mapper.readValue("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", QuoteResponseDTO.class);
 
         assertThat(response.getQuote()).isPresent();
         assertThat(response.getQuote().get().getPrice()).isEqualTo(of(new BigDecimal("128.5000")));
@@ -53,7 +53,7 @@ public final class DeserializationTest {
 
     @Test
     public void shouldNotDeserializePriceIfNotProvided() throws JsonProcessingException {
-        val response = mapper.readValue("{\"Global Quote\":{}}", QuoteResponseDTO.class);
+        final val response = mapper.readValue("{\"Global Quote\":{}}", QuoteResponseDTO.class);
 
         assertThat(response.getQuote()).isPresent();
         assertThat(response.getQuote().get().getPrice()).isEmpty();

@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
+import lombok.val;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -22,7 +23,7 @@ final class StrictIntegerDeserializerTest {
 
     @BeforeEach
     public void setup() {
-        SimpleModule module = new SimpleModule();
+        final val module = new SimpleModule();
         module.addDeserializer(Integer.class, new StrictIntegerDeserializer());
         mapper = new ObjectMapper().registerModule(module);
     }
@@ -45,8 +46,8 @@ final class StrictIntegerDeserializerTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "\"string\"", "3.3", "true", "false", "{}", "[]" })
-    public void failureShouldPreserveParserAndLocation(String jsonValue) throws JsonProcessingException {
-        StrictIntegerDeserializingException exception = catchThrowableOfType(() -> {
+    public void failureShouldPreserveParserAndLocation(final String jsonValue) {
+        final val exception = catchThrowableOfType(() -> {
             mapper.readValue(format("{\"integerValue\":%s}", jsonValue), IntegerWrapper.class);
         }, StrictIntegerDeserializingException.class);
 
@@ -59,7 +60,7 @@ final class StrictIntegerDeserializerTest {
 
     @Test
     public void failureShouldBeDueToStrictDeserializing() {
-        Throwable throwable = catchThrowable(() -> {
+        final val throwable = catchThrowable(() -> {
             mapper.readValue("\"notInteger\"", Integer.class);
         });
 
@@ -69,7 +70,7 @@ final class StrictIntegerDeserializerTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "\"someString\"", "3.3", "true", "false", "{}", "[]" })
-    public void shouldFailFromOtherJsonTypes(String jsonValue) {
+    public void shouldFailFromOtherJsonTypes(final String jsonValue) {
         assertThatExceptionOfType(StrictIntegerDeserializingException.class).isThrownBy(() -> {
             mapper.readValue(jsonValue, Integer.class);
         });
@@ -83,7 +84,7 @@ final class StrictIntegerDeserializerTest {
     static class IntegerWrapper {
         private Integer integerValue;
 
-        public IntegerWrapper(@JsonProperty(value = "integerValue", required = true) Integer integerValue) {
+        public IntegerWrapper(@JsonProperty(value = "integerValue", required = true) final Integer integerValue) {
             this.integerValue = integerValue;
         }
     }

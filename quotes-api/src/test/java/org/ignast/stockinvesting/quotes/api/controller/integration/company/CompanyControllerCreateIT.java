@@ -113,12 +113,7 @@ final class CompanyControllerNameParsingIT extends CompanyControllerITBase {
     @Test
     public void shouldRejectCompanyWithInvalidName() throws Exception {
         when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
-        rejectsAsBadRequest(companyWithNameOfLength(0), forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
-    }
-
-    private String companyWithNameOfLength(int length) {
-        String name = "c".repeat(length);
-        return bodyFactory.createWithNameJsonPair(String.format("\"name\":\"%s\"", name));
+        rejectsAsBadRequest("", forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
     }
 }
 
@@ -191,7 +186,7 @@ final class CompanyControllerTestIndividualListingParsingIT extends CompanyContr
 
     @Test
     public void shouldRejectCompanyWithUnsupportedSymbol() throws Exception {
-        val exchange = exchangeNotSupportingAnySymbol();
+        final val exchange = exchangeNotSupportingAnySymbol();
         when(stockExchanges.getFor(any())).thenReturn(exchange);
         rejectsAsBadRequest(bodyFactory.createAmazon(), "{\"errorName\":\"stockSymbolNotSupportedInThisMarket\"}");
     }

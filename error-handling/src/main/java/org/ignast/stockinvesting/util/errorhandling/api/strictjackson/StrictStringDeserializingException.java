@@ -4,7 +4,7 @@ import com.fasterxml.jackson.core.JsonParser;
 
 public final class StrictStringDeserializingException extends StrictDeserializingException {
 
-    protected StrictStringDeserializingException(JsonParser parser) {
+    StrictStringDeserializingException(final JsonParser parser) {
         super("java.String can only be deserialized only from json String", parser);
     }
 }

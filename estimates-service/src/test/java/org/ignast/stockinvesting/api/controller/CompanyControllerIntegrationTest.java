@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller;
 
+import lombok.val;
 import org.ignast.stockinvesting.api.controller.errorhandler.AppErrorsHandlingConfiguration;
 import org.ignast.stockinvesting.domain.Companies;
 import org.junit.jupiter.api.Test;
@@ -12,13 +13,13 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forArrayRequiredAt;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forInvalidValueAt;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forObjectRequiredAt;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt;
-import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forArrayRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forInvalidValueAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forObjectRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
@@ -34,10 +35,10 @@ abstract class CompanyControllerIntegrationTestBase {
 
     protected final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
-    void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
+    void rejectsAsBadRequest(final String requestBody, final String expectedResponse) throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)
                         .content(requestBody))
-                .andExpect(status().isBadRequest()).andExpect(contentMatchesJson(expectedResponse));
+                .andExpect(status().isBadRequest()).andExpect(bodyMatchesJson(expectedResponse));
     }
 }
 
@@ -49,7 +50,7 @@ public final class CompanyControllerIntegrationTest extends CompanyControllerInt
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)).andExpect(status().isBadRequest())
-                .andExpect(contentMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test
@@ -67,20 +68,20 @@ public final class CompanyControllerIntegrationTest extends CompanyControllerInt
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(put("/companies/").contentType("application/json"))
                 .andExpect(status().isUnsupportedMediaType())
-                .andExpect(contentMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
         mockMvc.perform(put("/companies/").contentType("application/hal+json"))
                 .andExpect(status().isUnsupportedMediaType())
-                .andExpect(contentMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
     public void shouldIndicateResourceNotReadable() throws Exception {
         mockMvc.perform(get("/companies/").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
-                .andExpect(contentMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }
 
     @Test
@@ -166,7 +167,7 @@ final class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyCo
 
     @ParameterizedTest
     @ValueSource(strings = { "12", "us", "ÑÑ" })
-    public void shouldRejectCountryCodesContainingNonUppercaseCharacters(String countryCode) throws Exception {
+    public void shouldRejectCountryCodesContainingNonUppercaseCharacters(final String countryCode) throws Exception {
         rejectsAsBadRequest(bodyFactory.createWithHomeCountryJsonPair(String.format("\"homeCountry\":\"%s\"", countryCode)), forInvalidValueAt("$.homeCountry", "Must contain only uppercase latin characters"));
     }
 
@@ -214,8 +215,8 @@ final class CompanyControllerNameParsingIntegrationTest extends CompanyControlle
                 .andExpect(status().isCreated());
     }
 
-    private String companyWithNameOfLength(int length) {
-        String name = "c".repeat(length);
+    private String companyWithNameOfLength(final int length) {
+        final val name = "c".repeat(length);
         return bodyFactory.createWithNameJsonPair(String.format("\"name\":\"%s\"", name));
     }
 }

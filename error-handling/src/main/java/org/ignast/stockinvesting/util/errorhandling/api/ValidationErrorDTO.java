@@ -3,13 +3,13 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 import static java.util.Objects.requireNonNull;
 
 final class JsonPath {
-    private String jsonPath;
+    private final String jsonPath;
 
-    private JsonPath(String jsonPath) {
+    private JsonPath(final String jsonPath) {
         this.jsonPath = jsonPath;
     }
 
-    public static JsonPath fromJsonPath(String jsonPath) {
+    public static JsonPath fromJsonPath(final String jsonPath) {
         requireNonNull(jsonPath, "JsonPath required to be non-null");
         if (jsonPath.startsWith("$.") || jsonPath.startsWith("$[") || "$".equals(jsonPath)) {
             return new JsonPath(jsonPath);
@@ -19,7 +19,7 @@ final class JsonPath {
         }
     }
 
-    public static JsonPath adaptFromJavaxValidationPath(String javaxValidationPath) {
+    public static JsonPath adaptFromJavaxValidationPath(final String javaxValidationPath) {
         if (javaxValidationPath == null || javaxValidationPath.isEmpty()) {
             return new JsonPath("$");
         } else if (javaxValidationPath.startsWith("[")) {
@@ -35,17 +35,19 @@ final class JsonPath {
 }
 
 public final class ValidationErrorDTO {
-    private String jsonPath;
+    private final String jsonPath;
 
-    private String message;
+    private final String message;
 
-    private ViolationType type;
+    private final ViolationType type;
 
-    public ValidationErrorDTO(JsonPath jsonPath, String message, ViolationType type) {
+    public ValidationErrorDTO(final JsonPath jsonPath, final String message, final ViolationType type) {
         this.jsonPath = jsonPath.getJsonPath();
         requireNonNull(type);
         if (!type.isErrorSelfExplanatory()) {
             this.message = message;
+        } else {
+            this.message = null;
         }
         this.type = type;
     }
@@ -59,6 +61,6 @@ public final class ValidationErrorDTO {
     }
 
     public String getErrorName() {
-        return type.getCorrespondigErrorName();
+        return type.getCorrespondingErrorName();
     }
 }

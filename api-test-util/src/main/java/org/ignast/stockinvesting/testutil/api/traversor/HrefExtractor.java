@@ -18,12 +18,12 @@ import static org.springframework.http.HttpStatus.OK;
 public class HrefExtractor {
     private final MediaType appMediaType;
 
-    public HrefExtractor(@NonNull MediaType appMediaType) {
+    public HrefExtractor(@NonNull final MediaType appMediaType) {
         this.appMediaType = appMediaType;
     }
 
     @SuppressWarnings("checkstyle:designforextension")
-    protected String extractHref(ResponseEntity<String> previousResponse, String rel) {
+    protected String extractHref(final ResponseEntity<String> previousResponse, final String rel) {
         return new Extractor(previousResponse, rel).extract();
     }
 
@@ -32,7 +32,7 @@ public class HrefExtractor {
 
         private final String rel;
 
-        private Extractor(ResponseEntity<String> previousResponse, String rel) {
+        private Extractor(final ResponseEntity<String> previousResponse, final String rel) {
             this.previousResponse = previousResponse;
             this.rel = rel;
         }
@@ -44,20 +44,18 @@ public class HrefExtractor {
         }
 
         private String extractHref() {
-            val jsonBody = toJson(previousResponse.getBody());
+            final val jsonBody = toJson(previousResponse.getBody());
             try {
                 MatcherAssert.assertThat(previousResponse.getBody(), HateoasJsonMatchers.hasRel(rel).withHref());
                 return jsonBody.getJSONObject("_links").getJSONObject(rel).getString("href");
-            } catch (AssertionError e) {
-                throw new IllegalArgumentException(format("Hop to '%s' failed: previous response does not contain rel to '%s'", rel, rel));
-            } catch (JSONException e) {
+            } catch (AssertionError | JSONException e) {
                 throw new IllegalArgumentException(format("Hop to '%s' failed: previous response does not contain rel to '%s'", rel, rel));
             }
         }
 
-        private JSONObject toJson(String previousResponse) {
+        private JSONObject toJson(final String previousResponseBody) {
             try {
-                return new JSONObject(previousResponse);
+                return new JSONObject(previousResponseBody);
             } catch (JSONException e) {
                 throw new IllegalArgumentException(format("Hop to '%s' failed: previous response is not a valid json", rel));
             }

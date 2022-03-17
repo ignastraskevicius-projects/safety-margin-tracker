@@ -16,11 +16,11 @@ public final class CompanyJsonBodyFactory {
         return "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}";
     }
 
-    public String createWithIdJsonPair(String jsonPair) {
+    public String createWithIdJsonPair(final String jsonPair) {
         return format("{%s\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}", appendCommaIfNotEmpty(jsonPair));
     }
 
-    public String createWithNameJsonPair(String nameJsonPair) {
+    public String createWithNameJsonPair(final String nameJsonPair) {
         return format(
                 "{\"id\":6,%s\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}",
                 appendCommaIfNotEmpty(nameJsonPair));
@@ -35,24 +35,24 @@ public final class CompanyJsonBodyFactory {
                 "\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"},{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]");
     }
 
-    public String createWithListingsJsonPair(String listingsJsonPair) {
+    public String createWithListingsJsonPair(final String listingsJsonPair) {
         return format("{\"id\":6,\"name\":\"Amazon\"%s}",
                 prependCommaIfNotEmpty(listingsJsonPair));
     }
 
-    public String createWithMarketIdJsonPair(String marketIdJsonPair) {
+    public String createWithMarketIdJsonPair(final String marketIdJsonPair) {
         return format(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{%s\"stockSymbol\":\"AMZN\"}]}",
                 appendCommaIfNotEmpty(marketIdJsonPair));
     }
 
-    public String createWithSymbolJsonPair(String jsonPair) {
+    public String createWithSymbolJsonPair(final String jsonPair) {
         return format(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\"%s}]}",
                 prependCommaIfNotEmpty(jsonPair));
     }
 
-    private String appendCommaIfNotEmpty(String jsonPair) {
+    private String appendCommaIfNotEmpty(final String jsonPair) {
         if (jsonPair.isEmpty()) {
             return "";
         } else {
@@ -60,7 +60,7 @@ public final class CompanyJsonBodyFactory {
         }
     }
 
-    private String prependCommaIfNotEmpty(String jsonPair) {
+    private String prependCommaIfNotEmpty(final String jsonPair) {
         if (jsonPair.isEmpty()) {
             return "";
         } else {
@@ -71,15 +71,15 @@ public final class CompanyJsonBodyFactory {
 
 final class CompanyJsonBodyFactoryTest {
 
-    private CompanyJsonBodyFactory factory = new CompanyJsonBodyFactory();
+    private static final CompanyJsonBodyFactory FACTORY = new CompanyJsonBodyFactory();
 
     @Test
     public void shouldCreateValidJsonRepresentingDomain() {
-        val externalId = 6;
-        val name = "Amazon";
-        val mic = "XNAS";
-        val symbol = "AMZN";
-        assertThat(factory.createAmazon()).isEqualTo(format(
+        final val externalId = 6;
+        final val name = "Amazon";
+        final val mic = "XNAS";
+        final val symbol = "AMZN";
+        assertThat(FACTORY.createAmazon()).isEqualTo(format(
                 "{\"id\":%d,\"name\":\"%s\",\"listings\":[{\"marketIdentifier\":\"%s\",\"stockSymbol\":\"%s\"}]}",
                 externalId, name, mic, symbol));
         assertThat(amazon().getExternalId()).isEqualTo(new CompanyExternalId(externalId));
@@ -91,74 +91,74 @@ final class CompanyJsonBodyFactoryTest {
 
     @Test
     public void shouldCreateCompanyWithoutId() {
-        assertThat(factory.createWithIdJsonPair("")).isEqualTo(
+        assertThat(FACTORY.createWithIdJsonPair("")).isEqualTo(
                 "{\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomCustomId() {
-        assertThat(factory.createWithIdJsonPair("\"id\":\"custom UUID\""))
+        assertThat(FACTORY.createWithIdJsonPair("\"id\":\"custom UUID\""))
                 .isEqualTo(
                         "{\"id\":\"custom UUID\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutName() {
-        assertThat(factory.createWithNameJsonPair("")).isEqualTo(
+        assertThat(FACTORY.createWithNameJsonPair("")).isEqualTo(
                 "{\"id\":6,\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomNameJsonPair() {
-        assertThat(factory.createWithNameJsonPair("\"name\":null")).isEqualTo(
+        assertThat(FACTORY.createWithNameJsonPair("\"name\":null")).isEqualTo(
                 "{\"id\":6,\"name\":null,\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateCompanyWithoutListingsField() {
-        assertThat(factory.createWithListingsJsonPair(""))
+        assertThat(FACTORY.createWithListingsJsonPair(""))
                 .isEqualTo("{\"id\":6,\"name\":\"Amazon\"}");
     }
 
     @Test
     public void shouldCreateCompanyWithCustomListingsJsonPair() {
-        assertThat(factory.createWithListingsJsonPair("\"listings\":null")).isEqualTo(
+        assertThat(FACTORY.createWithListingsJsonPair("\"listings\":null")).isEqualTo(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":null}");
     }
 
     @Test
     public void shouldCreateCompanyWithMultipleListings() {
-        assertThat(factory.createWithMultipleListings()).isEqualTo(
+        assertThat(FACTORY.createWithMultipleListings()).isEqualTo(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"},{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithoutMarketIdField() {
-        assertThat(factory.createWithMarketIdJsonPair("")).isEqualTo(
+        assertThat(FACTORY.createWithMarketIdJsonPair("")).isEqualTo(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomMarketIdField() {
-        assertThat(factory.createWithMarketIdJsonPair("\"marketIdentifier\":\"London Stock Exchange\"")).isEqualTo(
+        assertThat(FACTORY.createWithMarketIdJsonPair("\"marketIdentifier\":\"London Stock Exchange\"")).isEqualTo(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"London Stock Exchange\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithoutSymbolField() {
-        assertThat(factory.createWithSymbolJsonPair("")).isEqualTo(
+        assertThat(FACTORY.createWithSymbolJsonPair("")).isEqualTo(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\"}]}");
     }
 
     @Test
     public void shouldCreateListedCompanyWithCustomSymbolField() {
-        assertThat(factory.createWithSymbolJsonPair("\"stockSymbol\":\"Amazon\"")).isEqualTo(
+        assertThat(FACTORY.createWithSymbolJsonPair("\"stockSymbol\":\"Amazon\"")).isEqualTo(
                 "{\"id\":6,\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"Amazon\"}]}");
     }
 
     @Test
     public void shouldCreateWithoutNameAndId() {
-        assertThat(factory.createWithoutNameAndId()).isEqualTo(
+        assertThat(FACTORY.createWithoutNameAndId()).isEqualTo(
                 "{\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 }

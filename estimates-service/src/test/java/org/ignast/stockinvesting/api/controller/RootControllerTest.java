@@ -1,15 +1,15 @@
 package org.ignast.stockinvesting.api.controller;
 
+import lombok.val;
 import org.ignast.stockinvesting.api.controller.errorhandler.AppErrorsHandlingConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 
-import static org.ignast.stockinvesting.util.test.api.HateoasJsonMatchers.hasRel;
-import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
+import static org.ignast.stockinvesting.testutil.api.HateoasJsonMatchers.hasRel;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -21,13 +21,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Import(AppErrorsHandlingConfiguration.class)
 public final class RootControllerTest {
 
-    private @Autowired MockMvc mockMvc;
+    private static final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
-    private final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+    private @Autowired MockMvc mockMvc;
 
     @Test
     public void rootResourceShouldLinkToCompanies() throws Exception {
-        ResultActions root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
+        final val root = mockMvc.perform(get("/").accept(V1_MEDIA_TYPE));
         root.andExpect(status().isOk()).andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE))
                 .andExpect(content().string(hasRel("stocks:company").withHrefContaining("/companies")));
     }
@@ -35,18 +35,18 @@ public final class RootControllerTest {
     @Test
     public void shouldRejectUnversionedRequests() throws Exception {
         mockMvc.perform(get("/").accept("application/hal+json")).andExpect(status().isNotAcceptable())
-                .andExpect(contentMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
     public void shouldRejectNonHalRequests() throws Exception {
         mockMvc.perform(get("/").accept("application/json")).andExpect(status().isNotAcceptable())
-                .andExpect(contentMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
     public void shouldNotBeModifiableResource() throws Exception {
         mockMvc.perform(post("/")).andExpect(status().isMethodNotAllowed())
-                .andExpect(contentMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+                .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }
 }

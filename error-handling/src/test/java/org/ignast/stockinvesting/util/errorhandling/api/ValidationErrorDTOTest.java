@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -13,7 +14,7 @@ public final class ValidationErrorDTOTest {
 
     @Test
     public void shouldPreserveJsonPath() {
-        ValidationErrorDTO error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.path"), "anyMessage",
+        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.path"), "anyMessage",
                 FIELD_IS_MISSING);
 
         assertThat(error.getJsonPath()).isEqualTo("$.path");
@@ -21,19 +22,19 @@ public final class ValidationErrorDTOTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "someMessage", "otherMessage" })
-    public void shouldPreserveMessageForNotSelfExplanatoryErrors(String message) {
-        ViolationType valueInvalid = VALUE_INVALID;
+    public void shouldPreserveMessageForNotSelfExplanatoryErrors(final String message) {
+        final val valueInvalid = VALUE_INVALID;
         assertThat(valueInvalid.isErrorSelfExplanatory()).isEqualTo(false);
-        ValidationErrorDTO error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), message, valueInvalid);
+        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), message, valueInvalid);
 
         assertThat(error.getMessage()).isEqualTo(message);
     }
 
     @Test
     public void shouldPreserveMessageForSelfExplanatoryErrors() {
-        ViolationType fieldIsMissing = FIELD_IS_MISSING;
+        final val fieldIsMissing = FIELD_IS_MISSING;
         assertThat(fieldIsMissing.isErrorSelfExplanatory()).isEqualTo(true);
-        ValidationErrorDTO error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage",
+        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage",
                 fieldIsMissing);
 
         assertThat(error.getMessage()).isNull();
@@ -41,7 +42,7 @@ public final class ValidationErrorDTOTest {
 
     @Test
     public void shouldConvertTypeToErrorName() {
-        ValidationErrorDTO error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage",
+        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage",
                 FIELD_IS_MISSING);
 
         assertThat(error.getErrorName()).isEqualTo("fieldIsMissing");

@@ -11,7 +11,7 @@ import java.io.IOException;
 @JsonComponent
 public final class StrictStringDeserializer extends StringDeserializer {
     @Override
-    public String deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
+    public String deserialize(final JsonParser p, final DeserializationContext context) throws IOException {
         if (p.hasToken(JsonToken.VALUE_STRING)) {
             return p.getText();
         } else {

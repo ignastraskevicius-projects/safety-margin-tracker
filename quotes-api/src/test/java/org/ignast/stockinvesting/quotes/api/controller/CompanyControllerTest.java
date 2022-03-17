@@ -12,8 +12,9 @@ import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
+import java.util.List;
+
 import static java.lang.String.format;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.api.controller.TestDtos.amazonDto;
@@ -24,23 +25,23 @@ import static org.mockito.Mockito.when;
 
 public final class CompanyControllerTest {
 
-    private StockExchanges stockExchanges = mock(StockExchanges.class);
+    private final StockExchanges stockExchanges = mock(StockExchanges.class);
 
-    private Companies companies = mock(Companies.class);
+    private final Companies companies = mock(Companies.class);
 
-    private CompanyController controller = new CompanyController(companies, stockExchanges);
+    private final CompanyController controller = new CompanyController(companies, stockExchanges);
 
     @Test
     public void shouldCreateCompany() {
-        val stockExchange = mock(StockExchange.class);
+        final val stockExchange = mock(StockExchange.class);
         when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(stockExchange);
-        val companyDto = new CompanyDTO(5, "Microsoft", asList(new ListingDTO("XNAS", "MSFT")));
-        val captor = ArgumentCaptor.forClass(Company.class);
+        final val companyDto = new CompanyDTO(5, "Microsoft", List.of(new ListingDTO("XNAS", "MSFT")));
+        final val captor = ArgumentCaptor.forClass(Company.class);
 
-        val createdCompanyDto = controller.createCompany(companyDto);
+        final val createdCompanyDto = controller.createCompany(companyDto);
 
         verify(companies).create(captor.capture());
-        val company = captor.getValue();
+        final val company = captor.getValue();
         assertThat(company.getExternalId()).isEqualTo(new CompanyExternalId(5));
         assertThat(company.getName()).isEqualTo(new CompanyName("Microsoft"));
         assertThat(company.getStockSymbol()).isEqualTo(new StockSymbol("MSFT"));
@@ -48,17 +49,16 @@ public final class CompanyControllerTest {
 
         assertThat(createdCompanyDto.getContent()).isEqualTo(companyDto);
         assertThat(createdCompanyDto.getLink("self").isPresent());
-        createdCompanyDto.getLink("self").stream().forEach(c ->
+        createdCompanyDto.getLink("self").ifPresent(c ->
                 assertThat(c.getHref()).endsWith("/companies/5"));
     }
 
     @Test
     public void companyShouldLinkToItself() {
         when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(mock(StockExchange.class));
-        val companyDto = new CompanyDTO(5, "Microsoft", asList(new ListingDTO("XNAS", "MSFT")));
-        val captor = ArgumentCaptor.forClass(Company.class);
+        final val companyDto = new CompanyDTO(5, "Microsoft", List.of(new ListingDTO("XNAS", "MSFT")));
 
-        val createdCompanyDto = controller.createCompany(companyDto);
+        final val createdCompanyDto = controller.createCompany(companyDto);
 
         assertThat(createdCompanyDto.getContent()).isEqualTo(companyDto);
         assertThat(createdCompanyDto.getRequiredLink("self").getHref()).endsWith(format("/companies/%d", 5));
@@ -66,27 +66,27 @@ public final class CompanyControllerTest {
 
     @Test
     public void shouldRejectDtoWithoutListings() {
-        val company = new CompanyDTO(1, "Microsoft", asList());
+        final val company = new CompanyDTO(1, "Microsoft", List.of());
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> controller.createCompany(company)).withMessage("Company to be created was expected to have one listing, but zero was found");
     }
 
     @Test
     public void shouldRetrieveCompany() {
-        val amazonExternalId = amazon().getExternalId().get();
+        final val amazonExternalId = amazon().getExternalId().get();
         when(companies.findByExternalId(new CompanyExternalId(amazonExternalId))).thenReturn(amazon());
 
-        val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
+        final val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
 
         assertThat(retrievedCompany.getContent()).isEqualTo(amazonDto());
     }
 
     @Test
     public void retrievedCompanyShouldLinkToItself() {
-        val amazonExternalId = amazon().getExternalId().get();
+        final val amazonExternalId = amazon().getExternalId().get();
         when(companies.findByExternalId(new CompanyExternalId(amazonExternalId))).thenReturn(amazon());
 
-        val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
+        final val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
 
         assertThat(retrievedCompany.getRequiredLink("self").getHref()).endsWith(format("/companies/%d", amazonExternalId));
     }

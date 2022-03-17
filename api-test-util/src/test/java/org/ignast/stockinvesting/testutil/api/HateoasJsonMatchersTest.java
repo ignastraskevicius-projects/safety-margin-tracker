@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.testutil.api;
 
+import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
@@ -11,8 +12,8 @@ final class HateoasJsonMatchersForRelAndHrefTest {
 
     @Test
     public void messageShouldIndicateExpectationAndActualOutcome() {
-        String testJson = "{}";
-        StringDescription desc = new StringDescription();
+        final val testJson = "{}";
+        final val desc = new StringDescription();
 
         matcher.describeTo(desc);
         matcher.describeMismatch(testJson, desc);
@@ -55,8 +56,8 @@ final class HateoasJsonMatchersForRelTest {
 
     @Test
     public void messageShouldIndicateExpectationAndActualOutcome() {
-        String testJson = "{}";
-        StringDescription desc = new StringDescription();
+        final val testJson = "{}";
+        final val desc = new StringDescription();
 
         matcher.describeTo(desc);
         matcher.describeMismatch(testJson, desc);

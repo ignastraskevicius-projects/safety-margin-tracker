@@ -1,7 +1,5 @@
 package org.ignast.stockinvesting.util.errorhandling.api.strictjackson;
 
-
-import com.fasterxml.jackson.core.JacksonException;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
@@ -18,7 +16,7 @@ public final class StrictIntegerDeserializer extends StdScalarDeserializer<Integ
     }
 
     @Override
-    public Integer deserialize(JsonParser p, DeserializationContext ctxt) throws IOException, JacksonException {
+    public Integer deserialize(final JsonParser p, final DeserializationContext ctxt) throws IOException {
         if (p.hasToken(JsonToken.VALUE_NUMBER_INT)) {
             return p.getIntValue();
         } else {

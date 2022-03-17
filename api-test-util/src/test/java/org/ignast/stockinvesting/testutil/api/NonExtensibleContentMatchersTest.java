@@ -16,16 +16,18 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.ignast.stockinvesting.testutil.api.MatcherWrapper.actualMatchingExpected;
 import static org.ignast.stockinvesting.testutil.api.MvcResultStubs.stubbedBody;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceContentMatchesJson;
+import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceLinksMatchesJson;
 import static org.mockito.Mockito.when;
 
 final class NonExtensibleContentMatchersTest {
 
-    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected((actual, expected) ->
-            actualMatchingExpected(actual, expected));
+    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
 
-    private void actualMatchingExpected(String actual, String expected) {
+    private void actualMatchingExpected(final String actual, final String expected) {
         try {
-            new NonExtensibleContentMatchers().bodyMatchesJson(expected).match(stubbedBody(actual));
+            bodyMatchesJson(expected).match(stubbedBody(actual));
         } catch (RuntimeException e) {
             throw e;
         } catch (Exception e) {
@@ -34,29 +36,28 @@ final class NonExtensibleContentMatchersTest {
     }
 
     @Test
-    public void shouldVerifySameJson() throws Exception {
+    public void shouldVerifySameJson() {
         matcher.assertThat("{\"list\":[1,2,3]}").matches("{\"list\":[1,2,3]}");
     }
 
     @Test
-    public void shouldFailToVerifysonWithExtraFields() throws Exception {
+    public void shouldFailToVerifysonWithExtraFields() {
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
                 matcher.assertThat("{\"A\":\"a\",\"B\":\"b\"}").matches("{\"A\":\"a\"}"));
     }
 
     @Test
-    public void shouldVerifyJsonWithUnorderedFields() throws Exception {
+    public void shouldVerifyJsonWithUnorderedFields() {
         matcher.assertThat("{\"list\":[1,2,3]}").matches("{\"list\":[1,3,2]}");
     }
 }
 
 final class NonExtensibleEntityContentMatchersTest {
-    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected((actual, expected) ->
-            actualMatchingExpected(actual, expected));
+    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
 
-    private void actualMatchingExpected(String actual, String expected) {
+    private void actualMatchingExpected(final String actual, final String expected) {
         try {
-            new NonExtensibleContentMatchers().resourceContentMatchesJson(expected).match(stubbedBody(actual));
+            resourceContentMatchesJson(expected).match(stubbedBody(actual));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -91,12 +92,11 @@ final class NonExtensibleEntityContentMatchersTest {
 }
 
 final class NonExtensibleEntityLinksMatchersTest {
-    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected((actual, expected) ->
-            actualMatchingExpected(actual, expected));
+    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
 
-    private void actualMatchingExpected(String actual, String expected) {
+    private void actualMatchingExpected(final String actual, final String expected) {
         try {
-            new NonExtensibleContentMatchers().resourceLinksMatchesJson(expected).match(stubbedBody(actual));
+            resourceLinksMatchesJson(expected).match(stubbedBody(actual));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -131,12 +131,12 @@ final class NonExtensibleEntityLinksMatchersTest {
 }
 
 final class MvcResultStubs {
-    static MvcResult stubbedBody(String content) {
-        val response = mock(MockHttpServletResponse.class, re -> when(getUtf8Content(re)).thenReturn(content));
+    static MvcResult stubbedBody(final String content) {
+        final val response = mock(MockHttpServletResponse.class, re -> when(getUtf8Content(re)).thenReturn(content));
         return mock(MvcResult.class, r -> when(r.getResponse()).thenReturn(response));
     }
 
-    private static String getUtf8Content(MockHttpServletResponse m) {
+    private static String getUtf8Content(final MockHttpServletResponse m) {
         try {
             return m.getContentAsString(StandardCharsets.UTF_8);
         } catch (UnsupportedEncodingException e) {
@@ -155,29 +155,29 @@ final class MvcResultStubsTest {
 final class MatcherWrapper {
     private final BiConsumer<String, String> underlyingMatcherActualExpected;
 
-    private MatcherWrapper(@NonNull BiConsumer<String, String> underlyingMatcherActualExpected) {
+    private MatcherWrapper(@NonNull final BiConsumer<String, String> underlyingMatcherActualExpected) {
         this.underlyingMatcherActualExpected = underlyingMatcherActualExpected;
     }
 
-    public static MatcherWrapper actualMatchingExpected(BiConsumer<String, String> underlyingMatcherActualExpected) {
+    public static MatcherWrapper actualMatchingExpected(final BiConsumer<String, String> underlyingMatcherActualExpected) {
         return new MatcherWrapper(underlyingMatcherActualExpected);
     }
 
-    public MatcherPerformer assertThat(String actual) {
+    public MatcherPerformer assertThat(final String actual) {
         return new MatcherPerformer(underlyingMatcherActualExpected, actual);
     }
 
-    final class MatcherPerformer {
+    final static class MatcherPerformer {
         private final BiConsumer<String, String> underlyingMatcherActualExpected;
 
         private final String actual;
 
-        private MatcherPerformer(BiConsumer<String, String> underlyingMatcherActualExpected, String actual) {
+        private MatcherPerformer(final BiConsumer<String, String> underlyingMatcherActualExpected, final String actual) {
             this.underlyingMatcherActualExpected = underlyingMatcherActualExpected;
             this.actual = actual;
         }
 
-        public void matches(String expected) {
+        public void matches(final String expected) {
             underlyingMatcherActualExpected.accept(actual, expected);
         }
     }

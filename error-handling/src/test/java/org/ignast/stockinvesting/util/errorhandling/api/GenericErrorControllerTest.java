@@ -22,46 +22,46 @@ public final class GenericErrorControllerTest {
 
     @ParameterizedTest
     @ValueSource(ints = { 404, 503 })
-    public void shouldPreserveHttpStatus(int statusCode) {
-        val request = MockitoUtils.mock(HttpServletRequest.class,
+    public void shouldPreserveHttpStatus(final int statusCode) {
+        final val request = MockitoUtils.mock(HttpServletRequest.class,
                 r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn(statusCode));
 
-        val response = controller.handleError(request);
+        final val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(statusCode));
     }
 
     @Test
     public void shouldIndicateServerErrorIfRequestIsNull() {
-        val response = controller.handleError(null);
+        final val response = controller.handleError(null);
 
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
     @Test
     public void shouldIndicateServerErrorIfStatusCodeRetrievedIsNull() {
-        val request = mock(HttpServletRequest.class);
+        final val request = mock(HttpServletRequest.class);
 
-        val response = controller.handleError(request);
+        final val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
     @Test
     public void shouldIndicateServerErrorIfStatusCodeRetrievedIsNotOfTypeInt() {
-        val request = MockitoUtils.mock(HttpServletRequest.class,
+        final val request = MockitoUtils.mock(HttpServletRequest.class,
                 r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn("nonInteger"));
 
-        val response = controller.handleError(request);
+        final val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
     @Test
     public void shouldNotExposeDetailsAboutClientErrors() {
-        val request = MockitoUtils.mock(HttpServletRequest.class, r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn(400));
+        final val request = MockitoUtils.mock(HttpServletRequest.class, r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn(400));
 
-        val response = controller.handleError(request);
+        final val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(response.getBody().getErrorName()).isNull();

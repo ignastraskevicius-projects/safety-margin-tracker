@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class MediaTypeInterceptorConfig implements WebMvcConfigurer {
     @SuppressWarnings("checkstyle:designforextension")
     @Override
-    public void addInterceptors(InterceptorRegistry registry) {
+    public void addInterceptors(final InterceptorRegistry registry) {
         registry.addInterceptor(new MediaTypeCheckerInterceptor());
     }
 }

@@ -1,10 +1,10 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import com.fasterxml.jackson.databind.JsonMappingException.Reference;
+import lombok.val;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,7 +23,7 @@ final class JacksonParsingErrorsExtractorTest {
 
     @Test
     public void shouldFailToExtractErrorsForNullPath() {
-        asList(integerParsingFailedAt(null), stringParsingFailedAt(null), dtoParsingFailedAt(null), listParsingFailedAt(null)).stream()
+        Stream.of(integerParsingFailedAt(null), stringParsingFailedAt(null), dtoParsingFailedAt(null), listParsingFailedAt(null))
                 .forEach(e -> assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
                         .isThrownBy(() -> extractor.extractError(e))
                         .withMessage("Jackson parsing failed without target type"));
@@ -31,34 +31,34 @@ final class JacksonParsingErrorsExtractorTest {
 
     @Test
     public void shouldExtractErrorsForRootPath() {
-        asList(integerParsingFailedAt(asList()), stringParsingFailedAt(asList()), dtoParsingFailedAt(asList()), listParsingFailedAt(asList())).stream()
+        Stream.of(integerParsingFailedAt(List.of()), stringParsingFailedAt(List.of()), dtoParsingFailedAt(List.of()), listParsingFailedAt(List.of()))
                 .forEach(e -> assertThat(extractor.extractError(e).getJsonPath()).isEqualTo("$"));
     }
 
     @Test
     public void shouldExtractErrorRequiringValueToBeString() {
-        ValidationErrorDTO validationError = extractor.extractError(stringParsingFailedAt(asList()));
+        final val validationError = extractor.extractError(stringParsingFailedAt(List.of()));
 
         assertThat(validationError.getErrorName()).isEqualTo("valueMustBeString");
     }
 
     @Test
     public void shouldExtractErrorRequiringValueToBeNumber() {
-        ValidationErrorDTO validationError = extractor.extractError(integerParsingFailedAt(asList()));
+        final val validationError = extractor.extractError(integerParsingFailedAt(List.of()));
 
         assertThat(validationError.getErrorName()).isEqualTo("valueMustBeInteger");
     }
 
     @Test
     public void shouldExtractErrorRequiringValueToBeObject() {
-        ValidationErrorDTO validationError = extractor.extractError(dtoParsingFailedAt(asList()));
+        final val validationError = extractor.extractError(dtoParsingFailedAt(List.of()));
 
         assertThat(validationError.getErrorName()).isEqualTo("valueMustBeObject");
     }
 
     @Test
     public void shouldExtractErrorRequiringValueToBeArray() {
-        ValidationErrorDTO validationError = extractor.extractError(listParsingFailedAt(asList()));
+        final val validationError = extractor.extractError(listParsingFailedAt(List.of()));
 
         assertThat(validationError.getErrorName()).isEqualTo("valueMustBeArray");
     }
@@ -79,33 +79,33 @@ final class JacksonParsingErrorsExtractorTest {
 
     @Test
     public void shouldPreserveJsonPathForFields() {
-        List<Reference> path = asList(toField(new CityDTO(), "population"));
+        final val path = List.of(toField(new CityDTO(), "population"));
 
-        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
-                .map(e -> extractor.extractError(e))
+        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path))
+                .map(extractor::extractError)
                 .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population"));
     }
 
     @Test
     public void shouldPreserveJsonPathForNestedFields() {
-        List<Reference> path = asList(toField(new CityDTO(), "population"), toField(new PopulationDTO(), "growth"));
+        final val path = asList(toField(new CityDTO(), "population"), toField(new PopulationDTO(), "growth"));
 
-        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
-                .map(e -> extractor.extractError(e))
+        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path))
+                .map(extractor::extractError)
                 .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population.growth"));
     }
 
     @Test
     public void shouldPreserveJsonPathForArrays() {
-        List<Reference> path = asList(ReferenceMock.toIndex(new ArrayList(), 5));
+        final val path = List.of(ReferenceMock.toIndex(List.of(), 5));
 
-        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path)).stream()
-                .map(e -> extractor.extractError(e)).forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$[5]"));
+        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path))
+                .map(extractor::extractError).forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$[5]"));
     }
 
-    class CityDTO {
+    private static final class CityDTO {
     }
 
-    class PopulationDTO {
+    private static final class PopulationDTO {
     }
 }

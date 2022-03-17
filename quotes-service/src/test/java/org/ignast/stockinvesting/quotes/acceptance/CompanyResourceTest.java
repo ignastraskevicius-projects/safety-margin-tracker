@@ -52,7 +52,7 @@ public final class CompanyResourceTest {
     }
 
     @DynamicPropertySource
-    private static void registedDatasource(DynamicPropertyRegistry registry) {
+    private static void registedDatasource(final DynamicPropertyRegistry registry) {
         registry.add("alphavantage.url", () -> format("http://localhost:%d", ALPHAVANTAGE.getMappedPort(8080)));
         registry.add("spring.datasource.url", () -> MYSQL.getJdbcUrl().replace("/test", "/quotes"));
         registry.add("spring.datasource.username", () -> "root");
@@ -61,7 +61,7 @@ public final class CompanyResourceTest {
 
     @Test
     public void shouldCreateCompany() throws JSONException {
-        val company = quotesTraversors.startAt(rootResourceOn(port))
+        final val company = quotesTraversors.startAt(rootResourceOn(port))
                 .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"MSFT\"}]}"))
                 .perform();
         assertThat(company.getStatusCode()).isEqualTo(CREATED);
@@ -70,7 +70,7 @@ public final class CompanyResourceTest {
 
     @Test
     public void shouldNotCreateCompaniesForUnsupportedSymbols() throws JSONException {
-        val company = quotesTraversors.startAt(rootResourceOn(port))
+        final val company = quotesTraversors.startAt(rootResourceOn(port))
                 .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AAAA\"}]}"))
                 .perform();
         assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
@@ -79,7 +79,7 @@ public final class CompanyResourceTest {
 
     @Test
     public void shouldRetrieveCreatedCompany() throws JSONException {
-        val company = quotesTraversors.startAt(rootResourceOn(port))
+        final val company = quotesTraversors.startAt(rootResourceOn(port))
                 .hop(f -> f.put("quotes:company", "{\"id\":5,\"name\":\"Microsoft\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}"))
                 .hop(f -> f.get("self"))
                 .perform();

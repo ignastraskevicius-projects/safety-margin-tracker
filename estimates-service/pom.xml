@@ -59,5 +59,9 @@
             <groupId>org.ignast.stock-investing</groupId>
             <artifactId>api-test-util</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.ignast.stock-investing</groupId>
+            <artifactId>api-test-util</artifactId>
+        </dependency>
     </dependencies>
 </project>

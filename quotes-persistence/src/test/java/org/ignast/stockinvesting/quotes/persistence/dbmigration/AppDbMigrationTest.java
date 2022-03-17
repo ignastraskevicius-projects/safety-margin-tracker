@@ -30,7 +30,7 @@ public final class AppDbMigrationTest {
 
     @BeforeAll
     public static void setup() {
-        val dataSource = getDataSourceTo(APP_DB);
+        final val dataSource = getDataSourceTo(APP_DB);
         db = new JdbcTemplate(dataSource);
     }
 
@@ -44,7 +44,7 @@ public final class AppDbMigrationTest {
         @AfterEach
         public void teardown() {
             Flyway.configure().dataSource(getDataSourceTo(APP_DB)).load().migrate();
-            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
+            final val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
             jdbcTemplate.execute("DROP TABLE flyway_schema_history;");
         }
 
@@ -65,7 +65,7 @@ public final class AppDbMigrationTest {
         @AfterEach
         public void teardown() {
             Flyway.configure().dataSource(getDataSourceTo(APP_DB)).load().migrate();
-            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
+            final val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
             jdbcTemplate.execute("DROP TABLE flyway_schema_history;");
         }
 
@@ -76,22 +76,22 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldAcceptCompany() {
-            val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'Amazon','AMZN','XNYS')";
             db.execute(insertAmazon);
         }
 
         @Test
         public void shouldAutoincrementId() {
-            val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertAmazon = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (15,'Amazon','AMZN','XNAS')";
-            val insertMicrosoft = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertMicrosoft = "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (16,'Microsoft','MSFT','XNAS')";
             db.execute(insertAmazon);
             db.execute(insertMicrosoft);
 
-            Integer amazonId = db.queryForObject("SELECT id FROM company WHERE external_id = 15", Integer.class);
-            Integer microsoftId = db.queryForObject("SELECT id FROM company WHERE external_id = 16", Integer.class);
+            final val amazonId = db.queryForObject("SELECT id FROM company WHERE external_id = 15", Integer.class);
+            final val microsoftId = db.queryForObject("SELECT id FROM company WHERE external_id = 16", Integer.class);
             assertThat(amazonId).isGreaterThan(0);
             assertThat(microsoftId).isGreaterThan(0);
             assertThat(amazonId + 1).isEqualTo(microsoftId);
@@ -99,10 +99,10 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldRejectCompanyWithSameInternalId() {
-            val externalId = 1;
-            val insertAmazon = format("INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val externalId = 1;
+            final val insertAmazon = format("INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1, 2,'Amazon','AMZN','XNAS')", externalId);
-            val insertHsbc = format("INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertHsbc = format("INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1, 3,'Santander','HSBC','XLON')", externalId);
 
             db.execute(insertAmazon);
@@ -113,10 +113,10 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldRejectCompanyWithSameExternalId() {
-            val externalId = 1;
-            val insertAmazon = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val externalId = 1;
+            final val insertAmazon = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (%d,'Amazon','AMZN','XNYS')", externalId);
-            val insertHsbc = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertHsbc = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (%d,'Santander','HSBC','XLON')", externalId);
 
             db.execute(insertAmazon);
@@ -127,11 +127,11 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldRejectCompanyWithAlreadyExistingListing() {
-            val symbol = "AMZN";
-            val mic = "XNYS";
-            val insertAmazonInUs = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val symbol = "AMZN";
+            final val mic = "XNYS";
+            final val insertAmazonInUs = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'Amazon','%s','%s')", symbol, mic);
-            val insertAnotherAmazonInUs = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertAnotherAmazonInUs = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (2,'Microsoft','%s','%s')", symbol, mic);
 
             db.execute(insertAmazonInUs);
@@ -141,10 +141,10 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldAcceptCompaniesWithSameSymbolInDifferentMarkets() {
-            val symbol = "X";
-            val insertXsymbolInTse = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val symbol = "X";
+            final val insertXsymbolInTse = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'TMX group','%s','XTSX')", symbol);
-            val insertXsymbolInNyse = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertXsymbolInNyse = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (2,'United States steel corporation','%s','XNYS')", symbol);
 
             db.execute(insertXsymbolInTse);
@@ -153,10 +153,10 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldAcceptCompaniesWithDifferentSymbolsInOneMarket() {
-            val mic = "XNAS";
-            val insertAmazon = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val mic = "XNAS";
+            final val insertAmazon = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'Amazon','AMZN','%s')", mic);
-            val insertMicrosoft = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
+            final val insertMicrosoft = format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (2,'Microsoft','MSFT','%s')", mic);
 
             db.execute(insertAmazon);
@@ -165,14 +165,14 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldPermitLongEnoughCompanyNames() {
-            val notTooLongName = "c".repeat(255);
+            final val notTooLongName = "c".repeat(255);
             db.execute(format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'%s','FR','{}')", notTooLongName));
         }
 
         @Test
         public void shouldPermit6charStockSymbols() {
-            val notTooLongSymbol = "123456";
+            final val notTooLongSymbol = "123456";
             db.execute(format("INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +
                     "VALUES (1,'AMZN','%s','XNAS')", notTooLongSymbol));
         }
@@ -188,7 +188,7 @@ public final class AppDbMigrationTest {
         @AfterEach
         public void teardown() {
             Flyway.configure().dataSource(getDataSourceTo(APP_DB)).load().migrate();
-            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
+            final val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
             jdbcTemplate.execute("DROP TABLE flyway_schema_history;");
         }
 

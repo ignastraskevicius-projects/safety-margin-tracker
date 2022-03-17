@@ -32,10 +32,10 @@ import static org.springframework.http.HttpStatus.OK;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class CompanyResourceTest {
     @Container
-    private static final GenericContainer alphavantange = new GenericContainer(DockerImageName.parse(System.getProperty("alphavantage.image"))).withExposedPorts(8080);
+    private static final GenericContainer ALPHAVANTAGE = new GenericContainer(DockerImageName.parse(System.getProperty("alphavantage.image"))).withExposedPorts(8080);
 
     @Container
-    private static final MySQLContainer mysql = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");
+    private static final MySQLContainer MYSQL = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");
 
     @LocalServerPort
     private int port;
@@ -53,8 +53,8 @@ public class CompanyResourceTest {
 
     @DynamicPropertySource
     private static void registedDatasource(DynamicPropertyRegistry registry) {
-        registry.add("alphavantage.url", () -> format("http://localhost:%d", alphavantange.getMappedPort(8080)));
-        registry.add("spring.datasource.url", () -> mysql.getJdbcUrl().replace("/test", "/quotes"));
+        registry.add("alphavantage.url", () -> format("http://localhost:%d", ALPHAVANTAGE.getMappedPort(8080)));
+        registry.add("spring.datasource.url", () -> MYSQL.getJdbcUrl().replace("/test", "/quotes"));
         registry.add("spring.datasource.username", () -> "root");
         registry.add("spring.datasource.password", () -> "test");
     }

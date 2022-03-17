@@ -32,14 +32,14 @@ import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactor
 public class DockerizedDevMysqlIT {
 
     @Container
-    public static final MySQLContainer mysql = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");
+    public static final MySQLContainer MYSQL = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");
 
     @Autowired
     private CompanyRepository companyRepository;
 
     @DynamicPropertySource
     private static void registerDatasource(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", () -> mysql.getJdbcUrl().replaceFirst("/test", "/quotes"));
+        registry.add("spring.datasource.url", () -> MYSQL.getJdbcUrl().replaceFirst("/test", "/quotes"));
         registry.add("spring.datasource.username", () -> "root");
         registry.add("spring.datasource.password", () -> "test");
     }

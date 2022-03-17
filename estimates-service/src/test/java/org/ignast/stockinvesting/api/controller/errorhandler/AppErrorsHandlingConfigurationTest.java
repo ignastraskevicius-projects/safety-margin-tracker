@@ -39,7 +39,7 @@ class AppErrorsHandlingConfigurationTest {
         return assertThat(constructor.construct(types.get(type))).isInstanceOf(type);
     }
 
-    private interface FromConstructorToObject {
+    private static interface FromConstructorToObject {
         Object construct(From1ParamConstructor constructor);
     }
 }

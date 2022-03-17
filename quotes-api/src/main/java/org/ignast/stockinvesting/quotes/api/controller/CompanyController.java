@@ -1,10 +1,23 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
 import lombok.val;
-import org.ignast.stockinvesting.quotes.domain.*;
+import org.ignast.stockinvesting.quotes.domain.Companies;
+import org.ignast.stockinvesting.quotes.domain.Company;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.StockExchanges;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.ResponseStatus;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 

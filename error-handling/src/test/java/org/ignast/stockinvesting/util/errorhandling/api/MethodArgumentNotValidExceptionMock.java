@@ -17,8 +17,14 @@ import java.util.function.Consumer;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.*;
-import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.*;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaLangOverride;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaLangSuppressWarning;
+import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.anyMethodParameter;
+import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withErrorFieldViolation;
+import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withFieldErrorCausedBy;
+import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withFieldErrorSourceNotBeingConstraintViolation;
+import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withFieldErrors;
+import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withMultipleFields;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

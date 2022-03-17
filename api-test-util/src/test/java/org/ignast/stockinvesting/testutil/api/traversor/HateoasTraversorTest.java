@@ -7,9 +7,8 @@ import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
-import org.springframework.http.*;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.test.web.client.response.MockRestResponseCreators;
 import org.springframework.web.client.RestTemplate;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -25,7 +24,9 @@ import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.*;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(HateoasTraversor.Factory.class)
 public class HateoasTraversorTest {
@@ -69,8 +70,8 @@ public class HateoasTraversorTest {
 
     @Test
     public void traverseGetHop() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
-        server.expect(requestTo("http://root/company")).andExpect(method(GET)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("company", "http://any"), APP_V1));
+        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+        server.expect(requestTo("http://root/company")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://any"), APP_V1));
 
         val response = traversors.startAt("http://root").hop(f -> f.get("company")).perform();
 
@@ -79,8 +80,8 @@ public class HateoasTraversorTest {
 
     @Test
     public void traversePutHop() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
-        server.expect(requestTo("http://root/company")).andExpect(method(PUT)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
+        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+        server.expect(requestTo("http://root/company")).andExpect(method(PUT)).andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
 
         val response = traversors.startAt("http://root").hop(f -> f.put("company", "someRequest")).perform();
 
@@ -89,9 +90,9 @@ public class HateoasTraversorTest {
 
     @Test
     public void traverseMultipleHops() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
-        server.expect(requestTo("http://root/company")).andExpect(method(GET)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("president", "http://root/president"), APP_V1));
-        server.expect(requestTo("http://root/president")).andExpect(method(GET)).andRespond(MockRestResponseCreators.withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
+        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+        server.expect(requestTo("http://root/company")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("president", "http://root/president"), APP_V1));
+        server.expect(requestTo("http://root/president")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
 
         val response = traversors
                 .startAt("http://root")

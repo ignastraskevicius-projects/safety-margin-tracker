@@ -13,10 +13,16 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.*;
+import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.dtoParsingFailedAt;
+import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.integerParsingFailedAt;
 import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.listParsingFailedAt;
+import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.stringParsingFailedAt;
+import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.undefinedTypeParsingException;
+import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.unexpectedTypeParsingFailed;
 import static org.ignast.stockinvesting.util.errorhandling.api.ReferenceMock.toField;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public class MismatchedInputExceptionMock {
     public static MismatchedInputException stringParsingFailedAt(List<Reference> path) {

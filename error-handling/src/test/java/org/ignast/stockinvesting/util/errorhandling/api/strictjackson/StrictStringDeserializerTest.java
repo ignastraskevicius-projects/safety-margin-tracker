@@ -5,16 +5,16 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.module.SimpleModule;
-import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictDeserializingException;
-import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializer;
-import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializingException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
 import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 class StrictStringDeserializerTest {
 

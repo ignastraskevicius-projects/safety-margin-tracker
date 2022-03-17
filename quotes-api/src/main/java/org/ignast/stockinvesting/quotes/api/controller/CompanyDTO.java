@@ -38,6 +38,14 @@ public final class CompanyDTO {
             @JsonProperty(value = "listings") List<ListingDTO> listings) {
         this.id = id;
         this.name = name;
-        this.listings = listings != null ? listings.stream().filter(Objects::nonNull).collect(Collectors.toList()) : null;
+        this.listings = withoutNullElements(listings);
+    }
+
+    private List<ListingDTO> withoutNullElements(List<ListingDTO> listings) {
+        if (listings != null) {
+            return listings.stream().filter(Objects::nonNull).collect(Collectors.toList());
+        } else {
+            return null;
+        }
     }
 }

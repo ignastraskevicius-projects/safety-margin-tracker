@@ -53,14 +53,20 @@ public class CompanyJsonBodyFactory {
     }
 
     private String appendCommaIfNotEmpty(String jsonPair) {
-        return jsonPair + (jsonPair.isEmpty() ? "" : ",");
+        if (jsonPair.isEmpty()) {
+            return "";
+        } else {
+            return jsonPair + ",";
+        }
     }
 
     private String prependCommaIfNotEmpty(String jsonPair) {
-        return (jsonPair.isEmpty() ? "" : ",") + jsonPair;
+        if (jsonPair.isEmpty()) {
+            return "";
+        } else {
+            return "," + jsonPair;
+        }
     }
-
-
 }
 
 class CompanyJsonBodyFactoryTest {

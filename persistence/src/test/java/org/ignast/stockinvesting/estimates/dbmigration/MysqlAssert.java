@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -70,8 +69,6 @@ public class MysqlAssert extends AbstractAssert<MysqlAssert, JdbcTemplate> {
             }
         }
     }
-
-
 }
 
 class MysqlAssertContainsTableTest {
@@ -106,17 +103,14 @@ class MysqlAssertContainsTableTest {
     @Test
     public void shouldFailIfResultsContainMoreThanOneColumn() {
         val secondColumn = "another_column_" + RandomStringUtils.randomAlphabetic(3).toLowerCase();
-        when(database.queryForList("SHOW TABLES;")).thenReturn(asList(new LinkedHashMap<>(){{
-            put("Tables_in_schema", "provider");
-            put(secondColumn, "client");
-        }}));
+        when(database.queryForList("SHOW TABLES;")).thenReturn(aRecordInOrderedColumns("Tables_in_schema", "provider", secondColumn, "client"));
 
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("order")).withMessage(format("Results from the database showing tables expected to have 1 column, but had multiple [Tables_in_schema, %s]", secondColumn));
     }
 
     @Test
     public void shouldFailIfResultsDoNotContainColumnStartingWithLiteralTables() {
-        when(database.queryForList("SHOW TABLES;")).thenReturn(asList(asMap("column_not_starting_with_tables", "any")));
+        when(database.queryForList("SHOW TABLES;")).thenReturn(asList(Map.of("column_not_starting_with_tables", "any")));
 
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("order")).withMessage("Results from the database showing tables expected to have a column starting with 'Tables', but was [column_not_starting_with_tables]");
     }
@@ -126,11 +120,7 @@ class MysqlAssertContainsTableTest {
                 asMap("Tables_in_schema", "client"),
                 asMap("Tables_in_schema", "order"),
                 asMap("Tables_in_schema", "item"));
-        return new HashMap<String, List<Map<String, Object>>>() {{
-            put("client", threeTables);
-            put("order", threeTables);
-            put("item", threeTables);
-        }};
+        return Map.of("client", threeTables, "order", threeTables, "item", threeTables);
     }
 
     @Test
@@ -142,10 +132,15 @@ class MysqlAssertContainsTableTest {
         });
     }
 
+    private List<Map<String, Object>> aRecordInOrderedColumns(String column1Name, String value1, String column2Name, String value2) {
+        val dbRecord = new LinkedHashMap<String, Object>();
+        dbRecord.put(column1Name, value1);
+        dbRecord.put(column2Name, value2);
+        return asList(dbRecord);
+    }
+
     private Map<String, Object> asMap(String column, String value) {
-        return new HashMap<>() {{
-            put(column, value);
-        }};
+        return Map.of(column, value);
     }
 }
 
@@ -172,9 +167,7 @@ class MysqlAssertNotContainsTableTest {
                 asMap("Tables_in_schema", "client"),
                 asMap("Tables_in_schema", "provider"),
                 asMap("Tables_in_schema", "order"));
-        return new HashMap<String, List<Map<String, Object>>>() {{
-            put("users", threeTables);
-        }};
+        return Map.of("users", threeTables);
     }
 
     @Test
@@ -189,10 +182,7 @@ class MysqlAssertNotContainsTableTest {
     @Test
     public void shouldFailIfResultsContainMoreThanOneColumn() {
         val secondColumn = "another_column_" + RandomStringUtils.randomAlphabetic(3).toLowerCase();
-        when(database.queryForList("SHOW TABLES;")).thenReturn(asList(new LinkedHashMap<>(){{
-            put("Tables_in_schema", "provider");
-            put(secondColumn, "client");
-        }}));
+        when(database.queryForList("SHOW TABLES;")).thenReturn(aRecordInOrderedColumns("Tables_in_schema", "provider", secondColumn, "client"));
 
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> MysqlAssert.assertThat(database).notContainsTable("order")).withMessage(format("Results from the database showing tables expected to have 1 column, but had multiple [Tables_in_schema, %s]", secondColumn));
     }
@@ -209,11 +199,7 @@ class MysqlAssertNotContainsTableTest {
                 asMap("Tables_in_schema", "client"),
                 asMap("Tables_in_schema", "order"),
                 asMap("Tables_in_schema", "item"));
-        return new HashMap<String, List<Map<String, Object>>>() {{
-            put("client", threeTables);
-            put("order", threeTables);
-            put("item", threeTables);
-        }};
+        return Map.of("client", threeTables, "order", threeTables, "item", threeTables);
     }
 
     @Test
@@ -222,14 +208,18 @@ class MysqlAssertNotContainsTableTest {
             when(database.queryForList("SHOW TABLES;")).thenReturn(result);
 
             assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> MysqlAssert.assertThat(database).notContainsTable(table)).withMessage(format("List of tables in the database [client, order, item] expected not to contain '%s' table, but '%s' table did exist", table, table));
-
         });
     }
 
+    private List<Map<String, Object>> aRecordInOrderedColumns(String column1Name, String value1, String column2Name, String value2) {
+        val dbRecord = new LinkedHashMap<String, Object>();
+        dbRecord.put(column1Name, value1);
+        dbRecord.put(column2Name, value2);
+        return asList(dbRecord);
+    }
+
     private Map<String, Object> asMap(String column, String value) {
-        return new HashMap<>() {{
-            put(column, value);
-        }};
+        return Map.of(column, value);
     }
 }
 

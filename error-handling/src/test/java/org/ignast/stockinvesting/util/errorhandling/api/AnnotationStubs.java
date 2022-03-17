@@ -41,6 +41,7 @@ public class AnnotationStubs {
         return annotation;
     }
 
+    @SuppressWarnings("checkstyle:anoninnerlength")
     static NotNull javaxValidationNotNull() {
         NotNull annotation = new NotNull() {
 
@@ -68,6 +69,7 @@ public class AnnotationStubs {
         return annotation;
     }
 
+    @SuppressWarnings("checkstyle:anoninnerlength")
     static Pattern javaxValidationPattern() {
         Pattern annotation = new Pattern() {
 
@@ -105,6 +107,7 @@ public class AnnotationStubs {
         return annotation;
     }
 
+    @SuppressWarnings("checkstyle:anoninnerlength")
     static DomainClassConstraint javaxValidationDomainClassConstraint() {
         val annotation = new DomainClassConstraint() {
 
@@ -137,6 +140,7 @@ public class AnnotationStubs {
         return annotation;
     }
 
+    @SuppressWarnings("checkstyle:anoninnerlength")
     static Size javaxValidationSize() {
         Size annotation = new Size() {
 

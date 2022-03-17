@@ -67,6 +67,7 @@ class DomainClassBackedByStringValidatorTest {
         assertThat(validator.isValid("argument", null)).isTrue();
     }
 
+    @SuppressWarnings("checkstyle:anoninnerlength")
     private DomainClassConstraint constrainedBy(Class<?> domainClass) {
         val constraint = new DomainClassConstraint() {
 
@@ -165,6 +166,7 @@ class DomainClassBackedByIntegerValidatorTest {
         assertThat(validator.isValid(4, null)).isTrue();
     }
 
+    @SuppressWarnings("checkstyle:anoninnerlength")
     private DomainClassConstraint constrainedBy(Class<?> domainClass) {
         val constraint = new DomainClassConstraint() {
 

@@ -19,6 +19,7 @@ import static org.ignast.stockinvesting.quotes.persistence.dbmigration.AppDbCont
 
 public final class FlywayIdempotentMigration {
     private final JdbcTemplate jdbcTemplate;
+
     private final DataSource dataSource;
 
     FlywayIdempotentMigration(DataSource dataSource) {
@@ -68,6 +69,7 @@ final class FlywayIdempotentMigrationTest {
     private static final String FLYWAY_METADATA_TABLE = "flyway_schema_history";
 
     private JdbcTemplate db;
+
     private FlywayIdempotentMigration idempotentMigration;
 
     @BeforeEach

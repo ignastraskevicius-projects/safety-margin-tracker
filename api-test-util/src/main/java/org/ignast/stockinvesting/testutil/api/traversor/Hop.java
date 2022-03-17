@@ -18,7 +18,9 @@ public interface Hop {
 
     final class Factory {
         private final RestTemplate restTemplate;
+
         private final MediaType appMediaType;
+
         private final HrefExtractor hrefExtractor;
 
         Factory(@NonNull MediaType appMediaType, @NonNull RestTemplate restTemplate, @NonNull HrefExtractor hrefExtractor) {
@@ -35,11 +37,15 @@ public interface Hop {
             return new GetHop(appMediaType, restTemplate, hrefExtractor, rel);
         }
 
-        private static class PutHop extends TraversableHop {
+        private static final class PutHop extends TraversableHop {
             private final MediaType appMediaType;
+
             private final RestTemplate restTemplate;
+
             private final HrefExtractor hrefExtractor;
+
             private final String rel;
+
             private final String body;
 
             private PutHop(MediaType appMediaType, RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel, @NonNull String body) {
@@ -62,10 +68,13 @@ public interface Hop {
             }
         }
 
-        private static class GetHop extends TraversableHop {
+        private static final class GetHop extends TraversableHop {
             private final MediaType appMediaType;
+
             private final RestTemplate restTemplate;
+
             private final HrefExtractor hrefExtractor;
+
             private final String rel;
 
             private GetHop(MediaType appMediaType, RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel) {

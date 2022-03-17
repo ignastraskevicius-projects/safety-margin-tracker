@@ -8,6 +8,7 @@ import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
 
 public final class JsonAssert {
     private final String actualJson;
+
     private final JSONCompareMode comparisonMode;
 
     public JsonAssert(String actualJson, JSONCompareMode strict) {

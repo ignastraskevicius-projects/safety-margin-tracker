@@ -167,9 +167,10 @@ final class MatcherWrapper {
         return new MatcherPerformer(underlyingMatcherActualExpected, actual);
     }
 
-    class MatcherPerformer {
-        private BiConsumer<String, String> underlyingMatcherActualExpected;
-        private String actual;
+    final class MatcherPerformer {
+        private final BiConsumer<String, String> underlyingMatcherActualExpected;
+
+        private final String actual;
 
         private MatcherPerformer(BiConsumer<String, String> underlyingMatcherActualExpected, String actual) {
             this.underlyingMatcherActualExpected = underlyingMatcherActualExpected;

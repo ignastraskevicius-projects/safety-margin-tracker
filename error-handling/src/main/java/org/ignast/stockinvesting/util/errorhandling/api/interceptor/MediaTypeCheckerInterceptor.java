@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletResponse;
 
 public final class MediaTypeCheckerInterceptor implements HandlerInterceptor {
     private static boolean PASS_ONTO_NEXT_HANDLER = true;
+
     private static int NOT_ACCEPTABLE = 406;
 
     @Override

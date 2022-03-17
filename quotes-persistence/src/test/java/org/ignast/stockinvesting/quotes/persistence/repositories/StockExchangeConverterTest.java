@@ -13,8 +13,10 @@ import static org.mockito.Mockito.when;
 final class StockExchangeConverterTest {
 
     private final MarketIdentifierCode nasdaqMic = new MarketIdentifierCode("XNAS");
+
     private final StockExchange nasdaqStockExchange = mock(StockExchange.class, e ->
             when(e.getMarketIdentifierCode()).thenReturn(nasdaqMic));
+
     private final StockExchanges stockExchanges = mock(StockExchanges.class, s ->
             when(s.getFor(nasdaqMic)).thenReturn(nasdaqStockExchange));
 

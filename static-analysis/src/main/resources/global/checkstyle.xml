@@ -4,6 +4,7 @@
 <module name="Checker">
 
     <module name="SuppressWarningsFilter"/>
+
     <module name="TreeWalker">
 
         <module name="SuppressWarningsHolder"/>
@@ -45,8 +46,25 @@
         <module name="DesignForExtension">
             <property name="ignoredAnnotations" value="Bean, PutMapping, GetMapping"/>
         </module>
+        <module name="EmptyBlock"/>
+        <module name="EmptyCatchBlock"/>
+        <module name="EmptyForInitializerPad"/>
+        <module name="EmptyForIteratorPad"/>
+        <module name="EmptyLineSeparator"/>
+        <module name="EmptyStatement"/>
+        <module name="EqualsAvoidNull"/>
+        <module name="EqualsHashCode"/>
+        <module name="ExecutableStatementCount"/>
+        <module name="ExplicitInitialization"/>
+        <module name="FallThrough"/>
+        <module name="FinalClass"/>
+
 
 
         <module name="UnusedImports"/>
     </module>
+
+
+    <module name="FileLength"/>
+    <module name="FileTabCharacter"/>
 </module>

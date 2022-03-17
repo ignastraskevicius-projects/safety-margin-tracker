@@ -28,8 +28,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RestController
 @RequestMapping("/companies")
 public class CompanyController {
-
     private Companies companies;
+
     private StockExchanges stockExchanges;
 
     public CompanyController(Companies companies, StockExchanges stockExchanges) {

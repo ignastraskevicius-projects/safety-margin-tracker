@@ -29,6 +29,7 @@ public final class HateoasJsonMatchers {
 
         static class ExistsRelWithHrefContainingString extends TypeSafeMatcher<String> {
             private String relName;
+
             private String hrefSubstring;
 
             public ExistsRelWithHrefContainingString(String relName, String hrefSubstring) {

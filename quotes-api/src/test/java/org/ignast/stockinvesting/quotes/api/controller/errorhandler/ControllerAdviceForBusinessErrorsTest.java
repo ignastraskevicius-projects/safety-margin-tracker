@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 
 public final class ControllerAdviceForBusinessErrorsTest {
     private ControllerAdviceForBusinessErrors errorHandler = new ControllerAdviceForBusinessErrors();
+
     @Test
     public void shouldHandleSymbolNotSupported() {
         assertThat(errorHandler.handleCompanyNotFound(mock(CompanyNotFound.class)).getErrorName()).isNull();

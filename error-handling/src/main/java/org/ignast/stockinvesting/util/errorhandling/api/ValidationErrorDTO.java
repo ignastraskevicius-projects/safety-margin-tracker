@@ -11,7 +11,7 @@ final class JsonPath {
 
     public static JsonPath fromJsonPath(String jsonPath) {
         requireNonNull(jsonPath, "JsonPath required to be non-null");
-        if (jsonPath.startsWith("$.") || jsonPath.startsWith("$[") || jsonPath.equals("$")) {
+        if (jsonPath.startsWith("$.") || jsonPath.startsWith("$[") || "$".equals(jsonPath)) {
             return new JsonPath(jsonPath);
         } else {
             throw new IllegalArgumentException(
@@ -36,7 +36,9 @@ final class JsonPath {
 
 public final class ValidationErrorDTO {
     private String jsonPath;
+
     private String message;
+
     private ViolationType type;
 
     public ValidationErrorDTO(JsonPath jsonPath, String message, ViolationType type) {

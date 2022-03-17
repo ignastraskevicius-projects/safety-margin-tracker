@@ -27,9 +27,10 @@ public class HrefExtractor {
         return new Extractor(previousResponse, rel).extract();
     }
 
-    private class Extractor {
-        private ResponseEntity<String> previousResponse;
-        private String rel;
+    private final class Extractor {
+        private final ResponseEntity<String> previousResponse;
+
+        private final String rel;
 
         private Extractor(ResponseEntity<String> previousResponse, String rel) {
             this.previousResponse = previousResponse;

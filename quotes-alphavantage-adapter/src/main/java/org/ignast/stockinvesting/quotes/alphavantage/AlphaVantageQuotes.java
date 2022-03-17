@@ -82,6 +82,7 @@ public class AlphaVantageQuotes implements QuotesRepository {
 final class QuoteResponseDTO {
     @Getter
     private final Optional<QuoteDTO> quote;
+
     @Getter
     private final Optional<String> error;
 

@@ -61,6 +61,7 @@ public final class FlywayAssert {
 
     static class LastMigration {
         private final String type;
+
         private final String version;
 
         LastMigration(String type, String version) {

@@ -21,8 +21,11 @@ import static java.util.stream.Stream.of;
 
 public final class HateoasTraversor {
     private final MediaType appMediaType;
+
     private final Hop.Factory hopFactory;
+
     private final List<Hop.TraversableHop> hops;
+
     private final String rootUri;
 
     private HateoasTraversor(MediaType appMediaType, Hop.Factory hopFactory, String rootUri, List<Hop.TraversableHop> hops) {
@@ -52,6 +55,7 @@ public final class HateoasTraversor {
     @Service
     public static final class Factory {
         private final Hop.Factory hopFactory;
+
         private final MediaType appMediaType;
 
         public Factory(RestTemplateBuilder builder, MediaType appMediaType) {

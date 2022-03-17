@@ -137,9 +137,10 @@ public final class MethodArgumentNotValidExceptionMock {
         return result;
     }
 
-    static class ViolationMockBuilder {
-        private ConstraintViolation violation = mock(ConstraintViolation.class);
-        private ConstraintDescriptor descriptor = null;
+    static final class ViolationMockBuilder {
+        private final ConstraintViolation violation = mock(ConstraintViolation.class);
+
+        private ConstraintDescriptor descriptor;
 
         public ViolationMockBuilder withDescriptor() {
             descriptor = mock(ConstraintDescriptor.class);

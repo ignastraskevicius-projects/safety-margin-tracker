@@ -34,6 +34,7 @@ public @interface DomainClassConstraint {
     public static class SupportedTypes {
         @NonNull
         private final Map<Class<?>, From1ParamConstructor<String>> typesConstructableFromString;
+
         private final Map<Class<?>, From1ParamConstructor<Integer>> typesConstructableFromInteger;
     }
 }

@@ -5,7 +5,7 @@ import java.util.List;
 
 public class StandardErrorDTO {
 
-    private String errorName;
+    private final String errorName;
 
     public StandardErrorDTO(String errorName) {
         this.errorName = errorName;
@@ -48,8 +48,8 @@ public class StandardErrorDTO {
         return errorName;
     }
 
-    public static class BodyDoesNotMatchSchemaErrorDTO extends StandardErrorDTO {
-        private List<ValidationErrorDTO> validationErrors;
+    public static final class BodyDoesNotMatchSchemaErrorDTO extends StandardErrorDTO {
+        private final List<ValidationErrorDTO> validationErrors;
 
         private BodyDoesNotMatchSchemaErrorDTO(List<ValidationErrorDTO> validationErrors) {
             super("bodyDoesNotMatchSchema");

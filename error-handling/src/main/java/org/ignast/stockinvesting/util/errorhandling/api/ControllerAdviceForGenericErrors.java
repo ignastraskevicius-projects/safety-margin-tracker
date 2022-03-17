@@ -17,6 +17,7 @@ import static java.util.Arrays.asList;
 @ControllerAdvice
 public final class ControllerAdviceForGenericErrors {
     private final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
+
     private final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
     public ControllerAdviceForGenericErrors(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,

@@ -8,12 +8,14 @@ import javax.sql.DataSource;
 
 
 public final class AppDbContainer {
-
-
     private static final String USERNAME = "test";
+
     private static final String PASSWORD = "test";
+
     private static final String DATABASE_NAME = "testschema";
+
     private static final MySQLContainer CONTAINER = new MySQLContainer("mysql:8.0.28-debian").withDatabaseName(DATABASE_NAME).withUsername(USERNAME).withPassword(PASSWORD);
+
     private AppDbContainer() {}
 
     public static MySQLContainer singleton() {

@@ -65,6 +65,5 @@ public final class GenericErrorControllerTest {
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(response.getBody().getErrorName()).isNull();
-        ;
     }
 }

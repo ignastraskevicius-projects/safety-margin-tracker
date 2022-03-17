@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
 import org.ignast.stockinvesting.util.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;

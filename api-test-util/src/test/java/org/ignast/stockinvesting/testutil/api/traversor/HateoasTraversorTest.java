@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
 import lombok.val;
-import org.ignast.stockinvesting.testutil.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;

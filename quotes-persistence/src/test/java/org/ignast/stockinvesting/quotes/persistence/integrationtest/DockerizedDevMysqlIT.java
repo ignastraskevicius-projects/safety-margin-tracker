@@ -19,7 +19,6 @@ import org.testcontainers.utility.DockerImageName;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
-import static org.mockito.Mockito.mock;
 
 @Testcontainers
 @DataJpaTest

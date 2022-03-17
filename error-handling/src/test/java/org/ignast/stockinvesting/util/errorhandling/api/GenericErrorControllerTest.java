@@ -1,12 +1,10 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import lombok.val;
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorController;
 import org.ignast.stockinvesting.util.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.mockito.Mockito;
 import org.springframework.http.HttpStatus;
 
 import javax.servlet.http.HttpServletRequest;

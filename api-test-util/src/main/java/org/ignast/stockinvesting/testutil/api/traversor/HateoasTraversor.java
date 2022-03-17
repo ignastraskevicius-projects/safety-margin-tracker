@@ -10,7 +10,6 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;

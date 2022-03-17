@@ -3,8 +3,6 @@ package org.ignast.stockinvesting.api.controller;
 import lombok.val;
 import org.ignast.stockinvesting.estimates.domain.Company;
 import org.ignast.stockinvesting.domain.Companies;
-import org.ignast.stockinvesting.estimates.domain.StockSymbol;
-import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

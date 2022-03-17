@@ -19,6 +19,17 @@
         <module name="AvoidDoubleBraceInitialization"/>
         <module name="AvoidEscapedUnicodeCharacters"/>
         <module name="AvoidInlineConditionals"/>
+        <module name="AvoidNestedBlocks"/>
+        <module name="AvoidNoArgumentSuperConstructorCall"/>
+        <module name="BooleanExpressionComplexity"/>
+        <module name="CatchParameterName"/>
+        <module name="ClassDataAbstractionCoupling"/>
+        <module name="ClassFanOutComplexity"/>
+        <module name="ClassMemberImpliedModifier" />
+        <module name="ClassTypeParameterName"/>
+        <module name="CommentsIndentation"/>
+        <module name="ConstantName"/>
+
 
         <module name="UnusedImports"/>
         <module name="AvoidStarImport"/>

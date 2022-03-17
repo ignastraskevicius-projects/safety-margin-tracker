@@ -24,13 +24,13 @@ import static org.ignast.stockinvesting.quotes.persistence.dbmigration.AppDbCont
 public class AppDbMigrationTest {
 
     @Container
-    private static final MySQLContainer appDb = AppDbContainer.singleton();
+    private static final MySQLContainer APP_DB = AppDbContainer.singleton();
 
     private static JdbcTemplate db;
 
     @BeforeAll
     public static void setup() {
-        val dataSource = getDataSourceTo(appDb);
+        val dataSource = getDataSourceTo(APP_DB);
         db = new JdbcTemplate(dataSource);
     }
 
@@ -38,13 +38,13 @@ public class AppDbMigrationTest {
     class V1CurrentProductionState {
         @BeforeEach
         public void setup() {
-            Flyway.configure().dataSource(getDataSourceTo(appDb)).target("1").load().migrate();
+            Flyway.configure().dataSource(getDataSourceTo(APP_DB)).target("1").load().migrate();
         }
 
         @AfterEach
         public void teardown() {
-            Flyway.configure().dataSource(getDataSourceTo(appDb)).load().migrate();
-            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(appDb));
+            Flyway.configure().dataSource(getDataSourceTo(APP_DB)).load().migrate();
+            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
             jdbcTemplate.execute("DROP TABLE flyway_schema_history;");
         }
 
@@ -59,13 +59,13 @@ public class AppDbMigrationTest {
 
         @BeforeEach
         public void setup() {
-            Flyway.configure().dataSource(getDataSourceTo(appDb)).target("2").load().migrate();
+            Flyway.configure().dataSource(getDataSourceTo(APP_DB)).target("2").load().migrate();
         }
 
         @AfterEach
         public void teardown() {
-            Flyway.configure().dataSource(getDataSourceTo(appDb)).load().migrate();
-            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(appDb));
+            Flyway.configure().dataSource(getDataSourceTo(APP_DB)).load().migrate();
+            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
             jdbcTemplate.execute("DROP TABLE flyway_schema_history;");
         }
 
@@ -182,13 +182,13 @@ public class AppDbMigrationTest {
     class V3 {
         @BeforeEach
         public void setup() {
-            Flyway.configure().dataSource(getDataSourceTo(appDb)).target("3").load().migrate();
+            Flyway.configure().dataSource(getDataSourceTo(APP_DB)).target("3").load().migrate();
         }
 
         @AfterEach
         public void teardown() {
-            Flyway.configure().dataSource(getDataSourceTo(appDb)).load().migrate();
-            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(appDb));
+            Flyway.configure().dataSource(getDataSourceTo(APP_DB)).load().migrate();
+            val jdbcTemplate = new JdbcTemplate(getDataSourceTo(APP_DB));
             jdbcTemplate.execute("DROP TABLE flyway_schema_history;");
         }
 

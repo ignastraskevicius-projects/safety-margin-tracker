@@ -145,7 +145,7 @@ class FlywayAssertLastMigrationTest {
         consumer.consume(v1, v2);
     }
 
-    interface TwoVersionsConsumer {
+    private static interface TwoVersionsConsumer {
         void consume(String first, String second);
     }
 }

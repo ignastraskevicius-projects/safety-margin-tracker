@@ -34,7 +34,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public class AlphaVantageStubIT {
 
-    private ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @RegisterExtension
     private WireMockExtension wireMock = WireMockExtension.newInstance().options(wireMockConfig().usingFilesUnderDirectory("src/main/resources/wiremock/")).build();
@@ -109,15 +109,15 @@ public class AlphaVantageStubIT {
 
 @Testcontainers
 class DockerizedAlphaVantageStubIT {
-    private static final String dockerImageName = System.getProperty("docker.image");
+    private static final String DOCKER_IMAGE_NAME = System.getProperty("docker.image");
 
     @Container
-    public static final GenericContainer container = new GenericContainer(DockerImageName.parse(dockerImageName)).withExposedPorts(8080);
+    public static final GenericContainer CONTAINER = new GenericContainer(DockerImageName.parse(DOCKER_IMAGE_NAME)).withExposedPorts(8080);
 
     @Test
     public void shouldContainQuotedPrices() throws IOException, InterruptedException {
         val client = HttpClient.newHttpClient();
-        val port = container.getMappedPort(8080);
+        val port = CONTAINER.getMappedPort(8080);
         val uri = format("http://localhost:%d/query?%s", port, validParamsBuilder().build().toString());
         val request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
 
@@ -131,10 +131,10 @@ class DockerizedAlphaVantageStubIT {
 @JsonAutoDetect(fieldVisibility = JsonAutoDetect.Visibility.ANY)
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "function", "symbol", "apikey" })
-class QueryParams {
-    String function;
-    String apikey;
-    String symbol;
+final class QueryParams {
+    private final String function;
+    private final String apikey;
+    private final String symbol;
 
     private static String API_KEY = "1OFDQOSYMBH3NP";
 

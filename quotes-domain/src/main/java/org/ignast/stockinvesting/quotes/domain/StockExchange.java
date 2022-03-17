@@ -54,7 +54,7 @@ public class StockExchange {
         return marketIdentifierCode;
     }
 
-    private interface StockExchangeSpecificBehaviour {
+    private static interface StockExchangeSpecificBehaviour {
         void checkRequirements();
 
         Money transformPrice(Money price);

@@ -12,7 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.function.BiConsumer;
 
-import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.ignast.stockinvesting.testutil.api.MatcherWrapper.actualMatchingExpected;

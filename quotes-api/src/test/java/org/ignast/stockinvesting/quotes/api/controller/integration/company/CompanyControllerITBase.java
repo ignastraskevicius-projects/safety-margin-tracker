@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
 import org.ignast.stockinvesting.quotes.domain.Companies;
-import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.api.controller.HalConfig;

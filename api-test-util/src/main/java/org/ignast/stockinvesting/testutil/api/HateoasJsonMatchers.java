@@ -4,8 +4,6 @@ import org.hamcrest.Description;
 import org.hamcrest.TypeSafeMatcher;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.skyscreamer.jsonassert.JSONAssert;
-import org.skyscreamer.jsonassert.JSONCompareMode;
 
 public class HateoasJsonMatchers {
     public static HasRel hasRel(String relName) {

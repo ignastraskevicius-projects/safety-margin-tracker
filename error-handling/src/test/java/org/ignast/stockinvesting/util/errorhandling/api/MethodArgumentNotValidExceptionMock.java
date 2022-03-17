@@ -2,7 +2,6 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.core.MethodParameter;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;

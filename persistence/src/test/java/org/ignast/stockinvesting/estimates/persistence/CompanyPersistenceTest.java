@@ -1,13 +1,11 @@
 package org.ignast.stockinvesting.estimates.persistence;
 
-import org.flywaydb.core.Flyway;
 import org.ignast.stockinvesting.estimates.dbmigration.ProductionDatabaseMigrationVersions;
 import org.ignast.stockinvesting.estimates.domain.Company;
 import org.ignast.stockinvesting.estimates.service.CompanyRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
-import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;

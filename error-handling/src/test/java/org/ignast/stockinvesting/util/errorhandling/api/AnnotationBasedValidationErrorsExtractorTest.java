@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import lombok.val;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.validation.*;
 import org.springframework.web.bind.MethodArgumentNotValidException;

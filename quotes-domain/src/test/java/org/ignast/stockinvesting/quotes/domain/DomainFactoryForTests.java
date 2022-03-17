@@ -2,8 +2,6 @@ package org.ignast.stockinvesting.quotes.domain;
 
 import java.math.BigDecimal;
 
-import static org.mockito.Mockito.mock;
-
 public class DomainFactoryForTests {
     public static CompanyExternalId anyId() {
         return new CompanyExternalId(15);

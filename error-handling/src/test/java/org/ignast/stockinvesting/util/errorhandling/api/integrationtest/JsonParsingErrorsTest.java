@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api.integrationtest;
 
 import lombok.Getter;
-import org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors;
 import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 import org.junit.jupiter.api.Test;

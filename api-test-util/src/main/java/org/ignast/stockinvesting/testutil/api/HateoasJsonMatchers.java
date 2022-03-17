@@ -6,18 +6,18 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public final class HateoasJsonMatchers {
-    public static HasRel hasRel(String relName) {
+    public static HasRel hasRel(final String relName) {
         return new HasRel(relName);
     }
 
     public static final class HasRel {
         private final String relName;
 
-        public HasRel(String relName) {
+        public HasRel(final String relName) {
             this.relName = relName;
         }
 
-        public TypeSafeMatcher<String> withHrefContaining(String hrefSubstring) {
+        public TypeSafeMatcher<String> withHrefContaining(final String hrefSubstring) {
             return new ExistsRelWithHrefContainingString(relName, hrefSubstring);
         }
 
@@ -30,13 +30,13 @@ public final class HateoasJsonMatchers {
 
             private final String hrefSubstring;
 
-            public ExistsRelWithHrefContainingString(String relName, String hrefSubstring) {
+            public ExistsRelWithHrefContainingString(final String relName, final String hrefSubstring) {
                 this.relName = relName;
                 this.hrefSubstring = hrefSubstring;
             }
 
             @Override
-            protected boolean matchesSafely(String hateoasJson) {
+            protected boolean matchesSafely(final String hateoasJson) {
                 try {
                     return new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href")
                             .contains(hrefSubstring);
@@ -46,7 +46,7 @@ public final class HateoasJsonMatchers {
             }
 
             @Override
-            public void describeTo(Description description) {
+            public void describeTo(final Description description) {
                 description.appendText(
                         String.format("HATEOAS json should contain a '%s' rel with a href containing substring '%s'",
                                 relName, hrefSubstring));
@@ -56,12 +56,12 @@ public final class HateoasJsonMatchers {
         static class ExistsRelWithHref extends TypeSafeMatcher<String> {
             private final String relName;
 
-            public ExistsRelWithHref(String relName) {
+            public ExistsRelWithHref(final String relName) {
                 this.relName = relName;
             }
 
             @Override
-            protected boolean matchesSafely(String hateoasJson) {
+            protected boolean matchesSafely(final String hateoasJson) {
                 try {
                     new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href");
                     return true;
@@ -71,7 +71,7 @@ public final class HateoasJsonMatchers {
             }
 
             @Override
-            public void describeTo(Description description) {
+            public void describeTo(final Description description) {
                 description.appendText(
                         String.format("HATEOAS json should contain a '%s' rel with a href",
                                 relName));

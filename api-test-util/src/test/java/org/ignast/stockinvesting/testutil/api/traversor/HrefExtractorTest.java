@@ -27,14 +27,14 @@ public final class HrefExtractorTest {
 
     @Test
     public void shouldExtractHref() {
-        val response = ResponseEntity.status(OK).contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
+        final val response = ResponseEntity.status(OK).contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
 
         assertThat(extractor.extractHref(response, "company")).isEqualTo("companyUri");
     }
 
     @Test
     public void shouldFailToExtractFromInvalidJsonResponses() {
-        val response = ResponseEntity.status(OK).contentType(APP_V1).body("not-a-json");
+        final val response = ResponseEntity.status(OK).contentType(APP_V1).body("not-a-json");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> extractor.extractHref(response, "company"))
@@ -43,8 +43,8 @@ public final class HrefExtractorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"{}", "{\"_lilnks\":{}}", "{\"_lilnks\":{\"company\":{}}}", "{\"_lilnks\":{\"client\":{\"href\":\"companyUri\"}}}"})
-    public void shouldFailToExtractNonexistentRel(String notContainingCompanyRel) {
-        val response = ResponseEntity.status(OK).contentType(APP_V1).body(notContainingCompanyRel);
+    public void shouldFailToExtractNonexistentRel(final String notContainingCompanyRel) {
+        final val response = ResponseEntity.status(OK).contentType(APP_V1).body(notContainingCompanyRel);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> extractor.extractHref(response, "company"))
@@ -53,7 +53,7 @@ public final class HrefExtractorTest {
 
     @Test
     public void shouldFailToExtractHrefFromResponseWithoutContentType() {
-        val response = ResponseEntity.status(OK).body(HateoasLink.anyLink());
+        final val response = ResponseEntity.status(OK).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> extractor.extractHref(response, "any"))
@@ -62,9 +62,9 @@ public final class HrefExtractorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {"text/xml", "application/json", "application/hal+jsosn", "application/vnd.stockinvesting.quotes.hal+json"})
-    public void shouldNotExtractHrefFromResponsesWithoutVersionedAppContentTypeSet(String type) {
-        val mediaType = MediaType.parseMediaType(type);
-        val response = ResponseEntity.status(OK).contentType(mediaType).body(HateoasLink.anyLink());
+    public void shouldNotExtractHrefFromResponsesWithoutVersionedAppContentTypeSet(final String type) {
+        final val mediaType = MediaType.parseMediaType(type);
+        final val response = ResponseEntity.status(OK).contentType(mediaType).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> extractor.extractHref(response, "any"))
@@ -73,8 +73,8 @@ public final class HrefExtractorTest {
 
     @ParameterizedTest
     @ValueSource(ints = {400, 500})
-    public void shouldNotExtractHrefFromResponsesWithNon2xxStatusCodes(int status) {
-        val response = ResponseEntity.status(HttpStatus.valueOf(status)).body(HateoasLink.anyLink());
+    public void shouldNotExtractHrefFromResponsesWithNon2xxStatusCodes(final int status) {
+        final val response = ResponseEntity.status(HttpStatus.valueOf(status)).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> extractor.extractHref(response, "any"))
@@ -83,8 +83,8 @@ public final class HrefExtractorTest {
 
     @ParameterizedTest
     @ValueSource(ints = {200, 201})
-    public void shouldExtractHrefForResponsesWith2xxStatusCodes(int status) {
-        val response = ResponseEntity.status(HttpStatus.valueOf(status))
+    public void shouldExtractHrefForResponsesWith2xxStatusCodes(final int status) {
+        final val response = ResponseEntity.status(HttpStatus.valueOf(status))
                 .contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
 
         assertThat(extractor.extractHref(response, "company")).isEqualTo("companyUri");

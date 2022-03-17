@@ -18,8 +18,8 @@ public final class ListingDTO {
     @DomainClassConstraint(domainClass = StockSymbol.class)
     private final String stockSymbol;
 
-    public ListingDTO(@JsonProperty(value = "marketIdentifier") String marketIdentifier,
-            @JsonProperty(value = "stockSymbol") String stockSymbol) {
+    public ListingDTO(@JsonProperty(value = "marketIdentifier") final String marketIdentifier,
+            @JsonProperty(value = "stockSymbol") final String stockSymbol) {
         this.marketIdentifier = marketIdentifier;
         this.stockSymbol = stockSymbol;
     }

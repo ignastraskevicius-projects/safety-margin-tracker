@@ -11,16 +11,16 @@ public final class JsonAssert {
 
     private final JSONCompareMode comparisonMode;
 
-    public JsonAssert(String actualJson, JSONCompareMode strict) {
+    public JsonAssert(final String actualJson, final JSONCompareMode strict) {
         this.actualJson = actualJson;
         comparisonMode = strict;
     }
 
-    public static JsonAssert assertThatJson(String actualJson) {
+    public static JsonAssert assertThatJson(final String actualJson) {
         return new JsonAssert(actualJson, STRICT);
     }
 
-    public void isEqualTo(String expectedJson) throws JSONException {
+    public void isEqualTo(final String expectedJson) throws JSONException {
         JSONAssert.assertEquals(expectedJson, actualJson, comparisonMode);
     }
 }

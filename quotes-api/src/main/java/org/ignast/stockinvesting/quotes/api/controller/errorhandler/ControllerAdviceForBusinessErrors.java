@@ -15,14 +15,14 @@ public final class ControllerAdviceForBusinessErrors {
     @ResponseStatus(HttpStatus.NOT_FOUND)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleCompanyNotFound(CompanyNotFound e) {
+    public StandardErrorDTO handleCompanyNotFound(final CompanyNotFound e) {
         return StandardErrorDTO.createForBusinessError(AppBusinessErrorDTO.createForCompanyNotFound());
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleSymbolNotSupportedInMarket(StockSymbolNotSupportedInThisMarket e) {
+    public StandardErrorDTO handleSymbolNotSupportedInMarket(final StockSymbolNotSupportedInThisMarket e) {
         return StandardErrorDTO.createForBusinessError(AppBusinessErrorDTO.createForStockSymbolNotSupportedInThisMarket());
     }
 }

@@ -9,6 +9,7 @@ import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.From1ParamConstructor;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
@@ -17,37 +18,37 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppErrorsHandlingConfigurationTest {
 
-    private Map<Class<?>, From1ParamConstructor<String>> typesBackedByString = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromString();
+    private static final Map<Class<?>, From1ParamConstructor<String>> TYPES_CONSTRUCTABLE_FROM_STRING = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromString();
 
-    private Map<Class<?>, From1ParamConstructor<Integer>> typesBackedByInteger = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromInteger();
+    private static final Map<Class<?>, From1ParamConstructor<Integer>> TYPES_CONSTRUCTABLE_FROM_INTEGER = new AppErrorsHandlingConfiguration().domainClassConstraintSupportedTypes().getTypesConstructableFromInteger();
 
     @Test
     public void shouldHaveClassCorrectlyAssignedForTypeConstructorsFromString() {
-        val countOfTypesSupported = asList(
+        final val countOfTypesSupported = asList(
                 checkConstructedTypeFromString(MarketIdentifierCode.class, t -> t.construct("XNYS")),
                 checkConstructedTypeFromString(StockSymbol.class, t -> t.construct("AMZN")),
                 checkConstructedTypeFromString(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300")),
                 checkConstructedTypeFromString(CompanyName.class, t -> t.construct("Amazon"))
         ).size();
 
-        assertThat(typesBackedByString).hasSize(countOfTypesSupported);
+        assertThat(TYPES_CONSTRUCTABLE_FROM_STRING).hasSize(countOfTypesSupported);
     }
 
     @Test
     public void shouldHaveClassCorrectlyAssignedForTypeConstructorsFromInteger() {
-        val countOfTypesSupported = asList(
+        final val countOfTypesSupported = List.of(
                 checkConstructedTypeFromInteger(CompanyExternalId.class, t -> t.construct(7))
         ).size();
 
-        assertThat(typesBackedByInteger).hasSize(countOfTypesSupported);
+        assertThat(TYPES_CONSTRUCTABLE_FROM_INTEGER).hasSize(countOfTypesSupported);
     }
 
-    private ObjectAssert checkConstructedTypeFromString(Class<?> type, FromConstructorToObject<String> constructor) {
-        return assertThat(constructor.construct(typesBackedByString.get(type))).isInstanceOf(type);
+    private ObjectAssert checkConstructedTypeFromString(final Class<?> type, final FromConstructorToObject<String> constructor) {
+        return assertThat(constructor.construct(TYPES_CONSTRUCTABLE_FROM_STRING.get(type))).isInstanceOf(type);
     }
 
-    private ObjectAssert checkConstructedTypeFromInteger(Class<?> type, FromConstructorToObject<Integer> constructor) {
-        return assertThat(constructor.construct(typesBackedByInteger.get(type))).isInstanceOf(type);
+    private ObjectAssert checkConstructedTypeFromInteger(final Class<?> type, final FromConstructorToObject<Integer> constructor) {
+        return assertThat(constructor.construct(TYPES_CONSTRUCTABLE_FROM_INTEGER.get(type))).isInstanceOf(type);
     }
 
     private static interface FromConstructorToObject<T> {

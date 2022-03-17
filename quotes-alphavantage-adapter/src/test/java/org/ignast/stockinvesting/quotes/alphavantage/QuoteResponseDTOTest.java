@@ -13,7 +13,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 public final class QuoteResponseDTOTest {
     @Test
     public void shouldPreserveError() {
-        val error = new QuoteResponseDTO(empty(), of("humal-readable-message"));
+        final val error = new QuoteResponseDTO(empty(), of("humal-readable-message"));
 
         assertThat(error.getError().get()).isEqualTo("humal-readable-message");
         assertThat(error.toString()).contains("error").contains("humal-readable-message");
@@ -31,8 +31,8 @@ public final class QuoteResponseDTOTest {
 
     @Test
     public void shouldPreserveQuote() {
-        QuoteDTO quote = new QuoteDTO(of(BigDecimal.ONE));
-        QuoteResponseDTO response = new QuoteResponseDTO(of(quote), empty());
+        final val quote = new QuoteDTO(of(BigDecimal.ONE));
+        final val response = new QuoteResponseDTO(of(quote), empty());
 
         assertThat(response.getQuote().get()).isEqualTo(quote);
         assertThat(response.toString()).contains("quote").contains("price");
@@ -50,7 +50,7 @@ public final class QuoteResponseDTOTest {
 
     @Test
     void quoteShouldPreservePrice() {
-        QuoteDTO quote = new QuoteDTO(of(BigDecimal.ONE));
+        final val quote = new QuoteDTO(of(BigDecimal.ONE));
 
         assertThat(quote.getPrice()).isEqualTo(of(BigDecimal.ONE));
         assertThat(quote.toString()).contains("price").contains("1");

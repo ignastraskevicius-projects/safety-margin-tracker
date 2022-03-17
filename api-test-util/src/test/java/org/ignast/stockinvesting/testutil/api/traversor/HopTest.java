@@ -73,10 +73,10 @@ public final class HopTest {
     @Test
     public void shouldTraverseGetHop() {
         when(restTemplate.exchange(any(String.class), any(), any(), any(Class.class))).thenReturn(status(OK).body("hopResponse"));
-        val responseWithLinkToCompany = status(OK).contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
+        final val responseWithLinkToCompany = status(OK).contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
         when(hrefExtractor.extractHref(responseWithLinkToCompany, "company")).thenReturn("companyUri");
 
-        val companyResponse = hopFactory.get("company").traverse(responseWithLinkToCompany);
+        final val companyResponse = hopFactory.get("company").traverse(responseWithLinkToCompany);
 
         verify(restTemplate).exchange(eq("companyUri"), eq(GET), entityCaptor.capture(), eq(String.class));
         assertThat(entityCaptor.getValue().getHeaders().get("Accept")).isEqualTo(asList(APP_V1.toString()));
@@ -85,7 +85,7 @@ public final class HopTest {
 
     @Test
     public void getHopTraversalShouldFailWhenHrefCannotBeExtracted() {
-        val response = mock(ResponseEntity.class);
+        final val response = mock(ResponseEntity.class);
         when(hrefExtractor.extractHref(response, "any")).thenThrow(TestException.class);
 
         assertThatExceptionOfType(TestException.class)
@@ -107,10 +107,10 @@ public final class HopTest {
     @Test
     public void shouldTraversePutHop() {
         when(restTemplate.exchange(any(String.class), any(), any(), any(Class.class))).thenReturn(status(OK).body("hopResponse"));
-        val responseWithLinkToCompany = status(OK).contentType(APP_V1).body("{\"_links\":{\"client\":{\"href\":\"clientUri\"}}}");
+        final val responseWithLinkToCompany = status(OK).contentType(APP_V1).body("{\"_links\":{\"client\":{\"href\":\"clientUri\"}}}");
         when(hrefExtractor.extractHref(responseWithLinkToCompany, "client")).thenReturn("clientUri");
 
-        val companyResponse = hopFactory.put("client", "hopRequest").traverse(responseWithLinkToCompany);
+        final val companyResponse = hopFactory.put("client", "hopRequest").traverse(responseWithLinkToCompany);
 
         verify(restTemplate).exchange(eq("clientUri"), eq(PUT), entityCaptor.capture(), eq(String.class));
         assertThat(entityCaptor.getValue().getHeaders().get("Content-Type")).isEqualTo(asList(APP_V1.toString()));
@@ -120,14 +120,14 @@ public final class HopTest {
 
     @Test
     public void putHopTraversalShouldFailWhenHrefCannotBeExtracted() {
-        val response = mock(ResponseEntity.class);
+        final ResponseEntity<String> response = mock(ResponseEntity.class);
         when(hrefExtractor.extractHref(response, "any")).thenThrow(TestException.class);
 
         assertThatExceptionOfType(TestException.class)
                 .isThrownBy(() -> hopFactory.put("any", "anyRequest").traverse(response));
     }
 
-    private class TestException extends RuntimeException {
+    private static class TestException extends RuntimeException {
 
     }
 }

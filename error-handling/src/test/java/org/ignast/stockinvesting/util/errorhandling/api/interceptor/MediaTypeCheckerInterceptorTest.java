@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api.interceptor;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -15,10 +16,10 @@ final class MediaTypeCheckerInterceptorTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "Accept", "accept", "Accept" })
-    public void GETMethodRequestsShouldComeWithAcceptHeader(String accept) throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "any");
+    public void GETMethodRequestsShouldComeWithAcceptHeader(final String accept) throws Exception {
+        final val request = new MockHttpServletRequest("GET", "any");
         request.addHeader(accept, "any");
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        final val response = new MockHttpServletResponse();
 
         assertThat(interceptor.preHandle(request, response, null)).isTrue();
         assertThat(response.getStatus()).isNotEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
@@ -26,8 +27,8 @@ final class MediaTypeCheckerInterceptorTest {
 
     @Test
     public void AcceptHeaderShouldBeRequiredForGetMethodRequests() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("GET", "any");
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        final val request = new MockHttpServletRequest("GET", "any");
+        final val response = new MockHttpServletResponse();
 
         assertThat(interceptor.preHandle(request, response, null)).isFalse();
         assertThat(response.getStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
@@ -35,8 +36,8 @@ final class MediaTypeCheckerInterceptorTest {
 
     @Test
     public void AcceptHeaderShouldNotBeRequiredForPostMethodRequests() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest("POST", "any");
-        MockHttpServletResponse response = new MockHttpServletResponse();
+        final val request = new MockHttpServletRequest("POST", "any");
+        final val response = new MockHttpServletResponse();
 
         assertThat(interceptor.preHandle(request, response, null)).isTrue();
         assertThat(response.getStatus()).isNotEqualTo(HttpStatus.NOT_ACCEPTABLE.value());

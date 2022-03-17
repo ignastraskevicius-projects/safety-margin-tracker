@@ -28,21 +28,21 @@ public final class HateoasTraversor {
 
     private final String rootUri;
 
-    private HateoasTraversor(MediaType appMediaType, Hop.Factory hopFactory, String rootUri, List<Hop.TraversableHop> hops) {
+    private HateoasTraversor(final MediaType appMediaType, final Hop.Factory hopFactory, final String rootUri, final List<Hop.TraversableHop> hops) {
         this.appMediaType = appMediaType;
         this.hopFactory = hopFactory;
         this.rootUri = rootUri;
         this.hops = hops;
     }
 
-    public HateoasTraversor hop(Function<Hop.Factory, Hop.TraversableHop> constructHop) {
-        Hop.TraversableHop hop = constructHop.apply(hopFactory);
+    public HateoasTraversor hop(final Function<Hop.Factory, Hop.TraversableHop> constructHop) {
+        final val hop = constructHop.apply(hopFactory);
         return new HateoasTraversor(appMediaType, hopFactory, rootUri, concat(hops.stream(), of(hop)).collect(toUnmodifiableList()));
     }
 
     public ResponseEntity<String> perform() {
-        val fakeLinkToRoot = ResponseEntity.status(HttpStatus.OK).contentType(appMediaType).body(HateoasLink.link("root", rootUri));
-        val rootHop = hopFactory.get("root");
+        final val fakeLinkToRoot = ResponseEntity.status(HttpStatus.OK).contentType(appMediaType).body(HateoasLink.link("root", rootUri));
+        final val rootHop = hopFactory.get("root");
         return concat(of(rootHop), hops.stream()).reduce(fakeLinkToRoot, (r, h) -> h.traverse(r), combinerUnsupported());
     }
 
@@ -58,24 +58,24 @@ public final class HateoasTraversor {
 
         private final MediaType appMediaType;
 
-        public Factory(RestTemplateBuilder builder, MediaType appMediaType) {
+        public Factory(final RestTemplateBuilder builder, final MediaType appMediaType) {
             this.appMediaType = appMediaType;
-            val restTemplate = builder.errorHandler(new NoSpecialHandling()).build();
+            final val restTemplate = builder.errorHandler(new NoSpecialHandling()).build();
             hopFactory = new Hop.Factory(appMediaType, restTemplate, new HrefExtractor(appMediaType));
         }
 
-        public HateoasTraversor startAt(@NonNull String rootUri) {
+        public HateoasTraversor startAt(@NonNull final String rootUri) {
             return new HateoasTraversor(appMediaType, hopFactory, rootUri, emptyList());
         }
 
-        private class NoSpecialHandling implements ResponseErrorHandler {
+        private static class NoSpecialHandling implements ResponseErrorHandler {
             @Override
-            public boolean hasError(ClientHttpResponse response) {
+            public boolean hasError(final ClientHttpResponse response) {
                 return false;
             }
 
             @Override
-            public void handleError(ClientHttpResponse response) {
+            public void handleError(final ClientHttpResponse response) {
             }
         }
     }

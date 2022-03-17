@@ -22,19 +22,19 @@ public final class FlywayIdempotentMigration {
 
     private final DataSource dataSource;
 
-    FlywayIdempotentMigration(DataSource dataSource) {
+    FlywayIdempotentMigration(final DataSource dataSource) {
         this.dataSource = dataSource;
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    void migrateTwice(String version, MysqlMigration migration) {
+    void migrateTwice(final String version, final MysqlMigration migration) {
         execute(version, migration);
         removeMigrationMetadata(version);
         execute(version, migration);
     }
 
-    private void removeMigrationMetadata(String version) {
-        val flywayMetadataTable = "flyway_schema_history";
+    private void removeMigrationMetadata(final String version) {
+        final val flywayMetadataTable = "flyway_schema_history";
         try {
             MysqlAssert.assertThat(jdbcTemplate).containsTable(flywayMetadataTable);
             FlywayAssert.assertThat(jdbcTemplate).hasJustMigrated(version);
@@ -44,7 +44,7 @@ public final class FlywayIdempotentMigration {
         }
     }
 
-    private void execute(String version, MysqlMigration migration) {
+    private void execute(final String version, final MysqlMigration migration) {
         migration.migrate(version, dataSource);
     }
 }
@@ -55,7 +55,7 @@ interface MysqlMigration {
 
 final class FlywayMigration implements MysqlMigration {
 
-    public void migrate(String version, DataSource dataSource) {
+    public void migrate(final String version, final DataSource dataSource) {
         Flyway.configure().baselineOnMigrate(true).dataSource(dataSource).target(version).load().migrate();
     }
 }
@@ -64,7 +64,7 @@ final class FlywayMigration implements MysqlMigration {
 final class FlywayIdempotentMigrationTest {
 
     @Container
-    private static MySQLContainer mysql = AppDbContainer.singleton();
+    private static final MySQLContainer MYSQL = AppDbContainer.singleton();
 
     private static final String FLYWAY_METADATA_TABLE = "flyway_schema_history";
 
@@ -74,17 +74,17 @@ final class FlywayIdempotentMigrationTest {
 
     @BeforeEach
     public void setup() {
-        db = new JdbcTemplate(getDataSourceTo(mysql));
+        db = new JdbcTemplate(getDataSourceTo(MYSQL));
         db.execute(format("DROP TABLE IF EXISTS %s;", FLYWAY_METADATA_TABLE));
 
-        Flyway.configure().dataSource(getDataSourceTo(mysql)).baselineOnMigrate(true).target(ProductionDatabaseMigrationVersions.CURRENT);
+        Flyway.configure().dataSource(getDataSourceTo(MYSQL)).baselineOnMigrate(true).target(ProductionDatabaseMigrationVersions.CURRENT);
 
-        idempotentMigration = new FlywayIdempotentMigration(getDataSourceTo(mysql));
+        idempotentMigration = new FlywayIdempotentMigration(getDataSourceTo(MYSQL));
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"2", "3"})
-    public void migrationShouldCreateExpectedMetadata(String toVersion) {
+    public void migrationShouldCreateExpectedMetadata(final String toVersion) {
         idempotentMigration.migrateTwice(toVersion, new FlywayMigration());
 
         FlywayAssert.assertThat(db).hasJustMigrated(toVersion);
@@ -95,10 +95,10 @@ final class FlywayIdempotentMigrationTest {
         assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> idempotentMigration.migrateTwice("2", new NoOpMysqlMigration())).withMessage(format("Migration idempotency check failed: Supplied migration has not created expected migration record for version '%s' in metadata table '%s'", "2", FLYWAY_METADATA_TABLE));
     }
 
-    class NoOpMysqlMigration implements MysqlMigration {
+    private static final class NoOpMysqlMigration implements MysqlMigration {
 
         @Override
-        public void migrate(String version, DataSource dataSource) {
+        public void migrate(final String version, final DataSource dataSource) {
 
         }
     }

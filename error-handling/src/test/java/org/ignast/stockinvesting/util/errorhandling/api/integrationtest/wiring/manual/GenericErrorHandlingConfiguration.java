@@ -34,8 +34,8 @@ final class GenericErrorHandlingConfiguration {
 
     @Bean
     public ControllerAdviceForGenericErrors genericControllerAdvice(
-            JacksonParsingErrorsExtractor parsing,
-            AnnotationBasedValidationErrorsExtractor validation) {
+            final JacksonParsingErrorsExtractor parsing,
+            final AnnotationBasedValidationErrorsExtractor validation) {
         return new ControllerAdviceForGenericErrors(validation, parsing);
     }
 }

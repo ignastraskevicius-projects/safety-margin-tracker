@@ -22,8 +22,8 @@ public final class AppDbContainer {
         return CONTAINER;
     }
 
-    public static DataSource getDataSourceTo(MySQLContainer mysql) {
-        val dataSource = new DriverManagerDataSource();
+    public static DataSource getDataSourceTo(final MySQLContainer mysql) {
+        final val dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");
         dataSource.setUrl(mysql.getJdbcUrl());
         dataSource.setUsername(mysql.getUsername());

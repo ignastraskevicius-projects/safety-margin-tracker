@@ -6,7 +6,7 @@ public final class AppBusinessErrorDTO implements BusinessErrorDTO {
 
     private final String errorName;
 
-    private AppBusinessErrorDTO(String errorName) {
+    private AppBusinessErrorDTO(final String errorName) {
         this.errorName = errorName;
     }
 

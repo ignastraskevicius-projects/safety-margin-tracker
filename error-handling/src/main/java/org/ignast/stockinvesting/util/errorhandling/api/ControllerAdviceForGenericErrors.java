@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import static java.util.Arrays.asList;
+import java.util.List;
 
 @ControllerAdvice
 public final class ControllerAdviceForGenericErrors {
@@ -20,8 +20,8 @@ public final class ControllerAdviceForGenericErrors {
 
     private final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
-    public ControllerAdviceForGenericErrors(AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
-                                            JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {
+    public ControllerAdviceForGenericErrors(final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
+                                            final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {
         this.validationErrorsExtractor = validationErrorsExtractor;
         this.jacksonParsingErrorsExtractor = jacksonParsingErrorsExtractor;
     }
@@ -29,28 +29,28 @@ public final class ControllerAdviceForGenericErrors {
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleMethodNotAllowed(HttpRequestMethodNotSupportedException error) {
+    public StandardErrorDTO handleMethodNotAllowed(final HttpRequestMethodNotSupportedException e) {
         return StandardErrorDTO.createForMethodNotAllowed();
     }
 
     @ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleMediaTypeNotAcceptable(HttpMediaTypeNotAcceptableException error) {
+    public StandardErrorDTO handleMediaTypeNotAcceptable(final HttpMediaTypeNotAcceptableException e) {
         return StandardErrorDTO.createForMediaTypeNotAcceptable();
     }
 
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleUnsupportedContentType(HttpMediaTypeNotSupportedException error) {
+    public StandardErrorDTO handleUnsupportedContentType(final HttpMediaTypeNotSupportedException e) {
         return StandardErrorDTO.createForUnsupportedContentType();
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleMethodArgumentNotValidException(MethodArgumentNotValidException exception) {
+    public StandardErrorDTO handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
         try {
             return StandardErrorDTO.createForBodyDoesNotMatchSchema(
                     validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
@@ -62,11 +62,11 @@ public final class ControllerAdviceForGenericErrors {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleUnparsableJson(HttpMessageNotReadableException error) {
+    public StandardErrorDTO handleUnparsableJson(final HttpMessageNotReadableException error) {
 
         if (error.getCause() instanceof MismatchedInputException) {
             try {
-                return StandardErrorDTO.createForBodyDoesNotMatchSchema(asList(
+                return StandardErrorDTO.createForBodyDoesNotMatchSchema(List.of(
                         jacksonParsingErrorsExtractor.extractError((MismatchedInputException) error.getCause())));
             } catch (JacksonParsingErrorExtractionException e) {
                 return StandardErrorDTO.createNameless();

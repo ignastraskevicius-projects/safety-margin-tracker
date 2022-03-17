@@ -34,14 +34,14 @@ import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 
 public final class AlphaVantageStubIT {
 
-    private final ObjectMapper mapper = new ObjectMapper();
-
     @RegisterExtension
-    private WireMockExtension wireMock = WireMockExtension.newInstance().options(wireMockConfig().usingFilesUnderDirectory("src/main/resources/wiremock/")).build();
+    private static final WireMockExtension WIREMOCK = WireMockExtension.newInstance().options(wireMockConfig().usingFilesUnderDirectory("src/main/resources/wiremock/")).build();
+
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Test
     public void shouldReturnPrice() throws IOException, InterruptedException, JSONException {
-        val response = query("/query?" + validParamsBuilder().build().toString());
+        final val response = query("/query?" + validParamsBuilder().build().toString());
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{\"05. price\":\"128.5000\"}}");
@@ -50,7 +50,7 @@ public final class AlphaVantageStubIT {
 
     @Test
     public void shouldReturnNoPriceForAAAA() throws IOException, InterruptedException, JSONException {
-        val response = query("/query?" + validParamsBuilder().symbol("AAAA").build().toString());
+        final val response = query("/query?" + validParamsBuilder().symbol("AAAA").build().toString());
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{}}");
@@ -87,22 +87,22 @@ public final class AlphaVantageStubIT {
         expectError(validParamsBuilder().symbol("").build());
     }
 
-    private void expectError(QueryParams uriQuery) throws IOException, InterruptedException {
-        val response = query(format("/query?%s", uriQuery.toString()));
+    private void expectError(final QueryParams uriQuery) throws IOException, InterruptedException {
+        final val response = query(format("/query?%s", uriQuery.toString()));
 
         assertThat(response.statusCode()).isEqualTo(200);
         assertThat(jsonAsMap(response).keySet()).contains("Error Message");
         assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
 
-    private HashMap jsonAsMap(HttpResponse<String> response) throws JsonProcessingException {
+    private HashMap jsonAsMap(final HttpResponse<String> response) throws JsonProcessingException {
         return mapper.readValue(response.body(), HashMap.class);
     }
 
-    private HttpResponse<String> query(String path) throws IOException, InterruptedException {
-        val client = HttpClient.newHttpClient();
-        val request = HttpRequest.newBuilder()
-                .uri(URI.create(format("http://localhost:%d%s", wireMock.getPort(), path))).build();
+    private HttpResponse<String> query(final String path) throws IOException, InterruptedException {
+        final val client = HttpClient.newHttpClient();
+        final val request = HttpRequest.newBuilder()
+                .uri(URI.create(format("http://localhost:%d%s", WIREMOCK.getPort(), path))).build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
@@ -116,14 +116,14 @@ final class DockerizedAlphaVantageStubIT {
 
     @Test
     public void shouldContainQuotedPrices() throws IOException, InterruptedException {
-        val client = HttpClient.newHttpClient();
-        val port = CONTAINER.getMappedPort(8080);
-        val uri = format("http://localhost:%d/query?%s", port, validParamsBuilder().build().toString());
-        val request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
+        final val client = HttpClient.newHttpClient();
+        final val port = CONTAINER.getMappedPort(8080);
+        final val uri = format("http://localhost:%d/query?%s", port, validParamsBuilder().build().toString());
+        final val request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
 
-        val response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        final val response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        assertThat(response.body().toString()).startsWith("{\"Global Quote");
+        assertThat(response.body()).startsWith("{\"Global Quote");
     }
 }
 
@@ -157,38 +157,38 @@ final class QueryParams {
 final class QueryParamsBuilderTest {
     @Test
     public void shouldBuildWithFunction() {
-        val queryParams = new QueryParams.QueryParamsBuilder().function("someFunction").build().toString();
+        final val queryParams = new QueryParams.QueryParamsBuilder().function("someFunction").build().toString();
         assertThat(queryParams).isEqualTo("function=someFunction");
     }
 
     @Test
     public void shouldBuildWithApikey() {
-        val queryParams = new QueryParams.QueryParamsBuilder().apikey("someApikey").build().toString();
+        final val queryParams = new QueryParams.QueryParamsBuilder().apikey("someApikey").build().toString();
         assertThat(queryParams).isEqualTo("apikey=someApikey");
     }
 
     @Test
     public void shouldBuildWithSymbol() {
-        val queryParams = new QueryParams.QueryParamsBuilder().symbol("someSymbol").build().toString();
+        final val queryParams = new QueryParams.QueryParamsBuilder().symbol("someSymbol").build().toString();
         assertThat(queryParams).isEqualTo("symbol=someSymbol");
     }
 
     @Test
     public void shouldBuildWithNoParameters() {
-        val queryParams = new QueryParams.QueryParamsBuilder().build().toString();
+        final val queryParams = new QueryParams.QueryParamsBuilder().build().toString();
         assertThat(queryParams).isEqualTo("");
     }
 
     @Test
     public void shouldBuildWithMultiplParameters() {
-        val queryParams = new QueryParams.QueryParamsBuilder().function("function1").symbol("symbol1").apikey("apikey1")
+        final val queryParams = new QueryParams.QueryParamsBuilder().function("function1").symbol("symbol1").apikey("apikey1")
                 .build().toString();
         assertThat(queryParams).isEqualTo("function=function1&symbol=symbol1&apikey=apikey1");
     }
 
     @Test
     public void shouldProvideBuilderWithValidParameters() {
-        val queryParams = validParamsBuilder().build().toString();
+        final val queryParams = validParamsBuilder().build().toString();
         assertThat(queryParams).isEqualTo("function=GLOBAL_QUOTE&symbol=AMZN&apikey=1OFDQOSYMBH3NP");
     }
 }

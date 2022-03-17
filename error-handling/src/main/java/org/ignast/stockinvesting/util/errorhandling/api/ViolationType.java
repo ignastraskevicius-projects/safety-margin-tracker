@@ -5,15 +5,16 @@ public enum ViolationType {
     VALUE_MUST_BE_ARRAY("valueMustBeArray", true), FIELD_IS_MISSING("fieldIsMissing", true),
     VALUE_MUST_BE_OBJECT("valueMustBeObject", true), VALUE_MUST_BE_INTEGER("valueMustBeInteger", true);
 
-    private String correspondingErrorName;
-    private boolean isErrorSelfExplanatory;
+    private final String correspondingErrorName;
 
-    ViolationType(String correspondingErrorName, boolean isErrorSelfExplanatory) {
+    private final boolean isErrorSelfExplanatory;
+
+    ViolationType(final String correspondingErrorName, final boolean isErrorSelfExplanatory) {
         this.correspondingErrorName = correspondingErrorName;
         this.isErrorSelfExplanatory = isErrorSelfExplanatory;
     }
 
-    public String getCorrespondigErrorName() {
+    public String getCorrespondingErrorName() {
         return correspondingErrorName;
     }
 

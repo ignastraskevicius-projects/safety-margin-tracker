@@ -32,8 +32,8 @@ public class AlphaVantageQuotes implements QuotesRepository {
 
     private final RestTemplate restTemplate;
 
-    public AlphaVantageQuotes(RestTemplateBuilder builder, @Value("${alphavantage.url}") String url,
-            @Value("${alphavantage.apikey}") String apikey) {
+    public AlphaVantageQuotes(final RestTemplateBuilder builder, @Value("${alphavantage.url}") final String url,
+            @Value("${alphavantage.apikey}") final String apikey) {
         restTemplate = builder.messageConverters().build();
         this.url = url;
         this.apikey = apikey;
@@ -41,34 +41,30 @@ public class AlphaVantageQuotes implements QuotesRepository {
 
     @Override
     @SuppressWarnings("checkstyle:designforextension")
-    public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic) {
-        val response = invoke(toUri(stockSymbol)).getBody();
+    public BigDecimal getQuotedPriceOf(final StockSymbol stockSymbol, final MarketIdentifierCode mic) {
+        final val response = invoke(toUri(stockSymbol)).getBody();
 
         return response.getQuote().map(q -> q.getPrice().orElseThrow(() -> stockSymbolNotSupported(stockSymbol, mic)))
                 .orElseThrow(() -> {
                     throw quoteRetrievalFailed(response.getError());
                 });
-
     }
 
-    private QuoteRetrievalFailedException quoteRetrievalFailed(Optional<String> errorMessage) {
-        if (errorMessage.isPresent()) {
-            return new QuoteRetrievalFailedException("Message from remote server: " + errorMessage.get());
-        } else {
-            return new QuoteRetrievalFailedException("Communication with server failed");
-        }
+    private QuoteRetrievalFailedException quoteRetrievalFailed(final Optional<String> errorMessage) {
+        return new QuoteRetrievalFailedException(errorMessage.map(s ->
+                "Message from remote server: " + s).orElse("Communication with server failed"));
     }
 
-    private String toUri(StockSymbol stockSymbol) {
+    private String toUri(final StockSymbol stockSymbol) {
         return url + format("/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", stockSymbol.get(), apikey);
     }
 
-    private StockSymbolNotSupportedInThisMarket stockSymbolNotSupported(StockSymbol stockSymbol, MarketIdentifierCode mic) {
+    private StockSymbolNotSupportedInThisMarket stockSymbolNotSupported(final StockSymbol stockSymbol, final MarketIdentifierCode mic) {
         return new StockSymbolNotSupportedInThisMarket(format("Stock symbol '%s' in market '%s' is not supported by this service",
                 stockSymbol.get(), mic.get()));
     }
 
-    private ResponseEntity<QuoteResponseDTO> invoke(String uri) {
+    private ResponseEntity<QuoteResponseDTO> invoke(final String uri) {
         try {
             return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(HttpHeaders.EMPTY),
                     QuoteResponseDTO.class);
@@ -86,8 +82,8 @@ final class QuoteResponseDTO {
     @Getter
     private final Optional<String> error;
 
-    public QuoteResponseDTO(@NonNull @JsonProperty("Global Quote") Optional<QuoteDTO> quote,
-            @NonNull @JsonProperty("Error Message") Optional<String> error) {
+    public QuoteResponseDTO(@NonNull @JsonProperty("Global Quote") final Optional<QuoteDTO> quote,
+            @NonNull @JsonProperty("Error Message") final Optional<String> error) {
         this.quote = quote;
         this.error = error;
     }
@@ -98,7 +94,7 @@ final class QuoteDTO {
     @Getter
     private final Optional<BigDecimal> price;
 
-    public QuoteDTO(@NonNull @JsonProperty(value = "05. price") Optional<BigDecimal> price) {
+    public QuoteDTO(@NonNull @JsonProperty(value = "05. price") final Optional<BigDecimal> price) {
         this.price = price;
     }
 }

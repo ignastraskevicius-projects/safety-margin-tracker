@@ -61,7 +61,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
     }
 
     @Test
-    public void shouldIndicateResourceNotModifyable() throws Exception {
+    public void shouldIndicateResourceNotModifiable() throws Exception {
         mockMvc.perform(put("/companies/5").contentType(HAL_JSON)).andExpect(status().isMethodNotAllowed())
                 .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
     }

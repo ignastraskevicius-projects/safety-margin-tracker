@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
 import lombok.NonNull;
+import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -23,17 +24,17 @@ public interface Hop {
 
         private final HrefExtractor hrefExtractor;
 
-        Factory(@NonNull MediaType appMediaType, @NonNull RestTemplate restTemplate, @NonNull HrefExtractor hrefExtractor) {
+        Factory(@NonNull final MediaType appMediaType, @NonNull final RestTemplate restTemplate, @NonNull final HrefExtractor hrefExtractor) {
             this.appMediaType = appMediaType;
             this.hrefExtractor = hrefExtractor;
             this.restTemplate = restTemplate;
         }
 
-        public TraversableHop put(String rel, String body) {
+        public TraversableHop put(final String rel, final String body) {
             return new PutHop(appMediaType, restTemplate, hrefExtractor, rel, body);
         }
 
-        public TraversableHop get(String rel) {
+        public TraversableHop get(final String rel) {
             return new GetHop(appMediaType, restTemplate, hrefExtractor, rel);
         }
 
@@ -48,7 +49,7 @@ public interface Hop {
 
             private final String body;
 
-            private PutHop(MediaType appMediaType, RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel, @NonNull String body) {
+            private PutHop(final MediaType appMediaType, final RestTemplate restTemplate, final HrefExtractor hrefExtractor, @NonNull final String rel, @NonNull final String body) {
                 this.appMediaType = appMediaType;
                 this.restTemplate = restTemplate;
                 this.hrefExtractor = hrefExtractor;
@@ -57,12 +58,12 @@ public interface Hop {
             }
 
             @Override
-            public ResponseEntity<String> traverse(@NonNull ResponseEntity<String> response) {
+            public ResponseEntity<String> traverse(@NonNull final ResponseEntity<String> response) {
                 return restTemplate.exchange(hrefExtractor.extractHref(response, rel), HttpMethod.PUT, contentTypeV1(body), String.class);
             }
 
-            private HttpEntity<String> contentTypeV1(String content) {
-                HttpHeaders headers = new HttpHeaders();
+            private HttpEntity<String> contentTypeV1(final String content) {
+                final val headers = new HttpHeaders();
                 headers.add("Content-Type", appMediaType.toString());
                 return new HttpEntity<>(content, headers);
             }
@@ -77,7 +78,7 @@ public interface Hop {
 
             private final String rel;
 
-            private GetHop(MediaType appMediaType, RestTemplate restTemplate, HrefExtractor hrefExtractor, @NonNull String rel) {
+            private GetHop(final MediaType appMediaType, final RestTemplate restTemplate, final HrefExtractor hrefExtractor, @NonNull final String rel) {
                 this.appMediaType = appMediaType;
                 this.restTemplate = restTemplate;
                 this.hrefExtractor = hrefExtractor;
@@ -85,12 +86,12 @@ public interface Hop {
             }
 
             @Override
-            ResponseEntity<String> traverse(@NonNull ResponseEntity<String> previousResponse) {
+            ResponseEntity<String> traverse(@NonNull final ResponseEntity<String> previousResponse) {
                 return restTemplate.exchange(hrefExtractor.extractHref(previousResponse, rel), GET, acceptV1(), String.class);
             }
 
             private HttpEntity<String> acceptV1() {
-                HttpHeaders headers = new HttpHeaders();
+                final val headers = new HttpHeaders();
                 headers.add("Accept", appMediaType.toString());
                 return new HttpEntity<>(headers);
             }

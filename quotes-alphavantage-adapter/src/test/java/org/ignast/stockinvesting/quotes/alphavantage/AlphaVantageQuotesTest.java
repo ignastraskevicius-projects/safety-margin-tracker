@@ -48,15 +48,15 @@ public final class AlphaVantageQuotesTest {
         mockServer.expect(requestTo(anything()))
                 .andRespond(withSuccess("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", MediaType.APPLICATION_JSON));
 
-        val price = alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC());
+        final val price = alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC());
 
         assertThat(price).isEqualTo(new BigDecimal("128.5000"));
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "AMZN", "MSFT" })
-    public void shouldGetStockQuotesForCompanyRetrievingUrlAndApiKeyFromProperties(String stockSymbol) {
-        val uri = format("%s/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", "https://test.uri.com", stockSymbol,
+    public void shouldGetStockQuotesForCompanyRetrievingUrlAndApiKeyFromProperties(final String stockSymbol) {
+        final val uri = format("%s/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", "https://test.uri.com", stockSymbol,
                 "testApiKey");
         mockServer.expect(requestTo(uri))
                 .andRespond(withSuccess("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", MediaType.APPLICATION_JSON));
@@ -67,7 +67,7 @@ public final class AlphaVantageQuotesTest {
     @Test
     public void shouldNotFindSymbol() {
         mockServer.expect(requestTo(anything()))
-                .andRespond(withSuccess(format("{\"Global Quote\":{}}"), MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("{\"Global Quote\":{}}", MediaType.APPLICATION_JSON));
 
         assertThatExceptionOfType(StockSymbolNotSupportedInThisMarket.class).isThrownBy(
                 () -> alphaVantageQuotes.getQuotedPriceOf(new StockSymbol("A"), new MarketIdentifierCode("XNYS")))
@@ -77,7 +77,7 @@ public final class AlphaVantageQuotesTest {
 
     @Test
     public void shouldThrowOnRemoteServerConstrainsViolations() {
-        val underlyingMessage = "underlying exception from server";
+        final val underlyingMessage = "underlying exception from server";
         mockServer.expect(requestTo(anything())).andRespond(
                 withSuccess(format("{\"Error Message\":\"%s\"}", underlyingMessage), MediaType.APPLICATION_JSON));
 
@@ -89,7 +89,7 @@ public final class AlphaVantageQuotesTest {
     @Test
     public void shouldThrowIfReceivedJsonIsOfNotExpectedStructure() {
         mockServer.expect(requestTo(anything()))
-                .andRespond(withSuccess(format("{\"unexpected\":\"json\"}"), MediaType.APPLICATION_JSON));
+                .andRespond(withSuccess("{\"unexpected\":\"json\"}", MediaType.APPLICATION_JSON));
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
                 .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
@@ -109,14 +109,14 @@ public final class AlphaVantageQuotesTest {
 final class AlphaVantageCasesUnableToCoverWithSpringTest {
 
     @RegisterExtension
-    private static WireMockExtension wireMock = WireMockExtension.newInstance().build();
+    private static final WireMockExtension WIREMOCK = WireMockExtension.newInstance().build();
 
     @Test
     public void shouldThrowIfResponseContentTypeUnexpected() {
-        wireMock.stubFor(get(urlPathEqualTo("/query")).willReturn(WireMock.ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
+        WIREMOCK.stubFor(get(urlPathEqualTo("/query")).willReturn(WireMock.ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
                 .withHeader("Content-Type", "application/octet-stream")));
-        val wireMockUrl = "http://localhost:" + wireMock.getPort();
-        val alphaVantageQuotes = new AlphaVantageQuotes(new RestTemplateBuilder(), wireMockUrl, "anyApiKey");
+        final val wireMockUrl = "http://localhost:" + WIREMOCK.getPort();
+        final val alphaVantageQuotes = new AlphaVantageQuotes(new RestTemplateBuilder(), wireMockUrl, "anyApiKey");
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
                 .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))

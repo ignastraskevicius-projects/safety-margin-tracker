@@ -7,12 +7,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 final class ViolationTypeTest {
     @Test
     public void shouldPreserveErrorNames() {
-        assertThat(ViolationType.VALUE_MUST_BE_ARRAY.getCorrespondigErrorName()).isEqualTo("valueMustBeArray");
-        assertThat(ViolationType.VALUE_INVALID.getCorrespondigErrorName()).isEqualTo("valueIsInvalid");
-        assertThat(ViolationType.VALUE_MUST_BE_STRING.getCorrespondigErrorName()).isEqualTo("valueMustBeString");
-        assertThat(ViolationType.VALUE_MUST_BE_INTEGER.getCorrespondigErrorName()).isEqualTo("valueMustBeInteger");
-        assertThat(ViolationType.FIELD_IS_MISSING.getCorrespondigErrorName()).isEqualTo("fieldIsMissing");
-        assertThat(ViolationType.VALUE_MUST_BE_OBJECT.getCorrespondigErrorName()).isEqualTo("valueMustBeObject");
+        assertThat(ViolationType.VALUE_MUST_BE_ARRAY.getCorrespondingErrorName()).isEqualTo("valueMustBeArray");
+        assertThat(ViolationType.VALUE_INVALID.getCorrespondingErrorName()).isEqualTo("valueIsInvalid");
+        assertThat(ViolationType.VALUE_MUST_BE_STRING.getCorrespondingErrorName()).isEqualTo("valueMustBeString");
+        assertThat(ViolationType.VALUE_MUST_BE_INTEGER.getCorrespondingErrorName()).isEqualTo("valueMustBeInteger");
+        assertThat(ViolationType.FIELD_IS_MISSING.getCorrespondingErrorName()).isEqualTo("fieldIsMissing");
+        assertThat(ViolationType.VALUE_MUST_BE_OBJECT.getCorrespondingErrorName()).isEqualTo("valueMustBeObject");
     }
 
     @Test

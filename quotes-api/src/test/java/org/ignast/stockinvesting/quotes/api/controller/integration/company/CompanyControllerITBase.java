@@ -36,7 +36,7 @@ abstract class CompanyControllerITBase {
 
     protected final String V1_QUOTES = "application/vnd.stockinvesting.quotes-v1.hal+json";
 
-    void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
+    void rejectsAsBadRequest(final String requestBody, final String expectedResponse) throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_QUOTES)
                         .content(requestBody))
                 .andExpect(status().isBadRequest()).andExpect(bodyMatchesJson(expectedResponse));

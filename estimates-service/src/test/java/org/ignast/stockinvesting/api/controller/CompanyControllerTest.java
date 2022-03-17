@@ -23,17 +23,17 @@ final class CompanyControllerTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "invalidCurrency", "anotherInvalidCurrency" })
-    public void shouldFailToCreateCompanyWithInvalidCurrency(String currency) {
-        val company = new CompanyDTO("anyId","anyName", "anyHomeCountry", currency, Collections.emptyList());
+    public void shouldFailToCreateCompanyWithInvalidCurrency(final String currency) {
+        final val company = new CompanyDTO("anyId","anyName", "anyHomeCountry", currency, Collections.emptyList());
 
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> controller.defineCompany(company));
     }
 
     @Test
     public void shouldCreateCompany() {
-        val currencyCode = "USD";
-        val company = new CompanyDTO("someId", "Santander", "FR", currencyCode, Collections.emptyList());
-        val captor = ArgumentCaptor.forClass(Company.class);
+        final val currencyCode = "USD";
+        final val company = new CompanyDTO("someId", "Santander", "FR", currencyCode, Collections.emptyList());
+        final val captor = ArgumentCaptor.forClass(Company.class);
 
         controller.defineCompany(company);
 

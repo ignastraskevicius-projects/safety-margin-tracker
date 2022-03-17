@@ -8,16 +8,16 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 public final class ControllerAdviceForBusinessErrorsTest {
-    private ControllerAdviceForBusinessErrors errorHandler = new ControllerAdviceForBusinessErrors();
+    private static final ControllerAdviceForBusinessErrors ERROR_HANDLER = new ControllerAdviceForBusinessErrors();
 
     @Test
     public void shouldHandleSymbolNotSupported() {
-        assertThat(errorHandler.handleCompanyNotFound(mock(CompanyNotFound.class)).getErrorName()).isNull();
+        assertThat(ERROR_HANDLER.handleCompanyNotFound(mock(CompanyNotFound.class)).getErrorName()).isNull();
     }
 
     @Test
     public void shouldHandleSymbolNotSupportedInMarket() {
-        assertThat(errorHandler.handleSymbolNotSupportedInMarket(mock(StockSymbolNotSupportedInThisMarket.class))
+        assertThat(ERROR_HANDLER.handleSymbolNotSupportedInMarket(mock(StockSymbolNotSupportedInThisMarket.class))
                 .getErrorName()).isEqualTo("stockSymbolNotSupportedInThisMarket");
     }
 

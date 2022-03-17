@@ -20,13 +20,13 @@ public class CompanyController {
 
     private final Companies companies;
 
-    public CompanyController(Companies companies) {
+    public CompanyController(final Companies companies) {
         this.companies = companies;
     }
 
     @PutMapping(consumes = VersionedApiMediaTypes.V1)
-    public HttpEntity<String> defineCompany(@Validated @RequestBody CompanyDTO company) {
-        val currency = Currency.getInstance(company.getFunctionalCurrency());
+    public HttpEntity<String> defineCompany(@Validated @RequestBody final CompanyDTO company) {
+        final val currency = Currency.getInstance(company.getFunctionalCurrency());
         companies.create(new Company(company.getName(), company.getHomeCountry(), currency));
 
         return new ResponseEntity<>("", HttpStatus.CREATED);

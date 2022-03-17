@@ -9,27 +9,27 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import java.nio.charset.StandardCharsets;
 
 public final class NonExtensibleContentMatchers {
-    public static ResultMatcher bodyMatchesJson(String expectedJson) {
+    public static ResultMatcher bodyMatchesJson(final String expectedJson) {
         return (result) -> {
-            String actualJson = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
+            final val actualJson = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
             JSONAssert.assertEquals(expectedJson, actualJson, JSONCompareMode.NON_EXTENSIBLE);
         };
     }
 
-    public static ResultMatcher resourceContentMatchesJson(String expectedJson) {
+    public static ResultMatcher resourceContentMatchesJson(final String expectedJson) {
         return (result) -> {
-            val expected = new JSONObject(expectedJson);
-            val actualJson = new JSONObject(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+            final val expected = new JSONObject(expectedJson);
+            final val actualJson = new JSONObject(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
             actualJson.remove("_links");
             JSONAssert.assertEquals(expected, actualJson, JSONCompareMode.NON_EXTENSIBLE);
         };
     }
 
-    public static ResultMatcher resourceLinksMatchesJson(String expectedJson) {
+    public static ResultMatcher resourceLinksMatchesJson(final String expectedJson) {
         return (result) -> {
-            val expected = new JSONObject(expectedJson);
-            val actualJson = new JSONObject(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
-            val actualJsonLinksOnly = new JSONObject();
+            final val expected = new JSONObject(expectedJson);
+            final val actualJson = new JSONObject(result.getResponse().getContentAsString(StandardCharsets.UTF_8));
+            final val actualJsonLinksOnly = new JSONObject();
             actualJsonLinksOnly.put("_links", actualJson.get("_links"));
             JSONAssert.assertEquals(expected, actualJsonLinksOnly, JSONCompareMode.NON_EXTENSIBLE);
         };

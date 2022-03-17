@@ -42,11 +42,11 @@ public final class CompanyDTO {
     private List<ListingDTO> listings;
 
     public CompanyDTO(
-            @JsonProperty(value = "id") String id,
-            @JsonProperty(value = "name") String name,
-            @JsonProperty(value = "homeCountry") String homeCountry,
-            @JsonProperty("functionalCurrency") String functionalCurrency,
-            @JsonProperty(value = "listings") List<ListingDTO> listings) {
+            @JsonProperty(value = "id") final String id,
+            @JsonProperty(value = "name") final String name,
+            @JsonProperty(value = "homeCountry") final String homeCountry,
+            @JsonProperty("functionalCurrency") final String functionalCurrency,
+            @JsonProperty(value = "listings") final List<ListingDTO> listings) {
         this.id = id;
         this.name = name;
         this.homeCountry = homeCountry;

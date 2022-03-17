@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import lombok.val;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictIntegerDeserializingException;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializingException;
 
@@ -8,12 +9,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public final class JacksonParsingErrorsExtractor {
-    public ValidationErrorDTO extractError(MismatchedInputException exception) {
-        JsonPath jsonPath = JsonPath.fromJsonPath(extractJsonPath(exception));
+    public ValidationErrorDTO extractError(final MismatchedInputException exception) {
+        final val jsonPath = JsonPath.fromJsonPath(extractJsonPath(exception));
         return new ValidationErrorDTO(jsonPath, "", toViolationType(exception));
     }
 
-    private String extractJsonPath(MismatchedInputException exception) {
+    private String extractJsonPath(final MismatchedInputException exception) {
         if (exception.getPath() == null) {
             throw new JacksonParsingErrorExtractionException("Jackson parsing failed without target type");
         }
@@ -26,7 +27,7 @@ public final class JacksonParsingErrorsExtractor {
         }).collect(Collectors.joining("", "$", ""));
     }
 
-    private ViolationType toViolationType(MismatchedInputException exception) {
+    private ViolationType toViolationType(final MismatchedInputException exception) {
         if (exception instanceof StrictStringDeserializingException) {
             return ViolationType.VALUE_MUST_BE_STRING;
         } else if (exception instanceof StrictIntegerDeserializingException) {
@@ -44,7 +45,7 @@ public final class JacksonParsingErrorsExtractor {
 }
 
 class JacksonParsingErrorExtractionException extends RuntimeException {
-    public JacksonParsingErrorExtractionException(String message) {
+    public JacksonParsingErrorExtractionException(final String message) {
         super(message);
     }
 }

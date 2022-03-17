@@ -58,6 +58,12 @@
         <module name="ExplicitInitialization"/>
         <module name="FallThrough"/>
         <module name="FinalClass"/>
+        <module name="FinalLocalVariable"/>
+        <module name="FinalParameters"/>
+        <module name="GenericWhitespace"/>
+        <module name="HiddenField">
+            <property name="ignoreConstructorParameter" value="true"/>
+        </module>
 
 
 
@@ -67,4 +73,6 @@
 
     <module name="FileLength"/>
     <module name="FileTabCharacter"/>
+    <module name="Header"/>
+
 </module>

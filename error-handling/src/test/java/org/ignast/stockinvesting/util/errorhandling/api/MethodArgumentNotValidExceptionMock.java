@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import lombok.val;
+import org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.ViolationMockBuilder;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 import org.springframework.core.MethodParameter;
@@ -8,7 +10,6 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -32,16 +33,16 @@ import static org.mockito.Mockito.when;
 final class ExpectationsForMethodArgumentNotValidExceptionTest {
 
     @Test
-    public void exceptionShouldAlwaysContainBindingResult() throws NoSuchMethodException {
+    public void exceptionShouldAlwaysContainBindingResult() {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new MethodArgumentNotValidException(anyMethodParameter(), null))
                 .withMessageContaining("BindingResult");
     }
 
     @Test
-    public void shouldThrowOnUnwrappingIfExceptionIsNotDueToConstraintViolation() throws NoSuchMethodException {
-        FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
-        Object source = new Object();
+    public void shouldThrowOnUnwrappingIfExceptionIsNotDueToConstraintViolation() {
+        final val fieldError = new FieldError("company", "anyName", "anyMessage");
+        final val source = new Object();
         fieldError.wrap(source);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -51,8 +52,8 @@ final class ExpectationsForMethodArgumentNotValidExceptionTest {
     }
 
     @Test
-    public void shouldThrowOnUnwrappingIfThereIsNoErrorSourceIndicated() throws NoSuchMethodException {
-        FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
+    public void shouldThrowOnUnwrappingIfThereIsNoErrorSourceIndicated() {
+        final val fieldError = new FieldError("company", "anyName", "anyMessage");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> fieldError.unwrap(ConstraintViolation.class))
@@ -62,7 +63,7 @@ final class ExpectationsForMethodArgumentNotValidExceptionTest {
 
     @Test
     public void shouldThrowIfThereIsNullSourceIndicated() {
-        FieldError fieldError = new FieldError("company", "anyName", "anyMessage");
+        final val fieldError = new FieldError("company", "anyName", "anyMessage");
         fieldError.wrap(null);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
@@ -73,50 +74,50 @@ final class ExpectationsForMethodArgumentNotValidExceptionTest {
 }
 
 public final class MethodArgumentNotValidExceptionMock {
-    public static MethodArgumentNotValidException withFieldErrors(List<FieldError> fieldErrors) {
+    public static MethodArgumentNotValidException withFieldErrors(final List<FieldError> fieldErrors) {
         return new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(fieldErrors));
     }
 
     public static MethodArgumentNotValidException withFieldErrorSourceNotBeingConstraintViolation() {
-        FieldError fieldError = mockFieldErrorWithNameAndMessage("any", "any");
+        final val fieldError = mockFieldErrorWithNameAndMessage("any", "any");
         when(fieldError.unwrap(ArgumentMatchers.any())).thenThrow(IllegalArgumentException.class);
-        return withFieldErrors(asList(fieldError));
+        return withFieldErrors(List.of(fieldError));
     }
 
     public static MethodArgumentNotValidException withErrorFieldViolation(
-            Consumer<ViolationMockBuilder> violationCustomizer) {
-        FieldError fieldError = mockFieldErrorCausedByViolation("any", "any", violationCustomizer);
-        return withFieldErrors(asList(fieldError));
+            final Consumer<ViolationMockBuilder> violationCustomizer) {
+        final val fieldError = mockFieldErrorCausedByViolation("any", "any", violationCustomizer);
+        return withFieldErrors(List.of(fieldError));
     }
 
-    public static MethodArgumentNotValidException withMultipleFields(String underlyingPath1, String defaultMessage1,
-            Annotation annotation1, String underlyingPath2, String defaultMessage2, Annotation annotation2) {
-        FieldError fieldError1 = mockFieldErrorCausedByViolation(underlyingPath1, defaultMessage1,
+    public static MethodArgumentNotValidException withMultipleFields(final String underlyingPath1, final String defaultMessage1,
+                                                                     final Annotation annotation1, final String underlyingPath2, final String defaultMessage2, final Annotation annotation2) {
+        final val fieldError1 = mockFieldErrorCausedByViolation(underlyingPath1, defaultMessage1,
                 createViolationCausedBy(annotation1));
-        FieldError fieldError2 = mockFieldErrorCausedByViolation(underlyingPath2, defaultMessage2,
+        final val fieldError2 = mockFieldErrorCausedByViolation(underlyingPath2, defaultMessage2,
                 createViolationCausedBy(annotation2));
         return withFieldErrors(asList(fieldError1, fieldError2));
     }
 
-    private static FieldError mockFieldErrorCausedByViolation(String path, String message,
-            Consumer<ViolationMockBuilder> violationCustomizer) {
-        ViolationMockBuilder builder = new ViolationMockBuilder();
+    private static FieldError mockFieldErrorCausedByViolation(final String path, final String message,
+                                                              final Consumer<ViolationMockBuilder> violationCustomizer) {
+        final val builder = new ViolationMockBuilder();
         violationCustomizer.accept(builder);
-        FieldError fieldError = mockFieldErrorWithNameAndMessage(path, message);
+        final val fieldError = mockFieldErrorWithNameAndMessage(path, message);
         when(fieldError.unwrap(ArgumentMatchers.any())).thenReturn(builder.build());
         return fieldError;
     }
 
-    public static MethodArgumentNotValidException withFieldErrorCausedBy(Annotation annotation) {
+    public static MethodArgumentNotValidException withFieldErrorCausedBy(final Annotation annotation) {
         return withErrorFieldViolation(createViolationCausedBy(annotation));
     }
 
-    private static Consumer<ViolationMockBuilder> createViolationCausedBy(Annotation annotation) {
+    private static Consumer<ViolationMockBuilder> createViolationCausedBy(final Annotation annotation) {
         return b -> b.withDescriptor().withAnnotation(annotation);
     }
 
-    private static FieldError mockFieldErrorWithNameAndMessage(String field, String defaultMessage) {
-        FieldError fieldError = mock(FieldError.class);
+    private static FieldError mockFieldErrorWithNameAndMessage(final String field, final String defaultMessage) {
+        final val fieldError = mock(FieldError.class);
         when(fieldError.getField()).thenReturn(field);
         when(fieldError.getDefaultMessage()).thenReturn(defaultMessage);
         return fieldError;
@@ -124,15 +125,15 @@ public final class MethodArgumentNotValidExceptionMock {
 
     static MethodParameter anyMethodParameter() {
         try {
-            Method anyMethod = String.class.getMethod("charAt", int.class);
+            final val anyMethod = String.class.getMethod("charAt", int.class);
             return new MethodParameter(anyMethod, 0);
         } catch (NoSuchMethodException e) {
             throw new RuntimeException(e);
         }
     }
 
-    private static BindingResult bindingResultWithFieldErrorsOf(List<FieldError> fieldErrors) {
-        BindingResult result = mock(BindingResult.class);
+    private static BindingResult bindingResultWithFieldErrorsOf(final List<FieldError> fieldErrors) {
+        final val result = mock(BindingResult.class);
         when(result.getFieldErrors()).thenReturn(fieldErrors);
         return result;
     }
@@ -153,7 +154,7 @@ public final class MethodArgumentNotValidExceptionMock {
             return this;
         }
 
-        private ViolationMockBuilder withAnnotation(Annotation annotation) {
+        private ViolationMockBuilder withAnnotation(final Annotation annotation) {
             when(descriptor.getAnnotation()).thenReturn(annotation);
             return this;
         }
@@ -168,23 +169,23 @@ final class MethodArgumentNotValidExceptionMockTest {
 
     @Test
     public void shouldCreateMockWithNullFieldErrors() {
-        MethodArgumentNotValidException exception = withFieldErrors(null);
+        final val exception = withFieldErrors(null);
 
         assertThat(exception.getBindingResult().getFieldErrors()).isNull();
     }
 
     @Test
     public void shouldCreateMockWithEmptyFieldErrors() {
-        MethodArgumentNotValidException exception = withFieldErrors(asList());
+        final val exception = withFieldErrors(List.of());
 
         assertThat(exception.getBindingResult().getFieldErrors()).hasSize(0);
     }
 
     @Test
     public void shouldCreateMockContainingErrorsWithoutConstrainViolation() {
-        MethodArgumentNotValidException exception = withFieldErrorSourceNotBeingConstraintViolation();
+        final val exception = withFieldErrorSourceNotBeingConstraintViolation();
 
-        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        final val fieldErrors = exception.getBindingResult().getFieldErrors();
         assertThat(fieldErrors).hasSize(1);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> fieldErrors.get(0).unwrap(ConstraintViolation.class));
@@ -192,10 +193,10 @@ final class MethodArgumentNotValidExceptionMockTest {
 
     @Test
     public void shouldCreateMockContainingErrorsWithViolationsButWithoutDescriptor() {
-        MethodArgumentNotValidException exception = withErrorFieldViolation(c -> {
+        final val exception = withErrorFieldViolation(c -> {
         });
 
-        ConstraintViolation violation = exception.getBindingResult().getFieldErrors().get(0)
+        final val violation = exception.getBindingResult().getFieldErrors().get(0)
                 .unwrap(ConstraintViolation.class);
         assertThat(violation).isNotNull();
         assertThat(violation.getConstraintDescriptor()).isNull();
@@ -203,9 +204,9 @@ final class MethodArgumentNotValidExceptionMockTest {
 
     @Test
     public void shouldCreateMockContainingErrorsWithViolationDescriptorButWithoutAnnotation() {
-        MethodArgumentNotValidException exception = withErrorFieldViolation(c -> c.withDescriptor());
+        final val exception = withErrorFieldViolation(ViolationMockBuilder::withDescriptor);
 
-        ConstraintDescriptor descriptor = exception.getBindingResult().getFieldErrors().get(0)
+        final val descriptor = exception.getBindingResult().getFieldErrors().get(0)
                 .unwrap(ConstraintViolation.class).getConstraintDescriptor();
         assertThat(descriptor).isNotNull();
         assertThat(descriptor.getAnnotation()).isNull();
@@ -213,9 +214,9 @@ final class MethodArgumentNotValidExceptionMockTest {
 
     @Test
     public void shouldCreateMockContainingErrorsWithCausingAnnotationsButWithoutTheType() {
-        MethodArgumentNotValidException exception = withErrorFieldViolation(c -> c.withDescriptor().withAnnotation());
+        final val exception = withErrorFieldViolation(c -> c.withDescriptor().withAnnotation());
 
-        Annotation violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
+        final val violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
                 .unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation();
         assertThat(violationCausingAnnotation).isNotNull();
         assertThat(violationCausingAnnotation.annotationType()).isNull();
@@ -223,19 +224,19 @@ final class MethodArgumentNotValidExceptionMockTest {
 
     @Test
     public void shouldCreateMockContainingErrorsWithCausingAnnotations() {
-        MethodArgumentNotValidException exception = withFieldErrorCausedBy(javaLangOverride());
+        final val exception = withFieldErrorCausedBy(javaLangOverride());
 
-        Annotation violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
+        final val violationCausingAnnotation = exception.getBindingResult().getFieldErrors().get(0)
                 .unwrap(ConstraintViolation.class).getConstraintDescriptor().getAnnotation();
         assertThat(violationCausingAnnotation.annotationType()).isNotNull();
     }
 
     @Test
     public void shouldCreateMockContainingMultipleErrors() {
-        MethodArgumentNotValidException exception = withMultipleFields("path1", "message1", javaLangOverride(), "path2",
+        final val exception = withMultipleFields("path1", "message1", javaLangOverride(), "path2",
                 "message2", javaLangSuppressWarning());
 
-        List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+        final val fieldErrors = exception.getBindingResult().getFieldErrors();
         assertThat(fieldErrors.size()).isEqualTo(2);
         assertThat(fieldErrors.get(0).getField()).isEqualTo("path1");
         assertThat(fieldErrors.get(0).getDefaultMessage()).isEqualTo("message1");

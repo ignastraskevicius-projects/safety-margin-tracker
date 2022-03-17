@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import lombok.val;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -10,12 +11,12 @@ import javax.servlet.http.HttpServletRequest;
 @Controller
 public final class GenericErrorController implements ErrorController {
 
-    private final int INTERNAL_SERVER_ERROR = 500;
+    private static final int INTERNAL_SERVER_ERROR = 500;
 
     @RequestMapping("/error")
-    public ResponseEntity<StandardErrorDTO> handleError(HttpServletRequest request) {
+    public ResponseEntity<StandardErrorDTO> handleError(final HttpServletRequest request) {
         try {
-            int statusCode = (int) request.getAttribute("javax.servlet.error.status_code");
+            final val statusCode = (int) request.getAttribute("javax.servlet.error.status_code");
             return ResponseEntity.status(statusCode).body(StandardErrorDTO.createNameless());
         } catch (Exception e) {
             return ResponseEntity.status(INTERNAL_SERVER_ERROR).body(StandardErrorDTO.createNameless());

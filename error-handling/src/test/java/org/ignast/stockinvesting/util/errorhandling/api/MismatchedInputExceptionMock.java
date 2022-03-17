@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import lombok.val;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictIntegerDeserializingException;
 import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializingException;
 import org.ignast.stockinvesting.util.mockito.MockitoUtils;
@@ -10,8 +11,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.stream.Stream;
 
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.dtoParsingFailedAt;
 import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.integerParsingFailedAt;
@@ -25,19 +26,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public final class MismatchedInputExceptionMock {
-    public static MismatchedInputException stringParsingFailedAt(List<Reference> path) {
-        return MockitoUtils.mock(StrictStringDeserializingException.class, e -> {
-            when(e.getPath()).thenReturn(path);
-        });
+    public static MismatchedInputException stringParsingFailedAt(final List<Reference> path) {
+        return MockitoUtils.mock(StrictStringDeserializingException.class, e -> when(e.getPath()).thenReturn(path));
     }
 
-    public static MismatchedInputException integerParsingFailedAt(List<Reference> path) {
-        return MockitoUtils.mock(StrictIntegerDeserializingException.class, e -> {
-            when(e.getPath()).thenReturn(path);
-        });
+    public static MismatchedInputException integerParsingFailedAt(final List<Reference> path) {
+        return MockitoUtils.mock(StrictIntegerDeserializingException.class, e -> when(e.getPath()).thenReturn(path));
     }
 
-    public static MismatchedInputException listParsingFailedAt(List<Reference> path) {
+    public static MismatchedInputException listParsingFailedAt(final List<Reference> path) {
         return MockitoUtils.mock(MismatchedInputException.class, e -> {
             doReturn(ArrayList.class).when(e).getTargetType();
             when(e.getPath()).thenReturn(path);
@@ -48,7 +45,7 @@ public final class MismatchedInputExceptionMock {
         return mock(MismatchedInputException.class);
     }
 
-    public static MismatchedInputException dtoParsingFailedAt(List<Reference> path) {
+    public static MismatchedInputException dtoParsingFailedAt(final List<Reference> path) {
         return MockitoUtils.mock(MismatchedInputException.class, e -> {
             doReturn(TestDTO.class).when(e).getTargetType();
             when(e.getPath()).thenReturn(path);
@@ -59,20 +56,20 @@ public final class MismatchedInputExceptionMock {
         return MockitoUtils.mock(MismatchedInputException.class, e -> doReturn(HashSet.class).when(e).getTargetType());
     }
 
-    class TestDTO {
+    private static final class TestDTO {
     }
 }
 
 final class ReferenceMock {
 
-    public static Reference toField(Object sourceObject, String field) {
+    public static Reference toField(final Object sourceObject, final String field) {
         return MockitoUtils.mock(Reference.class, r -> {
             when(r.getFrom()).thenReturn(sourceObject);
             when(r.getFieldName()).thenReturn(field);
         });
     }
 
-    public static Reference toIndex(Object sourceObject, int index) {
+    public static Reference toIndex(final Object sourceObject, final int index) {
         return MockitoUtils.mock(Reference.class, r -> {
             when(r.getFrom()).thenReturn(sourceObject);
             when(r.getIndex()).thenReturn(index);
@@ -83,9 +80,9 @@ final class ReferenceMock {
 final class ReferenceMockTest {
     @Test
     public void shouldCreateFieldPath() {
-        City source = new City();
-        String fieldName = "population";
-        Reference reference = toField(source, fieldName);
+        final val source = new City();
+        final val fieldName = "population";
+        final val reference = toField(source, fieldName);
 
         assertThat(reference.getFrom()).isSameAs(source);
         assertThat(reference.getFieldName()).isEqualTo(fieldName);
@@ -93,34 +90,34 @@ final class ReferenceMockTest {
 
     @Test
     public void shouldCreateIndexPath() {
-        List source = new ArrayList();
-        int index = 3;
-        Reference reference = ReferenceMock.toIndex(source, index);
+        final val source = List.of();
+        final val index = 3;
+        final val reference = ReferenceMock.toIndex(source, index);
 
         assertThat(reference.getFrom()).isSameAs(source);
         assertThat(reference.getIndex()).isEqualTo(index);
     }
 
-    class City {
+    private static final class City {
     }
 }
 
 final class MismatchedInputExceptionMockTest {
     @Test
     public void shouldCreateStringInputMismatchException() {
-        MismatchedInputException exception = stringParsingFailedAt(null);
+        final val exception = stringParsingFailedAt(null);
         assertThat(exception).isInstanceOf(StrictStringDeserializingException.class);
     }
 
     @Test
     public void shouldCreateIntegerInputMismatchException() {
-        MismatchedInputException exception = integerParsingFailedAt(null);
+        final val exception = integerParsingFailedAt(null);
         assertThat(exception).isInstanceOf(StrictIntegerDeserializingException.class);
     }
 
     @Test
     public void shouldCreateListInputMismatchException() {
-        MismatchedInputException exception = listParsingFailedAt(null);
+        final val exception = listParsingFailedAt(null);
         assertThat(exception).isInstanceOf(MismatchedInputException.class)
                 .isNotInstanceOf(StrictStringDeserializingException.class);
         assertThat(List.class.isAssignableFrom(exception.getTargetType())).isTrue();
@@ -128,7 +125,7 @@ final class MismatchedInputExceptionMockTest {
 
     @Test
     public void shouldCreateUndefinedTypeParsingException() {
-        MismatchedInputException exception = undefinedTypeParsingException();
+        final val exception = undefinedTypeParsingException();
         assertThat(exception).isInstanceOf(MismatchedInputException.class)
                 .isNotInstanceOf(StrictStringDeserializingException.class);
         assertThat(exception.getTargetType()).isNull();
@@ -136,7 +133,7 @@ final class MismatchedInputExceptionMockTest {
 
     @Test
     public void shouldCreateDtoInputMismatchException() {
-        MismatchedInputException exception = dtoParsingFailedAt(null);
+        final val exception = dtoParsingFailedAt(null);
         assertThat(exception).isInstanceOf(MismatchedInputException.class)
                 .isNotInstanceOf(StrictStringDeserializingException.class);
         assertThat(exception.getTargetType().getName()).endsWith("DTO");
@@ -144,7 +141,7 @@ final class MismatchedInputExceptionMockTest {
 
     @Test
     public void shouldCreateUnexpectedInputMismatchException() {
-        MismatchedInputException exception = unexpectedTypeParsingFailed();
+        final val exception = unexpectedTypeParsingFailed();
         assertThat(exception).isInstanceOf(MismatchedInputException.class)
                 .isNotInstanceOf(StrictStringDeserializingException.class);
         assertThat(exception.getTargetType().getName()).endsWith("Set");
@@ -152,17 +149,17 @@ final class MismatchedInputExceptionMockTest {
 
     @Test
     public void shouldCreateMismatchedInputExceptionsWithNullPath() {
-        asList(integerParsingFailedAt(null), stringParsingFailedAt(null), listParsingFailedAt(null), dtoParsingFailedAt(null)).stream()
+        Stream.of(integerParsingFailedAt(null), stringParsingFailedAt(null), listParsingFailedAt(null), dtoParsingFailedAt(null))
                 .map(MismatchedInputException::getPath).forEach(p -> assertThat(p).isNull());
     }
 
 
     @Test
     public void shouldCreateMismatchedInputExceptionsWithPath() {
-        City sourceObject = new City();
-        String field = "population";
-        List<Reference> path = asList(toField(sourceObject, field));
-        asList(integerParsingFailedAt(path), stringParsingFailedAt(path), listParsingFailedAt(path), dtoParsingFailedAt(path)).stream()
+        final val sourceObject = new City();
+        final val field = "population";
+        final val path = List.of(toField(sourceObject, field));
+        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), listParsingFailedAt(path), dtoParsingFailedAt(path))
                 .map(MismatchedInputException::getPath).forEach(p -> {
                     assertThat(p).isNotNull().hasSize(1);
                     assertThat(p.get(0).getFrom()).isSameAs(sourceObject);
@@ -170,6 +167,6 @@ final class MismatchedInputExceptionMockTest {
                 });
     }
 
-    class City {
+    private static final class City {
     }
 }

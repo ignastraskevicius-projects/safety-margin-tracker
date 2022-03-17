@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import lombok.val;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
@@ -20,7 +21,7 @@ import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.FIE
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.VALUE_INVALID;
 
 public final class AnnotationBasedValidationErrorsExtractor {
-    public List<ValidationErrorDTO> extractAnnotationBasedErrorsFrom(MethodArgumentNotValidException exception) {
+    public List<ValidationErrorDTO> extractAnnotationBasedErrorsFrom(final MethodArgumentNotValidException exception) {
         if (CollectionUtils.isEmpty(exception.getBindingResult().getFieldErrors())) {
             throw new ValidationErrorsExtractionException(
                     "javax.validation exception is expected to contain at least 1 field error");
@@ -34,7 +35,7 @@ public final class AnnotationBasedValidationErrorsExtractor {
         }
     }
 
-    private ViolationType toViolationType(Class<? extends Annotation> annotationClass) {
+    private ViolationType toViolationType(final Class<? extends Annotation> annotationClass) {
         if (annotationClass == NotNull.class) {
             return FIELD_IS_MISSING;
         } else if (asList(Size.class, Pattern.class, DomainClassConstraint.class)
@@ -47,9 +48,9 @@ public final class AnnotationBasedValidationErrorsExtractor {
         }
     }
 
-    private Class<? extends Annotation> extractAnnotationClassCausingViolation(FieldError fieldError) {
+    private Class<? extends Annotation> extractAnnotationClassCausingViolation(final FieldError fieldError) {
         try {
-            Class<? extends Annotation> annotation = extractViolation(fieldError).getConstraintDescriptor()
+            final val annotation = extractViolation(fieldError).getConstraintDescriptor()
                     .getAnnotation().annotationType();
             requireNonNull(annotation);
             return annotation;
@@ -59,7 +60,7 @@ public final class AnnotationBasedValidationErrorsExtractor {
         }
     }
 
-    private ConstraintViolation extractViolation(FieldError fieldError) {
+    private ConstraintViolation extractViolation(final FieldError fieldError) {
         try {
             return fieldError.unwrap(ConstraintViolation.class);
         } catch (IllegalArgumentException e) {
@@ -70,11 +71,11 @@ public final class AnnotationBasedValidationErrorsExtractor {
 }
 
 class ValidationErrorsExtractionException extends RuntimeException {
-    public ValidationErrorsExtractionException(String message) {
+    public ValidationErrorsExtractionException(final String message) {
         super(message);
     }
 
-    public ValidationErrorsExtractionException(String message, RuntimeException cause) {
+    public ValidationErrorsExtractionException(final String message, final RuntimeException cause) {
         super(message, cause);
     }
 }

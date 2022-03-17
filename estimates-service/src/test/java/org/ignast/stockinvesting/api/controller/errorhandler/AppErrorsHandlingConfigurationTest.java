@@ -23,7 +23,7 @@ final class AppErrorsHandlingConfigurationTest {
 
     @Test
     public void shouldHaveClassCorrectlyAssignedForTypeConstructors() {
-        val countOfTypesSupported = asList(
+        final val countOfTypesSupported = asList(
                 checkConstructedType(MarketIdentifierCode.class, t -> t.construct("XNYS")),
                 checkConstructedType(StockSymbol.class, t -> t.construct("AMZN")),
                 checkConstructedType(CountryCode.class, t -> t.construct("US")),
@@ -35,7 +35,7 @@ final class AppErrorsHandlingConfigurationTest {
         assertThat(types).hasSize(countOfTypesSupported);
     }
 
-    private ObjectAssert checkConstructedType(Class<?> type, FromConstructorToObject constructor) {
+    private ObjectAssert checkConstructedType(final Class<?> type, final FromConstructorToObject constructor) {
         return assertThat(constructor.construct(types.get(type))).isInstanceOf(type);
     }
 

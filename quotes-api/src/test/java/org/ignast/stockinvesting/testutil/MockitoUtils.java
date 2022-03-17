@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.testutil;
 
+import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 
@@ -9,8 +10,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public final class MockitoUtils {
 
-    public static <T> T mock(Class<? extends T> classToMock, Consumer<T> customizer) {
-        T mock = Mockito.mock(classToMock);
+    public static <T> T mock(final Class<? extends T> classToMock, final Consumer<T> customizer) {
+        final T mock = Mockito.mock(classToMock);
         customizer.accept(mock);
         return mock;
     }
@@ -19,21 +20,21 @@ public final class MockitoUtils {
 final class MockitoUtilsTest {
     @Test
     public void shouldCreateEmptyMock() {
-        TicketMachine machine = MockitoUtils.mock(TicketMachine.class, m -> {
+        final val machine = MockitoUtils.mock(TicketMachine.class, m -> {
         });
 
-        assertThat(machine.getTicked()).isNull();
+        assertThat(machine.getTicket()).isNull();
     }
 
     @Test
     public void shouldCustomizeMock() {
-        TicketMachine machine = MockitoUtils.mock(TicketMachine.class, m -> Mockito.when(m.getTicked()).thenReturn("bbb"));
+        final val machine = MockitoUtils.mock(TicketMachine.class, m -> Mockito.when(m.getTicket()).thenReturn("bbb"));
 
-        assertThat(machine.getTicked()).isEqualTo("bbb");
+        assertThat(machine.getTicket()).isEqualTo("bbb");
     }
 
-    class TicketMachine {
-        public String getTicked() {
+    private static final class TicketMachine {
+        public String getTicket() {
             return "aaa";
         }
     }

@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import lombok.val;
 import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
 import org.ignast.stockinvesting.util.mockito.MockitoUtils;
 import org.junit.jupiter.api.Test;
@@ -10,8 +11,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import java.util.Arrays;
-
+import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.util.errorhandling.api.Errors.anyValidationErrorDTO;
 import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.jacksonFieldLevelError;
@@ -32,11 +32,11 @@ final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
     @Test
     public void shouldExtractJavaxValidationErrors() {
-        MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
+        final val exception = mock(MethodArgumentNotValidException.class);
         when(javaxErrorExtractor.extractAnnotationBasedErrorsFrom(notNull()))
-                .thenReturn(Arrays.asList(anyValidationErrorDTO()));
+                .thenReturn(of(anyValidationErrorDTO()));
 
-        StandardErrorDTO error = handler.handleMethodArgumentNotValidException(exception);
+        final val error = handler.handleMethodArgumentNotValidException(exception);
 
         assertThat(error).isInstanceOf(BodyDoesNotMatchSchemaErrorDTO.class);
         assertThat(((BodyDoesNotMatchSchemaErrorDTO) error).getValidationErrors()).isNotEmpty();
@@ -44,11 +44,11 @@ final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
     @Test
     public void validationExtractorFailingToExtractExpectedErrorsShouldResultInNamelessError() {
-        MethodArgumentNotValidException exception = mock(MethodArgumentNotValidException.class);
+        final val exception = mock(MethodArgumentNotValidException.class);
         when(javaxErrorExtractor.extractAnnotationBasedErrorsFrom(notNull()))
                 .thenThrow(ValidationErrorsExtractionException.class);
 
-        StandardErrorDTO error = handler.handleMethodArgumentNotValidException(exception);
+        final val error = handler.handleMethodArgumentNotValidException(exception);
 
         assertThat(error.getErrorName()).isNull();
     }
@@ -65,7 +65,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
     public void shouldExtractJacksonParsingError() {
         when(jacksonErrorExtractor.extractError(any())).thenReturn(anyValidationErrorDTO());
 
-        StandardErrorDTO error = handler.handleUnparsableJson(jacksonFieldLevelError());
+        final val error = handler.handleUnparsableJson(jacksonFieldLevelError());
 
         assertThat(error).isInstanceOf(BodyDoesNotMatchSchemaErrorDTO.class);
         assertThat(((BodyDoesNotMatchSchemaErrorDTO) error).getValidationErrors()).isNotEmpty();
@@ -75,7 +75,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
     public void shouldIndicateBodyIsUnparsableWhenExceptionHasNoCause() {
         when(jacksonErrorExtractor.extractError(any())).thenReturn(anyValidationErrorDTO());
 
-        StandardErrorDTO error = handler.handleUnparsableJson(withoutCause());
+        final val error = handler.handleUnparsableJson(withoutCause());
 
         assertThat(error.getErrorName()).isEqualTo("bodyNotParsable");
     }
@@ -84,7 +84,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
     public void shouldIndicateBodyIsUnparsableWhenExceptionHasUnrecognisedCause() {
         when(jacksonErrorExtractor.extractError(any())).thenReturn(anyValidationErrorDTO());
 
-        StandardErrorDTO error = handler.handleUnparsableJson(unknownCause());
+        final val error = handler.handleUnparsableJson(unknownCause());
 
         assertThat(error.getErrorName()).isEqualTo("bodyNotParsable");
     }
@@ -93,7 +93,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
     public void failingToExtractJacksonShouldResultNamelessError() {
         when(jacksonErrorExtractor.extractError(any())).thenThrow(JacksonParsingErrorExtractionException.class);
 
-        StandardErrorDTO error = handler.handleUnparsableJson(jacksonFieldLevelError());
+        final val error = handler.handleUnparsableJson(jacksonFieldLevelError());
 
         assertThat(error.getErrorName()).isNull();
     }

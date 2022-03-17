@@ -30,7 +30,7 @@ public final class DomainFactoryForTests {
     private static class StubQuotesRepository implements QuotesRepository {
 
         @Override
-        public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic) {
+        public BigDecimal getQuotedPriceOf(final StockSymbol stockSymbol, final MarketIdentifierCode mic) {
             return null;
         }
     }

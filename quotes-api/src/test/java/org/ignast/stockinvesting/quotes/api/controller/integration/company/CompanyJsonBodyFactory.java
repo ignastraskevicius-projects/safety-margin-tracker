@@ -1,9 +1,9 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
 import lombok.val;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.junit.jupiter.api.Test;
 

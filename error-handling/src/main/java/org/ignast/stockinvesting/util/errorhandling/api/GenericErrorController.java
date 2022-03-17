@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;

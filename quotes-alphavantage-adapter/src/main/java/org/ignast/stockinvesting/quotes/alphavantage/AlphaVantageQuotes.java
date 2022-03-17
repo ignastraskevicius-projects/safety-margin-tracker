@@ -1,15 +1,14 @@
 package org.ignast.stockinvesting.quotes.alphavantage;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.val;
-import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
-import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
-import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
+import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.HttpEntity;

@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.quotes.persistence.repositories;
 
 import lombok.val;
-
 import org.ignast.stockinvesting.quotes.domain.Company;
 import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
@@ -23,14 +22,14 @@ import org.springframework.jdbc.datasource.SingleConnectionDataSource;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.transaction.TestTransaction;
 
-import javax.persistence.EntityManager;
-import javax.sql.DataSource;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import javax.persistence.EntityManager;
+import javax.sql.DataSource;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
 
 @DataJpaTest

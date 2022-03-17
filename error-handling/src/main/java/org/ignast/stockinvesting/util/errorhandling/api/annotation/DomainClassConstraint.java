@@ -4,14 +4,15 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
 
-import javax.validation.Constraint;
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import java.util.Map;
+
+import javax.validation.Constraint;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
 import static java.lang.String.format;
 

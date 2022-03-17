@@ -8,8 +8,8 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
-import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.ignast.stockinvesting.util.test.api.HateoasJsonMatchers.hasRel;
+import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.http.HttpHeaders.CONTENT_TYPE;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;

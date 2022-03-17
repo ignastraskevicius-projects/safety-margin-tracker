@@ -7,12 +7,13 @@ import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
-import javax.validation.ConstraintViolation;
-import javax.validation.metadata.ConstraintDescriptor;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.function.Consumer;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.metadata.ConstraintDescriptor;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;

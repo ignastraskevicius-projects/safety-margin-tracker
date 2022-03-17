@@ -7,13 +7,14 @@ import org.ignast.stockinvesting.estimates.domain.CountryCode;
 import org.ignast.stockinvesting.estimates.domain.CurrencyCode;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 @Getter
 public class CompanyDTO {

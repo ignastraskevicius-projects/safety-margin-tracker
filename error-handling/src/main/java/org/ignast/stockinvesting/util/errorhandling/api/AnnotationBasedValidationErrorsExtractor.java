@@ -5,13 +5,14 @@ import org.springframework.util.CollectionUtils;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+import java.lang.annotation.Annotation;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import javax.validation.ConstraintViolation;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.lang.annotation.Annotation;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;

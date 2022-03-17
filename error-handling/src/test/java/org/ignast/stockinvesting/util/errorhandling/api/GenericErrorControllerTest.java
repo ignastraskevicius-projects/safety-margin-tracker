@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import static javax.servlet.RequestDispatcher.ERROR_STATUS_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.util.mockito.MockitoUtils.mock;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;

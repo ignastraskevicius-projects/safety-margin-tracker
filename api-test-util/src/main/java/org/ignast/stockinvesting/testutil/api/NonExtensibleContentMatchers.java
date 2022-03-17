@@ -1,11 +1,11 @@
 package org.ignast.stockinvesting.testutil.api;
 
 import lombok.val;
-
 import org.json.JSONObject;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 import org.springframework.test.web.servlet.ResultMatcher;
+
 import java.nio.charset.StandardCharsets;
 
 public class NonExtensibleContentMatchers {

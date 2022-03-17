@@ -3,11 +3,12 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 import lombok.val;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
+import java.lang.annotation.Annotation;
+
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-import java.lang.annotation.Annotation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 

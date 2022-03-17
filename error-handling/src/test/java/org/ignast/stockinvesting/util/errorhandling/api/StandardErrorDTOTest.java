@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO;
 import org.junit.jupiter.api.Test;
 
 import java.util.Collections;

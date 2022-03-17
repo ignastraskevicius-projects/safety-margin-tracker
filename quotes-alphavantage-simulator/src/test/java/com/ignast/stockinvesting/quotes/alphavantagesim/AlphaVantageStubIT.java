@@ -28,9 +28,9 @@ import java.util.stream.Collectors;
 
 import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
 import static com.ignast.stockinvesting.quotes.alphavantagesim.QueryParams.validParamsBuilder;
-import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 
 public class AlphaVantageStubIT {
 

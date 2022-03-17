@@ -3,11 +3,12 @@ package org.ignast.stockinvesting.estimates.domain;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 
+import java.util.Currency;
+import java.util.Locale;
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
-import java.util.Currency;
-import java.util.Locale;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity

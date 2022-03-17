@@ -30,8 +30,10 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.*;
-import static org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.manual.ManualWiringIT.TestController.*;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forIntegerRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.manual.ManualWiringIT.TestController.url;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.springframework.http.HttpEntity.EMPTY;
 import static org.springframework.http.HttpMethod.PUT;

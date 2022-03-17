@@ -6,11 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -76,7 +80,7 @@ class MysqlAssertContainsTableTest {
 
     @Test
     public void shouldFailIfNoTableExistsInDatabase() {
-        when(database.queryForList("SHOW TABLES;")).thenReturn(Collections.emptyList());
+        when(database.queryForList("SHOW TABLES;")).thenReturn(emptyList());
 
         assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("client")).withMessage("List of tables in the database [] expected to contain 'client' table, but 'client' table did not exist");
     }
@@ -151,7 +155,7 @@ class MysqlAssertNotContainsTableTest {
 
     @Test
     public void shouldSucceedIfNoTableExistsInDatabase() {
-        when(database.queryForList("SHOW TABLES;")).thenReturn(Collections.emptyList());
+        when(database.queryForList("SHOW TABLES;")).thenReturn(emptyList());
 
         MysqlAssert.assertThat(database).notContainsTable("client");
     }

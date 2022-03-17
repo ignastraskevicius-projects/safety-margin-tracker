@@ -12,11 +12,17 @@ import org.springframework.context.annotation.Import;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.*;
+import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forArrayRequiredAt;
+import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forInvalidValueAt;
+import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
+import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forObjectRequiredAt;
+import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.util.test.api.BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt;
 import static org.ignast.stockinvesting.util.test.api.NonExtensibleContentMatchers.contentMatchesJson;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest
 @Import(AppErrorsHandlingConfiguration.class)

@@ -2,8 +2,15 @@ package org.ignast.stockinvesting.quotes.persistence.repositories;
 
 import lombok.val;
 
+import org.ignast.stockinvesting.quotes.domain.Company;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
+import org.ignast.stockinvesting.quotes.domain.CompanyRepository;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchanges;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.quotes.persistence.dbmigration.ProductionDatabaseMigrationVersions;
-import org.ignast.stockinvesting.quotes.domain.*;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;

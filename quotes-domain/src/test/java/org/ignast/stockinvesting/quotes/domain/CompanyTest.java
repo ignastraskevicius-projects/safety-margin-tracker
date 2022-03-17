@@ -13,7 +13,10 @@ import java.math.BigDecimal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.*;
+import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.anyCompanyName;
+import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.anyId;
+import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.anyStockExchange;
+import static org.ignast.stockinvesting.quotes.domain.DomainFactoryForTests.anySymbol;
 import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.mockito.Mockito.when;
 

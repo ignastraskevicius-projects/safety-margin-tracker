@@ -1,6 +1,14 @@
 package org.ignast.stockinvesting.quotes.api.testutil;
 
-import org.ignast.stockinvesting.quotes.domain.*;
+import org.ignast.stockinvesting.quotes.domain.Company;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
+import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchanges;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
+import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
 import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;

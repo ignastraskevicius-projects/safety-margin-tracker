@@ -1,7 +1,14 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
 import lombok.val;
-import org.ignast.stockinvesting.quotes.domain.*;
+import org.ignast.stockinvesting.quotes.domain.Companies;
+import org.ignast.stockinvesting.quotes.domain.Company;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchanges;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 
@@ -11,7 +18,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 import static org.ignast.stockinvesting.quotes.api.controller.TestDtos.amazonDto;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class CompanyControllerTest {
 

@@ -14,7 +14,9 @@ import java.util.Arrays;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.util.errorhandling.api.Errors.anyValidationErrorDTO;
-import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.*;
+import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.jacksonFieldLevelError;
+import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.unknownCause;
+import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.withoutCause;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;

@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import lombok.val;
 import org.junit.jupiter.api.Test;
-import org.springframework.validation.*;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import java.util.ArrayList;
@@ -11,7 +11,12 @@ import java.util.List;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.*;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaLangOverride;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaLangSuppressWarning;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaxValidationDomainClassConstraint;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaxValidationNotNull;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaxValidationPattern;
+import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaxValidationSize;
 import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withErrorFieldViolation;
 
 public class AnnotationBasedValidationErrorsExtractorTest {

@@ -1,7 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import org.ignast.stockinvesting.util.errorhandling.api.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;

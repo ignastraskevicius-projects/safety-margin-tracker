@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.quotes.persistence.dbmigration;
 
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,13 +15,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+@RequiredArgsConstructor
 public class FlywayAssert {
 
-    private static JdbcTemplate db;
+    private final JdbcTemplate db;
 
     public static FlywayAssert assertThat(JdbcTemplate db) {
-        FlywayAssert.db = db;
-        return new FlywayAssert();
+        return new FlywayAssert(db);
     }
 
     public void hasNotJustMigrated(String expectedVersion) {
@@ -79,9 +80,9 @@ public class FlywayAssert {
 
 class FlywayAssertLastMigrationTest {
 
-    private JdbcTemplate db = mock(JdbcTemplate.class);
-
     private static final String QUERY_LAST_APPLIED_MIGRATION = "SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;";
+
+    private final JdbcTemplate db = mock(JdbcTemplate.class);
 
     @Test
     public void assertingLastMigrationShouldSucceedForExpectedVersion() {

@@ -23,15 +23,15 @@ import static org.springframework.http.ResponseEntity.status;
 
 public class HopTest {
 
-    private RestTemplate restTemplate = mock(RestTemplate.class);
-
-    private HrefExtractor hrefExtractor = mock(HrefExtractor.class);
-
-    private Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
-
-    private ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
-
     private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
+
+    private final RestTemplate restTemplate = mock(RestTemplate.class);
+
+    private final HrefExtractor hrefExtractor = mock(HrefExtractor.class);
+
+    private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
+
+    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 
     @Test
     public void factoryShouldNotBeCreatedWithNullAppMediaType() {

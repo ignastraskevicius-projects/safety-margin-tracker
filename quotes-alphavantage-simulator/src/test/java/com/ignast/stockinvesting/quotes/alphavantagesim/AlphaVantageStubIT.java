@@ -132,13 +132,12 @@ class DockerizedAlphaVantageStubIT {
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "function", "symbol", "apikey" })
 final class QueryParams {
+    private static String API_KEY = "1OFDQOSYMBH3NP";
+    private static String GLOBAL_QUOTE = "GLOBAL_QUOTE";
+
     private final String function;
     private final String apikey;
     private final String symbol;
-
-    private static String API_KEY = "1OFDQOSYMBH3NP";
-
-    private static String GLOBAL_QUOTE = "GLOBAL_QUOTE";
 
     public static QueryParamsBuilder validParamsBuilder() {
         return new QueryParamsBuilder().apikey(API_KEY).symbol("AMZN").function(GLOBAL_QUOTE);

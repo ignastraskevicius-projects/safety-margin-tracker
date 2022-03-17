@@ -43,7 +43,7 @@ abstract class CompanyControllerITBase {
     }
 }
 
-class CompanyControllerITBaseTest extends CompanyControllerITBase {
+final class CompanyControllerITBaseTest extends CompanyControllerITBase {
 
     @Test
     public void shouldNotRejectGoodRequest()  {

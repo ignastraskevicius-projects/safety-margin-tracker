@@ -21,7 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.persistence.dbmigration.AppDbContainer.getDataSourceTo;
 
 @Testcontainers
-public class AppDbMigrationTest {
+public final class AppDbMigrationTest {
 
     @Container
     private static final MySQLContainer APP_DB = AppDbContainer.singleton();
@@ -35,7 +35,7 @@ public class AppDbMigrationTest {
     }
 
     @Nested
-    class V1CurrentProductionState {
+    final class V1CurrentProductionState {
         @BeforeEach
         public void setup() {
             Flyway.configure().dataSource(getDataSourceTo(APP_DB)).target("1").load().migrate();
@@ -55,7 +55,7 @@ public class AppDbMigrationTest {
     }
 
     @Nested
-    class V2CompanyTableIntroduced {
+    final class V2CompanyTableIntroduced {
 
         @BeforeEach
         public void setup() {
@@ -179,7 +179,7 @@ public class AppDbMigrationTest {
     }
 
     @Nested
-    class V3 {
+    final class V3 {
         @BeforeEach
         public void setup() {
             Flyway.configure().dataSource(getDataSourceTo(APP_DB)).target("3").load().migrate();

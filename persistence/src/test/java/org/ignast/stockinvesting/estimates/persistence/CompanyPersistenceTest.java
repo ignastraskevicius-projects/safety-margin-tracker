@@ -15,7 +15,7 @@ import java.util.Currency;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
-class CompanyPersistenceTest {
+public final class CompanyPersistenceTest {
 
     @Autowired
     private CompanyRepository companyRepository;

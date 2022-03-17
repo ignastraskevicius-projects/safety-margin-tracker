@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import static java.util.Objects.requireNonNull;
 
-class JsonPath {
+final class JsonPath {
     private String jsonPath;
 
     private JsonPath(String jsonPath) {
@@ -34,7 +34,7 @@ class JsonPath {
     }
 }
 
-public class ValidationErrorDTO {
+public final class ValidationErrorDTO {
     private String jsonPath;
     private String message;
     private ViolationType type;

@@ -19,7 +19,7 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 import static java.util.stream.Stream.concat;
 import static java.util.stream.Stream.of;
 
-public class HateoasTraversor {
+public final class HateoasTraversor {
     private final MediaType appMediaType;
     private final Hop.Factory hopFactory;
     private final List<Hop.TraversableHop> hops;
@@ -50,9 +50,9 @@ public class HateoasTraversor {
     }
 
     @Service
-    public static class Factory {
-        private Hop.Factory hopFactory;
-        private MediaType appMediaType;
+    public static final class Factory {
+        private final Hop.Factory hopFactory;
+        private final MediaType appMediaType;
 
         public Factory(RestTemplateBuilder builder, MediaType appMediaType) {
             this.appMediaType = appMediaType;

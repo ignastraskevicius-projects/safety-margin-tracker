@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.anyLink;
 import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 
-class HateoasLinkTest {
+final class HateoasLinkTest {
     @Test
     public void shouldCreateLink() {
         Assertions.assertThat(link("company", "companyUri")).isEqualTo("{\"_links\":{\"company\":{\"href\":\"companyUri\"}}}");

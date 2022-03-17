@@ -16,10 +16,10 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-class CompanyControllerTest {
+final class CompanyControllerTest {
     private final Companies companies = mock(Companies.class);
 
-    private CompanyController controller = new CompanyController(companies);
+    private final CompanyController controller = new CompanyController(companies);
 
     @ParameterizedTest
     @ValueSource(strings = { "invalidCurrency", "anotherInvalidCurrency" })

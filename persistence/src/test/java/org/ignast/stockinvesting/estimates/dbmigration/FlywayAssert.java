@@ -17,7 +17,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RequiredArgsConstructor
-public class FlywayAssert {
+public final class FlywayAssert {
 
     private final JdbcTemplate db;
 

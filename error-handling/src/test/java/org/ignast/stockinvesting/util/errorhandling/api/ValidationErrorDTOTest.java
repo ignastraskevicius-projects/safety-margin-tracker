@@ -9,7 +9,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.VALUE_INVALID;
 
-public class ValidationErrorDTOTest {
+public final class ValidationErrorDTOTest {
 
     @Test
     public void shouldPreserveJsonPath() {
@@ -54,7 +54,7 @@ public class ValidationErrorDTOTest {
     }
 }
 
-class JsonPathFromJsonPathTest {
+final class JsonPathFromJsonPathTest {
 
     @Test
     public void shouldRejectToCreateFromNull() {
@@ -95,7 +95,7 @@ class JsonPathFromJsonPathTest {
     }
 }
 
-class JsonPathAdaptionTest {
+final class JsonPathAdaptionTest {
     @Test
     public void shouldAdaptNullAsRootJsonPath() {
         assertThat(JsonPath.adaptFromJavaxValidationPath(null).getJsonPath()).isEqualTo("$");

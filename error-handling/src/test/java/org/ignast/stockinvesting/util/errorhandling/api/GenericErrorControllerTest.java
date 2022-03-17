@@ -16,7 +16,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
-public class GenericErrorControllerTest {
+public final class GenericErrorControllerTest {
 
     private final GenericErrorController controller = new GenericErrorController();
 

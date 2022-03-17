@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ViolationTypeTest {
+final class ViolationTypeTest {
     @Test
     public void shouldPreserveErrorNames() {
         assertThat(ViolationType.VALUE_MUST_BE_ARRAY.getCorrespondigErrorName()).isEqualTo("valueMustBeArray");

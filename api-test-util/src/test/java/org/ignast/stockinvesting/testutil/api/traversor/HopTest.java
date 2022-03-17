@@ -21,7 +21,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.status;
 
-public class HopTest {
+public final class HopTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
 

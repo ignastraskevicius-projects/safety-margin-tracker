@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-public class MediaTypeCheckerInterceptor implements HandlerInterceptor {
+public final class MediaTypeCheckerInterceptor implements HandlerInterceptor {
     private static boolean PASS_ONTO_NEXT_HANDLER = true;
     private static int NOT_ACCEPTABLE = 406;
 

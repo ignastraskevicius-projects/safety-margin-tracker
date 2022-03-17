@@ -16,7 +16,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RequiredArgsConstructor
-public class FlywayAssert {
+public final class FlywayAssert {
 
     private final JdbcTemplate db;
 
@@ -78,7 +78,7 @@ public class FlywayAssert {
     }
 }
 
-class FlywayAssertLastMigrationTest {
+final class FlywayAssertLastMigrationTest {
 
     private static final String QUERY_LAST_APPLIED_MIGRATION = "SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;";
 

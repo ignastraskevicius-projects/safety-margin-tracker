@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
-public class CompanyControllerCreateIT extends CompanyControllerITBase {
+public final class CompanyControllerCreateIT extends CompanyControllerITBase {
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_QUOTES)).andExpect(status().isBadRequest())
@@ -80,7 +80,7 @@ public class CompanyControllerCreateIT extends CompanyControllerITBase {
     }
 }
 
-class CompanyControllerIdParsingIT extends CompanyControllerITBase {
+final class CompanyControllerIdParsingIT extends CompanyControllerITBase {
 
     @Test
     public void shouldRejectCompanyWithoutIdIndicatingFieldIsMandatory() throws Exception {
@@ -98,7 +98,7 @@ class CompanyControllerIdParsingIT extends CompanyControllerITBase {
     }
 }
 
-class CompanyControllerNameParsingIT extends CompanyControllerITBase {
+final class CompanyControllerNameParsingIT extends CompanyControllerITBase {
 
     @Test
     public void shouldRejectCompanyWithoutNameIndicatingFieldIsMandatory() throws Exception {
@@ -122,7 +122,7 @@ class CompanyControllerNameParsingIT extends CompanyControllerITBase {
     }
 }
 
-class CompanyControllerListingsParsingIT extends CompanyControllerITBase {
+final class CompanyControllerListingsParsingIT extends CompanyControllerITBase {
 
     @Test
     public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
@@ -155,7 +155,7 @@ class CompanyControllerListingsParsingIT extends CompanyControllerITBase {
     }
 }
 
-class CompanyControllerTestIndividualListingParsingIT extends CompanyControllerITBase {
+final class CompanyControllerTestIndividualListingParsingIT extends CompanyControllerITBase {
 
     @Test
     public void shouldRejectCompanyListedWithoutMarketIdIndicatingFieldIsMandatory() throws Exception {

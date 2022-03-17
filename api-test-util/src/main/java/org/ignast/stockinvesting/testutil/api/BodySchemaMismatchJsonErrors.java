@@ -1,6 +1,6 @@
 package org.ignast.stockinvesting.testutil.api;
 
-public class BodySchemaMismatchJsonErrors {
+public final class BodySchemaMismatchJsonErrors {
 
     public static String forMissingFieldAt(String jsonPath) {
         return String.format(

@@ -19,9 +19,9 @@ import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.j
 import static org.ignast.stockinvesting.util.errorhandling.api.AnnotationStubs.javaxValidationSize;
 import static org.ignast.stockinvesting.util.errorhandling.api.MethodArgumentNotValidExceptionMock.withErrorFieldViolation;
 
-public class AnnotationBasedValidationErrorsExtractorTest {
+public final class AnnotationBasedValidationErrorsExtractorTest {
 
-    private AnnotationBasedValidationErrorsExtractor errorsExtractor = new AnnotationBasedValidationErrorsExtractor();
+    private final AnnotationBasedValidationErrorsExtractor errorsExtractor = new AnnotationBasedValidationErrorsExtractor();
 
     @Test
     public void shouldThrowIfExceptionContainsNullFieldErrors() throws NoSuchMethodException {

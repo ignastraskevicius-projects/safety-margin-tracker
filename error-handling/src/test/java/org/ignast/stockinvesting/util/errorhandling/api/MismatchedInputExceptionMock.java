@@ -24,7 +24,7 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public class MismatchedInputExceptionMock {
+public final class MismatchedInputExceptionMock {
     public static MismatchedInputException stringParsingFailedAt(List<Reference> path) {
         return MockitoUtils.mock(StrictStringDeserializingException.class, e -> {
             when(e.getPath()).thenReturn(path);
@@ -63,7 +63,7 @@ public class MismatchedInputExceptionMock {
     }
 }
 
-class ReferenceMock {
+final class ReferenceMock {
 
     public static Reference toField(Object sourceObject, String field) {
         return MockitoUtils.mock(Reference.class, r -> {
@@ -80,7 +80,7 @@ class ReferenceMock {
     }
 }
 
-class ReferenceMockTest {
+final class ReferenceMockTest {
     @Test
     public void shouldCreateFieldPath() {
         City source = new City();
@@ -105,7 +105,7 @@ class ReferenceMockTest {
     }
 }
 
-class MismatchedInputExceptionMockTest {
+final class MismatchedInputExceptionMockTest {
     @Test
     public void shouldCreateStringInputMismatchException() {
         MismatchedInputException exception = stringParsingFailedAt(null);

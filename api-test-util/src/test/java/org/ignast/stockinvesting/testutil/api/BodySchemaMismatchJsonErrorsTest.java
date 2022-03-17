@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class BodySchemaMismatchJsonErrorsTest {
+final class BodySchemaMismatchJsonErrorsTest {
     @Test
     public void shouldCreateErrorJsonForMissingField() {
         assertThat(BodySchemaMismatchJsonErrors.forMissingFieldAt("someJsonPath")).isEqualTo(

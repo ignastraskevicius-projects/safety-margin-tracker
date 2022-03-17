@@ -60,7 +60,7 @@ class StandardErrorDTOTest {
     }
 }
 
-class BodyDoesNotMatchSchemaErrorDTOTest {
+final class BodyDoesNotMatchSchemaErrorDTOTest {
     @Test
     public void shouldHaveErrorNameSetAutomatically() {
         StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO bodyDoesNotMatchSchema = StandardErrorDTO

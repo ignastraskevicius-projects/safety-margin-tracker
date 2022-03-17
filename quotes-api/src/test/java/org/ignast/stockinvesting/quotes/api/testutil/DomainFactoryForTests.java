@@ -21,7 +21,7 @@ import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
-public class DomainFactoryForTests {
+public final class DomainFactoryForTests {
     public static Company amazon() {
         return new Company(new CompanyExternalId(6), new CompanyName("Amazon"), new StockSymbol("AMZN"),
                 new StockExchanges(new StubQuotesRepository()).getFor(new MarketIdentifierCode("XNAS")));
@@ -40,7 +40,7 @@ public class DomainFactoryForTests {
     }
 }
 
-class DomainFactoryForTestsTest {
+final class DomainFactoryForTestsTest {
 
     @Test
     public void shouldCreateAmazon() {

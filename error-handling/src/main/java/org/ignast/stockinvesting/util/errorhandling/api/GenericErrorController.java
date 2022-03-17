@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import javax.servlet.http.HttpServletRequest;
 
 @Controller
-public class GenericErrorController implements ErrorController {
+public final class GenericErrorController implements ErrorController {
 
     private final int INTERNAL_SERVER_ERROR = 500;
 

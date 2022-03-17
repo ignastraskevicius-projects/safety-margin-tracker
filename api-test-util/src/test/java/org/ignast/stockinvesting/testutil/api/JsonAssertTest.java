@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class StrictJsonAssertTest {
+final class StrictJsonAssertTest {
     @Test
     public void shouldAssertEqualsIfAttributeOrderIsTheSame() throws JSONException {
         JsonAssert.assertThatJson("{\"a\":\"valueA\",\"b\":\"valueB\"}")

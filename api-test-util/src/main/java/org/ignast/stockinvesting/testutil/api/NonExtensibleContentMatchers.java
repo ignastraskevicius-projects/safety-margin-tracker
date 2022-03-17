@@ -8,7 +8,7 @@ import org.springframework.test.web.servlet.ResultMatcher;
 
 import java.nio.charset.StandardCharsets;
 
-public class NonExtensibleContentMatchers {
+public final class NonExtensibleContentMatchers {
     public static ResultMatcher bodyMatchesJson(String expectedJson) {
         return (result) -> {
             String actualJson = result.getResponse().getContentAsString(StandardCharsets.UTF_8);

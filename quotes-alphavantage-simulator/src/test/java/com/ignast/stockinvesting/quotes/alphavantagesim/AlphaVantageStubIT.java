@@ -32,7 +32,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 
-public class AlphaVantageStubIT {
+public final class AlphaVantageStubIT {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -108,7 +108,7 @@ public class AlphaVantageStubIT {
 }
 
 @Testcontainers
-class DockerizedAlphaVantageStubIT {
+final class DockerizedAlphaVantageStubIT {
     private static final String DOCKER_IMAGE_NAME = System.getProperty("docker.image");
 
     @Container
@@ -151,7 +151,7 @@ final class QueryParams {
     }
 }
 
-class QueryParamsBuilderTest {
+final class QueryParamsBuilderTest {
     @Test
     public void shouldBuildWithFunction() {
         val queryParams = new QueryParams.QueryParamsBuilder().function("someFunction").build().toString();

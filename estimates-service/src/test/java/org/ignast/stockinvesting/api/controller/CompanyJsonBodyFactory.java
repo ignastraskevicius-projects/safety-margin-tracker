@@ -4,7 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CompanyJsonBodyFactory {
+public final class CompanyJsonBodyFactory {
     public String createAmazon() {
         return "{\"id\":\"339d7d9e-d837-47bd-971b-d52e965e6968\",\"name\":\"Amazon\",\"homeCountry\":\"US\",\"functionalCurrency\":\"USD\",\"listings\":[{\"marketIdentifier\":\"XNYS\",\"stockSymbol\":\"AMZN\"}]}";
     }
@@ -74,9 +74,9 @@ public class CompanyJsonBodyFactory {
     }
 }
 
-class CompanyJsonBodyFactoryTest {
+final class CompanyJsonBodyFactoryTest {
 
-    private CompanyJsonBodyFactory factory = new CompanyJsonBodyFactory();
+    private final CompanyJsonBodyFactory factory = new CompanyJsonBodyFactory();
 
     @Test
     public void shouldCreateValidJson() {

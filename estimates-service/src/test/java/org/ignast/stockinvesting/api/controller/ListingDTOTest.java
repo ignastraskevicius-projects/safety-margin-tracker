@@ -5,7 +5,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class ListingDTOTest {
+final class ListingDTOTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "New York Stock Exchange", "London Stock Exchange" })

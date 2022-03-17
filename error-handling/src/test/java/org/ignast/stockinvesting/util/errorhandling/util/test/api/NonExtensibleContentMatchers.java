@@ -23,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class NonExtensibleContentMatchers {
+public final class NonExtensibleContentMatchers {
     public static ResultMatcher contentMatchesJson(String expectedJson) {
         return (result) -> {
             String actualJson = result.getResponse().getContentAsString(StandardCharsets.UTF_8);
@@ -34,7 +34,7 @@ public class NonExtensibleContentMatchers {
 
 @ExtendWith(SpringExtension.class)
 @WebAppConfiguration
-class NonExtensibleContentMatchersTest {
+final class NonExtensibleContentMatchersTest {
 
     private MockMvc mockMvc;
 

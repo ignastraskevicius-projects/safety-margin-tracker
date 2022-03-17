@@ -29,7 +29,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(HateoasTraversor.Factory.class)
-public class HateoasTraversorTest {
+public final class HateoasTraversorTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
 
@@ -133,7 +133,7 @@ public class HateoasTraversorTest {
     }
 }
 
-class RestTemplateBuilderStubs {
+final class RestTemplateBuilderStubs {
     static RestTemplateBuilder stub() {
         val builder = mock(RestTemplateBuilder.class);
         when(builder.errorHandler(any())).thenReturn(builder);
@@ -142,7 +142,7 @@ class RestTemplateBuilderStubs {
     }
 }
 
-class RestTemplateBuilderStubsTest {
+final class RestTemplateBuilderStubsTest {
 
     @Test
     public void shouldBuildRestTemplate() {

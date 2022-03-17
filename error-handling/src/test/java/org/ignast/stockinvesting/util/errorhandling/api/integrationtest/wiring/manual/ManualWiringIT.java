@@ -43,7 +43,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(GenericErrorHandlingConfiguration.class)
-class ManualWiringIT {
+final class ManualWiringIT {
 
     @LocalServerPort
     private int port;

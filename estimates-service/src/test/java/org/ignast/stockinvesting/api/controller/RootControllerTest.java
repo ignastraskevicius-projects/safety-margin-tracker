@@ -19,7 +19,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @WebMvcTest({ RootController.class, HalConfig.class })
 @Import(AppErrorsHandlingConfiguration.class)
-public class RootControllerTest {
+public final class RootControllerTest {
 
     private @Autowired MockMvc mockMvc;
 

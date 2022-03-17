@@ -11,12 +11,12 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.util.test.api.HateoasJsonMatchers.hasRel;
 
-public class HateoasJsonMatchers {
+public final class HateoasJsonMatchers {
     public static HasRel hasRel(String relName) {
         return new HasRel(relName);
     }
 
-    public static class HasRel {
+    public static final class HasRel {
         private final String relName;
 
         public HasRel(String relName) {
@@ -56,8 +56,8 @@ public class HateoasJsonMatchers {
     }
 }
 
-class HateoasJsonMatcheresTest {
-    private Matcher<String> matcher = hasRel("link:link").withHrefContaining("contextPath");
+final class HateoasJsonMatcheresTest {
+    private final Matcher<String> matcher = hasRel("link:link").withHrefContaining("contextPath");
 
     @Test
     public void messageShouldIndicateExpectationAndActualOutcome() {

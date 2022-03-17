@@ -18,7 +18,7 @@ import java.util.Currency;
 @RequestMapping("companies")
 public class CompanyController {
 
-    private Companies companies;
+    private final Companies companies;
 
     public CompanyController(Companies companies) {
         this.companies = companies;

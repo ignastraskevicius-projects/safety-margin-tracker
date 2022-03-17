@@ -10,7 +10,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-class CompanyDTOTest {
+public final class CompanyDTOTest {
 
     @Test
     public void shouldBeEqual() {

@@ -16,7 +16,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
-class StrictStringDeserializerTest {
+final class StrictStringDeserializerTest {
 
     private ObjectMapper mapper;
 

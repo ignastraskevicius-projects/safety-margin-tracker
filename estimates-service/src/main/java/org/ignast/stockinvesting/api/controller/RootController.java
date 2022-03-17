@@ -12,7 +12,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-public class RootController {
+public final class RootController {
 
     @GetMapping(value = "/", produces = VersionedApiMediaTypes.V1)
     public HttpEntity<Root> getRoot() {

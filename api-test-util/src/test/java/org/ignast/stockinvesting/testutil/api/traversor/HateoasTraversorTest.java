@@ -31,13 +31,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 @RestClientTest(HateoasTraversor.Factory.class)
 public class HateoasTraversorTest {
 
+    private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
+
     @Autowired
     private HateoasTraversor.Factory traversors;
 
     @Autowired
     private MockRestServiceServer server;
-
-    private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
 
     @Test
     public void shouldNotBeCreatedWithNullRestTemplateBuilder() {

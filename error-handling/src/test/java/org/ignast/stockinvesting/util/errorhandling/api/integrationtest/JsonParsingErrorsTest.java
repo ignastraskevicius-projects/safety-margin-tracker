@@ -39,10 +39,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(ErrorExtractorConfiguration.class)
 class UnparsableJsonErrorsTest {
 
+    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
     @Autowired
     private MockMvc mockMvc;
-
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
@@ -85,10 +85,10 @@ class UnparsableJsonErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonStringFieldErrorsTest {
 
+    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
     @Autowired
     private MockMvc mockMvc;
-
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
@@ -163,10 +163,10 @@ class JsonStringFieldErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonIntegerFieldErrorsTest {
 
+    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
     @Autowired
     private MockMvc mockMvc;
-
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
@@ -241,10 +241,10 @@ class JsonIntegerFieldErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonCollectionErrorsTest {
 
+    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
     @Autowired
     private MockMvc mockMvc;
-
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
@@ -325,10 +325,10 @@ class JsonCollectionErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 class JsonNestedStringFieldErrorsTest {
 
+    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
     @Autowired
     private MockMvc mockMvc;
-
-    static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {

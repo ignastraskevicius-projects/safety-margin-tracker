@@ -15,9 +15,9 @@ import static org.springframework.http.HttpStatus.OK;
 
 public class HrefExtractorTest {
 
-    private HrefExtractor extractor = new HrefExtractor(APP_V1);
-
     private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
+
+    private final HrefExtractor extractor = new HrefExtractor(APP_V1);
 
     @Test
     public void shouldNotCreateWithNullMediaType() {

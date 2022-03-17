@@ -32,7 +32,7 @@ abstract class CompanyControllerIntegrationTestBase {
     @Autowired
     protected MockMvc mockMvc;
 
-    protected String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+    protected final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     void rejectsAsBadRequest(String requestBody, String expectedResponse) throws Exception {
         mockMvc.perform(put("/companies/").contentType(V1_MEDIA_TYPE)

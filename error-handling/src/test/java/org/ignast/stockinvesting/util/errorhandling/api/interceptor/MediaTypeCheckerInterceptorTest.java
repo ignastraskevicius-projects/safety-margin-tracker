@@ -25,7 +25,7 @@ class MediaTypeCheckerInterceptorTest {
     }
 
     @Test
-    public void AcceptHeaderShouldBeRequiredForGETMethodRequests() throws Exception {
+    public void AcceptHeaderShouldBeRequiredForGetMethodRequests() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("GET", "any");
         MockHttpServletResponse response = new MockHttpServletResponse();
 
@@ -34,7 +34,7 @@ class MediaTypeCheckerInterceptorTest {
     }
 
     @Test
-    public void AcceptHeaderShouldNotBeRequiredForPOSTMethodRequests() throws Exception {
+    public void AcceptHeaderShouldNotBeRequiredForPostMethodRequests() throws Exception {
         MockHttpServletRequest request = new MockHttpServletRequest("POST", "any");
         MockHttpServletResponse response = new MockHttpServletResponse();
 

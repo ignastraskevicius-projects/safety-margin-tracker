@@ -22,7 +22,7 @@ public class RootControllerTest {
 
     private @Autowired MockMvc mockMvc;
 
-    private String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
+    private final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
 
     @Test
     public void rootResourceShouldLinkToCompanies() throws Exception {

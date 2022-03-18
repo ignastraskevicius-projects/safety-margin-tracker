@@ -16,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.math.BigDecimal;
@@ -68,7 +69,7 @@ public class AlphaVantageQuotes implements QuotesRepository {
         try {
             return restTemplate.exchange(uri, HttpMethod.GET, new HttpEntity<>(HttpHeaders.EMPTY),
                     QuoteResponseDTO.class);
-        } catch (Exception e) {
+        } catch (RestClientException e) {
             throw new QuoteRetrievalFailedException("Communication with server failed", e);
         }
     }

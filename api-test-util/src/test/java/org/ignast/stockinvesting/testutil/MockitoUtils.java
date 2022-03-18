@@ -10,6 +10,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 public final class MockitoUtils {
 
+    private MockitoUtils() {
+
+    }
+
     public static <T> T mock(final Class<? extends T> classToMock, final Consumer<T> customizer) {
         final T mock = Mockito.mock(classToMock);
         customizer.accept(mock);

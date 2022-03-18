@@ -9,6 +9,11 @@ import org.springframework.test.web.servlet.ResultMatcher;
 import java.nio.charset.StandardCharsets;
 
 public final class NonExtensibleContentMatchers {
+
+    private NonExtensibleContentMatchers() {
+
+    }
+
     public static ResultMatcher bodyMatchesJson(final String expectedJson) {
         return (result) -> {
             final val actualJson = result.getResponse().getContentAsString(StandardCharsets.UTF_8);

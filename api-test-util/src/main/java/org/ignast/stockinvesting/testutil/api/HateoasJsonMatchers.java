@@ -6,6 +6,11 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public final class HateoasJsonMatchers {
+
+    private HateoasJsonMatchers() {
+
+    }
+
     public static HasRel hasRel(final String relName) {
         return new HasRel(relName);
     }

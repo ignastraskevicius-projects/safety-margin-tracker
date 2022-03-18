@@ -9,6 +9,10 @@ import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTest
 
 public final class TestDtos {
 
+    private TestDtos() {
+
+    }
+
     public static CompanyDTO amazonDto() {
         return new CompanyDTO(6, "Amazon", List.of(new ListingDTO("XNAS", "AMZN")));
     }

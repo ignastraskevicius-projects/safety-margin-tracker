@@ -25,11 +25,10 @@ final class NonExtensibleContentMatchersTest {
 
     private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
 
+    @SuppressWarnings("checkstyle:illegalcatch")
     private void actualMatchingExpected(final String actual, final String expected) {
         try {
             bodyMatchesJson(expected).match(stubbedBody(actual));
-        } catch (RuntimeException e) {
-            throw e;
         } catch (Exception e) {
             new RuntimeException(e);
         }
@@ -55,6 +54,7 @@ final class NonExtensibleContentMatchersTest {
 final class NonExtensibleEntityContentMatchersTest {
     private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
 
+    @SuppressWarnings("checkstyle:illegalcatch")
     private void actualMatchingExpected(final String actual, final String expected) {
         try {
             resourceContentMatchesJson(expected).match(stubbedBody(actual));
@@ -94,6 +94,7 @@ final class NonExtensibleEntityContentMatchersTest {
 final class NonExtensibleEntityLinksMatchersTest {
     private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
 
+    @SuppressWarnings("checkstyle:illegalcatch")
     private void actualMatchingExpected(final String actual, final String expected) {
         try {
             resourceLinksMatchesJson(expected).match(stubbedBody(actual));
@@ -131,6 +132,10 @@ final class NonExtensibleEntityLinksMatchersTest {
 }
 
 final class MvcResultStubs {
+    private MvcResultStubs() {
+
+    }
+
     static MvcResult stubbedBody(final String content) {
         final val response = mock(MockHttpServletResponse.class, re -> when(getUtf8Content(re)).thenReturn(content));
         return mock(MvcResult.class, r -> when(r.getResponse()).thenReturn(response));

@@ -7,11 +7,11 @@ public interface QuotesRepository {
     BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic);
 
     class QuoteRetrievalFailedException extends RuntimeException {
-        public QuoteRetrievalFailedException(String message, Exception e) {
+        public QuoteRetrievalFailedException(final String message, final Exception e) {
             super(message, e);
         }
 
-        public QuoteRetrievalFailedException(String message) {
+        public QuoteRetrievalFailedException(final String message) {
             super(message);
         }
     }

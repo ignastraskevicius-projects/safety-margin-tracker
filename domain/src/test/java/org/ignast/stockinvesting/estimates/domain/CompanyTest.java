@@ -20,8 +20,8 @@ class CompanyTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "EUR", "USD" })
-    public void shouldHaveFunctionalCurrency(String currencyCode) {
-        val currency = Currency.getInstance(currencyCode);
+    public void shouldHaveFunctionalCurrency(final String currencyCode) {
+        final val currency = Currency.getInstance(currencyCode);
         assertThat(new Company("Amazon", "US", currency).getFunctionalCurrency()).isEqualTo(currency);
     }
 
@@ -32,7 +32,7 @@ class CompanyTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "US", "ES" })
-    public void shouldHaveHomeCountry(String countryCode) {
+    public void shouldHaveHomeCountry(final String countryCode) {
         assertThat(new Company("Amazon", countryCode, usd()).getHomeCountry()).isEqualTo(countryCode);
     }
 
@@ -58,14 +58,14 @@ class CompanyTest {
 
     @ParameterizedTest
     @ValueSource(ints = { 1, 255 })
-    public void shouldHaveNeitherTooLongNorEmptyName(int boundaryValidLength) {
-        val name = "c".repeat(boundaryValidLength);
+    public void shouldHaveNeitherTooLongNorEmptyName(final int boundaryValidLength) {
+        final val name = "c".repeat(boundaryValidLength);
         assertThat(new Company(name, "US", usd()).getName()).isEqualTo(name);
     }
 
     @ParameterizedTest
     @ValueSource(ints = { 0, 256 })
-    public void companyNameShouldNotBeEmpty(int boundaryInvalidLength) {
+    public void companyNameShouldNotBeEmpty(final int boundaryInvalidLength) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new Company("c".repeat(boundaryInvalidLength), "US", usd()));
     }

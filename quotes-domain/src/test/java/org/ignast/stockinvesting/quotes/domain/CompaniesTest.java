@@ -11,11 +11,11 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-class CompaniesTest {
+public final class CompaniesTest {
 
-    private CompanyRepository repository = mock(CompanyRepository.class);
+    private final CompanyRepository repository = mock(CompanyRepository.class);
 
-    private Companies companies = new Companies(repository);
+    private final Companies companies = new Companies(repository);
 
     @Test
     public void shouldNotBeCreatedWithNullRepository() {
@@ -29,7 +29,7 @@ class CompaniesTest {
 
     @Test
     public void createdCompanyShouldBePersisted() {
-        val company = mock(Company.class);
+        final val company = mock(Company.class);
 
         companies.create(company);
 
@@ -38,18 +38,18 @@ class CompaniesTest {
 
     @Test
     public void shouldFindCreatedCompanyByExternalId() {
-        val company = mock(Company.class);
-        val externalId = new CompanyExternalId(5);
+        final val company = mock(Company.class);
+        final val externalId = new CompanyExternalId(5);
         when(repository.findByExternalId(externalId)).thenReturn(of(company));
 
-        val retrievedCompany = companies.findByExternalId(externalId);
+        final val retrievedCompany = companies.findByExternalId(externalId);
 
         assertThat(retrievedCompany).isSameAs(company);
     }
 
     @Test
     public void shouldNotFindNonexistentCompanyByExternalId() {
-        val externalId = new CompanyExternalId(5);
+        final val externalId = new CompanyExternalId(5);
         when(repository.findByExternalId(externalId)).thenReturn(empty());
 
         assertThatExceptionOfType(CompanyNotFound.class)

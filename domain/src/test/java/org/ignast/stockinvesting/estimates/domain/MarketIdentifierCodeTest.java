@@ -17,7 +17,7 @@ class MarketIdentifierCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "XNYS", "XLON" })
-    public void shouldPreserveCode(String mic) {
+    public void shouldPreserveCode(final String mic) {
         assertThat(new MarketIdentifierCode(mic).get()).isEqualTo(mic);
     }
 
@@ -33,7 +33,7 @@ class MarketIdentifierCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "AAAa", "1AAA", "AÑAA" })
-    public void shouldRejectNonLatinUppercaseCharacters(String mic) {
+    public void shouldRejectNonLatinUppercaseCharacters(final String mic) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new MarketIdentifierCode(mic)).withMessage(
                         "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)");

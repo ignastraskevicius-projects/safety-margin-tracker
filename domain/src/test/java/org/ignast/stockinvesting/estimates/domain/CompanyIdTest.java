@@ -19,7 +19,7 @@ class CompanyIdTest {
                              "12345678-9012-3456-7890-123456789012",
                              "ABCDEFAB-CDEF-ABCD-EFAB-CDEFACBDEFAB",
                              "A4C7A6dF-0950-431C-9315-ccf9a2ef1a90"})
-    public void shouldPreserveInitialValue(String uuid) {
+    public void shouldPreserveInitialValue(final String uuid) {
         assertThat(CompanyId.toUUID(uuid).toString()).isEqualTo(uuid.toLowerCase());
     }
 
@@ -39,14 +39,14 @@ class CompanyIdTest {
                              "00112233-4455-6677-8899-GGGGGGGGGGGG",
                              "00112233-4455-6677-8899-gggggggggggg",
                              "00112233-4455-6677-8899-abcdefabcd  "})
-    public void shouldRejectNonNumericAndNonAbcdefCharacters(String id) {
+    public void shouldRejectNonNumericAndNonAbcdefCharacters(final String id) {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> CompanyId.toUUID(id))
                 .withMessage("Must consist of hyphens (-) and a,b,c,d,e,f and numeric characters only");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "19C56-04-73c6-4cd1-96a43aae7962b-643", "19c5640473c64cd196a4aae7962b64356435" })
-    public void shouldRejectInvalidUUID(String invalidUuid) {
+    public void shouldRejectInvalidUUID(final String invalidUuid) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> CompanyId.toUUID(invalidUuid)).withMessage(
                         "Must be a valid UUID");

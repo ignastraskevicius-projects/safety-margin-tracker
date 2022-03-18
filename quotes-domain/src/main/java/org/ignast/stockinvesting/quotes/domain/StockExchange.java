@@ -14,8 +14,10 @@ import static java.lang.String.format;
 public class StockExchange {
     @Embedded
     private MarketIdentifierCode marketIdentifierCode;
+
     @Transient
     private CurrencyCode quoteCurrency;
+
     @Transient
     private QuotesRepository quotes;
 
@@ -23,7 +25,7 @@ public class StockExchange {
         //JPA requirement entities to have default constructor
     }
 
-    private StockExchange(@NonNull MarketIdentifierCode marketIdentifierCode, @NonNull CurrencyCode quoteCurrency, @NonNull QuotesRepository quotes) {
+    private StockExchange(@NonNull final MarketIdentifierCode marketIdentifierCode, @NonNull final CurrencyCode quoteCurrency, @NonNull final QuotesRepository quotes) {
         this.marketIdentifierCode = marketIdentifierCode;
         this.quoteCurrency = quoteCurrency;
         this.quotes = quotes;
@@ -38,15 +40,13 @@ public class StockExchange {
         }
     }
 
-    static StockExchange create( MarketIdentifierCode marketIdentifierCode,  CurrencyCode quoteCurrency,  QuotesRepository quotes) {
-        val stockExchange = new StockExchange(marketIdentifierCode, quoteCurrency, quotes);
-
-        return stockExchange;
+    static StockExchange create(final MarketIdentifierCode marketIdentifierCode, final  CurrencyCode quoteCurrency, final  QuotesRepository quotes) {
+        return new StockExchange(marketIdentifierCode, quoteCurrency, quotes);
     }
 
-    public Money getQuotedPrice(@NonNull StockSymbol symbol) {
-        val numericPriceValue = quotes.getQuotedPriceOf(symbol, marketIdentifierCode);
-        val price = Money.of(numericPriceValue, quoteCurrency.get());
+    public Money getQuotedPrice(@NonNull final StockSymbol symbol) {
+        final val numericPriceValue = quotes.getQuotedPriceOf(symbol, marketIdentifierCode);
+        final val price = Money.of(numericPriceValue, quoteCurrency.get());
         return getStockExchangeSpecificBehaviour().transformPrice(price);
     }
 
@@ -70,12 +70,12 @@ public class StockExchange {
         }
 
         @Override
-        public Money transformPrice(Money price) {
+        public Money transformPrice(final Money price) {
             return price.divide(100);
         }
     }
 
-    private class StandardBehaviour implements StockExchangeSpecificBehaviour {
+    private static final class StandardBehaviour implements StockExchangeSpecificBehaviour {
 
         @Override
         public void checkRequirements() {
@@ -83,7 +83,7 @@ public class StockExchange {
         }
 
         @Override
-        public Money transformPrice(Money price) {
+        public Money transformPrice(final Money price) {
             return price;
         }
     }

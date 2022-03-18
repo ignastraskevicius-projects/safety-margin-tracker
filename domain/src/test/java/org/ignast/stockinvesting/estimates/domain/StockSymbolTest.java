@@ -16,7 +16,7 @@ class StockSymbolTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "AMZN", "MSFT" })
-    public void shouldPreserveCode(String symbol) {
+    public void shouldPreserveCode(final String symbol) {
         assertThat(new StockSymbol(symbol).get()).isEqualTo(symbol);
     }
 
@@ -36,14 +36,14 @@ class StockSymbolTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "1Aa", "Ñ1A" })
-    public void shouldRejectNonAlphanumericUppercaseCharacters(String symbol) {
+    public void shouldRejectNonAlphanumericUppercaseCharacters(final String symbol) {
         assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> new StockSymbol(symbol))
                 .withMessage("Stock Symbol must contain only uppercase alphanumeric characters");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "11", "AA", "2B", "C3" })
-    public void shouldAcceptUppercaseAlphanumeric(String symbol) {
+    public void shouldAcceptUppercaseAlphanumeric(final String symbol) {
         assertThat(new StockSymbol(symbol).get()).isEqualTo(symbol);
     }
 }

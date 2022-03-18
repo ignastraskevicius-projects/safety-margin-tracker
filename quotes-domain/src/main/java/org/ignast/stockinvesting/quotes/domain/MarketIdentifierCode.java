@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 
 @EqualsAndHashCode
 @Embeddable
-public final class MarketIdentifierCode {
+public class MarketIdentifierCode {
     @Column(name = "market_identifier_code")
     private String code;
 
@@ -16,7 +16,7 @@ public final class MarketIdentifierCode {
         //JPA requirement to have default constructor
     }
 
-    public MarketIdentifierCode(@NonNull String code) {
+    public MarketIdentifierCode(@NonNull final String code) {
         if (code.length() != 4) {
             throw new IllegalArgumentException("Market Identifier is not 4 characters long (ISO 10383 standard)");
         }

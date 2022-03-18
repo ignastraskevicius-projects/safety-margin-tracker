@@ -6,7 +6,7 @@ import java.util.UUID;
 
 public class CompanyId {
 
-    public static UUID toUUID(@NonNull String id) {
+    public static UUID toUUID(@NonNull final String id) {
         if (id.length() != 36) {
             throw new IllegalArgumentException("Must consist of 36 characters");
         }

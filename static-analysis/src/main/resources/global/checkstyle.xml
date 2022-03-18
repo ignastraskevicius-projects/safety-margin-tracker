@@ -43,9 +43,6 @@
         <module name="CyclomaticComplexity"/>
         <module name="DeclarationOrder"/>
         <module name="DefaultComesLast"/>
-        <module name="DesignForExtension">
-            <property name="ignoredAnnotations" value="Bean, PutMapping, GetMapping"/>
-        </module>
         <module name="EmptyBlock"/>
         <module name="EmptyCatchBlock"/>
         <module name="EmptyForInitializerPad"/>

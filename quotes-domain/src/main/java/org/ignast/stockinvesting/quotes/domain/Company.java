@@ -18,7 +18,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
 
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @RequiredArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //JPA requirement for entities
 @Entity
@@ -50,13 +49,13 @@ public class Company {
     @Getter
     private StockExchange stockExchange;
 
-    public static Company create(CompanyExternalId externalId, CompanyName name, StockSymbol stockSymbol, StockExchange stockExchange) {
-        val company = new Company(externalId, name, stockSymbol, stockExchange);
+    public static Company create(final CompanyExternalId externalId, final CompanyName name, final StockSymbol stockSymbol, final StockExchange stockExchange) {
+        final val company = new Company(externalId, name, stockSymbol, stockExchange);
         verifyStockSymbolIsSupported(company);
         return company;
     }
 
-    private static void verifyStockSymbolIsSupported(Company company) {
+    private static void verifyStockSymbolIsSupported(final Company company) {
         company.getQuotedPrice();
     }
 

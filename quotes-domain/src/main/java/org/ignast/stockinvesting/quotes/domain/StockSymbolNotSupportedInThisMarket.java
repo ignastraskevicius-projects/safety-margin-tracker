@@ -1,7 +1,7 @@
 package org.ignast.stockinvesting.quotes.domain;
 
 public class StockSymbolNotSupportedInThisMarket extends ApplicationException {
-    public StockSymbolNotSupportedInThisMarket(String message) {
+    public StockSymbolNotSupportedInThisMarket(final String message) {
         super(message);
     }
 }

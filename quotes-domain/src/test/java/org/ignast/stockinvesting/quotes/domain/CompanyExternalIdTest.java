@@ -8,18 +8,18 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class CompanyExternalIdTest {
+public final class CompanyExternalIdTest {
 
     @Test
     public void shouldNotBeNull() {
-        Integer id = null;
+        final Integer id = null;
         assertThatExceptionOfType(NullPointerException.class)
                 .isThrownBy(() -> new CompanyExternalId(id));
     }
 
     @ParameterizedTest
     @ValueSource(ints = { 1, 2000000 })
-    public void shouldPreserveCode(Integer id) {
+    public void shouldPreserveCode(final Integer id) {
         assertThat(new CompanyExternalId(id).get()).isEqualTo(id);
     }
 
@@ -30,14 +30,14 @@ class CompanyExternalIdTest {
 
     @ParameterizedTest
     @ValueSource(ints = { 0, -1, -2000000} )
-    public void shouldNotBeNegativeOrZero(Integer id) {
+    public void shouldNotBeNegativeOrZero(final Integer id) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new CompanyExternalId(id))
                 .withMessage("Must be positive");
     }
 
     @Test
-    public void shouldEqualToTheSameNumericId() {
+    public void shouldEqualToTheSameExternalId() {
         EqualsVerifier.forClass(CompanyExternalId.class).verify();
     }
 }

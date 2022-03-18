@@ -7,9 +7,9 @@ import java.util.Currency;
 
 @EqualsAndHashCode
 public final class CurrencyCode {
-
     private final String code;
-    public CurrencyCode(@NonNull String code) {
+
+    public CurrencyCode(@NonNull final String code) {
         if (code.length() != 3) {
             throw new IllegalArgumentException("Currency must have 3 letters");
         }

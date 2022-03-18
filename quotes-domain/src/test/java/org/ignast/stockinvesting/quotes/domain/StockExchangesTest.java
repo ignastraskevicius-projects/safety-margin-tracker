@@ -13,91 +13,91 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-class StockExchangesTest {
-    private QuotesRepository quotes = mock(QuotesRepository.class);
+public final class StockExchangesTest {
+    private final QuotesRepository quotes = mock(QuotesRepository.class);
 
-    private StockExchanges stockExchanges = new StockExchanges(quotes);
+    private final StockExchanges stockExchanges = new StockExchanges(quotes);
 
     @Test
     public void FrankfurtExchangeShouldBeSupported() {
-        val volkswagenSymbol = new StockSymbol("VOW3");
-        val fraMic = new MarketIdentifierCode("XFRA");
+        final val volkswagenSymbol = new StockSymbol("VOW3");
+        final val fraMic = new MarketIdentifierCode("XFRA");
         when(quotes.getQuotedPriceOf(volkswagenSymbol, fraMic)).thenReturn(TEN);
 
-        Money price = stockExchanges.getFor(fraMic).getQuotedPrice(volkswagenSymbol);
+        final val price = stockExchanges.getFor(fraMic).getQuotedPrice(volkswagenSymbol);
 
         assertThat(price).isEqualTo(Money.of(TEN, "EUR"));
     }
 
     @Test
     public void NewYorkExchangeShouldBeSupported() {
-        val amazonSymbol = new StockSymbol("AMZN");
-        val nyseMic = new MarketIdentifierCode("XNYS");
+        final val amazonSymbol = new StockSymbol("AMZN");
+        final val nyseMic = new MarketIdentifierCode("XNYS");
         when(quotes.getQuotedPriceOf(amazonSymbol, nyseMic)).thenReturn(ONE);
 
-        Money price = stockExchanges.getFor(nyseMic).getQuotedPrice(amazonSymbol);
+        final val price = stockExchanges.getFor(nyseMic).getQuotedPrice(amazonSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "USD"));
     }
 
     @Test
     public void TorontoExchangeShouldBeSupported() {
-        val royalBankOfCanadaSymbol = new StockSymbol("RY");
-        val tsxMic = new MarketIdentifierCode("XTSE");
+        final val royalBankOfCanadaSymbol = new StockSymbol("RY");
+        final val tsxMic = new MarketIdentifierCode("XTSE");
         when(quotes.getQuotedPriceOf(royalBankOfCanadaSymbol, tsxMic)).thenReturn(ONE);
 
-        Money price = stockExchanges.getFor(tsxMic).getQuotedPrice(royalBankOfCanadaSymbol);
+        final val price = stockExchanges.getFor(tsxMic).getQuotedPrice(royalBankOfCanadaSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "CAD"));
     }
 
     @Test
     public void HongKongStockExchangeShouldBeSupported() {
-        val alibabaSymbol = new StockSymbol("9988");
-        val hkexMic = new MarketIdentifierCode("XHKG");
+        final val alibabaSymbol = new StockSymbol("9988");
+        final val hkexMic = new MarketIdentifierCode("XHKG");
         when(quotes.getQuotedPriceOf(alibabaSymbol, hkexMic)).thenReturn(ONE);
 
-        Money price = stockExchanges.getFor(hkexMic).getQuotedPrice(alibabaSymbol);
+        final val price = stockExchanges.getFor(hkexMic).getQuotedPrice(alibabaSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "HKD"));
     }
 
     @Test
     public void AustralianSecuritiesExchangeShouldBeSupported() {
-        val telsraSymbol = new StockSymbol("TLS");
-        val asxMic = new MarketIdentifierCode("XASX");
+        final val telsraSymbol = new StockSymbol("TLS");
+        final val asxMic = new MarketIdentifierCode("XASX");
         when(quotes.getQuotedPriceOf(telsraSymbol, asxMic)).thenReturn(ONE);
 
-        Money price = stockExchanges.getFor(asxMic).getQuotedPrice(telsraSymbol);
+        final val price = stockExchanges.getFor(asxMic).getQuotedPrice(telsraSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "AUD"));
     }
 
     @Test
     public void NasdaqShouldBeSupported() {
-        val appleSymbol = new StockSymbol("AAPL");
-        val nasdaqMic = new MarketIdentifierCode("XNAS");
+        final val appleSymbol = new StockSymbol("AAPL");
+        final val nasdaqMic = new MarketIdentifierCode("XNAS");
         when(quotes.getQuotedPriceOf(appleSymbol, nasdaqMic)).thenReturn(ONE);
 
-        Money price = stockExchanges.getFor(nasdaqMic).getQuotedPrice(appleSymbol);
+        final val price = stockExchanges.getFor(nasdaqMic).getQuotedPrice(appleSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "USD"));
     }
 
     @Test
     public void LondonStockExchangeShouldBeSupported() {
-        val astrazenecaSymbol = new StockSymbol("AZN");
-        val lseMic = new MarketIdentifierCode("XLON");
+        final val astrazenecaSymbol = new StockSymbol("AZN");
+        final val lseMic = new MarketIdentifierCode("XLON");
         when(quotes.getQuotedPriceOf(astrazenecaSymbol, lseMic)).thenReturn(new BigDecimal(100));
 
-        Money price = stockExchanges.getFor(lseMic).getQuotedPrice(astrazenecaSymbol);
+        final val price = stockExchanges.getFor(lseMic).getQuotedPrice(astrazenecaSymbol);
 
         assertThat(price).isEqualTo(Money.of(ONE, "GBP"));
     }
 
     @Test
     public void shouldThrowForNotSupportedStockExchanges() {
-        val madridMic = new MarketIdentifierCode("XMAD");
+        final val madridMic = new MarketIdentifierCode("XMAD");
         
         assertThatExceptionOfType(StockExchangeNotSupported.class).isThrownBy(() -> stockExchanges.getFor(madridMic))
                 .withMessage("Market Identifier Code 'XMAD' is not supported")

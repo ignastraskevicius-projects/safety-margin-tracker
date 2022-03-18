@@ -3,9 +3,9 @@ package org.ignast.stockinvesting.estimates.domain;
 import lombok.NonNull;
 
 public class MarketIdentifierCode {
-    private String code;
+    private final String code;
 
-    public MarketIdentifierCode(@NonNull String code) {
+    public MarketIdentifierCode(@NonNull final String code) {
         if (code.length() != 4) {
             throw new IllegalArgumentException("Market Identifier is not 4 characters long (ISO 10383 standard)");
         }

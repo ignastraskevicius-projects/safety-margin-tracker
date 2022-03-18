@@ -74,6 +74,10 @@ final class ExpectationsForMethodArgumentNotValidExceptionTest {
 }
 
 public final class MethodArgumentNotValidExceptionMock {
+    private MethodArgumentNotValidExceptionMock() {
+
+    }
+
     public static MethodArgumentNotValidException withFieldErrors(final List<FieldError> fieldErrors) {
         return new MethodArgumentNotValidException(anyMethodParameter(), bindingResultWithFieldErrorsOf(fieldErrors));
     }

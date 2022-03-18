@@ -31,6 +31,7 @@ import static org.hamcrest.Matchers.anything;
 import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anyMIC;
 import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anySymbol;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 @RestClientTest(AlphaVantageQuotes.class)
@@ -99,6 +100,17 @@ public final class AlphaVantageQuotesTest {
     @Test
     public void shouldThrowIfReceivedBodyIsNotJson() {
         mockServer.expect(requestTo(anything())).andRespond(withSuccess("not-valid-json", MediaType.APPLICATION_JSON));
+
+        assertThatExceptionOfType(QuoteRetrievalFailedException.class)
+                .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
+                .withMessage("Communication with server failed");
+    }
+
+    @Test
+    public void shouldThrowOnHttpServerError() {
+        final val underlyingMessage = "underlying exception from server";
+        mockServer.expect(requestTo(anything())).andRespond(
+                withServerError());
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
                 .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))

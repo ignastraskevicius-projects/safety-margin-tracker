@@ -26,6 +26,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public final class MismatchedInputExceptionMock {
+    private MismatchedInputExceptionMock() {
+
+    }
+
     public static MismatchedInputException stringParsingFailedAt(final List<Reference> path) {
         return MockitoUtils.mock(StrictStringDeserializingException.class, e -> when(e.getPath()).thenReturn(path));
     }
@@ -61,6 +65,9 @@ public final class MismatchedInputExceptionMock {
 }
 
 final class ReferenceMock {
+    private ReferenceMock() {
+
+    }
 
     public static Reference toField(final Object sourceObject, final String field) {
         return MockitoUtils.mock(Reference.class, r -> {

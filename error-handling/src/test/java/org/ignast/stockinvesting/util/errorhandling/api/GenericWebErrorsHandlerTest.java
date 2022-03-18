@@ -13,10 +13,10 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import static java.util.List.of;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.util.errorhandling.api.Errors.anyValidationErrorDTO;
 import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.jacksonFieldLevelError;
 import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.unknownCause;
 import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.withoutCause;
+import static org.ignast.stockinvesting.util.errorhandling.api.ValidationErrorDTOs.anyValidationErrorDTO;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
@@ -123,6 +123,9 @@ final class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
 }
 
 final class HttpMessageNotReadableExceptionMock {
+    private HttpMessageNotReadableExceptionMock() {
+
+    }
 
     public static HttpMessageNotReadableException jacksonFieldLevelError() {
         return MockitoUtils.mock(HttpMessageNotReadableException.class,

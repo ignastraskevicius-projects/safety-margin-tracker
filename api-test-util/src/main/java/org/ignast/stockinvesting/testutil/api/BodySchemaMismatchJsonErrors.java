@@ -2,6 +2,10 @@ package org.ignast.stockinvesting.testutil.api;
 
 public final class BodySchemaMismatchJsonErrors {
 
+    private BodySchemaMismatchJsonErrors() {
+
+    }
+
     public static String forMissingFieldAt(final String jsonPath) {
         return String.format(
                 "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"%s\"}]}",

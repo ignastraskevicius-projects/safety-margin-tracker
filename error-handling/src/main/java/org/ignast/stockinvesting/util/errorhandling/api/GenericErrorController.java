@@ -14,6 +14,7 @@ public final class GenericErrorController implements ErrorController {
     private static final int INTERNAL_SERVER_ERROR = 500;
 
     @RequestMapping("/error")
+    @SuppressWarnings("checkstyle:illegalcatch")
     public ResponseEntity<StandardErrorDTO> handleError(final HttpServletRequest request) {
         try {
             final val statusCode = (int) request.getAttribute("javax.servlet.error.status_code");

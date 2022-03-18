@@ -21,6 +21,7 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.persistence.dbmigration.AppDbContainer.getDataSourceTo;
 
 @Testcontainers
+@SuppressWarnings("checkstyle:hideutilityclassconstructor")
 public final class AppDbMigrationTest {
 
     @Container

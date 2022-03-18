@@ -95,7 +95,7 @@ public final class AlphaVantageStubIT {
         assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
 
-    private HashMap jsonAsMap(final HttpResponse<String> response) throws JsonProcessingException {
+    private Map jsonAsMap(final HttpResponse<String> response) throws JsonProcessingException {
         return mapper.readValue(response.body(), HashMap.class);
     }
 

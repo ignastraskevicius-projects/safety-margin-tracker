@@ -19,6 +19,7 @@ import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.estimates.dbmigration.AppDbContainer.getDataSourceTo;
 
+@SuppressWarnings("checkstyle:hideutilityclassconstructor")
 @Testcontainers
 public final class AppDbMigrationTest {
 

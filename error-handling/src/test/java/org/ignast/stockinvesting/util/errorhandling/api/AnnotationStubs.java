@@ -13,6 +13,10 @@ import javax.validation.constraints.Size;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AnnotationStubs {
+    private AnnotationStubs() {
+
+    }
+
     static Override javaLangOverride() {
         final val annotation = new Override() {
 

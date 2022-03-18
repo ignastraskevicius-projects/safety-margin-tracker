@@ -22,6 +22,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 public final class DomainFactoryForTests {
+    private DomainFactoryForTests() {
+
+    }
+
     public static Company amazon() {
         return new Company(new CompanyExternalId(6), new CompanyName("Amazon"), new StockSymbol("AMZN"),
                 new StockExchanges(new StubQuotesRepository()).getFor(new MarketIdentifierCode("XNAS")));

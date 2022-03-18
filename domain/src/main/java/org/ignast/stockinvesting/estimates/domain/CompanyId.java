@@ -4,7 +4,11 @@ import lombok.NonNull;
 
 import java.util.UUID;
 
-public class CompanyId {
+public final class CompanyId {
+
+    private CompanyId() {
+
+    }
 
     public static UUID toUUID(@NonNull final String id) {
         if (id.length() != 36) {

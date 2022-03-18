@@ -97,9 +97,9 @@ final class CompanyJsonBodyFactoryTest {
 
     @Test
     public void shouldCreateCompanyWithCustomCustomId() {
-        assertThat(FACTORY.createWithIdJsonPair("\"id\":\"custom UUID\""))
+        assertThat(FACTORY.createWithIdJsonPair("\"id\":\"custom id\""))
                 .isEqualTo(
-                        "{\"id\":\"custom UUID\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
+                        "{\"id\":\"custom id\",\"name\":\"Amazon\",\"listings\":[{\"marketIdentifier\":\"XNAS\",\"stockSymbol\":\"AMZN\"}]}");
     }
 
     @Test

@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -27,7 +26,6 @@ public final class AppErrorsHandlingConfigurationTest {
         final val countOfTypesSupported = asList(
                 checkConstructedTypeFromString(MarketIdentifierCode.class, t -> t.construct("XNYS")),
                 checkConstructedTypeFromString(StockSymbol.class, t -> t.construct("AMZN")),
-                checkConstructedTypeFromString(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300")),
                 checkConstructedTypeFromString(CompanyName.class, t -> t.construct("Amazon"))
         ).size();
 

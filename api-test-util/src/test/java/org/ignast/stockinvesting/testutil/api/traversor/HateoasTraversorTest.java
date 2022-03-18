@@ -134,6 +134,11 @@ public final class HateoasTraversorTest {
 }
 
 final class RestTemplateBuilderStubs {
+
+    private RestTemplateBuilderStubs() {
+
+    }
+
     static RestTemplateBuilder stub() {
         final val builder = mock(RestTemplateBuilder.class);
         when(builder.errorHandler(any())).thenReturn(builder);

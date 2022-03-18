@@ -1,5 +1,14 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
+import static java.util.Collections.emptyList;
+import static java.util.stream.Collectors.toUnmodifiableList;
+import static java.util.stream.Stream.concat;
+import static java.util.stream.Stream.of;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
+
+import java.util.List;
+import java.util.function.BinaryOperator;
+import java.util.function.Function;
 import lombok.NonNull;
 import lombok.val;
 import org.springframework.boot.web.client.RestTemplateBuilder;
@@ -10,16 +19,8 @@ import org.springframework.http.client.ClientHttpResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.ResponseErrorHandler;
 
-import java.util.List;
-import java.util.function.BinaryOperator;
-import java.util.function.Function;
-
-import static java.util.Collections.emptyList;
-import static java.util.stream.Collectors.toUnmodifiableList;
-import static java.util.stream.Stream.concat;
-import static java.util.stream.Stream.of;
-
 public final class HateoasTraversor {
+
     private final MediaType appMediaType;
 
     private final Hop.Factory hopFactory;
@@ -28,7 +29,12 @@ public final class HateoasTraversor {
 
     private final String rootUri;
 
-    private HateoasTraversor(final MediaType appMediaType, final Hop.Factory hopFactory, final String rootUri, final List<Hop.TraversableHop> hops) {
+    private HateoasTraversor(
+        final MediaType appMediaType,
+        final Hop.Factory hopFactory,
+        final String rootUri,
+        final List<Hop.TraversableHop> hops
+    ) {
         this.appMediaType = appMediaType;
         this.hopFactory = hopFactory;
         this.rootUri = rootUri;
@@ -36,14 +42,20 @@ public final class HateoasTraversor {
     }
 
     public HateoasTraversor hop(final Function<Hop.Factory, Hop.TraversableHop> constructHop) {
-        final val hop = constructHop.apply(hopFactory);
-        return new HateoasTraversor(appMediaType, hopFactory, rootUri, concat(hops.stream(), of(hop)).collect(toUnmodifiableList()));
+        final val newHop = constructHop.apply(hopFactory);
+        final val hopsPlusNewOne = concat(hops.stream(), of(newHop)).collect(toUnmodifiableList());
+        return new HateoasTraversor(appMediaType, hopFactory, rootUri, hopsPlusNewOne);
     }
 
     public ResponseEntity<String> perform() {
-        final val fakeLinkToRoot = ResponseEntity.status(HttpStatus.OK).contentType(appMediaType).body(HateoasLink.link("root", rootUri));
+        final val linkToRoot = link("root", rootUri);
+        final val fakeLinkToRoot = ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(appMediaType)
+            .body(linkToRoot);
         final val rootHop = hopFactory.get("root");
-        return concat(of(rootHop), hops.stream()).reduce(fakeLinkToRoot, (r, h) -> h.traverse(r), combinerUnsupported());
+        return concat(of(rootHop), hops.stream())
+            .reduce(fakeLinkToRoot, (r, h) -> h.traverse(r), combinerUnsupported());
     }
 
     private BinaryOperator<ResponseEntity<String>> combinerUnsupported() {
@@ -54,6 +66,7 @@ public final class HateoasTraversor {
 
     @Service
     public static final class Factory {
+
         private final Hop.Factory hopFactory;
 
         private final MediaType appMediaType;
@@ -69,14 +82,14 @@ public final class HateoasTraversor {
         }
 
         private static class NoSpecialHandling implements ResponseErrorHandler {
+
             @Override
             public boolean hasError(final ClientHttpResponse response) {
                 return false;
             }
 
             @Override
-            public void handleError(final ClientHttpResponse response) {
-            }
+            public void handleError(final ClientHttpResponse response) {}
         }
     }
 }

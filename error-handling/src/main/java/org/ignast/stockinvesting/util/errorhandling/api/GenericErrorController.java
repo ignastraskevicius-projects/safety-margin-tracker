@@ -1,12 +1,11 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import javax.servlet.http.HttpServletRequest;
 import lombok.val;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public final class GenericErrorController implements ErrorController {

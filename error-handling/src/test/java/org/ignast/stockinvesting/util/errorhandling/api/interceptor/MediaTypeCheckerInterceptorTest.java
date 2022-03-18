@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.util.errorhandling.api.interceptor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -9,9 +11,8 @@ import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.web.servlet.HandlerInterceptor;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 final class MediaTypeCheckerInterceptorTest {
+
     private final HandlerInterceptor interceptor = new MediaTypeCheckerInterceptor();
 
     @ParameterizedTest

@@ -1,10 +1,9 @@
 package org.ignast.stockinvesting.quotes.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 @EqualsAndHashCode
 @Embeddable

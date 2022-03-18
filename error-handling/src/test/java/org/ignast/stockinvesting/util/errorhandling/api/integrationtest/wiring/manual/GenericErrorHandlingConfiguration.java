@@ -14,7 +14,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 
 @TestConfiguration
-@Import({MediaTypeInterceptorConfig.class, ErrorExtractorConfiguration.class})
+@Import({ MediaTypeInterceptorConfig.class, ErrorExtractorConfiguration.class })
 final class GenericErrorHandlingConfiguration {
 
     @Bean
@@ -34,8 +34,9 @@ final class GenericErrorHandlingConfiguration {
 
     @Bean
     public ControllerAdviceForGenericErrors genericControllerAdvice(
-            final JacksonParsingErrorsExtractor parsing,
-            final AnnotationBasedValidationErrorsExtractor validation) {
+        final JacksonParsingErrorsExtractor parsing,
+        final AnnotationBasedValidationErrorsExtractor validation
+    ) {
         return new ControllerAdviceForGenericErrors(validation, parsing);
     }
 }

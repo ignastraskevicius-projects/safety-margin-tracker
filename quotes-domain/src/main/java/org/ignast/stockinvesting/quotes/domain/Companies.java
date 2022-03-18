@@ -7,7 +7,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class Companies {
-    @NonNull private CompanyRepository repository;
+
+    @NonNull
+    private CompanyRepository repository;
 
     public void create(@NonNull final Company company) {
         repository.save(company);

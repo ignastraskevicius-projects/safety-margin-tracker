@@ -1,5 +1,24 @@
 package org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.manual;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forIntegerRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.manual.ManualWiringIT.TestController.url;
+import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
+import static org.springframework.http.HttpEntity.EMPTY;
+import static org.springframework.http.HttpMethod.PUT;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.val;
 import org.json.JSONException;
@@ -19,27 +38,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forIntegerRequiredAt;
-import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
-import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
-import static org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.manual.ManualWiringIT.TestController.url;
-import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
-import static org.springframework.http.HttpEntity.EMPTY;
-import static org.springframework.http.HttpMethod.PUT;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
-import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(GenericErrorHandlingConfiguration.class)
@@ -61,8 +59,12 @@ final class ManualWiringIT {
 
     @Test
     public void shouldWireInCustomParsingErrorHandling() {
-        final val response = restTemplate
-                .exchange(url(port) + "/string", PUT, asJson("\"not-a-json-object\""), String.class);
+        final val response = restTemplate.exchange(
+            url(port) + "/string",
+            PUT,
+            asJson("\"not-a-json-object\""),
+            String.class
+        );
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(response.getBody()).contains("valueMustBeObject");
@@ -70,17 +72,29 @@ final class ManualWiringIT {
 
     @Test
     public void shouldWireInStrictStringParsing() throws JSONException {
-        final val response = restTemplate
-                .exchange(url(port) + "/string", PUT, asJson("{\"stringField\":2}"), String.class);
+        final val response = restTemplate.exchange(
+            url(port) + "/string",
+            PUT,
+            asJson("{\"stringField\":2}"),
+            String.class
+        );
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertEquals(forStringRequiredAt("$.stringField"), response.getBody(), JSONCompareMode.NON_EXTENSIBLE);
+        assertEquals(
+            forStringRequiredAt("$.stringField"),
+            response.getBody(),
+            JSONCompareMode.NON_EXTENSIBLE
+        );
     }
 
     @Test
     public void shouldWireInStrictIntegerParsing() throws JSONException {
-        final val response = restTemplate
-                .exchange(url(port) + "/int", PUT, asJson("{\"intField\":\"2\"}"), String.class);
+        final val response = restTemplate.exchange(
+            url(port) + "/int",
+            PUT,
+            asJson("{\"intField\":\"2\"}"),
+            String.class
+        );
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertEquals(forIntegerRequiredAt("$.intField"), response.getBody(), JSONCompareMode.NON_EXTENSIBLE);
@@ -103,14 +117,16 @@ final class ManualWiringIT {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:linelength")
     public void shouldWireInInterceptorEnsuringGETRequestsHaveAcceptHeaderInOrderToRequireExplicitApiVersionAndNeverBreakClientOnVersionBumps()
-            throws Exception {
+        throws Exception {
         final val response = getWithoutAcceptHeader(url(port));
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
     }
 
-    private HttpResponse<String> getWithoutAcceptHeader(final String url) throws IOException, InterruptedException {
+    private HttpResponse<String> getWithoutAcceptHeader(final String url)
+        throws IOException, InterruptedException {
         final val request = HttpRequest.newBuilder().GET().uri(URI.create(url)).build();
         final val client = HttpClient.newBuilder().build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
@@ -125,6 +141,7 @@ final class ManualWiringIT {
 
     @TestConfiguration
     static class TestControllerConfig {
+
         @Bean
         public TestController testController() {
             return new TestController();
@@ -133,6 +150,7 @@ final class ManualWiringIT {
 
     @RestController
     static class TestController {
+
         static String url(final int port) {
             return "http://localhost:" + port;
         }
@@ -155,15 +173,15 @@ final class ManualWiringIT {
 
     @Getter
     static class TestStringDTO {
+
         @NotNull
         private String stringField;
     }
 
     @Getter
     static class TestIntDTO {
+
         @NotNull
         private Integer intField;
     }
-
-
 }

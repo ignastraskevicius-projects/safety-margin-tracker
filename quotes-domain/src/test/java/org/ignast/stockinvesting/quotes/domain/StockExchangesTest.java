@@ -1,11 +1,5 @@
 package org.ignast.stockinvesting.quotes.domain;
 
-import lombok.val;
-import org.javamoney.moneta.Money;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-
 import static java.math.BigDecimal.ONE;
 import static java.math.BigDecimal.TEN;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -13,7 +7,13 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import lombok.val;
+import org.javamoney.moneta.Money;
+import org.junit.jupiter.api.Test;
+
 public final class StockExchangesTest {
+
     private final QuotesRepository quotes = mock(QuotesRepository.class);
 
     private final StockExchanges stockExchanges = new StockExchanges(quotes);
@@ -98,10 +98,11 @@ public final class StockExchangesTest {
     @Test
     public void shouldThrowForNotSupportedStockExchanges() {
         final val madridMic = new MarketIdentifierCode("XMAD");
-        
-        assertThatExceptionOfType(StockExchangeNotSupported.class).isThrownBy(() -> stockExchanges.getFor(madridMic))
-                .withMessage("Market Identifier Code 'XMAD' is not supported")
-                .isInstanceOf(ApplicationException.class);
+
+        assertThatExceptionOfType(StockExchangeNotSupported.class)
+            .isThrownBy(() -> stockExchanges.getFor(madridMic))
+            .withMessage("Market Identifier Code 'XMAD' is not supported")
+            .isInstanceOf(ApplicationException.class);
     }
 
     @Test

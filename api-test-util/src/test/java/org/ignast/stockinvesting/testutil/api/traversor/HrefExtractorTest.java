@@ -1,21 +1,24 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
+import static org.mockito.Mockito.mock;
+import static org.springframework.http.HttpStatus.OK;
+import static org.springframework.http.ResponseEntity.status;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.mockito.Mockito.mock;
-import static org.springframework.http.HttpStatus.OK;
 
 public final class HrefExtractorTest {
 
-    private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
+    private static final MediaType APP_V1 = MediaType.parseMediaType(
+        "application/app.specific.media.type-v1.hal+json"
+    );
 
     private final HrefExtractor extractor = new HrefExtractor(APP_V1);
 
@@ -27,65 +30,80 @@ public final class HrefExtractorTest {
 
     @Test
     public void shouldExtractHref() {
-        final val response = ResponseEntity.status(OK).contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
+        final val response = status(OK).contentType(APP_V1).body(link("company", "companyUri"));
 
         assertThat(extractor.extractHref(response, "company")).isEqualTo("companyUri");
     }
 
     @Test
     public void shouldFailToExtractFromInvalidJsonResponses() {
-        final val response = ResponseEntity.status(OK).contentType(APP_V1).body("not-a-json");
+        final val response = status(OK).contentType(APP_V1).body("not-a-json");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> extractor.extractHref(response, "company"))
-                .withMessage("Hop to 'company' failed: previous response is not a valid json");
+            .isThrownBy(() -> extractor.extractHref(response, "company"))
+            .withMessage("Hop to 'company' failed: previous response is not a valid json");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"{}", "{\"_lilnks\":{}}", "{\"_lilnks\":{\"company\":{}}}", "{\"_lilnks\":{\"client\":{\"href\":\"companyUri\"}}}"})
+    @ValueSource(
+        strings = {
+            "{}",
+            "{\"_lilnks\":{}}",
+            "{\"_lilnks\":{\"company\":{}}}",
+            "{\"_lilnks\":{\"client\":{\"href\":\"companyUri\"}}}",
+        }
+    )
     public void shouldFailToExtractNonexistentRel(final String notContainingCompanyRel) {
-        final val response = ResponseEntity.status(OK).contentType(APP_V1).body(notContainingCompanyRel);
+        final val response = status(OK).contentType(APP_V1).body(notContainingCompanyRel);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> extractor.extractHref(response, "company"))
-                .withMessage("Hop to 'company' failed: previous response does not contain rel to 'company'");
+            .isThrownBy(() -> extractor.extractHref(response, "company"))
+            .withMessage("Hop to 'company' failed: previous response does not contain rel to 'company'");
     }
 
     @Test
     public void shouldFailToExtractHrefFromResponseWithoutContentType() {
-        final val response = ResponseEntity.status(OK).body(HateoasLink.anyLink());
+        final val response = status(OK).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> extractor.extractHref(response, "any"))
-                .withMessage("Hop to 'any' failed: previous response has no content-type specified");
+            .isThrownBy(() -> extractor.extractHref(response, "any"))
+            .withMessage("Hop to 'any' failed: previous response has no content-type specified");
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"text/xml", "application/json", "application/hal+jsosn", "application/vnd.stockinvesting.quotes.hal+json"})
+    @ValueSource(
+        strings = {
+            "text/xml",
+            "application/json",
+            "application/hal+jsosn",
+            "application/vnd.stockinvesting.quotes.hal+json",
+        }
+    )
     public void shouldNotExtractHrefFromResponsesWithoutVersionedAppContentTypeSet(final String type) {
         final val mediaType = MediaType.parseMediaType(type);
-        final val response = ResponseEntity.status(OK).contentType(mediaType).body(HateoasLink.anyLink());
+        final val response = status(OK).contentType(mediaType).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> extractor.extractHref(response, "any"))
-                .withMessage("Hop to 'any' failed: previous response has unsupported content-type specified");
+            .isThrownBy(() -> extractor.extractHref(response, "any"))
+            .withMessage("Hop to 'any' failed: previous response has unsupported content-type specified");
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {400, 500})
+    @ValueSource(ints = { 400, 500 })
     public void shouldNotExtractHrefFromResponsesWithNon2xxStatusCodes(final int status) {
-        final val response = ResponseEntity.status(HttpStatus.valueOf(status)).body(HateoasLink.anyLink());
+        final val response = status(HttpStatus.valueOf(status)).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> extractor.extractHref(response, "any"))
-                .withMessage("Hop to 'any' failed: previous interaction has failed");
+            .isThrownBy(() -> extractor.extractHref(response, "any"))
+            .withMessage("Hop to 'any' failed: previous interaction has failed");
     }
 
     @ParameterizedTest
-    @ValueSource(ints = {200, 201})
+    @ValueSource(ints = { 200, 201 })
     public void shouldExtractHrefForResponsesWith2xxStatusCodes(final int status) {
-        final val response = ResponseEntity.status(HttpStatus.valueOf(status))
-                .contentType(APP_V1).body(HateoasLink.link("company", "companyUri"));
+        final val response = status(HttpStatus.valueOf(status))
+            .contentType(APP_V1)
+            .body(link("company", "companyUri"));
 
         assertThat(extractor.extractHref(response, "company")).isEqualTo("companyUri");
     }

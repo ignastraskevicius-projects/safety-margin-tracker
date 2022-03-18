@@ -1,20 +1,19 @@
 package org.ignast.stockinvesting.quotes.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import lombok.val;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-
 public final class CompanyNameTest {
 
     @Test
     public void shouldNotBeNull() {
-        assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> new CompanyName(null));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new CompanyName(null));
     }
 
     @ParameterizedTest
@@ -26,8 +25,8 @@ public final class CompanyNameTest {
     @Test
     public void shouldRejectEmptyName() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new CompanyName(""))
-                .withMessage("Company name must be between 1-255 characters");
+            .isThrownBy(() -> new CompanyName(""))
+            .withMessage("Company name must be between 1-255 characters");
         new CompanyName("a");
     }
 
@@ -36,8 +35,8 @@ public final class CompanyNameTest {
         final val notTooLongName = "c".repeat(255);
         final val tooLongName = "c".repeat(256);
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new CompanyName(tooLongName))
-                .withMessage("Company name must be between 1-255 characters");
+            .isThrownBy(() -> new CompanyName(tooLongName))
+            .withMessage("Company name must be between 1-255 characters");
         new CompanyName(notTooLongName);
     }
 

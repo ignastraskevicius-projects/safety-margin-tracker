@@ -1,5 +1,11 @@
 package org.ignast.stockinvesting.util.errorhandling.api.strictjackson;
 
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.assertj.core.api.Assertions.catchThrowable;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -10,12 +16,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.assertj.core.api.Assertions.catchThrowable;
-import static org.assertj.core.api.Assertions.catchThrowableOfType;
 
 final class StrictIntegerDeserializerTest {
 
@@ -35,8 +35,7 @@ final class StrictIntegerDeserializerTest {
 
     @Test
     public void shouldDeserializeBeanValue() throws JsonProcessingException {
-        assertThat(mapper.readValue("{\"integerValue\":7}", IntegerWrapper.class).integerValue)
-                .isEqualTo(7);
+        assertThat(mapper.readValue("{\"integerValue\":7}", IntegerWrapper.class).integerValue).isEqualTo(7);
     }
 
     @Test
@@ -47,12 +46,16 @@ final class StrictIntegerDeserializerTest {
     @ParameterizedTest
     @ValueSource(strings = { "\"string\"", "3.3", "true", "false", "{}", "[]" })
     public void failureShouldPreserveParserAndLocation(final String jsonValue) {
-        final val exception = catchThrowableOfType(() -> {
-            mapper.readValue(format("{\"integerValue\":%s}", jsonValue), IntegerWrapper.class);
-        }, StrictIntegerDeserializingException.class);
+        final val exception = catchThrowableOfType(
+            () -> {
+                mapper.readValue(format("{\"integerValue\":%s}", jsonValue), IntegerWrapper.class);
+            },
+            StrictIntegerDeserializingException.class
+        );
 
         assertThat(exception).isNotNull();
-        assertThat(exception.getMessage()).startsWith("java.util.Integer can be deserialized only from json Integer type");
+        assertThat(exception.getMessage())
+            .startsWith("java.util.Integer can be deserialized only from json Integer type");
         assertThat(exception.getLocation().getColumnNr()).isEqualTo(17);
         assertThat(exception.getProcessor()).isInstanceOf(JsonParser.class);
         assertThat(((JsonParser) exception.getProcessor()).getTokenLocation().getColumnNr()).isEqualTo(17);
@@ -64,16 +67,18 @@ final class StrictIntegerDeserializerTest {
             mapper.readValue("\"notInteger\"", Integer.class);
         });
 
-        assertThat(throwable).isExactlyInstanceOf(StrictIntegerDeserializingException.class)
-                .isInstanceOf(StrictDeserializingException.class);
+        assertThat(throwable)
+            .isExactlyInstanceOf(StrictIntegerDeserializingException.class)
+            .isInstanceOf(StrictDeserializingException.class);
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "\"someString\"", "3.3", "true", "false", "{}", "[]" })
     public void shouldFailFromOtherJsonTypes(final String jsonValue) {
-        assertThatExceptionOfType(StrictIntegerDeserializingException.class).isThrownBy(() -> {
-            mapper.readValue(jsonValue, Integer.class);
-        });
+        assertThatExceptionOfType(StrictIntegerDeserializingException.class)
+            .isThrownBy(() -> {
+                mapper.readValue(jsonValue, Integer.class);
+            });
     }
 
     @Test
@@ -82,9 +87,12 @@ final class StrictIntegerDeserializerTest {
     }
 
     static class IntegerWrapper {
+
         private Integer integerValue;
 
-        public IntegerWrapper(@JsonProperty(value = "integerValue", required = true) final Integer integerValue) {
+        public IntegerWrapper(
+            @JsonProperty(value = "integerValue", required = true) final Integer integerValue
+        ) {
             this.integerValue = integerValue;
         }
     }

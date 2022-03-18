@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
+import java.util.List;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
@@ -12,16 +13,17 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import java.util.List;
-
 @ControllerAdvice
 public final class ControllerAdviceForGenericErrors {
+
     private final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
 
     private final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
-    public ControllerAdviceForGenericErrors(final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
-                                            final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor) {
+    public ControllerAdviceForGenericErrors(
+        final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
+        final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor
+    ) {
         this.validationErrorsExtractor = validationErrorsExtractor;
         this.jacksonParsingErrorsExtractor = jacksonParsingErrorsExtractor;
     }
@@ -50,10 +52,13 @@ public final class ControllerAdviceForGenericErrors {
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler
     @ResponseBody
-    public StandardErrorDTO handleMethodArgumentNotValidException(final MethodArgumentNotValidException exception) {
+    public StandardErrorDTO handleMethodArgumentNotValidException(
+        final MethodArgumentNotValidException exception
+    ) {
         try {
             return StandardErrorDTO.createForBodyDoesNotMatchSchema(
-                    validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception));
+                validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception)
+            );
         } catch (ValidationErrorsExtractionException e) {
             return StandardErrorDTO.createNameless();
         }
@@ -63,11 +68,15 @@ public final class ControllerAdviceForGenericErrors {
     @ExceptionHandler
     @ResponseBody
     public StandardErrorDTO handleUnparsableJson(final HttpMessageNotReadableException error) {
-
         if (error.getCause() instanceof MismatchedInputException) {
             try {
-                return StandardErrorDTO.createForBodyDoesNotMatchSchema(List.of(
-                        jacksonParsingErrorsExtractor.extractError((MismatchedInputException) error.getCause())));
+                return StandardErrorDTO.createForBodyDoesNotMatchSchema(
+                    List.of(
+                        jacksonParsingErrorsExtractor.extractError(
+                            (MismatchedInputException) error.getCause()
+                        )
+                    )
+                );
             } catch (JacksonParsingErrorExtractionException e) {
                 return StandardErrorDTO.createNameless();
             }
@@ -75,5 +84,4 @@ public final class ControllerAdviceForGenericErrors {
             return StandardErrorDTO.createBodyNotParsable();
         }
     }
-
 }

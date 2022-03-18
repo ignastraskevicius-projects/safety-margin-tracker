@@ -6,7 +6,5 @@ import org.springframework.stereotype.Service;
 @Service
 public class Companies {
 
-    public void create(final Company company) {
-
-    }
+    public void create(final Company company) {}
 }

@@ -7,5 +7,4 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 @Configuration
 @EnableJpaRepositories(basePackages = "org.ignast.stockinvesting.estimates.service")
 @EntityScan("org.ignast.stockinvesting.estimates.domain")
-public class PersistenceConfig {
-}
+public class PersistenceConfig {}

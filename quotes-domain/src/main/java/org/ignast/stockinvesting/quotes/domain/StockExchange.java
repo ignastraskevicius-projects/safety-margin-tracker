@@ -1,17 +1,17 @@
 package org.ignast.stockinvesting.quotes.domain;
 
-import lombok.NonNull;
-import lombok.val;
-import org.javamoney.moneta.Money;
+import static java.lang.String.format;
 
 import javax.persistence.Embeddable;
 import javax.persistence.Embedded;
 import javax.persistence.Transient;
-
-import static java.lang.String.format;
+import lombok.NonNull;
+import lombok.val;
+import org.javamoney.moneta.Money;
 
 @Embeddable
 public class StockExchange {
+
     @Embedded
     private MarketIdentifierCode marketIdentifierCode;
 
@@ -25,7 +25,11 @@ public class StockExchange {
         //JPA requirement entities to have default constructor
     }
 
-    private StockExchange(@NonNull final MarketIdentifierCode marketIdentifierCode, @NonNull final CurrencyCode quoteCurrency, @NonNull final QuotesRepository quotes) {
+    private StockExchange(
+        @NonNull final MarketIdentifierCode marketIdentifierCode,
+        @NonNull final CurrencyCode quoteCurrency,
+        @NonNull final QuotesRepository quotes
+    ) {
         this.marketIdentifierCode = marketIdentifierCode;
         this.quoteCurrency = quoteCurrency;
         this.quotes = quotes;
@@ -40,7 +44,11 @@ public class StockExchange {
         }
     }
 
-    static StockExchange create(final MarketIdentifierCode marketIdentifierCode, final  CurrencyCode quoteCurrency, final  QuotesRepository quotes) {
+    static StockExchange create(
+        final MarketIdentifierCode marketIdentifierCode,
+        final CurrencyCode quoteCurrency,
+        final QuotesRepository quotes
+    ) {
         return new StockExchange(marketIdentifierCode, quoteCurrency, quotes);
     }
 
@@ -65,7 +73,12 @@ public class StockExchange {
         @Override
         public void checkRequirements() {
             if (!quoteCurrency.equals(new CurrencyCode("GBP"))) {
-                throw new IllegalArgumentException(format("'%s' currency is not supported in stock exchange identified with market identifier 'XLON'", quoteCurrency.get()));
+                throw new IllegalArgumentException(
+                    format(
+                        "'%s' currency is not supported in stock exchange identified with market identifier 'XLON'",
+                        quoteCurrency.get()
+                    )
+                );
             }
         }
 
@@ -78,9 +91,7 @@ public class StockExchange {
     private static final class StandardBehaviour implements StockExchangeSpecificBehaviour {
 
         @Override
-        public void checkRequirements() {
-
-        }
+        public void checkRequirements() {}
 
         @Override
         public Money transformPrice(final Money price) {
@@ -88,4 +99,3 @@ public class StockExchange {
         }
     }
 }
-

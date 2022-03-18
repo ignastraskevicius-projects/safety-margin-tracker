@@ -1,13 +1,5 @@
 package org.ignast.stockinvesting.quotes.domain;
 
-import lombok.val;
-import org.javamoney.moneta.Money;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
-import java.math.BigDecimal;
-
 import static java.math.BigDecimal.TEN;
 import static java.math.BigDecimal.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -17,15 +9,25 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.math.BigDecimal;
+import lombok.val;
+import org.javamoney.moneta.Money;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 public final class StockExchangeTest {
 
     private final QuotesRepository quotes = mock(QuotesRepository.class);
 
     @Test
     public void shouldNotBeInitializedWithNulls() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> create(null, new CurrencyCode("USD"), quotes));
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> create(new MarketIdentifierCode("XNYS"), null, quotes));
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> create(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), null));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> create(null, new CurrencyCode("USD"), quotes));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> create(new MarketIdentifierCode("XNYS"), null, quotes));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> create(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), null));
     }
 
     @Test
@@ -34,7 +36,8 @@ public final class StockExchangeTest {
 
         final val stockExchange = create(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes);
 
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> stockExchange.getQuotedPrice(null));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> stockExchange.getQuotedPrice(null));
     }
 
     @Test
@@ -42,11 +45,12 @@ public final class StockExchangeTest {
         when(quotes.getQuotedPriceOf(any(), any())).thenReturn(null);
         final val stockExchange = create(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes);
 
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> stockExchange.getQuotedPrice(new StockSymbol("AMZN")));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> stockExchange.getQuotedPrice(new StockSymbol("AMZN")));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"XNYS", "XNAS"})
+    @ValueSource(strings = { "XNYS", "XNAS" })
     public void shouldPreserveMarketIdentifierCode(final String micStr) {
         final val mic = new MarketIdentifierCode(micStr);
 
@@ -72,21 +76,29 @@ public final class StockExchangeTest {
         shouldGetQuotedPriceOfListedCompany(bankOfChinaSymbol, sseMic, priceNumericAmount, "CNY");
     }
 
-    private void shouldGetQuotedPriceOfListedCompany(final StockSymbol symbol, final MarketIdentifierCode mic, final BigDecimal quotedPrice, final String quoteCurrency) {
+    private void shouldGetQuotedPriceOfListedCompany(
+        final StockSymbol symbol,
+        final MarketIdentifierCode mic,
+        final BigDecimal quotedPrice,
+        final String quoteCurrency
+    ) {
         final val exchange = create(mic, new CurrencyCode(quoteCurrency), quotes);
 
         final val price = exchange.getQuotedPrice(symbol);
 
         assertThat(price).isEqualTo(Money.of(quotedPrice, quoteCurrency));
     }
-
 }
 
 final class LondonStockExchangeTest {
 
     private final QuotesRepository quotes = mock(QuotesRepository.class);
 
-    private final StockExchange lse = create(new MarketIdentifierCode("XLON"), new CurrencyCode("GBP"), quotes);
+    private final StockExchange lse = create(
+        new MarketIdentifierCode("XLON"),
+        new CurrencyCode("GBP"),
+        quotes
+    );
 
     private final StockSymbol astrazenecaSymbol = new StockSymbol("AZN");
 
@@ -104,15 +116,21 @@ final class LondonStockExchangeTest {
 
     @Test
     public void shouldNotBeInitializedWithNulls() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> create(null, new CurrencyCode("GBP"), quotes));
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> create(new MarketIdentifierCode("XLON"), null, quotes));
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> create(new MarketIdentifierCode("XLON"), new CurrencyCode("GBP"), null));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> create(null, new CurrencyCode("GBP"), quotes));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> create(new MarketIdentifierCode("XLON"), null, quotes));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> create(new MarketIdentifierCode("XLON"), new CurrencyCode("GBP"), null));
     }
 
     @Test
     public void shouldThrowForNonGbpCurrency() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> create(new MarketIdentifierCode("XLON"), new CurrencyCode("EUR"), quotes))
-                .withMessage("'EUR' currency is not supported in stock exchange identified with market identifier 'XLON'");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> create(new MarketIdentifierCode("XLON"), new CurrencyCode("EUR"), quotes))
+            .withMessage(
+                "'EUR' currency is not supported in stock exchange identified with market identifier 'XLON'"
+            );
     }
 
     @Test
@@ -126,6 +144,7 @@ final class LondonStockExchangeTest {
     public void shouldFailOnNullPrice() {
         when(quotes.getQuotedPriceOf(any(), any())).thenThrow(NullPointerException.class);
 
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> lse.getQuotedPrice(new StockSymbol("AMZN")));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> lse.getQuotedPrice(new StockSymbol("AMZN")));
     }
 }

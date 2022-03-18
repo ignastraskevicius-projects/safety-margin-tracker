@@ -11,7 +11,6 @@
 
         <module name="AbbreviationAsWordInName"/>
         <module name="AnnotationLocation"/>
-        <module name="AnnotationUseStyle"/>
         <module name="AnonInnerLength">
             <property name="id" value="checkstyle:anoninnerlength" />
         </module>
@@ -34,9 +33,7 @@
         <module name="CovariantEquals"/>
         <module name="CustomImportOrder">
             <property name="customImportOrderRules"
-                      value="THIRD_PARTY_PACKAGE###STANDARD_JAVA_PACKAGE###SPECIAL_IMPORTS###STATIC"/>
-            <property name="standardPackageRegExp" value="^java\."/>
-            <property name="specialImportsRegExp" value="^javax\."/>
+                      value="STATIC###SPECIAL_IMPORTS###"/>
             <property name="sortImportsInGroupAlphabetically" value="true"/>
             <property name="separateLineBetweenGroups" value="true"/>
         </module>
@@ -69,7 +66,6 @@
         <module name="IllegalThrows"/>
         <module name="IllegalToken"/>
         <module name="IllegalType"/>
-        <module name="Indentation"/>
         <module name="InnerAssignment"/>
         <module name="InnerTypeLast"/>
         <module name="InterfaceIsType"/>
@@ -81,16 +77,12 @@
         <module name="LambdaBodyLength"/>
         <module name="LambdaParameterName"/>
         <module name="LeftCurly"/>
-        <module name="LineLength"/>
-
-
-
-
-
         <module name="UnusedImports"/>
     </module>
 
-
+    <module name="LineLength">
+        <property name="max" value="120"/>
+    </module>
     <module name="FileLength"/>
     <module name="FileTabCharacter"/>
     <module name="Header"/>

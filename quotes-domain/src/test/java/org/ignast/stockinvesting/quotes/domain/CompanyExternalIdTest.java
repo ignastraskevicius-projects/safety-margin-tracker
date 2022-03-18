@@ -1,20 +1,19 @@
 package org.ignast.stockinvesting.quotes.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public final class CompanyExternalIdTest {
 
     @Test
     public void shouldNotBeNull() {
         final Integer id = null;
-        assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> new CompanyExternalId(id));
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new CompanyExternalId(id));
     }
 
     @ParameterizedTest
@@ -29,11 +28,11 @@ public final class CompanyExternalIdTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 0, -1, -2000000} )
+    @ValueSource(ints = { 0, -1, -2000000 })
     public void shouldNotBeNegativeOrZero(final Integer id) {
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new CompanyExternalId(id))
-                .withMessage("Must be positive");
+            .isThrownBy(() -> new CompanyExternalId(id))
+            .withMessage("Must be positive");
     }
 
     @Test

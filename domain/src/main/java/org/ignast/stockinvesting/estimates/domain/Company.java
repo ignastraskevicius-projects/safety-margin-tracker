@@ -1,18 +1,17 @@
 package org.ignast.stockinvesting.estimates.domain;
 
-import lombok.EqualsAndHashCode;
-import lombok.NonNull;
-
 import java.util.Currency;
 import java.util.Locale;
-
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Transient;
+import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Entity
 public final class Company {
+
     @Id
     @EqualsAndHashCode.Include
     private String id = "AAA";
@@ -28,7 +27,11 @@ public final class Company {
         //constructor for JPA
     }
 
-    public Company(@NonNull final String name, @NonNull final String countryCode, @NonNull final Currency functionalCurrency) {
+    public Company(
+        @NonNull final String name,
+        @NonNull final String countryCode,
+        @NonNull final Currency functionalCurrency
+    ) {
         if (name.isEmpty() || name.length() > 255) {
             throw new IllegalArgumentException();
         }

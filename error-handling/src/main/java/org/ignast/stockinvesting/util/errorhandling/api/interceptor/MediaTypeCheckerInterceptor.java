@@ -1,21 +1,26 @@
 package org.ignast.stockinvesting.util.errorhandling.api.interceptor;
 
-import org.springframework.web.servlet.HandlerInterceptor;
-
 import java.util.Collections;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.springframework.web.servlet.HandlerInterceptor;
 
 public final class MediaTypeCheckerInterceptor implements HandlerInterceptor {
-    private final static boolean PASS_ONTO_NEXT_HANDLER = true;
 
-    private final static int NOT_ACCEPTABLE = 406;
+    private static final boolean PASS_ONTO_NEXT_HANDLER = true;
+
+    private static final int NOT_ACCEPTABLE = 406;
 
     @Override
-    public boolean preHandle(final HttpServletRequest request, final HttpServletResponse response, final Object handler) {
-        if (isGETrequestMissingMediaTypeAsPerExplicitApiVersionRequirementNotToBreakClientsOnUpgrades(request)) {
+    public boolean preHandle(
+        final HttpServletRequest request,
+        final HttpServletResponse response,
+        final Object h
+    ) {
+        if (
+            isGETrequestMissingMediaTypeAsPerExplicitApiVersionRequirementNotToBreakClientsOnUpgrades(request)
+        ) {
             response.setStatus(NOT_ACCEPTABLE);
             return !PASS_ONTO_NEXT_HANDLER;
         } else {
@@ -24,7 +29,8 @@ public final class MediaTypeCheckerInterceptor implements HandlerInterceptor {
     }
 
     private boolean isGETrequestMissingMediaTypeAsPerExplicitApiVersionRequirementNotToBreakClientsOnUpgrades(
-            final HttpServletRequest request) {
+        final HttpServletRequest request
+    ) {
         return isGET(request) && !containsAcceptHeader(request);
     }
 
@@ -33,7 +39,11 @@ public final class MediaTypeCheckerInterceptor implements HandlerInterceptor {
     }
 
     private boolean containsAcceptHeader(final HttpServletRequest request) {
-        return Collections.list(request.getHeaderNames()).stream().map(String::toLowerCase)
-                .collect(Collectors.toUnmodifiableList()).contains("accept");
+        return Collections
+            .list(request.getHeaderNames())
+            .stream()
+            .map(String::toLowerCase)
+            .collect(Collectors.toUnmodifiableList())
+            .contains("accept");
     }
 }

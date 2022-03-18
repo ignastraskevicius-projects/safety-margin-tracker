@@ -1,5 +1,15 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.quotes.api.controller.TestDtos.amazonDto;
+import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.List;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.Companies;
 import org.ignast.stockinvesting.quotes.domain.Company;
@@ -11,17 +21,6 @@ import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
-
-import java.util.List;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.quotes.api.controller.TestDtos.amazonDto;
-import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 public final class CompanyControllerTest {
 
@@ -49,8 +48,7 @@ public final class CompanyControllerTest {
 
         assertThat(createdCompanyDto.getContent()).isEqualTo(companyDto);
         assertThat(createdCompanyDto.getLink("self").isPresent());
-        createdCompanyDto.getLink("self").ifPresent(c ->
-                assertThat(c.getHref()).endsWith("/companies/5"));
+        createdCompanyDto.getLink("self").ifPresent(c -> assertThat(c.getHref()).endsWith("/companies/5"));
     }
 
     @Test
@@ -68,7 +66,9 @@ public final class CompanyControllerTest {
     public void shouldRejectDtoWithoutListings() {
         final val company = new CompanyDTO(1, "Microsoft", List.of());
 
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> controller.createCompany(company)).withMessage("Company to be created was expected to have one listing, but zero was found");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> controller.createCompany(company))
+            .withMessage("Company to be created was expected to have one listing, but zero was found");
     }
 
     @Test
@@ -88,6 +88,7 @@ public final class CompanyControllerTest {
 
         final val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
 
-        assertThat(retrievedCompany.getRequiredLink("self").getHref()).endsWith(format("/companies/%d", amazonExternalId));
+        assertThat(retrievedCompany.getRequiredLink("self").getHref())
+            .endsWith(format("/companies/%d", amazonExternalId));
     }
 }

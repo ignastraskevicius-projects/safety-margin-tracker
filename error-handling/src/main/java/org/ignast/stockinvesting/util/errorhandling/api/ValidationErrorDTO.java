@@ -3,6 +3,7 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 import static java.util.Objects.requireNonNull;
 
 final class JsonPath {
+
     private final String jsonPath;
 
     private JsonPath(final String jsonPath) {
@@ -15,7 +16,9 @@ final class JsonPath {
             return new JsonPath(jsonPath);
         } else {
             throw new IllegalArgumentException(
-                    "Invalid JsonPath provided. It should start with '$.' for property or '$[' for index or be root '$'");
+                "Invalid JsonPath provided. " +
+                "It should start with '$.' for property or '$[' for index or be root '$'"
+            );
         }
     }
 
@@ -35,6 +38,7 @@ final class JsonPath {
 }
 
 public final class ValidationErrorDTO {
+
     private final String jsonPath;
 
     private final String message;

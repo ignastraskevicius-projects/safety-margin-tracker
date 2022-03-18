@@ -1,5 +1,8 @@
 package org.ignast.stockinvesting.quotes.persistence.integrationtest;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
+
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.Company;
 import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
@@ -23,16 +26,18 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
-
 @Testcontainers
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public final class DockerizedDevMysqlIT {
 
     @Container
-    public static final MySQLContainer MYSQL = new MySQLContainer(DockerImageName.parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT").asCompatibleSubstituteFor("mysql")).withPassword("test");
+    public static final MySQLContainer MYSQL = new MySQLContainer(
+        DockerImageName
+            .parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT")
+            .asCompatibleSubstituteFor("mysql")
+    )
+        .withPassword("test");
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -46,8 +51,14 @@ public final class DockerizedDevMysqlIT {
 
     @Test
     public void shouldCreateCompany() {
-        companyRepository.save(Company.create(new CompanyExternalId(3), new CompanyName("Amazon"), new StockSymbol("AMZN"),
-                new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"))));
+        companyRepository.save(
+            Company.create(
+                new CompanyExternalId(3),
+                new CompanyName("Amazon"),
+                new StockSymbol("AMZN"),
+                new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"))
+            )
+        );
         commit();
         final val result = companyRepository.findByExternalId(new CompanyExternalId(3));
 
@@ -65,7 +76,7 @@ public final class DockerizedDevMysqlIT {
 
         @Bean
         FlywayMigrationStrategy noMigration() {
-            return (f) -> {};
+            return f -> {};
         }
     }
 }

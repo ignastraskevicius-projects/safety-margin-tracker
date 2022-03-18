@@ -1,5 +1,11 @@
 package com.ignast.stockinvesting.quotes.alphavantagesim;
 
+import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
+import static com.ignast.stockinvesting.quotes.alphavantagesim.QueryParams.validParamsBuilder;
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
+
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
@@ -7,6 +13,14 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
 import lombok.Builder;
 import lombok.val;
 import org.json.JSONException;
@@ -17,25 +31,13 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import static com.github.tomakehurst.wiremock.core.WireMockConfiguration.wireMockConfig;
-import static com.ignast.stockinvesting.quotes.alphavantagesim.QueryParams.validParamsBuilder;
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
-
 public final class AlphaVantageStubIT {
 
     @RegisterExtension
-    private static final WireMockExtension WIREMOCK = WireMockExtension.newInstance().options(wireMockConfig().usingFilesUnderDirectory("src/main/resources/wiremock/")).build();
+    private static final WireMockExtension WIREMOCK = WireMockExtension
+        .newInstance()
+        .options(wireMockConfig().usingFilesUnderDirectory("src/main/resources/wiremock/"))
+        .build();
 
     private final ObjectMapper mapper = new ObjectMapper();
 
@@ -101,18 +103,24 @@ public final class AlphaVantageStubIT {
 
     private HttpResponse<String> query(final String path) throws IOException, InterruptedException {
         final val client = HttpClient.newHttpClient();
-        final val request = HttpRequest.newBuilder()
-                .uri(URI.create(format("http://localhost:%d%s", WIREMOCK.getPort(), path))).build();
+        final val request = HttpRequest
+            .newBuilder()
+            .uri(URI.create(format("http://localhost:%d%s", WIREMOCK.getPort(), path)))
+            .build();
         return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
 }
 
 @Testcontainers
 final class DockerizedAlphaVantageStubIT {
+
     private static final String DOCKER_IMAGE_NAME = System.getProperty("docker.image");
 
     @Container
-    public static final GenericContainer CONTAINER = new GenericContainer(DockerImageName.parse(DOCKER_IMAGE_NAME)).withExposedPorts(8080);
+    public static final GenericContainer CONTAINER = new GenericContainer(
+        DockerImageName.parse(DOCKER_IMAGE_NAME)
+    )
+        .withExposedPorts(8080);
 
     @Test
     public void shouldContainQuotedPrices() throws IOException, InterruptedException {
@@ -132,6 +140,7 @@ final class DockerizedAlphaVantageStubIT {
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @JsonPropertyOrder({ "function", "symbol", "apikey" })
 final class QueryParams {
+
     private static String API_KEY = "1OFDQOSYMBH3NP";
 
     private static String GLOBAL_QUOTE = "GLOBAL_QUOTE";
@@ -148,16 +157,23 @@ final class QueryParams {
 
     @Override
     public String toString() {
-        return new ObjectMapper().convertValue(this, new TypeReference<Map<String, String>>() {
-        }).entrySet().stream().map(e -> format("%s=%s", e.getKey(), e.getValue()))
-                .collect(Collectors.joining("&"));
+        return new ObjectMapper()
+            .convertValue(this, new TypeReference<Map<String, String>>() {})
+            .entrySet()
+            .stream()
+            .map(e -> format("%s=%s", e.getKey(), e.getValue()))
+            .collect(Collectors.joining("&"));
     }
 }
 
 final class QueryParamsBuilderTest {
+
     @Test
     public void shouldBuildWithFunction() {
-        final val queryParams = new QueryParams.QueryParamsBuilder().function("someFunction").build().toString();
+        final val queryParams = new QueryParams.QueryParamsBuilder()
+            .function("someFunction")
+            .build()
+            .toString();
         assertThat(queryParams).isEqualTo("function=someFunction");
     }
 
@@ -181,8 +197,12 @@ final class QueryParamsBuilderTest {
 
     @Test
     public void shouldBuildWithMultiplParameters() {
-        final val queryParams = new QueryParams.QueryParamsBuilder().function("function1").symbol("symbol1").apikey("apikey1")
-                .build().toString();
+        final val queryParams = new QueryParams.QueryParamsBuilder()
+            .function("function1")
+            .symbol("symbol1")
+            .apikey("apikey1")
+            .build()
+            .toString();
         assertThat(queryParams).isEqualTo("function=function1&symbol=symbol1&apikey=apikey1");
     }
 

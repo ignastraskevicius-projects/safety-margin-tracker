@@ -1,14 +1,13 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
-import lombok.val;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import lombok.val;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import org.junit.jupiter.api.Test;
 
 public final class CompanyDTOTest {
 
@@ -32,8 +31,10 @@ public final class CompanyDTOTest {
 
     @Test
     public void shouldPreserveMultipleListings() {
-        final val listings = Arrays.asList(new ListingDTO("New York Stock Exchange", "Amazon"),
-                new ListingDTO("Hong Kong Stock Exchange", "Amazon"));
+        final val listings = Arrays.asList(
+            new ListingDTO("New York Stock Exchange", "Amazon"),
+            new ListingDTO("Hong Kong Stock Exchange", "Amazon")
+        );
         assertThat(anyCompanyWith(listings).getListings()).isEqualTo(listings);
     }
 
@@ -56,6 +57,6 @@ public final class CompanyDTOTest {
     }
 
     private CompanyDTO anyCompanyWith(final List<ListingDTO> listings) {
-        return new CompanyDTO(4,"anyName", listings);
+        return new CompanyDTO(4, "anyName", listings);
     }
 }

@@ -1,21 +1,24 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.FIELD_IS_MISSING;
 import static org.ignast.stockinvesting.util.errorhandling.api.ViolationType.VALUE_INVALID;
 
+import lombok.val;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+
 public final class ValidationErrorDTOTest {
 
     @Test
     public void shouldPreserveJsonPath() {
-        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.path"), "anyMessage",
-                FIELD_IS_MISSING);
+        final val error = new ValidationErrorDTO(
+            JsonPath.fromJsonPath("$.path"),
+            "anyMessage",
+            FIELD_IS_MISSING
+        );
 
         assertThat(error.getJsonPath()).isEqualTo("$.path");
     }
@@ -34,16 +37,22 @@ public final class ValidationErrorDTOTest {
     public void shouldPreserveMessageForSelfExplanatoryErrors() {
         final val fieldIsMissing = FIELD_IS_MISSING;
         assertThat(fieldIsMissing.isErrorSelfExplanatory()).isEqualTo(true);
-        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage",
-                fieldIsMissing);
+        final val error = new ValidationErrorDTO(
+            JsonPath.fromJsonPath("$.anyPath"),
+            "anyMessage",
+            fieldIsMissing
+        );
 
         assertThat(error.getMessage()).isNull();
     }
 
     @Test
     public void shouldConvertTypeToErrorName() {
-        final val error = new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage",
-                FIELD_IS_MISSING);
+        final val error = new ValidationErrorDTO(
+            JsonPath.fromJsonPath("$.anyPath"),
+            "anyMessage",
+            FIELD_IS_MISSING
+        );
 
         assertThat(error.getErrorName()).isEqualTo("fieldIsMissing");
     }
@@ -51,7 +60,7 @@ public final class ValidationErrorDTOTest {
     @Test
     public void shouldNotBeOfNullType() {
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage", null));
+            .isThrownBy(() -> new ValidationErrorDTO(JsonPath.fromJsonPath("$.anyPath"), "anyMessage", null));
     }
 }
 
@@ -59,8 +68,9 @@ final class JsonPathFromJsonPathTest {
 
     @Test
     public void shouldRejectToCreateFromNull() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> JsonPath.fromJsonPath(null))
-                .withMessage("JsonPath required to be non-null");
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> JsonPath.fromJsonPath(null))
+            .withMessage("JsonPath required to be non-null");
     }
 
     @Test
@@ -70,9 +80,12 @@ final class JsonPathFromJsonPathTest {
 
     @Test
     public void shouldRejectToCreateFromPathNotStartingWithDollarSign() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> JsonPath.fromJsonPath(".path"))
-                .withMessage(
-                        "Invalid JsonPath provided. It should start with '$.' for property or '$[' for index or be root '$'");
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> JsonPath.fromJsonPath(".path"))
+            .withMessage(
+                "Invalid JsonPath provided. " +
+                "It should start with '$.' for property or '$[' for index or be root '$'"
+            );
     }
 
     @Test
@@ -92,11 +105,13 @@ final class JsonPathFromJsonPathTest {
 
     @Test
     public void shouldRejectToCreateFromPathNotStartingWithNeitherPropertyNorIndex() {
-        assertThatExceptionOfType(IllegalArgumentException.class).isThrownBy(() -> JsonPath.fromJsonPath("$abc"));
+        assertThatExceptionOfType(IllegalArgumentException.class)
+            .isThrownBy(() -> JsonPath.fromJsonPath("$abc"));
     }
 }
 
 final class JsonPathAdaptionTest {
+
     @Test
     public void shouldAdaptNullAsRootJsonPath() {
         assertThat(JsonPath.adaptFromJavaxValidationPath(null).getJsonPath()).isEqualTo("$");
@@ -109,7 +124,8 @@ final class JsonPathAdaptionTest {
 
     @Test
     public void shouldAdaptPathStartingWithIndex() {
-        assertThat(JsonPath.adaptFromJavaxValidationPath("[4].element").getJsonPath()).isEqualTo("$[4].element");
+        assertThat(JsonPath.adaptFromJavaxValidationPath("[4].element").getJsonPath())
+            .isEqualTo("$[4].element");
     }
 
     @Test

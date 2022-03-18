@@ -1,20 +1,19 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import lombok.val;
-import org.ignast.stockinvesting.util.mockito.MockitoUtils;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
-import org.springframework.http.HttpStatus;
-
-import javax.servlet.http.HttpServletRequest;
-
 import static javax.servlet.RequestDispatcher.ERROR_STATUS_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
+
+import javax.servlet.http.HttpServletRequest;
+import lombok.val;
+import org.ignast.stockinvesting.utiltest.MockitoUtils;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
+import org.springframework.http.HttpStatus;
 
 public final class GenericErrorControllerTest {
 
@@ -23,8 +22,10 @@ public final class GenericErrorControllerTest {
     @ParameterizedTest
     @ValueSource(ints = { 404, 503 })
     public void shouldPreserveHttpStatus(final int statusCode) {
-        final val request = MockitoUtils.mock(HttpServletRequest.class,
-                r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn(statusCode));
+        final val request = MockitoUtils.mock(
+            HttpServletRequest.class,
+            r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn(statusCode)
+        );
 
         final val response = controller.handleError(request);
 
@@ -49,8 +50,10 @@ public final class GenericErrorControllerTest {
 
     @Test
     public void shouldIndicateServerErrorIfStatusCodeRetrievedIsNotOfTypeInt() {
-        final val request = MockitoUtils.mock(HttpServletRequest.class,
-                r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn("nonInteger"));
+        final val request = MockitoUtils.mock(
+            HttpServletRequest.class,
+            r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn("nonInteger")
+        );
 
         final val response = controller.handleError(request);
 
@@ -59,7 +62,8 @@ public final class GenericErrorControllerTest {
 
     @Test
     public void shouldNotExposeDetailsAboutClientErrors() {
-        final val request = MockitoUtils.mock(HttpServletRequest.class, r -> when(r.getAttribute(ERROR_STATUS_CODE)).thenReturn(400));
+        final val request = mock(HttpServletRequest.class);
+        when(request.getAttribute(ERROR_STATUS_CODE)).thenReturn(400);
 
         final val response = controller.handleError(request);
 

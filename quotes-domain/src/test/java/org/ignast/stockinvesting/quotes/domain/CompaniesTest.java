@@ -1,8 +1,5 @@
 package org.ignast.stockinvesting.quotes.domain;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
-
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,6 +7,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+
+import lombok.val;
+import org.junit.jupiter.api.Test;
 
 public final class CompaniesTest {
 
@@ -53,13 +53,14 @@ public final class CompaniesTest {
         when(repository.findByExternalId(externalId)).thenReturn(empty());
 
         assertThatExceptionOfType(CompanyNotFound.class)
-                .isThrownBy(() -> companies.findByExternalId(externalId))
-                .isInstanceOf(ApplicationException.class)
-                .withMessage("Company with id '5' was not found");
+            .isThrownBy(() -> companies.findByExternalId(externalId))
+            .isInstanceOf(ApplicationException.class)
+            .withMessage("Company with id '5' was not found");
     }
 
     @Test
     public void shouldNotRetrieveCompaniesByNullId() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> companies.findByExternalId(null));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> companies.findByExternalId(null));
     }
 }

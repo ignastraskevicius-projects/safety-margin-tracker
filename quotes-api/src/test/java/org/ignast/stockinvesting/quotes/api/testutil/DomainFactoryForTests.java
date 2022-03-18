@@ -31,16 +31,15 @@ public final class DomainFactoryForTests {
                 new StockExchanges(new StubQuotesRepository()).getFor(new MarketIdentifierCode("XNAS")));
     }
 
-    private static class StubQuotesRepository implements QuotesRepository {
+    public static StockExchange exchangeNotSupportingAnySymbol() {
+        return mock(StockExchange.class, e -> when(e.getQuotedPrice(any())).thenThrow(StockSymbolNotSupportedInThisMarket.class));
+    }
 
+    private static class StubQuotesRepository implements QuotesRepository {
         @Override
         public BigDecimal getQuotedPriceOf(final StockSymbol stockSymbol, final MarketIdentifierCode mic) {
             return null;
         }
-    }
-
-    public static StockExchange exchangeNotSupportingAnySymbol() {
-        return mock(StockExchange.class, e -> when(e.getQuotedPrice(any())).thenThrow(StockSymbolNotSupportedInThisMarket.class));
     }
 }
 

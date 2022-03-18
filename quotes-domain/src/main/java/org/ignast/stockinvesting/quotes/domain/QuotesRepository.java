@@ -4,9 +4,9 @@ import java.math.BigDecimal;
 
 public interface QuotesRepository {
 
-    BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic);
+    public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic);
 
-    class QuoteRetrievalFailedException extends RuntimeException {
+    public static class QuoteRetrievalFailedException extends RuntimeException {
         public QuoteRetrievalFailedException(final String message, final Exception e) {
             super(message, e);
         }

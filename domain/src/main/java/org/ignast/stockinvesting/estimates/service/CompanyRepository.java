@@ -6,7 +6,7 @@ import org.springframework.data.repository.Repository;
 import java.util.Optional;
 
 public interface CompanyRepository extends Repository<Company, String> {
-    Company save(Company company);
+    public Company save(Company company);
 
-    Optional<Company> findById(String id);
+    public Optional<Company> findById(String id);
 }

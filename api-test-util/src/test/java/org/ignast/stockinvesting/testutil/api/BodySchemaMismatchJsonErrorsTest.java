@@ -1,57 +1,148 @@
 package org.ignast.stockinvesting.testutil.api;
 
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forArrayRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forIntegerRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forInvalidValueAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forInvalidValuesAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forObjectRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt;
+import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
+
+import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 final class BodySchemaMismatchJsonErrorsTest {
+
     @Test
-    public void shouldCreateErrorJsonForMissingField() {
-        assertThat(BodySchemaMismatchJsonErrors.forMissingFieldAt("someJsonPath")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"someJsonPath\"}]}");
+    public void shouldCreateErrorJsonForMissingField() throws JSONException {
+        assertThatJson(forMissingFieldAt("someJsonPath"))
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'fieldIsMissing',
+                                'jsonPath':'someJsonPath'
+                            }]
+                        }"""
+            );
     }
 
     @Test
-    public void shouldCreateErrorJsonForMultipleMissingFields() {
-        assertThat(BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt("someJsonPath", "someOtherPath")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"someJsonPath\"}, {\"errorName\":\"fieldIsMissing\",\"jsonPath\":\"someOtherPath\"}]}");
+    public void shouldCreateErrorJsonForMultipleMissingFields() throws JSONException {
+        assertThatJson(forTwoMissingFieldsAt("someJsonPath", "someOtherPath"))
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'fieldIsMissing',
+                                'jsonPath':'someJsonPath'
+                            }, {
+                                'errorName':'fieldIsMissing',
+                                'jsonPath':'someOtherPath'
+                            }]
+                        }"""
+            );
     }
 
     @Test
-    public void shouldCreateErrorJsonForStringRequiredField() {
-        assertThat(BodySchemaMismatchJsonErrors.forStringRequiredAt("someJsonPath")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeString\",\"jsonPath\":\"someJsonPath\"}]}");
+    public void shouldCreateErrorJsonForStringRequiredField() throws JSONException {
+        assertThatJson(forStringRequiredAt("someJsonPath"))
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'valueMustBeString',
+                                'jsonPath':'someJsonPath'
+                            }]
+                        }"""
+            );
     }
 
     @Test
-    public void shouldCreateErrorJsonForIntegerRequiredField() {
-        assertThat(BodySchemaMismatchJsonErrors.forIntegerRequiredAt("someJsonPath")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeInteger\",\"jsonPath\":\"someJsonPath\"}]}");
+    public void shouldCreateErrorJsonForIntegerRequiredField() throws JSONException {
+        assertThatJson(forIntegerRequiredAt("someJsonPath"))
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'valueMustBeInteger',
+                                'jsonPath':'someJsonPath'
+                            }]
+                        }"""
+            );
     }
 
     @Test
-    public void shouldCreateErrorJsonForObjectRequiredField() {
-        assertThat(BodySchemaMismatchJsonErrors.forObjectRequiredAt("someJsonPath")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeObject\",\"jsonPath\":\"someJsonPath\"}]}");
+    public void shouldCreateErrorJsonForObjectRequiredField() throws JSONException {
+        assertThatJson(forObjectRequiredAt("someJsonPath"))
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'valueMustBeObject',
+                                'jsonPath':'someJsonPath'
+                            }]
+                        }"""
+            );
     }
 
     @Test
-    public void shouldCreateErrorJsonForArrayRequiredField() {
-        assertThat(BodySchemaMismatchJsonErrors.forArrayRequiredAt("someJsonPath")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueMustBeArray\",\"jsonPath\":\"someJsonPath\"}]}");
+    public void shouldCreateErrorJsonForArrayRequiredField() throws JSONException {
+        assertThatJson(forArrayRequiredAt("someJsonPath"))
+            .isEqualTo(
+                """
+                    {
+                        'errorName':'bodyDoesNotMatchSchema',
+                        'validationErrors':[{
+                            'errorName':'valueMustBeArray',
+                            'jsonPath':'someJsonPath'
+                        }]
+                    }"""
+            );
     }
 
     @Test
-    void shouldCreateErrorJsonForInvalidValue() {
-        assertThat(BodySchemaMismatchJsonErrors.forInvalidValueAt("someJsonPath", "someMessage")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"}]}");
+    void shouldCreateErrorJsonForInvalidValue() throws JSONException {
+        assertThatJson(forInvalidValueAt("someJsonPath", "someMessage"))
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'valueIsInvalid',
+                                'jsonPath':'someJsonPath',
+                                'message':'someMessage'
+                            }]
+                        }"""
+            );
     }
 
     @Test
-    void shouldCreateErrorJsonForMultipleInvalidValues() {
-        assertThat(BodySchemaMismatchJsonErrors.forInvalidValuesAt("someJsonPath", "someMessage", "someOtherJsonPath",
-                "someOtherMessage")).isEqualTo(
-                "{\"errorName\":\"bodyDoesNotMatchSchema\",\"validationErrors\":[{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someJsonPath\",\"message\":\"someMessage\"},{\"errorName\":\"valueIsInvalid\",\"jsonPath\":\"someOtherJsonPath\",\"message\":\"someOtherMessage\"}]}");
+    void shouldCreateErrorJsonForMultipleInvalidValues() throws JSONException {
+        assertThatJson(
+            forInvalidValuesAt("someJsonPath", "someMessage", "someOtherJsonPath", "someOtherMessage")
+        )
+            .isEqualTo(
+                """
+                        {
+                            'errorName':'bodyDoesNotMatchSchema',
+                            'validationErrors':[{
+                                'errorName':'valueIsInvalid',
+                                'jsonPath':'someJsonPath',
+                                'message':'someMessage'
+                            },{
+                                'errorName':'valueIsInvalid',
+                                'jsonPath':'someOtherJsonPath',
+                                'message':'someOtherMessage'
+                            }]
+                        }"""
+            );
     }
 }
-

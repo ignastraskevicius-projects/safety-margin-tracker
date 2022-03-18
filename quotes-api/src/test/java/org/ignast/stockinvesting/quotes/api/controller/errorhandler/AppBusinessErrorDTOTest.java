@@ -1,9 +1,9 @@
 package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import lombok.val;
 import org.junit.jupiter.api.Test;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 public final class AppBusinessErrorDTOTest {
 

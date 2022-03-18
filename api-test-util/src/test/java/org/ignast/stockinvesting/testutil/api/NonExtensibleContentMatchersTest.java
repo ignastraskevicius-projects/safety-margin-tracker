@@ -1,17 +1,6 @@
 package org.ignast.stockinvesting.testutil.api;
 
-import lombok.NonNull;
-import lombok.val;
-import org.assertj.core.api.Assertions;
-import org.json.JSONException;
-import org.junit.jupiter.api.Test;
-import org.springframework.mock.web.MockHttpServletResponse;
-import org.springframework.test.web.servlet.MvcResult;
-
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.function.BiConsumer;
-
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.testutil.MockitoUtils.mock;
 import static org.ignast.stockinvesting.testutil.api.MatcherWrapper.actualMatchingExpected;
@@ -21,9 +10,21 @@ import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatcher
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceLinksMatchesJson;
 import static org.mockito.Mockito.when;
 
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
+import java.util.function.BiConsumer;
+import lombok.NonNull;
+import lombok.val;
+import org.json.JSONException;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.web.servlet.MvcResult;
+
 final class NonExtensibleContentMatchersTest {
 
-    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
+    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(
+        this::actualMatchingExpected
+    );
 
     @SuppressWarnings("checkstyle:illegalcatch")
     private void actualMatchingExpected(final String actual, final String expected) {
@@ -41,8 +42,8 @@ final class NonExtensibleContentMatchersTest {
 
     @Test
     public void shouldFailToVerifysonWithExtraFields() {
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
-                matcher.assertThat("{\"A\":\"a\",\"B\":\"b\"}").matches("{\"A\":\"a\"}"));
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> matcher.assertThat("{\"A\":\"a\",\"B\":\"b\"}").matches("{\"A\":\"a\"}"));
     }
 
     @Test
@@ -52,7 +53,10 @@ final class NonExtensibleContentMatchersTest {
 }
 
 final class NonExtensibleEntityContentMatchersTest {
-    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
+
+    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(
+        this::actualMatchingExpected
+    );
 
     @SuppressWarnings("checkstyle:illegalcatch")
     private void actualMatchingExpected(final String actual, final String expected) {
@@ -65,8 +69,11 @@ final class NonExtensibleEntityContentMatchersTest {
 
     @Test
     public void shouldFailIfNotJsonObject() {
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> matcher.assertThat("not-json").matches("{\"list\":[1,2,3]}"))
-                .withRootCauseInstanceOf(JSONException.class).havingRootCause().withMessageContaining("not-json");
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> matcher.assertThat("not-json").matches("{\"list\":[1,2,3]}"))
+            .withRootCauseInstanceOf(JSONException.class)
+            .havingRootCause()
+            .withMessageContaining("not-json");
     }
 
     @Test
@@ -81,8 +88,8 @@ final class NonExtensibleEntityContentMatchersTest {
 
     @Test
     public void shouldFailToVerifyJsonWithExtraFields() {
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
-                matcher.assertThat("{\"A\":\"a\",\"B\":\"b\"}").matches("{\"A\":\"a\"}"));
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> matcher.assertThat("{\"A\":\"a\",\"B\":\"b\"}").matches("{\"A\":\"a\"}"));
     }
 
     @Test
@@ -92,7 +99,10 @@ final class NonExtensibleEntityContentMatchersTest {
 }
 
 final class NonExtensibleEntityLinksMatchersTest {
-    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(this::actualMatchingExpected);
+
+    private final MatcherWrapper matcher = MatcherWrapper.actualMatchingExpected(
+        this::actualMatchingExpected
+    );
 
     @SuppressWarnings("checkstyle:illegalcatch")
     private void actualMatchingExpected(final String actual, final String expected) {
@@ -105,24 +115,35 @@ final class NonExtensibleEntityLinksMatchersTest {
 
     @Test
     public void shouldFailIfNotJsonObject() {
-        assertThatExceptionOfType(RuntimeException.class).isThrownBy(() -> matcher.assertThat("not-json").matches("{\"list\":[1,2,3]}"))
-                .withRootCauseInstanceOf(JSONException.class).havingRootCause().withMessageContaining("not-json");
+        assertThatExceptionOfType(RuntimeException.class)
+            .isThrownBy(() -> matcher.assertThat("not-json").matches("{\"list\":[1,2,3]}"))
+            .withRootCauseInstanceOf(JSONException.class)
+            .havingRootCause()
+            .withMessageContaining("not-json");
     }
 
     @Test
     public void shouldVerifyJsonComparingOnlyLinksField() {
-        matcher.assertThat("{\"list\":[1,2,3],\"_links\":{\"company\":{\"href\":\"someValue\"}}}").matches("{\"_links\":{\"company\":{\"href\":\"someValue\"}}}");
+        matcher
+            .assertThat("{\"list\":[1,2,3],\"_links\":{\"company\":{\"href\":\"someValue\"}}}")
+            .matches("{\"_links\":{\"company\":{\"href\":\"someValue\"}}}");
     }
 
     @Test
     public void shouldVerifySameJson() {
-        matcher.assertThat("{\"_links\":{\"company\":{\"href\":\"someValue\"}}}").matches("{\"_links\":{\"company\":{\"href\":\"someValue\"}}}");
+        matcher
+            .assertThat("{\"_links\":{\"company\":{\"href\":\"someValue\"}}}")
+            .matches("{\"_links\":{\"company\":{\"href\":\"someValue\"}}}");
     }
 
     @Test
     public void shouldFailToVerifyJsonWithExtraFields() {
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() ->
-                matcher.assertThat("{\"_links\":{\"company\":\"A\",\"extra\":\"field\"}}").matches("{\"_links\":{\"company\":\"A\"}}"));
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() ->
+                matcher
+                    .assertThat("{\"_links\":{\"company\":\"A\",\"extra\":\"field\"}}")
+                    .matches("{\"_links\":{\"company\":\"A\"}}")
+            );
     }
 
     @Test
@@ -132,12 +153,14 @@ final class NonExtensibleEntityLinksMatchersTest {
 }
 
 final class MvcResultStubs {
-    private MvcResultStubs() {
 
-    }
+    private MvcResultStubs() {}
 
     static MvcResult stubbedBody(final String content) {
-        final val response = mock(MockHttpServletResponse.class, re -> when(getUtf8Content(re)).thenReturn(content));
+        final val response = mock(
+            MockHttpServletResponse.class,
+            re -> when(getUtf8Content(re)).thenReturn(content)
+        );
         return mock(MvcResult.class, r -> when(r.getResponse()).thenReturn(response));
     }
 
@@ -151,20 +174,25 @@ final class MvcResultStubs {
 }
 
 final class MvcResultStubsTest {
+
     @Test
     public void shouldReturnUtf8Content() throws UnsupportedEncodingException {
-        Assertions.assertThat(stubbedBody("abc").getResponse().getContentAsString(StandardCharsets.UTF_8)).isEqualTo("abc");
+        assertThat(stubbedBody("abc").getResponse().getContentAsString(StandardCharsets.UTF_8))
+            .isEqualTo("abc");
     }
 }
 
 final class MatcherWrapper {
+
     private final BiConsumer<String, String> underlyingMatcherActualExpected;
 
     private MatcherWrapper(@NonNull final BiConsumer<String, String> underlyingMatcherActualExpected) {
         this.underlyingMatcherActualExpected = underlyingMatcherActualExpected;
     }
 
-    public static MatcherWrapper actualMatchingExpected(final BiConsumer<String, String> underlyingMatcherActualExpected) {
+    public static MatcherWrapper actualMatchingExpected(
+        final BiConsumer<String, String> underlyingMatcherActualExpected
+    ) {
         return new MatcherWrapper(underlyingMatcherActualExpected);
     }
 
@@ -172,12 +200,16 @@ final class MatcherWrapper {
         return new MatcherPerformer(underlyingMatcherActualExpected, actual);
     }
 
-    final static class MatcherPerformer {
+    static final class MatcherPerformer {
+
         private final BiConsumer<String, String> underlyingMatcherActualExpected;
 
         private final String actual;
 
-        private MatcherPerformer(final BiConsumer<String, String> underlyingMatcherActualExpected, final String actual) {
+        private MatcherPerformer(
+            final BiConsumer<String, String> underlyingMatcherActualExpected,
+            final String actual
+        ) {
             this.underlyingMatcherActualExpected = underlyingMatcherActualExpected;
             this.actual = actual;
         }
@@ -200,13 +232,17 @@ final class MatcherWrapperTest {
         actualMatchingExpected((a, b) -> noException()).assertThat("A").matches("A");
     }
 
-    private void noException() {
-    }
+    private void noException() {}
 
     @Test
     public void shouldFailWhenUnderlyingConditionFails() {
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> actualMatchingExpected((a, b) -> {
-            throw new AssertionError();
-        }).assertThat("A").matches("A"));
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() ->
+                actualMatchingExpected((a, b) -> {
+                        throw new AssertionError();
+                    })
+                    .assertThat("A")
+                    .matches("A")
+            );
     }
 }

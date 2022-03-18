@@ -1,7 +1,20 @@
 package org.ignast.stockinvesting.quotes.alphavantage;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.get;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.hamcrest.Matchers.anything;
+import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anyMIC;
+import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anySymbol;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
+
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
+import java.math.BigDecimal;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.ApplicationException;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
@@ -20,22 +33,10 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-import java.math.BigDecimal;
-
-import static com.github.tomakehurst.wiremock.client.WireMock.get;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.hamcrest.Matchers.anything;
-import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anyMIC;
-import static org.ignast.stockinvesting.quotes.alphavantage.DomainFactoryForTests.anySymbol;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
-import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
-
 @RestClientTest(AlphaVantageQuotes.class)
-@TestPropertySource(properties = { "alphavantage.url=https://test.uri.com", "alphavantage.apikey=testApiKey" })
+@TestPropertySource(
+    properties = { "alphavantage.url=https://test.uri.com", "alphavantage.apikey=testApiKey" }
+)
 public final class AlphaVantageQuotesTest {
 
     @Autowired
@@ -46,8 +47,11 @@ public final class AlphaVantageQuotesTest {
 
     @Test
     public void shouldRetrievePrice() {
-        mockServer.expect(requestTo(anything()))
-                .andRespond(withSuccess("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", MediaType.APPLICATION_JSON));
+        mockServer
+            .expect(requestTo(anything()))
+            .andRespond(
+                withSuccess("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", MediaType.APPLICATION_JSON)
+            );
 
         final val price = alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC());
 
@@ -57,64 +61,82 @@ public final class AlphaVantageQuotesTest {
     @ParameterizedTest
     @ValueSource(strings = { "AMZN", "MSFT" })
     public void shouldGetStockQuotesForCompanyRetrievingUrlAndApiKeyFromProperties(final String stockSymbol) {
-        final val uri = format("%s/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s", "https://test.uri.com", stockSymbol,
-                "testApiKey");
-        mockServer.expect(requestTo(uri))
-                .andRespond(withSuccess("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", MediaType.APPLICATION_JSON));
+        final val uri = format(
+            "%s/query?function=GLOBAL_QUOTE&symbol=%s&apikey=%s",
+            "https://test.uri.com",
+            stockSymbol,
+            "testApiKey"
+        );
+        mockServer
+            .expect(requestTo(uri))
+            .andRespond(
+                withSuccess("{\"Global Quote\":{\"05. price\":\"128.5000\"}}", MediaType.APPLICATION_JSON)
+            );
 
         alphaVantageQuotes.getQuotedPriceOf(new StockSymbol(stockSymbol), new MarketIdentifierCode("XNYS"));
     }
 
     @Test
     public void shouldNotFindSymbol() {
-        mockServer.expect(requestTo(anything()))
-                .andRespond(withSuccess("{\"Global Quote\":{}}", MediaType.APPLICATION_JSON));
+        mockServer
+            .expect(requestTo(anything()))
+            .andRespond(withSuccess("{\"Global Quote\":{}}", MediaType.APPLICATION_JSON));
 
-        assertThatExceptionOfType(StockSymbolNotSupportedInThisMarket.class).isThrownBy(
-                () -> alphaVantageQuotes.getQuotedPriceOf(new StockSymbol("A"), new MarketIdentifierCode("XNYS")))
-                .withMessage("Stock symbol 'A' in market 'XNYS' is not supported by this service")
-                .isInstanceOf(ApplicationException.class);
+        assertThatExceptionOfType(StockSymbolNotSupportedInThisMarket.class)
+            .isThrownBy(() ->
+                alphaVantageQuotes.getQuotedPriceOf(new StockSymbol("A"), new MarketIdentifierCode("XNYS"))
+            )
+            .withMessage("Stock symbol 'A' in market 'XNYS' is not supported by this service")
+            .isInstanceOf(ApplicationException.class);
     }
 
     @Test
     public void shouldThrowOnRemoteServerConstrainsViolations() {
         final val underlyingMessage = "underlying exception from server";
-        mockServer.expect(requestTo(anything())).andRespond(
-                withSuccess(format("{\"Error Message\":\"%s\"}", underlyingMessage), MediaType.APPLICATION_JSON));
+        mockServer
+            .expect(requestTo(anything()))
+            .andRespond(
+                withSuccess(
+                    format("{\"Error Message\":\"%s\"}", underlyingMessage),
+                    MediaType.APPLICATION_JSON
+                )
+            );
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
-                .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
-                .withMessage("Message from remote server: " + underlyingMessage);
+            .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
+            .withMessage("Message from remote server: " + underlyingMessage);
     }
 
     @Test
     public void shouldThrowIfReceivedJsonIsOfNotExpectedStructure() {
-        mockServer.expect(requestTo(anything()))
-                .andRespond(withSuccess("{\"unexpected\":\"json\"}", MediaType.APPLICATION_JSON));
+        mockServer
+            .expect(requestTo(anything()))
+            .andRespond(withSuccess("{\"unexpected\":\"json\"}", MediaType.APPLICATION_JSON));
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
-                .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
-                .withMessage("Communication with server failed");
+            .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
+            .withMessage("Communication with server failed");
     }
 
     @Test
     public void shouldThrowIfReceivedBodyIsNotJson() {
-        mockServer.expect(requestTo(anything())).andRespond(withSuccess("not-valid-json", MediaType.APPLICATION_JSON));
+        mockServer
+            .expect(requestTo(anything()))
+            .andRespond(withSuccess("not-valid-json", MediaType.APPLICATION_JSON));
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
-                .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
-                .withMessage("Communication with server failed");
+            .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
+            .withMessage("Communication with server failed");
     }
 
     @Test
     public void shouldThrowOnHttpServerError() {
         final val underlyingMessage = "underlying exception from server";
-        mockServer.expect(requestTo(anything())).andRespond(
-                withServerError());
+        mockServer.expect(requestTo(anything())).andRespond(withServerError());
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
-                .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
-                .withMessage("Communication with server failed");
+            .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
+            .withMessage("Communication with server failed");
     }
 }
 
@@ -125,13 +147,23 @@ final class AlphaVantageCasesUnableToCoverWithSpringTest {
 
     @Test
     public void shouldThrowIfResponseContentTypeUnexpected() {
-        WIREMOCK.stubFor(get(urlPathEqualTo("/query")).willReturn(WireMock.ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
-                .withHeader("Content-Type", "application/octet-stream")));
+        WIREMOCK.stubFor(
+            get(urlPathEqualTo("/query"))
+                .willReturn(
+                    WireMock
+                        .ok("{\"Global Quote\":{\"05. price\":\"128.5000\"}}")
+                        .withHeader("Content-Type", "application/octet-stream")
+                )
+        );
         final val wireMockUrl = "http://localhost:" + WIREMOCK.getPort();
-        final val alphaVantageQuotes = new AlphaVantageQuotes(new RestTemplateBuilder(), wireMockUrl, "anyApiKey");
+        final val alphaVantageQuotes = new AlphaVantageQuotes(
+            new RestTemplateBuilder(),
+            wireMockUrl,
+            "anyApiKey"
+        );
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)
-                .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
-                .withMessage("Communication with server failed");
+            .isThrownBy(() -> alphaVantageQuotes.getQuotedPriceOf(anySymbol(), anyMIC()))
+            .withMessage("Communication with server failed");
     }
 }

@@ -1,23 +1,22 @@
 package org.ignast.stockinvesting.api.controller;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.Arrays.asList;
-import static org.assertj.core.api.Assertions.assertThat;
+import lombok.val;
+import org.junit.jupiter.api.Test;
 
 final class CompanyDTOTest {
 
     @Test
     public void shouldPreserveNonNestedAttributes() {
-        final val company = new CompanyDTO("someId", "Amazon", "United States", "United States Dollar", Collections.emptyList());
+        final val company = new CompanyDTO("someId", "Amazon", "US", "USD", Collections.emptyList());
         assertThat(company.getId()).isEqualTo("someId");
-        assertThat(company.getHomeCountry()).isEqualTo("United States");
+        assertThat(company.getHomeCountry()).isEqualTo("US");
         assertThat(company.getName()).isEqualTo("Amazon");
-        assertThat(company.getFunctionalCurrency()).isEqualTo("United States Dollar");
+        assertThat(company.getFunctionalCurrency()).isEqualTo("USD");
     }
 
     @Test
@@ -28,8 +27,10 @@ final class CompanyDTOTest {
 
     @Test
     public void shouldPreserveMultipleListings() {
-        final val listings = asList(new ListingDTO("New York Stock Exchange", "Amazon"),
-                new ListingDTO("Hong Kong Stock Exchange", "Amazon"));
+        final val listings = asList(
+            new ListingDTO("New York Stock Exchange", "Amazon"),
+            new ListingDTO("Hong Kong Stock Exchange", "Amazon")
+        );
         assertThat(anyCompanyWith(listings).getListings()).isEqualTo(listings);
     }
 
@@ -51,8 +52,7 @@ final class CompanyDTOTest {
         assertThat(listing.getStockSymbol()).isNull();
     }
 
-
     private CompanyDTO anyCompanyWith(final List<ListingDTO> listings) {
-        return new CompanyDTO("anyId","anyName", "anyCountry", "United States Dollar", listings);
+        return new CompanyDTO("anyId", "anyName", "anyCountry", "United States Dollar", listings);
     }
 }

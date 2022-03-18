@@ -1,16 +1,15 @@
 package org.ignast.stockinvesting.quotes.domain;
 
+import java.io.Serializable;
+import javax.persistence.Embeddable;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
-
-import java.io.Serializable;
-
-import javax.persistence.Embeddable;
 
 @EqualsAndHashCode
 @Embeddable
 @ToString
 public class CompanyExternalId implements Serializable {
+
     private int number;
 
     protected CompanyExternalId() {

@@ -1,14 +1,17 @@
 package org.ignast.stockinvesting.testutil.api;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import lombok.val;
 import org.hamcrest.Matcher;
 import org.hamcrest.StringDescription;
 import org.junit.jupiter.api.Test;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
 final class HateoasJsonMatchersForRelAndHrefTest {
-    private final Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHrefContaining("contextPath");
+
+    private final Matcher<String> matcher = HateoasJsonMatchers
+        .hasRel("link:link")
+        .withHrefContaining("contextPath");
 
     @Test
     public void messageShouldIndicateExpectationAndActualOutcome() {
@@ -19,9 +22,10 @@ final class HateoasJsonMatchersForRelAndHrefTest {
         matcher.describeMismatch(testJson, desc);
 
         assertThat(desc.toString())
-                .contains(
-                        "HATEOAS json should contain a 'link:link' rel with a href containing substring 'contextPath'")
-                .contains(testJson);
+            .contains(
+                "HATEOAS json should contain a 'link:link' rel with a href containing substring 'contextPath'"
+            )
+            .contains(testJson);
     }
 
     @Test
@@ -41,17 +45,21 @@ final class HateoasJsonMatchersForRelAndHrefTest {
 
     @Test
     public void shouldNotMatchHrefsNotContainingRequiredSubstring() {
-        assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com\"}}}")).isFalse();
+        assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com\"}}}"))
+            .isFalse();
     }
 
     @Test
     public void shouldMatchJsonWhereRelIsPresentAndHrefContainsRequiredString() {
-        assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com/contextPath\"}}}"))
-                .isTrue();
+        assertThat(
+            matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"http://example.uri.com/contextPath\"}}}")
+        )
+            .isTrue();
     }
 }
 
 final class HateoasJsonMatchersForRelTest {
+
     private final Matcher<String> matcher = HateoasJsonMatchers.hasRel("link:link").withHref();
 
     @Test
@@ -63,9 +71,8 @@ final class HateoasJsonMatchersForRelTest {
         matcher.describeMismatch(testJson, desc);
 
         assertThat(desc.toString())
-                .contains(
-                        "HATEOAS json should contain a 'link:link' rel with a href")
-                .contains(testJson);
+            .contains("HATEOAS json should contain a 'link:link' rel with a href")
+            .contains(testJson);
     }
 
     @Test
@@ -87,5 +94,4 @@ final class HateoasJsonMatchersForRelTest {
     public void shouldMatchAnyHrefs() {
         assertThat(matcher.matches("{\"_links\":{\"link:link\":{\"href\":\"any\"}}}")).isTrue();
     }
-
 }

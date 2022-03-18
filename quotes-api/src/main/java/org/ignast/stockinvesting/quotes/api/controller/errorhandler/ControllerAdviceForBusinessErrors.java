@@ -23,6 +23,8 @@ public final class ControllerAdviceForBusinessErrors {
     @ExceptionHandler
     @ResponseBody
     public StandardErrorDTO handleSymbolNotSupportedInMarket(final StockSymbolNotSupportedInThisMarket e) {
-        return StandardErrorDTO.createForBusinessError(AppBusinessErrorDTO.createForStockSymbolNotSupportedInThisMarket());
+        return StandardErrorDTO.createForBusinessError(
+            AppBusinessErrorDTO.createForStockSymbolNotSupportedInThisMarket()
+        );
     }
 }

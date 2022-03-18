@@ -1,20 +1,22 @@
 package org.ignast.stockinvesting.estimates.dbmigration;
 
+import javax.sql.DataSource;
 import lombok.val;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.testcontainers.containers.MySQLContainer;
 
-import javax.sql.DataSource;
-
-
 public final class AppDbContainer {
+
     private static final String USERNAME = "test";
 
     private static final String PASSWORD = "test";
 
     private static final String DATABASE_NAME = "testschema";
 
-    private static final MySQLContainer CONTAINER = new MySQLContainer("mysql:8.0.28-debian").withDatabaseName(DATABASE_NAME).withUsername(USERNAME).withPassword(PASSWORD);
+    private static final MySQLContainer CONTAINER = new MySQLContainer("mysql:8.0.28-debian")
+        .withDatabaseName(DATABASE_NAME)
+        .withUsername(USERNAME)
+        .withPassword(PASSWORD);
 
     private AppDbContainer() {}
 

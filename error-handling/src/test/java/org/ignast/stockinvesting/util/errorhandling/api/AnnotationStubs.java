@@ -1,25 +1,21 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import lombok.val;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.lang.annotation.Annotation;
-
 import javax.validation.Payload;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import lombok.val;
+import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
 
 public final class AnnotationStubs {
-    private AnnotationStubs() {
 
-    }
+    private AnnotationStubs() {}
 
     static Override javaLangOverride() {
         final val annotation = new Override() {
-
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Override.class;
@@ -31,7 +27,6 @@ public final class AnnotationStubs {
 
     static SuppressWarnings javaLangSuppressWarning() {
         final val annotation = new SuppressWarnings() {
-
             @Override
             public Class<? extends Annotation> annotationType() {
                 return SuppressWarnings.class;
@@ -49,7 +44,6 @@ public final class AnnotationStubs {
     @SuppressWarnings("checkstyle:anoninnerlength")
     static NotNull javaxValidationNotNull() {
         final val annotation = new NotNull() {
-
             @Override
             public String message() {
                 return null;
@@ -77,7 +71,6 @@ public final class AnnotationStubs {
     @SuppressWarnings("checkstyle:anoninnerlength")
     static Pattern javaxValidationPattern() {
         final val annotation = new Pattern() {
-
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Pattern.class;
@@ -115,7 +108,6 @@ public final class AnnotationStubs {
     @SuppressWarnings("checkstyle:anoninnerlength")
     static DomainClassConstraint javaxValidationDomainClassConstraint() {
         final val annotation = new DomainClassConstraint() {
-
             @Override
             public Class<? extends Annotation> annotationType() {
                 return DomainClassConstraint.class;
@@ -148,7 +140,6 @@ public final class AnnotationStubs {
     @SuppressWarnings("checkstyle:anoninnerlength")
     static Size javaxValidationSize() {
         final val annotation = new Size() {
-
             @Override
             public Class<? extends Annotation> annotationType() {
                 return Size.class;

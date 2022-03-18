@@ -1,5 +1,10 @@
 package org.ignast.stockinvesting.estimates.dbmigration;
 
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.estimates.dbmigration.AppDbContainer.getDataSourceTo;
+
+import javax.sql.DataSource;
 import lombok.val;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,13 +16,8 @@ import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
-import javax.sql.DataSource;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.estimates.dbmigration.AppDbContainer.getDataSourceTo;
-
 public final class FlywayIdempotentMigration {
+
     private final JdbcTemplate jdbcTemplate;
 
     private final DataSource dataSource;
@@ -38,9 +38,28 @@ public final class FlywayIdempotentMigration {
         try {
             MysqlAssert.assertThat(jdbcTemplate).containsTable(flywayMetadataTable);
             FlywayAssert.assertThat(jdbcTemplate).hasJustMigrated(version);
-            jdbcTemplate.execute(format("DELETE FROM %s WHERE installed_rank IN (SELECT last_installed_rank FROM (SELECT MAX(installed_rank) AS last_installed_rank FROM %s) AS l);", flywayMetadataTable, flywayMetadataTable));
+            jdbcTemplate.execute(
+                format(
+                    """
+                        DELETE FROM %s WHERE installed_rank IN (
+                            SELECT last_installed_rank FROM (
+                                SELECT MAX(installed_rank) AS last_installed_rank FROM %s
+                            ) AS l
+                        );""",
+                    flywayMetadataTable,
+                    flywayMetadataTable
+                )
+            );
         } catch (AssertionError e) {
-            throw new IllegalStateException(format("Migration idempotency check failed: Supplied migration has not created expected migration record for version '%s' in metadata table '%s'", version, flywayMetadataTable));
+            throw new IllegalStateException(
+                format(
+                    "Migration idempotency check failed: " +
+                    "Supplied migration has not created expected migration record " +
+                    "for version '%s' in metadata table '%s'",
+                    version,
+                    flywayMetadataTable
+                )
+            );
         }
     }
 
@@ -77,13 +96,17 @@ final class FlywayIdempotentMigrationTest {
         db = new JdbcTemplate(getDataSourceTo(MYSQL));
         db.execute(format("DROP TABLE IF EXISTS %s;", FLYWAY_METADATA_TABLE));
 
-        Flyway.configure().dataSource(getDataSourceTo(MYSQL)).baselineOnMigrate(true).target(ProductionDatabaseMigrationVersions.CURRENT);
+        Flyway
+            .configure()
+            .dataSource(getDataSourceTo(MYSQL))
+            .baselineOnMigrate(true)
+            .target(ProductionDatabaseMigrationVersions.CURRENT);
 
         idempotentMigration = new FlywayIdempotentMigration(getDataSourceTo(MYSQL));
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"2", "3"})
+    @ValueSource(strings = { "2", "3" })
     public void migrationShouldCreateExpectedMetadata(final String toVersion) {
         idempotentMigration.migrateTwice(toVersion, new FlywayMigration());
 
@@ -92,15 +115,22 @@ final class FlywayIdempotentMigrationTest {
 
     @Test
     public void migrationShouldFailIfSuppliedMigrationDoesNotCreateExpectedMigrationMetadata() {
-        assertThatExceptionOfType(IllegalStateException.class).isThrownBy(() -> idempotentMigration.migrateTwice("2", new NoOpMysqlMigration())).withMessage(format("Migration idempotency check failed: Supplied migration has not created expected migration record for version '%s' in metadata table '%s'", "2", FLYWAY_METADATA_TABLE));
+        assertThatExceptionOfType(IllegalStateException.class)
+            .isThrownBy(() -> idempotentMigration.migrateTwice("2", new NoOpMysqlMigration()))
+            .withMessage(
+                format(
+                    "Migration idempotency check failed: " +
+                    "Supplied migration has not created expected migration record for version '%s' " +
+                    "in metadata table '%s'",
+                    "2",
+                    FLYWAY_METADATA_TABLE
+                )
+            );
     }
 
     private static final class NoOpMysqlMigration implements MysqlMigration {
 
         @Override
-        public void migrate(final String version, final DataSource dataSource) {
-
-        }
+        public void migrate(final String version, final DataSource dataSource) {}
     }
 }
-

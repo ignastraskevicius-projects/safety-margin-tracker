@@ -12,5 +12,4 @@ public class HalConfig {
     public HalConfiguration halAcceptingServiceSpecificMediaType() {
         return new HalConfiguration().withMediaType(MediaType.valueOf(VersionedApiMediaTypes.V1));
     }
-
 }

@@ -1,5 +1,14 @@
 package org.ignast.stockinvesting.api.acceptance;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import lombok.val;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,16 +16,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
-
-import java.io.IOException;
-import java.net.URI;
-import java.net.http.HttpClient;
-import java.net.http.HttpRequest;
-import java.net.http.HttpResponse;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.ignast.stockinvesting.api.acceptance.Uris.rootResourceOn;
-import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public final class WiringCheckingIT {
@@ -28,8 +27,9 @@ public final class WiringCheckingIT {
     private TestRestTemplate restTemplate;
 
     @Test
+    @SuppressWarnings("checkstyle:linelength")
     public void shouldWireInInterceptorEnsuringGETRequestsHaveAcceptHeaderInOrderToRequireExplicitApiVersionAndNeverBreakClientOnVersionBumps()
-            throws Exception {
+        throws Exception {
         final val request = HttpRequest.newBuilder().GET().uri(URI.create(rootResourceOn(port))).build();
 
         final val client = HttpClient.newBuilder().build();
@@ -39,21 +39,27 @@ public final class WiringCheckingIT {
 
     @Test
     public void shouldWireInCustomErrorSerialization() throws IOException, InterruptedException {
-        final val request = HttpRequest.newBuilder().POST(HttpRequest.BodyPublishers.ofString(""))
-                .uri(URI.create(rootResourceOn(port))).build();
+        final val request = HttpRequest
+            .newBuilder()
+            .POST(HttpRequest.BodyPublishers.ofString(""))
+            .uri(URI.create(rootResourceOn(port)))
+            .build();
 
-        final val response = HttpClient.newBuilder().build().send(request,
-                HttpResponse.BodyHandlers.ofString());
+        final val response = HttpClient
+            .newBuilder()
+            .build()
+            .send(request, HttpResponse.BodyHandlers.ofString());
         assertThat(response.statusCode()).isEqualTo(METHOD_NOT_ALLOWED.value());
         assertThat(response.body()).isEqualTo("{\"errorName\":\"methodNotAllowed\"}");
     }
 
     @Test
     public void jacksonShouldNotSerializeNullErrorNamesWhereErrorCodeIsSelfExplanatory() {
-        final val response = restTemplate.getForEntity(String.format("http://localhost:%d/notexistent/path", port),
-                String.class);
+        final val response = restTemplate.getForEntity(
+            String.format("http://localhost:%d/notexistent/path", port),
+            String.class
+        );
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
         assertThat(response.getBody()).isEqualTo("{}");
     }
 }
-

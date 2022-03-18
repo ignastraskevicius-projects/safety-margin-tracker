@@ -1,19 +1,19 @@
 package org.ignast.stockinvesting.quotes.domain;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+
 import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 public final class MarketIdentifierCodeTest {
 
     @Test
     public void shouldNotBeNull() {
         assertThatExceptionOfType(NullPointerException.class)
-                .isThrownBy(() -> new MarketIdentifierCode(null));
+            .isThrownBy(() -> new MarketIdentifierCode(null));
     }
 
     @ParameterizedTest
@@ -25,19 +25,21 @@ public final class MarketIdentifierCodeTest {
     @Test
     public void shouldRejectNon4CharacterMics() {
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MarketIdentifierCode("ABC"))
-                .withMessage("Market Identifier is not 4 characters long (ISO 10383 standard)");
+            .isThrownBy(() -> new MarketIdentifierCode("ABC"))
+            .withMessage("Market Identifier is not 4 characters long (ISO 10383 standard)");
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MarketIdentifierCode("ABCDE"))
-                .withMessage("Market Identifier is not 4 characters long (ISO 10383 standard)");
+            .isThrownBy(() -> new MarketIdentifierCode("ABCDE"))
+            .withMessage("Market Identifier is not 4 characters long (ISO 10383 standard)");
     }
 
     @ParameterizedTest
     @ValueSource(strings = { "AAAa", "1AAA", "AÑAA" })
     public void shouldRejectNonLatinUppercaseCharacters(final String mic) {
         assertThatExceptionOfType(IllegalArgumentException.class)
-                .isThrownBy(() -> new MarketIdentifierCode(mic)).withMessage(
-                        "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)");
+            .isThrownBy(() -> new MarketIdentifierCode(mic))
+            .withMessage(
+                "Market Identifier must contain only latin uppercase alphanumeric characters (ISO 10383 standard)"
+            );
     }
 
     @Test

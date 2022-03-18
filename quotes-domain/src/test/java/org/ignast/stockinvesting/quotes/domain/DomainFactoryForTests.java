@@ -3,9 +3,8 @@ package org.ignast.stockinvesting.quotes.domain;
 import java.math.BigDecimal;
 
 public final class DomainFactoryForTests {
-    private DomainFactoryForTests() {
 
-    }
+    private DomainFactoryForTests() {}
 
     public static CompanyExternalId anyId() {
         return new CompanyExternalId(15);

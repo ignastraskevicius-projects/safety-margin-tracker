@@ -1,12 +1,11 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Collections;
 import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
+import lombok.val;
+import org.junit.jupiter.api.Test;
 
 class StandardErrorDTOTest {
 
@@ -61,18 +60,19 @@ class StandardErrorDTOTest {
 }
 
 final class BodyDoesNotMatchSchemaErrorDTOTest {
+
     @Test
     public void shouldHaveErrorNameSetAutomatically() {
-        final val bodyDoesNotMatchSchema = StandardErrorDTO
-                .createForBodyDoesNotMatchSchema(Collections.emptyList());
+        final val bodyDoesNotMatchSchema = StandardErrorDTO.createForBodyDoesNotMatchSchema(
+            Collections.emptyList()
+        );
 
         assertThat(bodyDoesNotMatchSchema.getErrorName()).isEqualTo("bodyDoesNotMatchSchema");
     }
 
     @Test
     public void shouldTransformNullListToEmptyList() {
-        final val bodyDoesNotMatchSchema = StandardErrorDTO
-                .createForBodyDoesNotMatchSchema(null);
+        final val bodyDoesNotMatchSchema = StandardErrorDTO.createForBodyDoesNotMatchSchema(null);
 
         assertThat(bodyDoesNotMatchSchema.getValidationErrors()).isEqualTo(Collections.emptyList());
     }
@@ -80,10 +80,10 @@ final class BodyDoesNotMatchSchemaErrorDTOTest {
     @Test
     public void shouldPreserveValidationErrors() {
         final val originalErrors = List.of(
-                new ValidationErrorDTO(JsonPath.fromJsonPath("$.path"), "message", ViolationType.FIELD_IS_MISSING));
+            new ValidationErrorDTO(JsonPath.fromJsonPath("$.path"), "message", ViolationType.FIELD_IS_MISSING)
+        );
 
-        final val bodyDoesNotMatchSchema = StandardErrorDTO
-                .createForBodyDoesNotMatchSchema(originalErrors);
+        final val bodyDoesNotMatchSchema = StandardErrorDTO.createForBodyDoesNotMatchSchema(originalErrors);
 
         final val preservedErrors = bodyDoesNotMatchSchema.getValidationErrors();
         assertThat(preservedErrors).hasSize(1);

@@ -1,5 +1,12 @@
 package org.ignast.stockinvesting.estimates.dbmigration;
 
+import static java.lang.String.format;
+import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.estimates.dbmigration.FlywayAssert.assertThat;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.junit.jupiter.api.Test;
@@ -7,14 +14,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
-
-import java.util.Map;
-
-import static java.lang.String.format;
-import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.estimates.dbmigration.FlywayAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RequiredArgsConstructor
 public final class FlywayAssert {
@@ -38,29 +37,48 @@ public final class FlywayAssert {
     }
 
     private LastMigration queryLastMigration() {
-        final val results = db.queryForMap("SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;");
+        final val results = db.queryForMap(
+            "SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;"
+        );
         return new LastMigration(results.get("type").toString(), results.get("version").toString());
     }
 
     private void expectVersion(final String expectedVersion, final LastMigration lastMigration) {
         if (!expectedVersion.equals(lastMigration.getVersion())) {
-            throw new AssertionError(format("Expected last flyway migration to be '%s' version migration but was '%s'", expectedVersion, lastMigration.getVersion()));
+            throw new AssertionError(
+                format(
+                    "Expected last flyway migration to be '%s' version migration but was '%s'",
+                    expectedVersion,
+                    lastMigration.getVersion()
+                )
+            );
         }
     }
 
     private void expectSqlOperation(final LastMigration lastMigration) {
         if (!"SQL".equals(lastMigration.getType())) {
-            throw new AssertionError(format("Expected last flyway migration type to be 'SQL' but was '%s'", lastMigration.getType()));
+            throw new AssertionError(
+                format(
+                    "Expected last flyway migration type to be 'SQL' but was '%s'",
+                    lastMigration.getType()
+                )
+            );
         }
     }
 
     private void expectNotSqlOperationo(final LastMigration lastMigration) {
         if ("SQL".equals(lastMigration.getType())) {
-            throw new AssertionError(format("Expected last flyway migration type not to be 'SQL' but was '%s'", lastMigration.getType()));
+            throw new AssertionError(
+                format(
+                    "Expected last flyway migration type not to be 'SQL' but was '%s'",
+                    lastMigration.getType()
+                )
+            );
         }
     }
 
     static class LastMigration {
+
         private final String type;
 
         private final String version;
@@ -82,7 +100,8 @@ public final class FlywayAssert {
 
 class FlywayAssertLastMigrationTest {
 
-    private static final String QUERY_LAST_APPLIED_MIGRATION = "SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;";
+    private static final String QUERY_LAST_APPLIED_MIGRATION =
+        "SELECT version, type FROM flyway_schema_history ORDER BY installed_rank DESC LIMIT 1;";
 
     private final JdbcTemplate db = mock(JdbcTemplate.class);
 
@@ -96,27 +115,32 @@ class FlywayAssertLastMigrationTest {
     @Test
     public void assertingLastMigrationShouldFailIfItWasForDifferentVersion() {
         with2DistinctVersions((v1, v2) -> {
-            when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION)).thenReturn(Map.of("type", "SQL", "version", v1));
+            when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION))
+                .thenReturn(Map.of("type", "SQL", "version", v1));
 
-            assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> assertThat(db)
-                    .hasJustMigrated(v2))
-                    .withMessage(format("Expected last flyway migration to be '%s' version migration but was '%s'", v2, v1));
+            assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat(db).hasJustMigrated(v2))
+                .withMessage(
+                    format("Expected last flyway migration to be '%s' version migration but was '%s'", v2, v1)
+                );
         });
     }
 
     @ParameterizedTest
-    @ValueSource(strings = {"UNDO_SQL", "OTHER_TYPE"})
+    @ValueSource(strings = { "UNDO_SQL", "OTHER_TYPE" })
     public void assertingLastMigrationShouldFailIfLastOperationWasNotSql(final String nonSqlType) {
-        when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION)).thenReturn(Map.of("type", nonSqlType, "version", "ANY"));
+        when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION))
+            .thenReturn(Map.of("type", nonSqlType, "version", "ANY"));
 
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> assertThat(db)
-                .hasJustMigrated("anyVersion"))
-                .withMessage(format("Expected last flyway migration type to be 'SQL' but was '%s'", nonSqlType));
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> assertThat(db).hasJustMigrated("anyVersion"))
+            .withMessage(format("Expected last flyway migration type to be 'SQL' but was '%s'", nonSqlType));
     }
 
     @Test
     public void assertingLastOperationWasNotMigrationShouldSucceedForExpectedVersion() {
-        when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION)).thenReturn(Map.of("type", "UNDO_SQL", "version", "V1"));
+        when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION))
+            .thenReturn(Map.of("type", "UNDO_SQL", "version", "V1"));
 
         assertThat(db).hasNotJustMigrated("V1");
     }
@@ -124,21 +148,25 @@ class FlywayAssertLastMigrationTest {
     @Test
     public void assertingLastNotMigratedShouldFailForDifferentVersion() {
         with2DistinctVersions((v1, v2) -> {
-            when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION)).thenReturn(Map.of("type", "UNDO_SQL", "version", v1));
+            when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION))
+                .thenReturn(Map.of("type", "UNDO_SQL", "version", v1));
 
-            assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> assertThat(db)
-                    .hasNotJustMigrated(v2))
-                    .withMessage(format("Expected last flyway migration to be '%s' version migration but was '%s'", v2, v1));
+            assertThatExceptionOfType(AssertionError.class)
+                .isThrownBy(() -> assertThat(db).hasNotJustMigrated(v2))
+                .withMessage(
+                    format("Expected last flyway migration to be '%s' version migration but was '%s'", v2, v1)
+                );
         });
     }
 
     @Test
     public void assertingLastNotMigratedShouldFailToAssertIfLastOperationWasUndo() {
-        when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION)).thenReturn(Map.of("type", "SQL", "version", "ANY"));
+        when(db.queryForMap(QUERY_LAST_APPLIED_MIGRATION))
+            .thenReturn(Map.of("type", "SQL", "version", "ANY"));
 
-        assertThatExceptionOfType(AssertionError.class).isThrownBy(() -> assertThat(db)
-                .hasNotJustMigrated("anyVersion"))
-                .withMessage("Expected last flyway migration type not to be 'SQL' but was 'SQL'");
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> assertThat(db).hasNotJustMigrated("anyVersion"))
+            .withMessage("Expected last flyway migration type not to be 'SQL' but was 'SQL'");
     }
 
     private void with2DistinctVersions(final TwoVersionsConsumer consumer) {

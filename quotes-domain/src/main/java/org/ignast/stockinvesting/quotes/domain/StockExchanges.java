@@ -1,17 +1,18 @@
 package org.ignast.stockinvesting.quotes.domain;
 
+import java.util.AbstractMap;
+import java.util.Map;
 import lombok.NonNull;
 import org.springframework.stereotype.Service;
 
-import java.util.AbstractMap;
-import java.util.Map;
-
 @Service
 public class StockExchanges {
+
     private final Map<MarketIdentifierCode, StockExchange> supportedStockExchanges;
 
     public StockExchanges(final QuotesRepository quotes) {
-        supportedStockExchanges = Map.ofEntries(
+        supportedStockExchanges =
+            Map.ofEntries(
                 newStockExchange(new MarketIdentifierCode("XFRA"), new CurrencyCode("EUR"), quotes),
                 newStockExchange(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XTSE"), new CurrencyCode("CAD"), quotes),
@@ -19,10 +20,14 @@ public class StockExchanges {
                 newStockExchange(new MarketIdentifierCode("XASX"), new CurrencyCode("AUD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XNAS"), new CurrencyCode("USD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XLON"), new CurrencyCode("GBP"), quotes)
-        );
+            );
     }
 
-    private AbstractMap.SimpleEntry<MarketIdentifierCode, StockExchange> newStockExchange(final MarketIdentifierCode mic, final CurrencyCode currency, final QuotesRepository quotes) {
+    private AbstractMap.SimpleEntry<MarketIdentifierCode, StockExchange> newStockExchange(
+        final MarketIdentifierCode mic,
+        final CurrencyCode currency,
+        final QuotesRepository quotes
+    ) {
         return new AbstractMap.SimpleEntry<>(mic, StockExchange.create(mic, currency, quotes));
     }
 

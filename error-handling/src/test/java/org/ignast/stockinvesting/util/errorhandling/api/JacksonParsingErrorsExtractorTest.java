@@ -1,11 +1,5 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-import java.util.stream.Stream;
-
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
@@ -17,22 +11,41 @@ import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputEx
 import static org.ignast.stockinvesting.util.errorhandling.api.MismatchedInputExceptionMock.unexpectedTypeParsingFailed;
 import static org.ignast.stockinvesting.util.errorhandling.api.ReferenceMock.toField;
 
+import java.util.List;
+import java.util.stream.Stream;
+import lombok.val;
+import org.junit.jupiter.api.Test;
+
 final class JacksonParsingErrorsExtractorTest {
 
     private final JacksonParsingErrorsExtractor extractor = new JacksonParsingErrorsExtractor();
 
     @Test
     public void shouldFailToExtractErrorsForNullPath() {
-        Stream.of(integerParsingFailedAt(null), stringParsingFailedAt(null), dtoParsingFailedAt(null), listParsingFailedAt(null))
-                .forEach(e -> assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
-                        .isThrownBy(() -> extractor.extractError(e))
-                        .withMessage("Jackson parsing failed without target type"));
+        Stream
+            .of(
+                integerParsingFailedAt(null),
+                stringParsingFailedAt(null),
+                dtoParsingFailedAt(null),
+                listParsingFailedAt(null)
+            )
+            .forEach(e ->
+                assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
+                    .isThrownBy(() -> extractor.extractError(e))
+                    .withMessage("Jackson parsing failed without target type")
+            );
     }
 
     @Test
     public void shouldExtractErrorsForRootPath() {
-        Stream.of(integerParsingFailedAt(List.of()), stringParsingFailedAt(List.of()), dtoParsingFailedAt(List.of()), listParsingFailedAt(List.of()))
-                .forEach(e -> assertThat(extractor.extractError(e).getJsonPath()).isEqualTo("$"));
+        Stream
+            .of(
+                integerParsingFailedAt(List.of()),
+                stringParsingFailedAt(List.of()),
+                dtoParsingFailedAt(List.of()),
+                listParsingFailedAt(List.of())
+            )
+            .forEach(e -> assertThat(extractor.extractError(e).getJsonPath()).isEqualTo("$"));
     }
 
     @Test
@@ -66,46 +79,63 @@ final class JacksonParsingErrorsExtractorTest {
     @Test
     public void shouldFailToExtractErrorWithoutTargetType() {
         assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
-                .isThrownBy(() -> extractor.extractError(undefinedTypeParsingException()))
-                .withMessage("Jackson parsing failed with no target type defined");
+            .isThrownBy(() -> extractor.extractError(undefinedTypeParsingException()))
+            .withMessage("Jackson parsing failed with no target type defined");
     }
 
     @Test
     public void shouldFailToExtractErrorForUnexpectedType() {
         assertThatExceptionOfType(JacksonParsingErrorExtractionException.class)
-                .isThrownBy(() -> extractor.extractError(unexpectedTypeParsingFailed()))
-                .withMessage("Jackson parsing failed on unexpected target type");
+            .isThrownBy(() -> extractor.extractError(unexpectedTypeParsingFailed()))
+            .withMessage("Jackson parsing failed on unexpected target type");
     }
 
     @Test
     public void shouldPreserveJsonPathForFields() {
         final val path = List.of(toField(new CityDTO(), "population"));
 
-        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path))
-                .map(extractor::extractError)
-                .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population"));
+        Stream
+            .of(
+                integerParsingFailedAt(path),
+                stringParsingFailedAt(path),
+                dtoParsingFailedAt(path),
+                listParsingFailedAt(path)
+            )
+            .map(extractor::extractError)
+            .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population"));
     }
 
     @Test
     public void shouldPreserveJsonPathForNestedFields() {
         final val path = asList(toField(new CityDTO(), "population"), toField(new PopulationDTO(), "growth"));
 
-        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path))
-                .map(extractor::extractError)
-                .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population.growth"));
+        Stream
+            .of(
+                integerParsingFailedAt(path),
+                stringParsingFailedAt(path),
+                dtoParsingFailedAt(path),
+                listParsingFailedAt(path)
+            )
+            .map(extractor::extractError)
+            .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$.population.growth"));
     }
 
     @Test
     public void shouldPreserveJsonPathForArrays() {
         final val path = List.of(ReferenceMock.toIndex(List.of(), 5));
 
-        Stream.of(integerParsingFailedAt(path), stringParsingFailedAt(path), dtoParsingFailedAt(path), listParsingFailedAt(path))
-                .map(extractor::extractError).forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$[5]"));
+        Stream
+            .of(
+                integerParsingFailedAt(path),
+                stringParsingFailedAt(path),
+                dtoParsingFailedAt(path),
+                listParsingFailedAt(path)
+            )
+            .map(extractor::extractError)
+            .forEach(e -> assertThat(e.getJsonPath()).isEqualTo("$[5]"));
     }
 
-    private static final class CityDTO {
-    }
+    private static final class CityDTO {}
 
-    private static final class PopulationDTO {
-    }
+    private static final class PopulationDTO {}
 }

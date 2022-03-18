@@ -1,8 +1,7 @@
 package org.ignast.stockinvesting.estimates.domain;
 
-import lombok.NonNull;
-
 import java.util.Currency;
+import lombok.NonNull;
 
 public class CurrencyCode {
 
@@ -13,14 +12,12 @@ public class CurrencyCode {
             throw new IllegalArgumentException("Currency must have 3 letters");
         }
         if (!code.matches("^[A-Z]*$")) {
-            throw new IllegalArgumentException(
-                    "Currency must contain only uppercase latin characters");
+            throw new IllegalArgumentException("Currency must contain only uppercase latin characters");
         }
         try {
             Currency.getInstance(code);
-        } catch(IllegalArgumentException e) {
-            throw new IllegalArgumentException(
-                    "Currency must be a valid ISO 4217 code");
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Currency must be a valid ISO 4217 code");
         }
         this.code = code;
     }

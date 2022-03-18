@@ -1,12 +1,13 @@
 package org.ignast.stockinvesting.testutil.api;
 
+import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
+
 import org.json.JSONException;
 import org.skyscreamer.jsonassert.JSONAssert;
 import org.skyscreamer.jsonassert.JSONCompareMode;
 
-import static org.skyscreamer.jsonassert.JSONCompareMode.STRICT;
-
 public final class JsonAssert {
+
     private final String actualJson;
 
     private final JSONCompareMode comparisonMode;
@@ -24,4 +25,3 @@ public final class JsonAssert {
         JSONAssert.assertEquals(expectedJson, actualJson, comparisonMode);
     }
 }
-

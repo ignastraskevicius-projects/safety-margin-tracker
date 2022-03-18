@@ -1,16 +1,5 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
-import org.springframework.test.web.client.MockRestServiceServer;
-import org.springframework.web.client.RestTemplate;
-
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.testutil.api.traversor.RestTemplateBuilderStubs.stub;
@@ -28,10 +17,23 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import lombok.val;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.client.RestClientTest;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.http.MediaType;
+import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestTemplate;
+
 @RestClientTest(HateoasTraversor.Factory.class)
 public final class HateoasTraversorTest {
 
-    private static final MediaType APP_V1 = MediaType.parseMediaType("application/app.specific.media.type-v1.hal+json");
+    private static final MediaType APP_V1 = MediaType.parseMediaType(
+        "application/app.specific.media.type-v1.hal+json"
+    );
 
     @Autowired
     private HateoasTraversor.Factory traversors;
@@ -41,12 +43,14 @@ public final class HateoasTraversorTest {
 
     @Test
     public void shouldNotBeCreatedWithNullRestTemplateBuilder() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new HateoasTraversor.Factory(null, APPLICATION_JSON));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> new HateoasTraversor.Factory(null, APPLICATION_JSON));
     }
 
     @Test
     public void shouldNotBeCreatedWithNullAppMediaType() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new HateoasTraversor.Factory(stub(), null));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> new HateoasTraversor.Factory(stub(), null));
     }
 
     @Test
@@ -61,7 +65,10 @@ public final class HateoasTraversorTest {
 
     @Test
     public void traverseRootOnly() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess("someResponse", APPLICATION_JSON));
+        server
+            .expect(requestTo("http://root"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess("someResponse", APPLICATION_JSON));
 
         final val response = traversors.startAt("http://root").perform();
 
@@ -70,8 +77,14 @@ public final class HateoasTraversorTest {
 
     @Test
     public void traverseGetHop() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
-        server.expect(requestTo("http://root/company")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://any"), APP_V1));
+        server
+            .expect(requestTo("http://root"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+        server
+            .expect(requestTo("http://root/company"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(HateoasLink.link("company", "http://any"), APP_V1));
 
         final val response = traversors.startAt("http://root").hop(f -> f.get("company")).perform();
 
@@ -80,32 +93,53 @@ public final class HateoasTraversorTest {
 
     @Test
     public void traversePutHop() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
-        server.expect(requestTo("http://root/company")).andExpect(method(PUT)).andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
+        server
+            .expect(requestTo("http://root"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+        server
+            .expect(requestTo("http://root/company"))
+            .andExpect(method(PUT))
+            .andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
 
-        final val response = traversors.startAt("http://root").hop(f -> f.put("company", "someRequest")).perform();
+        final val response = traversors
+            .startAt("http://root")
+            .hop(f -> f.put("company", "someRequest"))
+            .perform();
 
         assertThat(response.getBody()).contains("http://any");
     }
 
     @Test
     public void traverseMultipleHops() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
-        server.expect(requestTo("http://root/company")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("president", "http://root/president"), APP_V1));
-        server.expect(requestTo("http://root/president")).andExpect(method(GET)).andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
+        server
+            .expect(requestTo("http://root"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+        server
+            .expect(requestTo("http://root/company"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(HateoasLink.link("president", "http://root/president"), APP_V1));
+        server
+            .expect(requestTo("http://root/president"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
 
         final val response = traversors
-                .startAt("http://root")
-                .hop(f -> f.get("company"))
-                .hop(f -> f.get("president"))
-                .perform();
+            .startAt("http://root")
+            .hop(f -> f.get("company"))
+            .hop(f -> f.get("president"))
+            .perform();
 
         assertThat(response.getBody()).contains("http://any");
     }
 
     @Test
     public void shouldHandleClientErrors() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withBadRequest().contentType(APPLICATION_JSON).body("someResponse"));
+        server
+            .expect(requestTo("http://root"))
+            .andExpect(method(GET))
+            .andRespond(withBadRequest().contentType(APPLICATION_JSON).body("someResponse"));
 
         final val response = traversors.startAt("http://root").perform();
 
@@ -113,10 +147,12 @@ public final class HateoasTraversorTest {
         assertThat(response.getBody()).isEqualTo("someResponse");
     }
 
-
     @Test
     public void shouldHandleServerErrors() {
-        server.expect(requestTo("http://root")).andExpect(method(GET)).andRespond(withServerError().contentType(APPLICATION_JSON).body("someResponse"));
+        server
+            .expect(requestTo("http://root"))
+            .andExpect(method(GET))
+            .andRespond(withServerError().contentType(APPLICATION_JSON).body("someResponse"));
 
         final val response = traversors.startAt("http://root").perform();
 
@@ -126,6 +162,7 @@ public final class HateoasTraversorTest {
 
     @TestConfiguration
     static class AppMediaTypeConfiguration {
+
         @Bean
         public MediaType appMediaType() {
             return APP_V1;
@@ -135,9 +172,7 @@ public final class HateoasTraversorTest {
 
 final class RestTemplateBuilderStubs {
 
-    private RestTemplateBuilderStubs() {
-
-    }
+    private RestTemplateBuilderStubs() {}
 
     static RestTemplateBuilder stub() {
         final val builder = mock(RestTemplateBuilder.class);

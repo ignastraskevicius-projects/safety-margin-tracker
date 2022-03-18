@@ -7,15 +7,14 @@ import org.json.JSONObject;
 
 public final class HateoasJsonMatchers {
 
-    private HateoasJsonMatchers() {
-
-    }
+    private HateoasJsonMatchers() {}
 
     public static HasRel hasRel(final String relName) {
         return new HasRel(relName);
     }
 
     public static final class HasRel {
+
         private final String relName;
 
         public HasRel(final String relName) {
@@ -31,6 +30,7 @@ public final class HateoasJsonMatchers {
         }
 
         static class ExistsRelWithHrefContainingString extends TypeSafeMatcher<String> {
+
             private final String relName;
 
             private final String hrefSubstring;
@@ -43,8 +43,11 @@ public final class HateoasJsonMatchers {
             @Override
             protected boolean matchesSafely(final String hateoasJson) {
                 try {
-                    return new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href")
-                            .contains(hrefSubstring);
+                    return new JSONObject(hateoasJson)
+                        .getJSONObject("_links")
+                        .getJSONObject(relName)
+                        .getString("href")
+                        .contains(hrefSubstring);
                 } catch (JSONException e) {
                     return false;
                 }
@@ -53,12 +56,17 @@ public final class HateoasJsonMatchers {
             @Override
             public void describeTo(final Description description) {
                 description.appendText(
-                        String.format("HATEOAS json should contain a '%s' rel with a href containing substring '%s'",
-                                relName, hrefSubstring));
+                    String.format(
+                        "HATEOAS json should contain a '%s' rel with a href containing substring '%s'",
+                        relName,
+                        hrefSubstring
+                    )
+                );
             }
         }
 
         static class ExistsRelWithHref extends TypeSafeMatcher<String> {
+
             private final String relName;
 
             public ExistsRelWithHref(final String relName) {
@@ -68,7 +76,10 @@ public final class HateoasJsonMatchers {
             @Override
             protected boolean matchesSafely(final String hateoasJson) {
                 try {
-                    new JSONObject(hateoasJson).getJSONObject("_links").getJSONObject(relName).getString("href");
+                    new JSONObject(hateoasJson)
+                        .getJSONObject("_links")
+                        .getJSONObject(relName)
+                        .getString("href");
                     return true;
                 } catch (JSONException e) {
                     return false;
@@ -78,8 +89,8 @@ public final class HateoasJsonMatchers {
             @Override
             public void describeTo(final Description description) {
                 description.appendText(
-                        String.format("HATEOAS json should contain a '%s' rel with a href",
-                                relName));
+                    String.format("HATEOAS json should contain a '%s' rel with a href", relName)
+                );
             }
         }
     }

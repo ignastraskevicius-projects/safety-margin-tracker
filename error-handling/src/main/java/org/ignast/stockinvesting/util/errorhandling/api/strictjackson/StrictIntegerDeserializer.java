@@ -4,9 +4,8 @@ import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.deser.std.StdScalarDeserializer;
-import org.springframework.boot.jackson.JsonComponent;
-
 import java.io.IOException;
+import org.springframework.boot.jackson.JsonComponent;
 
 @JsonComponent
 public final class StrictIntegerDeserializer extends StdScalarDeserializer<Integer> {

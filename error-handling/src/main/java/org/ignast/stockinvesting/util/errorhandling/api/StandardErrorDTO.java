@@ -1,9 +1,9 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import static java.util.Objects.requireNonNullElse;
+
 import java.util.Collections;
 import java.util.List;
-
-import static java.util.Objects.requireNonNullElse;
 
 public class StandardErrorDTO {
 
@@ -17,7 +17,9 @@ public class StandardErrorDTO {
         return new StandardErrorDTO(null);
     }
 
-    public static BodyDoesNotMatchSchemaErrorDTO createForBodyDoesNotMatchSchema(final List<ValidationErrorDTO> errors) {
+    public static BodyDoesNotMatchSchemaErrorDTO createForBodyDoesNotMatchSchema(
+        final List<ValidationErrorDTO> errors
+    ) {
         return new BodyDoesNotMatchSchemaErrorDTO(errors);
     }
 
@@ -51,6 +53,7 @@ public class StandardErrorDTO {
     }
 
     public static final class BodyDoesNotMatchSchemaErrorDTO extends StandardErrorDTO {
+
         private final List<ValidationErrorDTO> validationErrors;
 
         private BodyDoesNotMatchSchemaErrorDTO(final List<ValidationErrorDTO> validationErrors) {

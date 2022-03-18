@@ -1,5 +1,8 @@
 package org.ignast.stockinvesting.estimates.persistence;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
+import java.util.Currency;
 import org.ignast.stockinvesting.estimates.dbmigration.ProductionDatabaseMigrationVersions;
 import org.ignast.stockinvesting.estimates.domain.Company;
 import org.ignast.stockinvesting.estimates.service.CompanyRepository;
@@ -9,10 +12,6 @@ import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomiz
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
-
-import java.util.Currency;
-
-import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 public final class CompanyPersistenceTest {

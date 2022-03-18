@@ -1,6 +1,10 @@
 package org.ignast.stockinvesting.testutil.api.traversor;
 
+import static org.springframework.http.HttpMethod.GET;
+
+import lombok.AllArgsConstructor;
 import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -9,26 +13,23 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
-import static org.springframework.http.HttpMethod.GET;
-
 public interface Hop {
-
     public abstract static class TraversableHop implements Hop {
+
         abstract ResponseEntity<String> traverse(ResponseEntity<String> response);
     }
 
-    public final static class Factory {
-        private final RestTemplate restTemplate;
+    @RequiredArgsConstructor
+    public static final class Factory {
 
+        @NonNull
         private final MediaType appMediaType;
 
-        private final HrefExtractor hrefExtractor;
+        @NonNull
+        private final RestTemplate restTemplate;
 
-        Factory(@NonNull final MediaType appMediaType, @NonNull final RestTemplate restTemplate, @NonNull final HrefExtractor hrefExtractor) {
-            this.appMediaType = appMediaType;
-            this.hrefExtractor = hrefExtractor;
-            this.restTemplate = restTemplate;
-        }
+        @NonNull
+        private final HrefExtractor hrefExtractor;
 
         public TraversableHop put(final String rel, final String body) {
             return new PutHop(appMediaType, restTemplate, hrefExtractor, rel, body);
@@ -38,28 +39,25 @@ public interface Hop {
             return new GetHop(appMediaType, restTemplate, hrefExtractor, rel);
         }
 
+        @AllArgsConstructor
         private static final class PutHop extends TraversableHop {
+
             private final MediaType appMediaType;
 
             private final RestTemplate restTemplate;
 
             private final HrefExtractor hrefExtractor;
 
+            @NonNull
             private final String rel;
 
+            @NonNull
             private final String body;
-
-            private PutHop(final MediaType appMediaType, final RestTemplate restTemplate, final HrefExtractor hrefExtractor, @NonNull final String rel, @NonNull final String body) {
-                this.appMediaType = appMediaType;
-                this.restTemplate = restTemplate;
-                this.hrefExtractor = hrefExtractor;
-                this.rel = rel;
-                this.body = body;
-            }
 
             @Override
             public ResponseEntity<String> traverse(@NonNull final ResponseEntity<String> response) {
-                return restTemplate.exchange(hrefExtractor.extractHref(response, rel), HttpMethod.PUT, contentTypeV1(body), String.class);
+                final val href = hrefExtractor.extractHref(response, rel);
+                return restTemplate.exchange(href, HttpMethod.PUT, contentTypeV1(body), String.class);
             }
 
             private HttpEntity<String> contentTypeV1(final String content) {
@@ -69,25 +67,22 @@ public interface Hop {
             }
         }
 
+        @AllArgsConstructor
         private static final class GetHop extends TraversableHop {
+
             private final MediaType appMediaType;
 
             private final RestTemplate restTemplate;
 
             private final HrefExtractor hrefExtractor;
 
+            @NonNull
             private final String rel;
-
-            private GetHop(final MediaType appMediaType, final RestTemplate restTemplate, final HrefExtractor hrefExtractor, @NonNull final String rel) {
-                this.appMediaType = appMediaType;
-                this.restTemplate = restTemplate;
-                this.hrefExtractor = hrefExtractor;
-                this.rel = rel;
-            }
 
             @Override
             ResponseEntity<String> traverse(@NonNull final ResponseEntity<String> previousResponse) {
-                return restTemplate.exchange(hrefExtractor.extractHref(previousResponse, rel), GET, acceptV1(), String.class);
+                final val href = hrefExtractor.extractHref(previousResponse, rel);
+                return restTemplate.exchange(href, GET, acceptV1(), String.class);
             }
 
             private HttpEntity<String> acceptV1() {

@@ -1,16 +1,16 @@
 package org.ignast.stockinvesting.quotes.alphavantage;
 
-import lombok.val;
-import org.junit.jupiter.api.Test;
-
-import java.math.BigDecimal;
-
 import static java.util.Optional.empty;
 import static java.util.Optional.of;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
+import java.math.BigDecimal;
+import lombok.val;
+import org.junit.jupiter.api.Test;
+
 public final class QuoteResponseDTOTest {
+
     @Test
     public void shouldPreserveError() {
         final val error = new QuoteResponseDTO(empty(), of("humal-readable-message"));
@@ -26,7 +26,8 @@ public final class QuoteResponseDTOTest {
 
     @Test
     public void shouldRejectNullErrors() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new QuoteResponseDTO(empty(), null));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> new QuoteResponseDTO(empty(), null));
     }
 
     @Test
@@ -45,7 +46,8 @@ public final class QuoteResponseDTOTest {
 
     @Test
     public void shouldRejectNullQuote() {
-        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new QuoteResponseDTO(null, empty()));
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> new QuoteResponseDTO(null, empty()));
     }
 
     @Test
@@ -65,5 +67,4 @@ public final class QuoteResponseDTOTest {
     public void shouldRejectNullPrice() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new QuoteDTO(null));
     }
-
 }

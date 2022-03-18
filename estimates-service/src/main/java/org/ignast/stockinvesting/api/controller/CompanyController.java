@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.api.controller;
 
+import java.util.Currency;
 import lombok.val;
 import org.ignast.stockinvesting.domain.Companies;
 import org.ignast.stockinvesting.estimates.domain.Company;
@@ -11,8 +12,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Currency;
 
 @RestController
 @RequestMapping("companies")
@@ -31,5 +30,4 @@ public class CompanyController {
 
         return new ResponseEntity<>("", HttpStatus.CREATED);
     }
-
 }

@@ -9,7 +9,8 @@ import java.util.Map;
 @Service
 public class StockExchanges {
     private final Map<MarketIdentifierCode, StockExchange> supportedStockExchanges;
-    public StockExchanges(QuotesRepository quotes) {
+
+    public StockExchanges(final QuotesRepository quotes) {
         supportedStockExchanges = Map.ofEntries(
                 newStockExchange(new MarketIdentifierCode("XFRA"), new CurrencyCode("EUR"), quotes),
                 newStockExchange(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes),
@@ -21,11 +22,11 @@ public class StockExchanges {
         );
     }
 
-    private AbstractMap.SimpleEntry<MarketIdentifierCode, StockExchange> newStockExchange(MarketIdentifierCode mic, CurrencyCode currency, QuotesRepository quotes) {
+    private AbstractMap.SimpleEntry<MarketIdentifierCode, StockExchange> newStockExchange(final MarketIdentifierCode mic, final CurrencyCode currency, final QuotesRepository quotes) {
         return new AbstractMap.SimpleEntry<>(mic, StockExchange.create(mic, currency, quotes));
     }
 
-    public StockExchange getFor(@NonNull MarketIdentifierCode mic) {
+    public StockExchange getFor(@NonNull final MarketIdentifierCode mic) {
         if (supportedStockExchanges.containsKey(mic)) {
             return supportedStockExchanges.get(mic);
         } else {

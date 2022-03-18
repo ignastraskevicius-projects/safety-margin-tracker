@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class CompanyNameTest {
+public final class CompanyNameTest {
 
     @Test
     public void shouldNotBeNull() {
@@ -19,7 +19,7 @@ class CompanyNameTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "Amazon", "Microsoft" })
-    public void shouldPreserveName(String name) {
+    public void shouldPreserveName(final String name) {
         assertThat(new CompanyName(name).get()).isEqualTo(name);
     }
 
@@ -33,8 +33,8 @@ class CompanyNameTest {
 
     @Test
     public void shouldRejectTooLongName() {
-        val notTooLongName = "c".repeat(255);
-        val tooLongName = "c".repeat(256);
+        final val notTooLongName = "c".repeat(255);
+        final val tooLongName = "c".repeat(256);
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new CompanyName(tooLongName))
                 .withMessage("Company name must be between 1-255 characters");

@@ -6,8 +6,9 @@ import java.util.Currency;
 
 public class CurrencyCode {
 
-    private String code;
-    public CurrencyCode(@NonNull String code) {
+    private final String code;
+
+    public CurrencyCode(@NonNull final String code) {
         if (code.length() != 3) {
             throw new IllegalArgumentException("Currency must have 3 letters");
         }

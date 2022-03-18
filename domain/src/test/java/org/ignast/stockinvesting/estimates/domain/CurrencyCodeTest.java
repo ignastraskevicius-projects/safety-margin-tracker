@@ -16,7 +16,7 @@ class CurrencyCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "USD", "EUR" })
-    public void shouldPreserveCode(String currencyCode) {
+    public void shouldPreserveCode(final String currencyCode) {
         assertThat(new CurrencyCode(currencyCode).get()).isEqualTo(currencyCode);
     }
 
@@ -32,7 +32,7 @@ class CurrencyCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "AAa", "1AA", "AÑA" })
-    public void shouldRejectNonLatinUppercaseCharacters(String currencyCode) {
+    public void shouldRejectNonLatinUppercaseCharacters(final String currencyCode) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new CurrencyCode(currencyCode)).withMessage(
                         "Currency must contain only uppercase latin characters");

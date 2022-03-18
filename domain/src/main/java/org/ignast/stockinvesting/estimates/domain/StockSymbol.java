@@ -3,9 +3,9 @@ package org.ignast.stockinvesting.estimates.domain;
 import lombok.NonNull;
 
 public class StockSymbol {
-    private String code;
+    private final String code;
 
-    public StockSymbol(@NonNull String code) {
+    public StockSymbol(@NonNull final String code) {
         if (code.isEmpty() || code.length() > 5) {
             throw new IllegalArgumentException("Stock Symbol must contain between 1-5 characters");
         }

@@ -16,16 +16,19 @@ public final class Company {
     @Id
     @EqualsAndHashCode.Include
     private String id = "AAA";
+
     private String countryCode;
+
     @Transient
     private Currency functionalCurrency;
+
     private String name;
 
     protected Company() {
         //constructor for JPA
     }
 
-    public Company(@NonNull String name, @NonNull String countryCode, @NonNull Currency functionalCurrency) {
+    public Company(@NonNull final String name, @NonNull final String countryCode, @NonNull final Currency functionalCurrency) {
         if (name.isEmpty() || name.length() > 255) {
             throw new IllegalArgumentException();
         }

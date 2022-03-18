@@ -10,14 +10,14 @@ import javax.persistence.Embeddable;
 @EqualsAndHashCode
 @Embeddable
 @ToString
-public final class CompanyExternalId implements Serializable {
+public class CompanyExternalId implements Serializable {
     private int number;
 
     protected CompanyExternalId() {
         //JPA requirement for entities
     }
 
-    public CompanyExternalId(int number) {
+    public CompanyExternalId(final int number) {
         this.number = number;
         if (number <= 0) {
             throw new IllegalArgumentException("Must be positive");

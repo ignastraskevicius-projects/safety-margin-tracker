@@ -28,12 +28,6 @@ public class DomainFactoryForTests {
     }
 
     public static QuotesRepository anyQuotes() {
-        return new QuotesRepository() {
-
-            @Override
-            public BigDecimal getQuotedPriceOf(StockSymbol stockSymbol, MarketIdentifierCode mic) {
-                return BigDecimal.ONE;
-            }
-        };
+        return (stockSymbol, mic) -> BigDecimal.ONE;
     }
 }

@@ -8,7 +8,7 @@ public final class CompanyName {
 
     private final String name;
 
-    public CompanyName(@NonNull String name) {
+    public CompanyName(@NonNull final String name) {
         if (name.isEmpty() || name.length() > 255) {
             throw new IllegalArgumentException("Company name must be between 1-255 characters");
         }

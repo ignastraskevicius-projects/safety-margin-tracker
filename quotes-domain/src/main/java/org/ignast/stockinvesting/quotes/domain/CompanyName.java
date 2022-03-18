@@ -8,7 +8,7 @@ import javax.persistence.Embeddable;
 
 @EqualsAndHashCode
 @Embeddable
-public final class CompanyName {
+public class CompanyName {
 
     @Column(name = "company_name")
     private String name;
@@ -17,7 +17,7 @@ public final class CompanyName {
         //constructor for JPA
     }
 
-    public CompanyName(@NonNull String name) {
+    public CompanyName(@NonNull final String name) {
         if (name.isEmpty() || name.length() > 255) {
             throw new IllegalArgumentException("Company name must be between 1-255 characters");
         }

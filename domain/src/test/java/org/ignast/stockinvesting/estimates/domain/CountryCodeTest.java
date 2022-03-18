@@ -16,7 +16,7 @@ class CountryCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "US", "FR" })
-    public void shouldPreserveCode(String countryCode) {
+    public void shouldPreserveCode(final String countryCode) {
         assertThat(new CountryCode(countryCode).get()).isEqualTo(countryCode);
     }
 
@@ -32,7 +32,7 @@ class CountryCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "Aa", "1A", "AÑ" })
-    public void shouldRejectNonLatinUppercaseCharacters(String countryCode) {
+    public void shouldRejectNonLatinUppercaseCharacters(final String countryCode) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new CountryCode(countryCode)).withMessage(
                         "Must contain only uppercase latin characters");

@@ -6,8 +6,9 @@ import java.util.Locale;
 
 
 public class CountryCode {
-    private String code;
-    public CountryCode(@NonNull String code) {
+    private final String code;
+
+    public CountryCode(@NonNull final String code) {
         if (code.length() != 2) {
             throw new IllegalArgumentException("Must consist of 2 characters");
         }

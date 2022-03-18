@@ -8,7 +8,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
-class CurrencyCodeTest {
+public final class CurrencyCodeTest {
     @Test
     public void shouldNotBeNull() {
         assertThatExceptionOfType(NullPointerException.class)
@@ -17,7 +17,7 @@ class CurrencyCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "USD", "EUR" })
-    public void shouldPreserveCode(String currencyCode) {
+    public void shouldPreserveCode(final String currencyCode) {
         assertThat(new CurrencyCode(currencyCode).get()).isEqualTo(currencyCode);
     }
 
@@ -33,7 +33,7 @@ class CurrencyCodeTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "AAa", "1AA", "AÑA" })
-    public void shouldRejectNonLatinUppercaseCharacters(String currencyCode) {
+    public void shouldRejectNonLatinUppercaseCharacters(final String currencyCode) {
         assertThatExceptionOfType(IllegalArgumentException.class)
                 .isThrownBy(() -> new CurrencyCode(currencyCode)).withMessage(
                         "Currency must contain only uppercase latin characters");

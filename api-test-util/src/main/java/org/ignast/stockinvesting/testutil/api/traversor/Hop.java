@@ -13,11 +13,11 @@ import static org.springframework.http.HttpMethod.GET;
 
 public interface Hop {
 
-    abstract class TraversableHop implements Hop {
+    public abstract static class TraversableHop implements Hop {
         abstract ResponseEntity<String> traverse(ResponseEntity<String> response);
     }
 
-    final class Factory {
+    public final static class Factory {
         private final RestTemplate restTemplate;
 
         private final MediaType appMediaType;

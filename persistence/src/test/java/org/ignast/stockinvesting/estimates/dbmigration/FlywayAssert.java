@@ -148,6 +148,6 @@ class FlywayAssertLastMigrationTest {
     }
 
     private static interface TwoVersionsConsumer {
-        void consume(String first, String second);
+        public void consume(String first, String second);
     }
 }

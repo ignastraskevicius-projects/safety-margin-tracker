@@ -55,9 +55,9 @@ public class StockExchange {
     }
 
     private static interface StockExchangeSpecificBehaviour {
-        void checkRequirements();
+        public void checkRequirements();
 
-        Money transformPrice(Money price);
+        public Money transformPrice(Money price);
     }
 
     private class LondonStockExchangeBehaviour implements StockExchangeSpecificBehaviour {

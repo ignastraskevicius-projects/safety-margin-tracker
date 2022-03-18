@@ -50,7 +50,7 @@ public final class FlywayIdempotentMigration {
 }
 
 interface MysqlMigration {
-    void migrate(String version, DataSource dataSource);
+    public void migrate(String version, DataSource dataSource);
 }
 
 final class FlywayMigration implements MysqlMigration {

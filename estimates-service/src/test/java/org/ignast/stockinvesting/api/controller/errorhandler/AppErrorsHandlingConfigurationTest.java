@@ -40,6 +40,6 @@ final class AppErrorsHandlingConfigurationTest {
     }
 
     private static interface FromConstructorToObject {
-        Object construct(From1ParamConstructor constructor);
+        public Object construct(From1ParamConstructor constructor);
     }
 }

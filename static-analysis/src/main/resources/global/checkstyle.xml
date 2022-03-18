@@ -69,6 +69,20 @@
         <module name="IllegalThrows"/>
         <module name="IllegalToken"/>
         <module name="IllegalType"/>
+        <module name="Indentation"/>
+        <module name="InnerAssignment"/>
+        <module name="InnerTypeLast"/>
+        <module name="InterfaceIsType"/>
+        <module name="InterfaceMemberImpliedModifier">
+            <property name="violateImpliedAbstractMethod" value="false" />
+        </module>
+        <module name="InterfaceTypeParameterName"/>
+        <module name="JavaNCSS"/>
+        <module name="LambdaBodyLength"/>
+        <module name="LambdaParameterName"/>
+        <module name="LeftCurly"/>
+        <module name="LineLength"/>
+
 
 
 

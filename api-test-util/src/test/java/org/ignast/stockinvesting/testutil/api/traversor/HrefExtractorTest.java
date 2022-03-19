@@ -13,12 +13,21 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
 public final class HrefExtractorTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType(
         "application/app.specific.media.type-v1.hal+json"
     );
+
+    private static final int NOT_FOUND = 400;
+
+    private static final int INTERNAL_SERVER_ERROR = 500;
+
+    private static final int OK = 200;
+
+    private static final int CREATED = 201;
 
     private final HrefExtractor extractor = new HrefExtractor(APP_V1);
 
@@ -30,14 +39,17 @@ public final class HrefExtractorTest {
 
     @Test
     public void shouldExtractHref() {
-        final val response = status(OK).contentType(APP_V1).body(link("company", "companyUri"));
+        final val response = ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(APP_V1)
+            .body(link("company", "companyUri"));
 
         assertThat(extractor.extractHref(response, "company")).isEqualTo("companyUri");
     }
 
     @Test
     public void shouldFailToExtractFromInvalidJsonResponses() {
-        final val response = status(OK).contentType(APP_V1).body("not-a-json");
+        final val response = ResponseEntity.status(HttpStatus.OK).contentType(APP_V1).body("not-a-json");
 
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> extractor.extractHref(response, "company"))
@@ -54,7 +66,10 @@ public final class HrefExtractorTest {
         }
     )
     public void shouldFailToExtractNonexistentRel(final String notContainingCompanyRel) {
-        final val response = status(OK).contentType(APP_V1).body(notContainingCompanyRel);
+        final val response = ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(APP_V1)
+            .body(notContainingCompanyRel);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> extractor.extractHref(response, "company"))
@@ -63,7 +78,7 @@ public final class HrefExtractorTest {
 
     @Test
     public void shouldFailToExtractHrefFromResponseWithoutContentType() {
-        final val response = status(OK).body(HateoasLink.anyLink());
+        final val response = ResponseEntity.status(HttpStatus.OK).body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> extractor.extractHref(response, "any"))
@@ -81,7 +96,10 @@ public final class HrefExtractorTest {
     )
     public void shouldNotExtractHrefFromResponsesWithoutVersionedAppContentTypeSet(final String type) {
         final val mediaType = MediaType.parseMediaType(type);
-        final val response = status(OK).contentType(mediaType).body(HateoasLink.anyLink());
+        final val response = ResponseEntity
+            .status(HttpStatus.OK)
+            .contentType(mediaType)
+            .body(HateoasLink.anyLink());
 
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> extractor.extractHref(response, "any"))
@@ -89,7 +107,7 @@ public final class HrefExtractorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 400, 500 })
+    @ValueSource(ints = { NOT_FOUND, INTERNAL_SERVER_ERROR })
     public void shouldNotExtractHrefFromResponsesWithNon2xxStatusCodes(final int status) {
         final val response = status(HttpStatus.valueOf(status)).body(HateoasLink.anyLink());
 
@@ -99,7 +117,7 @@ public final class HrefExtractorTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 200, 201 })
+    @ValueSource(ints = { OK, CREATED })
     public void shouldExtractHrefForResponsesWith2xxStatusCodes(final int status) {
         final val response = status(HttpStatus.valueOf(status))
             .contentType(APP_V1)

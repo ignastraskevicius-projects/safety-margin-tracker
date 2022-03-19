@@ -6,6 +6,7 @@ public final class DomainFactoryForTests {
 
     private DomainFactoryForTests() {}
 
+    @SuppressWarnings("checkstyle:magicnumber")
     public static CompanyExternalId anyId() {
         return new CompanyExternalId(15);
     }

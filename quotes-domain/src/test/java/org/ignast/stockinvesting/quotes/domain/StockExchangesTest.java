@@ -85,10 +85,12 @@ public final class StockExchangesTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void LondonStockExchangeShouldBeSupported() {
+        final val penceInPound = 100;
         final val astrazenecaSymbol = new StockSymbol("AZN");
         final val lseMic = new MarketIdentifierCode("XLON");
-        when(quotes.getQuotedPriceOf(astrazenecaSymbol, lseMic)).thenReturn(new BigDecimal(100));
+        when(quotes.getQuotedPriceOf(astrazenecaSymbol, lseMic)).thenReturn(new BigDecimal(penceInPound));
 
         final val price = stockExchanges.getFor(lseMic).getQuotedPrice(astrazenecaSymbol);
 

@@ -4,10 +4,12 @@ import lombok.NonNull;
 
 public class MarketIdentifierCode {
 
+    private static final int ISO_10383_LENGTH = 4;
+
     private final String code;
 
     public MarketIdentifierCode(@NonNull final String code) {
-        if (code.length() != 4) {
+        if (code.length() != ISO_10383_LENGTH) {
             throw new IllegalArgumentException(
                 "Market Identifier is not 4 characters long (ISO 10383 standard)"
             );

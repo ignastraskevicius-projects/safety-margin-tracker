@@ -10,6 +10,7 @@ public final class TestDtos {
 
     private TestDtos() {}
 
+    @SuppressWarnings("checkstyle:magicnumber")
     public static CompanyDTO amazonDto() {
         return new CompanyDTO(6, "Amazon", List.of(new ListingDTO("XNAS", "AMZN")));
     }

@@ -17,6 +17,7 @@ public final class CompanyDTOTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldPreserveNonNestedAttributes() {
         final val company = new CompanyDTO(3, "Amazon", Collections.emptyList());
         assertThat(company.getId()).isEqualTo(3);
@@ -56,6 +57,7 @@ public final class CompanyDTOTest {
         assertThat(listing.getStockSymbol()).isNull();
     }
 
+    @SuppressWarnings("checkstyle:magicnumber")
     private CompanyDTO anyCompanyWith(final List<ListingDTO> listings) {
         return new CompanyDTO(4, "anyName", listings);
     }

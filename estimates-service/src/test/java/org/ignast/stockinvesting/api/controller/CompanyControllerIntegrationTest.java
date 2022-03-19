@@ -220,6 +220,8 @@ final class CompanyControllerHomeCountryParsingIntegrationTest extends CompanyCo
 
 final class CompanyControllerNameParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
 
+    private static final int MAX_COMPANY_NAME_LENGTH = 160;
+
     @MockBean
     private Companies companies;
 
@@ -238,7 +240,7 @@ final class CompanyControllerNameParsingIntegrationTest extends CompanyControlle
     @Test
     public void shouldRejectCompanyWithEmptyName() throws Exception {
         assertThatRequest(companyWithNameOfLength(0))
-            .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
+            .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-160 characters"));
     }
 
     @Test
@@ -250,14 +252,19 @@ final class CompanyControllerNameParsingIntegrationTest extends CompanyControlle
 
     @Test
     public void shouldRejectCompanyWithTooLongName() throws Exception {
-        assertThatRequest(companyWithNameOfLength(256))
-            .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
+        final val overMaxLength = MAX_COMPANY_NAME_LENGTH + 1;
+        assertThatRequest(companyWithNameOfLength(overMaxLength))
+            .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-160 characters"));
     }
 
     @Test
     public void shouldCreateCompanyWithWithNamesOfRelativelyReasonableLength() throws Exception {
         mockMvc
-            .perform(put("/companies/").contentType(V1_MEDIA_TYPE).content(companyWithNameOfLength(255)))
+            .perform(
+                put("/companies/")
+                    .contentType(V1_MEDIA_TYPE)
+                    .content(companyWithNameOfLength(MAX_COMPANY_NAME_LENGTH))
+            )
             .andExpect(status().isCreated());
     }
 

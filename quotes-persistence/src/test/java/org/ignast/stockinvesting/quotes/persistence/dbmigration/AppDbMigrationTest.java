@@ -26,6 +26,8 @@ public final class AppDbMigrationTest {
     @Container
     private static final MySQLContainer APP_DB = AppDbContainer.singleton();
 
+    private static final int MAX_COMPANY_NAME_LENGTH = 160;
+
     private static JdbcTemplate db;
 
     @BeforeAll
@@ -226,7 +228,7 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldPermitLongEnoughCompanyNames() {
-            final val notTooLongName = "c".repeat(255);
+            final val notTooLongName = "c".repeat(MAX_COMPANY_NAME_LENGTH);
             db.execute(
                 format(
                     """

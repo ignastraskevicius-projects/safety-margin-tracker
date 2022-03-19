@@ -32,6 +32,7 @@ public final class CompanyTest {
 
     @ParameterizedTest
     @ValueSource(ints = { 2, 5 })
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldHaveExternalId(final int externalId) {
         assertThat(
             Company

@@ -10,6 +10,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public final class CompanyExternalIdTest {
 
+    private static final int SOME_BIG_NUMBER = 2000000;
+
     @Test
     public void shouldNotBeNull() {
         final Integer id = null;
@@ -17,18 +19,19 @@ public final class CompanyExternalIdTest {
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 1, 2000000 })
+    @ValueSource(ints = { 1, SOME_BIG_NUMBER })
     public void shouldPreserveCode(final Integer id) {
         assertThat(new CompanyExternalId(id).get()).isEqualTo(id);
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldHaveStringRepresentation() {
         assertThat(new CompanyExternalId(4).toString()).contains("4");
     }
 
     @ParameterizedTest
-    @ValueSource(ints = { 0, -1, -2000000 })
+    @ValueSource(ints = { 0, -1, -SOME_BIG_NUMBER })
     public void shouldNotBeNegativeOrZero(final Integer id) {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> new CompanyExternalId(id))

@@ -40,8 +40,9 @@ public final class AppErrorsHandlingConfigurationTest {
 
     @Test
     public void shouldHaveClassCorrectlyAssignedForTypeConstructorsFromInteger() {
+        final val anyPositive = 7;
         final val countOfTypesSupported = List
-            .of(verifyConstructionFromInt(CompanyExternalId.class, t -> t.construct(7)))
+            .of(verifyConstructionFromInt(CompanyExternalId.class, t -> t.construct(anyPositive)))
             .size();
 
         assertThat(TYPES_CONSTRUCTABLE_FROM_INTEGER).hasSize(countOfTypesSupported);

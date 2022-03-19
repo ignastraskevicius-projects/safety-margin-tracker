@@ -33,6 +33,8 @@ import org.testcontainers.utility.DockerImageName;
 
 public final class AlphaVantageStubIT {
 
+    private static final int OK = 200;
+
     @RegisterExtension
     private static final WireMockExtension WIREMOCK = WireMockExtension
         .newInstance()
@@ -45,7 +47,7 @@ public final class AlphaVantageStubIT {
     public void shouldReturnPrice() throws IOException, InterruptedException, JSONException {
         final val response = query("/query?" + validParamsBuilder().build().toString());
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK);
         assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{\"05. price\":\"128.5000\"}}");
         assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
@@ -54,7 +56,7 @@ public final class AlphaVantageStubIT {
     public void shouldReturnNoPriceForAAAA() throws IOException, InterruptedException, JSONException {
         final val response = query("/query?" + validParamsBuilder().symbol("AAAA").build().toString());
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK);
         assertThatJson(response.body()).isEqualTo("{\"Global Quote\":{}}");
         assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
@@ -92,7 +94,7 @@ public final class AlphaVantageStubIT {
     private void expectError(final QueryParams uriQuery) throws IOException, InterruptedException {
         final val response = query(format("/query?%s", uriQuery.toString()));
 
-        assertThat(response.statusCode()).isEqualTo(200);
+        assertThat(response.statusCode()).isEqualTo(OK);
         assertThat(jsonAsMap(response).keySet()).contains("Error Message");
         assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }

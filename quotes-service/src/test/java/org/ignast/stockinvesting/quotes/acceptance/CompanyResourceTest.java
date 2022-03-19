@@ -32,11 +32,13 @@ import org.testcontainers.utility.DockerImageName;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public final class CompanyResourceTest {
 
+    private static final int EXPOSED_ALPHAVANTAGE_PORT = 8080;
+
     @Container
     private static final GenericContainer ALPHAVANTAGE = new GenericContainer(
         DockerImageName.parse(System.getProperty("alphavantage.image"))
     )
-        .withExposedPorts(8080);
+        .withExposedPorts(EXPOSED_ALPHAVANTAGE_PORT);
 
     @Container
     private static final MySQLContainer MYSQL = new MySQLContainer(
@@ -62,13 +64,14 @@ public final class CompanyResourceTest {
 
     @DynamicPropertySource
     private static void registedDatasource(final DynamicPropertyRegistry registry) {
-        registry.add(
-            "alphavantage.url",
-            () -> format("http://localhost:%d", ALPHAVANTAGE.getMappedPort(8080))
-        );
+        registry.add("alphavantage.url", () -> format("http://localhost:%d", getAlphavantagePort()));
         registry.add("spring.datasource.url", () -> MYSQL.getJdbcUrl().replace("/test", "/quotes"));
         registry.add("spring.datasource.username", () -> "root");
         registry.add("spring.datasource.password", () -> "test");
+    }
+
+    private static Integer getAlphavantagePort() {
+        return ALPHAVANTAGE.getMappedPort(EXPOSED_ALPHAVANTAGE_PORT);
     }
 
     @Test

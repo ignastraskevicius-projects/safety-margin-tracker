@@ -22,6 +22,7 @@ import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 
+@SuppressWarnings("checkstyle:outertypefilename")
 final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
     private final AnnotationBasedValidationErrorsExtractor javaxErrorExtractor = mock(

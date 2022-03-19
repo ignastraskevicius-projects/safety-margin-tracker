@@ -48,12 +48,13 @@ public final class HateoasTraversor {
     }
 
     public ResponseEntity<String> perform() {
-        final val linkToRoot = link("root", rootUri);
+        final val rootRel = "root";
+        final val linkToRoot = link(rootRel, rootUri);
         final val fakeLinkToRoot = ResponseEntity
             .status(HttpStatus.OK)
             .contentType(appMediaType)
             .body(linkToRoot);
-        final val rootHop = hopFactory.get("root");
+        final val rootHop = hopFactory.get(rootRel);
         return concat(of(rootHop), hops.stream())
             .reduce(fakeLinkToRoot, (r, h) -> h.traverse(r), combinerUnsupported());
     }

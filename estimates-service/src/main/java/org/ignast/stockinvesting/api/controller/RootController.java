@@ -3,7 +3,6 @@ package org.ignast.stockinvesting.api.controller;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-import java.util.List;
 import lombok.val;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
@@ -20,15 +19,7 @@ public final class RootController {
         root.add(
             linkTo(
                 methodOn(CompanyController.class)
-                    .defineCompany(
-                        new CompanyDTO(
-                            "someId",
-                            "Amazon",
-                            "Romania",
-                            "United States Dollar",
-                            List.of(new ListingDTO("New York Stock Exchange", "Amazon"))
-                        )
-                    )
+                    .defineCompany(new CompanyDTO("someId", "Amazon", "Romania", "United States Dollar"))
             )
                 .withRel("stocks:company")
         );

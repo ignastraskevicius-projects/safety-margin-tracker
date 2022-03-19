@@ -2,10 +2,8 @@ package org.ignast.stockinvesting.api.controller;
 
 import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
-import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forArrayRequiredAt;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forInvalidValueAt;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
-import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forObjectRequiredAt;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forTwoMissingFieldsAt;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
@@ -32,12 +30,12 @@ import org.springframework.test.web.servlet.ResultActions;
 @Import(AppErrorsHandlingConfiguration.class)
 abstract class CompanyControllerIntegrationTestBase {
 
+    protected static final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
+
     protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
 
     @Autowired
     protected MockMvc mockMvc;
-
-    protected final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
     MockMvcAssert assertThatRequest(final String body) throws Exception {
         return new MockMvcAssert(
@@ -271,105 +269,6 @@ final class CompanyControllerNameParsingIntegrationTest extends CompanyControlle
     private String companyWithNameOfLength(final int length) {
         final val name = "c".repeat(length);
         return bodyFactory.createWithNameJsonPair(format("\"name\":\"%s\"", name));
-    }
-}
-
-final class CompanyControllerListingsParsingIntegrationTest extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private Companies companies;
-
-    @Test
-    public void companyWithoutListingShouldBeRejectedIndicatingFieldIsMandatory() throws Exception {
-        assertThatRequest(bodyFactory.createWithListingsJsonPair(""))
-            .failsValidation(forMissingFieldAt("$.listings"));
-    }
-
-    @Test
-    public void companyWithNonArrayListingShouldBeRejectedIndicatingWrongType() throws Exception {
-        assertThatRequest(bodyFactory.createWithListingsJsonPair("\"listings\":3"))
-            .failsValidation(forArrayRequiredAt("$.listings"));
-    }
-
-    @Test
-    public void companyWithZeroListingsShouldBeRejected() throws Exception {
-        assertThatRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[]"))
-            .failsValidation(
-                forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange")
-            );
-    }
-
-    @Test
-    public void companyWithNullListingShouldBeRejected() throws Exception {
-        assertThatRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[null]"))
-            .failsValidation(
-                forInvalidValueAt("$.listings", "Company must be listed on at least 1 stock exchange")
-            );
-    }
-
-    @Test
-    public void companyWithIndividualListingAsNonObjectShouldBeRejectedIndicatedWrongType() throws Exception {
-        assertThatRequest(bodyFactory.createWithListingsJsonPair("\"listings\":[3.3]"))
-            .failsValidation(forObjectRequiredAt("$.listings[0]"));
-    }
-
-    @Test
-    public void shouldNotSupportMultipleListings() throws Exception {
-        assertThatRequest(bodyFactory.createWithMultipleListings())
-            .failsValidation(forInvalidValueAt("$.listings", "Multiple listings are not supported"));
-    }
-}
-
-final class CompanyControllerTestIndividualListingParsingIntegrationTest
-    extends CompanyControllerIntegrationTestBase {
-
-    @MockBean
-    private Companies companies;
-
-    @Test
-    public void shouldRejectCompanyListedWithoutMarketIdIndicatingFieldIsMandatory() throws Exception {
-        assertThatRequest(bodyFactory.createWithMarketIdJsonPair(""))
-            .failsValidation(forMissingFieldAt("$.listings[0].marketIdentifier"));
-    }
-
-    @Test
-    public void shouldRejectCompanyListedWithNonStringMarketIdIndicatingTypeIsWrong() throws Exception {
-        assertThatRequest(bodyFactory.createWithMarketIdJsonPair("\"marketIdentifier\":true"))
-            .failsValidation(forStringRequiredAt("$.listings[0].marketIdentifier"));
-    }
-
-    @Test
-    public void shouldRejectCompanyListedWithInvalidMarketId() throws Exception {
-        assertThatRequest(bodyFactory.createWithMarketIdJsonPair("\"marketIdentifier\":\"invalid\""))
-            .failsValidation(
-                forInvalidValueAt(
-                    "$.listings[0].marketIdentifier",
-                    "Market Identifier is not 4 characters long (ISO 10383 standard)"
-                )
-            );
-    }
-
-    @Test
-    public void shouldRejectCompanyWithoutSymbolIndicatingFieldIsMandatory() throws Exception {
-        assertThatRequest(bodyFactory.createWithSymbolJsonPair(""))
-            .failsValidation(forMissingFieldAt("$.listings[0].stockSymbol"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithNonStringSymbolIndicatingTypeIsWrong() throws Exception {
-        assertThatRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":3"))
-            .failsValidation(forStringRequiredAt("$.listings[0].stockSymbol"));
-    }
-
-    @Test
-    public void shouldRejectCompanyWithInvalidSymbol() throws Exception {
-        assertThatRequest(bodyFactory.createWithSymbolJsonPair("\"stockSymbol\":\"TOOLONG\""))
-            .failsValidation(
-                forInvalidValueAt(
-                    "$.listings[0].stockSymbol",
-                    "Stock Symbol must contain between 1-5 characters"
-                )
-            );
     }
 }
 

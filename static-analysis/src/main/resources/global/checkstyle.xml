@@ -5,6 +5,15 @@
 
     <module name="SuppressWarningsFilter"/>
 
+    <module name="SuppressionSingleFilter">
+        <property name="id" value="MultipleStringLiteralsRegular"/>
+        <property name="files" value=".*src[\\/]test[\\/]"/>
+    </module>
+    <module name="SuppressionSingleFilter">
+        <property name="id" value="MultipleStringLiteralsTest"/>
+        <property name="files" value=".*src[\\/](?!test[\\/])"/>
+    </module>
+
     <module name="TreeWalker">
 
         <module name="SuppressWarningsHolder"/>
@@ -82,13 +91,53 @@
             <property name="format" value="^mutable(_?[a-zA-Z0-9]+)*$"/>
         </module>
         <module name="MagicNumber"/>
+        <module name="MemberName"/>
+        <module name="MethodCount"/>
+        <module name="MethodLength"/>
+        <module name="MethodName"/>
+        <module name="MethodParamPad"/>
+        <module name="MethodTypeParameterName"/>
+        <module name="MissingOverride"/>
+        <module name="MissingSwitchDefault"/>
+        <module name="ModifiedControlVariable"/>
+        <module name="ModifierOrder"/>
+        <module name="MultipleStringLiterals">
+            <property name="id" value="MultipleStringLiteralsRegular"/>
+            <property name="allowedDuplicates" value="1"/>
+        </module>
+        <module name="MultipleStringLiterals">
+            <property name="id" value="MultipleStringLiteralsTest"/>
+            <property name="allowedDuplicates" value="10"/>
+        </module><module name="MultipleVariableDeclarations"/>
+        <module name="MutableException"/>
+        <module name="NeedBraces"/>
+        <module name="NestedForDepth"/>
+        <module name="NestedIfDepth"/>
+        <module name="NestedTryDepth"/>
+        <module name="NoClone"/>
+        <module name="NoCodeInFile"/>
+        <module name="NoFinalizer"/>
+        <module name="NoLineWrap"/>
+        <module name="NoEnumTrailingComma"/>
+        <module name="NoWhitespaceBeforeCaseDefaultColon"/>
+        <module name="NPathComplexity"/>
+        <module name="OneStatementPerLine"/>
+        <module name="OuterTypeFilename"/>
+        <module name="OuterTypeNumber">
+            <property name="max" value="7"/>
+        </module>
+
     </module>
 
-    <module name="LineLength">
-        <property name="max" value="120"/>
-    </module>
     <module name="FileLength"/>
     <module name="FileTabCharacter"/>
     <module name="Header"/>
+    <module name="LineLength">
+        <property name="max" value="120"/>
+    </module>
+    <module name="NewlineAtEndOfFile"/>
+    <module name="OrderedProperties"/>
+
+
 
 </module>

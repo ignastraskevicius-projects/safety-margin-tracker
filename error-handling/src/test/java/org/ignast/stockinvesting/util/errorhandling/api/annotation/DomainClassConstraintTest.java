@@ -20,6 +20,7 @@ import org.ignast.stockinvesting.utiltest.MockitoUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentMatchers;
 
+@SuppressWarnings("checkstyle:outertypefilename")
 final class DomainClassStringBackedObjectValidatorValidatorTest {
 
     @Test

@@ -15,6 +15,10 @@ public final class HateoasJsonMatchers {
 
     public static final class HasRel {
 
+        private static final String LINKS = "_links";
+
+        private static final String HREF = "href";
+
         private final String relName;
 
         public HasRel(final String relName) {
@@ -44,9 +48,9 @@ public final class HateoasJsonMatchers {
             protected boolean matchesSafely(final String hateoasJson) {
                 try {
                     return new JSONObject(hateoasJson)
-                        .getJSONObject("_links")
+                        .getJSONObject(LINKS)
                         .getJSONObject(relName)
-                        .getString("href")
+                        .getString(HREF)
                         .contains(hrefSubstring);
                 } catch (JSONException e) {
                     return false;
@@ -76,10 +80,7 @@ public final class HateoasJsonMatchers {
             @Override
             protected boolean matchesSafely(final String hateoasJson) {
                 try {
-                    new JSONObject(hateoasJson)
-                        .getJSONObject("_links")
-                        .getJSONObject(relName)
-                        .getString("href");
+                    new JSONObject(hateoasJson).getJSONObject(LINKS).getJSONObject(relName).getString(HREF);
                     return true;
                 } catch (JSONException e) {
                     return false;

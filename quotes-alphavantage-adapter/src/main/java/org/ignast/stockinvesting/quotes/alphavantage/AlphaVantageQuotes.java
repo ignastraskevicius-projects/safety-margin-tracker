@@ -26,6 +26,8 @@ import org.springframework.web.client.RestTemplate;
 @Repository
 public class AlphaVantageQuotes implements QuotesRepository {
 
+    private static final String COMMUNICATION_FAILED = "Communication with server failed";
+
     private final String url;
 
     private final String apikey;
@@ -57,9 +59,7 @@ public class AlphaVantageQuotes implements QuotesRepository {
 
     private QuoteRetrievalFailedException quoteRetrievalFailed(final Optional<String> errorMessage) {
         return new QuoteRetrievalFailedException(
-            errorMessage
-                .map(s -> "Message from remote server: " + s)
-                .orElse("Communication with server failed")
+            errorMessage.map(s -> "Message from remote server: " + s).orElse(COMMUNICATION_FAILED)
         );
     }
 
@@ -89,7 +89,7 @@ public class AlphaVantageQuotes implements QuotesRepository {
                 QuoteResponseDTO.class
             );
         } catch (RestClientException e) {
-            throw new QuoteRetrievalFailedException("Communication with server failed", e);
+            throw new QuoteRetrievalFailedException(COMMUNICATION_FAILED, e);
         }
     }
 }

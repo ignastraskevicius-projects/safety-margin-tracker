@@ -17,7 +17,7 @@ final class MediaTypeCheckerInterceptorTest {
 
     @ParameterizedTest
     @ValueSource(strings = { "Accept", "accept", "Accept" })
-    public void GETMethodRequestsShouldComeWithAcceptHeader(final String accept) throws Exception {
+    public void httpGetMethodRequestsShouldComeWithAcceptHeader(final String accept) throws Exception {
         final val request = new MockHttpServletRequest("GET", "any");
         request.addHeader(accept, "any");
         final val response = new MockHttpServletResponse();
@@ -27,7 +27,7 @@ final class MediaTypeCheckerInterceptorTest {
     }
 
     @Test
-    public void AcceptHeaderShouldBeRequiredForGetMethodRequests() throws Exception {
+    public void acceptHeaderShouldBeRequiredForGetMethodRequests() throws Exception {
         final val request = new MockHttpServletRequest("GET", "any");
         final val response = new MockHttpServletResponse();
 
@@ -36,7 +36,7 @@ final class MediaTypeCheckerInterceptorTest {
     }
 
     @Test
-    public void AcceptHeaderShouldNotBeRequiredForPostMethodRequests() throws Exception {
+    public void acceptHeaderShouldNotBeRequiredForPostMethodRequests() throws Exception {
         final val request = new MockHttpServletRequest("POST", "any");
         final val response = new MockHttpServletResponse();
 

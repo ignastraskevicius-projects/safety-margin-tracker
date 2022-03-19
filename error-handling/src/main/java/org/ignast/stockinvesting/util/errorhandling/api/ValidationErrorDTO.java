@@ -10,14 +10,14 @@ final class JsonPath {
         this.jsonPath = jsonPath;
     }
 
+    @SuppressWarnings("checkstyle:multiplestringliterals")
     public static JsonPath fromJsonPath(final String jsonPath) {
         requireNonNull(jsonPath, "JsonPath required to be non-null");
         if (jsonPath.startsWith("$.") || jsonPath.startsWith("$[") || "$".equals(jsonPath)) {
             return new JsonPath(jsonPath);
         } else {
             throw new IllegalArgumentException(
-                "Invalid JsonPath provided. " +
-                "It should start with '$.' for property or '$[' for index or be root '$'"
+                "Invalid JsonPath provided. It should start with '$.' for property or '$[' for index or be root '$'"
             );
         }
     }

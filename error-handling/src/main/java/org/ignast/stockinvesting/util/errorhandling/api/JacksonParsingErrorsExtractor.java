@@ -31,6 +31,7 @@ public final class JacksonParsingErrorsExtractor {
             .collect(Collectors.joining("", "$", ""));
     }
 
+    @SuppressWarnings("checkstyle:returncount")
     private ViolationType toViolationType(final MismatchedInputException exception) {
         if (exception instanceof StrictStringDeserializingException) {
             return ViolationType.VALUE_MUST_BE_STRING;

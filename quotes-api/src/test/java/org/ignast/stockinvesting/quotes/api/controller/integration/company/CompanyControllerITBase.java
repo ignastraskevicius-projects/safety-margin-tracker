@@ -29,15 +29,19 @@ abstract class CompanyControllerITBase {
 
     protected static final String APP_V1 = "application/vnd.stockinvesting.quotes-v1.hal+json";
 
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
 
     @MockBean
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected Companies companies;
 
     @MockBean
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected StockExchanges stockExchanges;
 
     @Autowired
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected MockMvc mockMvc;
 
     MockMvcAssert assertThatRequest(final String body) throws Exception {

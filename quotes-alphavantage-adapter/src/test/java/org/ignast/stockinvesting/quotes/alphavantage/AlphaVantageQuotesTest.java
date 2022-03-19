@@ -131,7 +131,6 @@ public final class AlphaVantageQuotesTest {
 
     @Test
     public void shouldThrowOnHttpServerError() {
-        final val underlyingMessage = "underlying exception from server";
         mockServer.expect(requestTo(anything())).andRespond(withServerError());
 
         assertThatExceptionOfType(QuoteRetrievalFailedException.class)

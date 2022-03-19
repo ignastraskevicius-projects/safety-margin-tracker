@@ -12,6 +12,8 @@ import lombok.NonNull;
 @Entity
 public final class Company {
 
+    private static final int MAX_NAME_LENGTH_FOUND_IN_UK = 160;
+
     @Id
     @EqualsAndHashCode.Include
     private String id = "AAA";
@@ -32,7 +34,7 @@ public final class Company {
         @NonNull final String countryCode,
         @NonNull final Currency functionalCurrency
     ) {
-        if (name.isEmpty() || name.length() > 255) {
+        if (name.isEmpty() || name.length() > MAX_NAME_LENGTH_FOUND_IN_UK) {
             throw new IllegalArgumentException();
         }
         this.name = name;

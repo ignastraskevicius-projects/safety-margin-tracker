@@ -12,6 +12,8 @@ import org.javamoney.moneta.Money;
 @Embeddable
 public class StockExchange {
 
+    private static final int PENCE_IN_POUND = 100;
+
     @Embedded
     private MarketIdentifierCode marketIdentifierCode;
 
@@ -83,8 +85,8 @@ public class StockExchange {
         }
 
         @Override
-        public Money transformPrice(final Money price) {
-            return price.divide(100);
+        public Money transformPrice(final Money priceInPounds) {
+            return priceInPounds.divide(PENCE_IN_POUND);
         }
     }
 

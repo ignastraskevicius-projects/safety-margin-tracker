@@ -7,10 +7,12 @@ import lombok.NonNull;
 @EqualsAndHashCode
 public final class CurrencyCode {
 
+    private static final int ISO_4217_LENGTH = 3;
+
     private final String code;
 
     public CurrencyCode(@NonNull final String code) {
-        if (code.length() != 3) {
+        if (code.length() != ISO_4217_LENGTH) {
             throw new IllegalArgumentException("Currency must have 3 letters");
         }
         if (!code.matches("^[A-Z]*$")) {

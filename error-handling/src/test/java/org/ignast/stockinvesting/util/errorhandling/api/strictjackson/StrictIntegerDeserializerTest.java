@@ -29,11 +29,13 @@ final class StrictIntegerDeserializerTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldReadJsonInteger() throws JsonProcessingException {
         assertThat(mapper.readValue("5", Integer.class)).isEqualTo(5);
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldDeserializeBeanValue() throws JsonProcessingException {
         assertThat(mapper.readValue("{\"integerValue\":7}", IntegerWrapper.class).integerValue).isEqualTo(7);
     }
@@ -43,6 +45,7 @@ final class StrictIntegerDeserializerTest {
         assertThat(mapper.readValue("{\"integerValue\":null}", IntegerWrapper.class).integerValue).isNull();
     }
 
+    @SuppressWarnings("checkstyle:magicnumber")
     @ParameterizedTest
     @ValueSource(strings = { "\"string\"", "3.3", "true", "false", "{}", "[]" })
     public void failureShouldPreserveParserAndLocation(final String jsonValue) {

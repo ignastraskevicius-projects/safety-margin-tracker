@@ -9,6 +9,8 @@ import lombok.NonNull;
 @Embeddable
 public class StockSymbol {
 
+    private static final int MAX_LENGTH_FOUND_IN_SHANGHAI_EXCHANGE = 6;
+
     @Column(name = "stock_symbol")
     private String symbol;
 
@@ -17,7 +19,7 @@ public class StockSymbol {
     }
 
     public StockSymbol(@NonNull final String symbol) {
-        if (symbol.isEmpty() || symbol.length() > 6) {
+        if (symbol.isEmpty() || symbol.length() > MAX_LENGTH_FOUND_IN_SHANGHAI_EXCHANGE) {
             throw new IllegalArgumentException("Stock Symbol must contain between 1-6 characters");
         }
         if (!symbol.matches("^[A-Z0-9]*$")) {

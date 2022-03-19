@@ -34,6 +34,7 @@ final class StrictStringDeserializerTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldReadJsonKey() throws JsonProcessingException {
         assertThat(mapper.readValue("{\"intValue\":6}", IntWrapper.class).intValue).isEqualTo(6);
     }
@@ -49,6 +50,7 @@ final class StrictStringDeserializerTest {
         assertThat(mapper.readValue("{\"stringValue\":null}", StringWrapper.class).stringValue).isNull();
     }
 
+    @SuppressWarnings("checkstyle:magicnumber")
     @ParameterizedTest
     @ValueSource(strings = { "3", "3.3", "true", "false", "{}", "[]" })
     public void failureShouldPreserveParserAndLocation(final String jsonValue) {

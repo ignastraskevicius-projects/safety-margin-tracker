@@ -34,32 +34,36 @@ public final class CompanyControllerTest {
     public void shouldCreateCompany() {
         final val stockExchange = mock(StockExchange.class);
         when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(stockExchange);
-        final val companyDto = new CompanyDTO(5, "Microsoft", List.of(new ListingDTO("XNAS", "MSFT")));
+        final val dto = amazonDto();
         final val captor = ArgumentCaptor.forClass(Company.class);
 
-        final val createdCompanyDto = controller.createCompany(companyDto);
+        final val createdCompanyDto = controller.createCompany(dto);
 
         verify(companies).create(captor.capture());
         final val company = captor.getValue();
-        assertThat(company.getExternalId()).isEqualTo(new CompanyExternalId(5));
-        assertThat(company.getName()).isEqualTo(new CompanyName("Microsoft"));
-        assertThat(company.getStockSymbol()).isEqualTo(new StockSymbol("MSFT"));
+        assertThat(company.getExternalId()).isEqualTo(new CompanyExternalId(dto.getId()));
+        assertThat(company.getName()).isEqualTo(new CompanyName(dto.getName()));
+        assertThat(company.getStockSymbol())
+            .isEqualTo(new StockSymbol(dto.getListings().get(0).getStockSymbol()));
         assertThat(company.getStockExchange()).isEqualTo(stockExchange);
 
-        assertThat(createdCompanyDto.getContent()).isEqualTo(companyDto);
+        assertThat(createdCompanyDto.getContent()).isEqualTo(dto);
         assertThat(createdCompanyDto.getLink("self").isPresent());
-        createdCompanyDto.getLink("self").ifPresent(c -> assertThat(c.getHref()).endsWith("/companies/5"));
+        createdCompanyDto
+            .getLink("self")
+            .ifPresent(c -> assertThat(c.getHref()).endsWith(format("/companies/%d", amazonDto().getId())));
     }
 
     @Test
     public void companyShouldLinkToItself() {
         when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(mock(StockExchange.class));
-        final val companyDto = new CompanyDTO(5, "Microsoft", List.of(new ListingDTO("XNAS", "MSFT")));
+        final val companyDto = amazonDto();
 
         final val createdCompanyDto = controller.createCompany(companyDto);
 
         assertThat(createdCompanyDto.getContent()).isEqualTo(companyDto);
-        assertThat(createdCompanyDto.getRequiredLink("self").getHref()).endsWith(format("/companies/%d", 5));
+        assertThat(createdCompanyDto.getRequiredLink("self").getHref())
+            .endsWith(format("/companies/%d", amazonDto().getId()));
     }
 
     @Test

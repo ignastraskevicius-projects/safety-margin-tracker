@@ -154,7 +154,7 @@ final class DomainClassIntegerBackedObjectValidatorValidatorTest {
         validator.initialize(constrainedBy(ClassB.class));
 
         assertThatExceptionOfType(IllegalArgumentException.class)
-            .isThrownBy(() -> validator.isValid(4, null))
+            .isThrownBy(() -> validator.isValid(any(), null))
             .withMessage("DomainClassConstraint is not configured for 'ClassB' class");
     }
 
@@ -172,7 +172,7 @@ final class DomainClassIntegerBackedObjectValidatorValidatorTest {
             c -> when(c.buildConstraintViolationWithTemplate(ArgumentMatchers.any())).thenReturn(builder)
         );
 
-        assertThat(validator.isValid(4, context)).isFalse();
+        assertThat(validator.isValid(any(), context)).isFalse();
 
         verify(context).buildConstraintViolationWithTemplate(startsWith("this class is always invalid"));
         verify(builder).addConstraintViolation();
@@ -184,7 +184,12 @@ final class DomainClassIntegerBackedObjectValidatorValidatorTest {
         final val validator = new IntegerBackedObjectValidator(supportedTypes);
         validator.initialize(constrainedBy(ClassA.class));
 
-        assertThat(validator.isValid(4, null)).isTrue();
+        assertThat(validator.isValid(any(), null)).isTrue();
+    }
+
+    @SuppressWarnings("checkstyle:magicnumber")
+    private int any() {
+        return 4;
     }
 
     @SuppressWarnings("checkstyle:anoninnerlength")

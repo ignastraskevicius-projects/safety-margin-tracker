@@ -11,6 +11,8 @@ import org.junit.jupiter.params.provider.ValueSource;
 
 public final class CompanyNameTest {
 
+    private static final int MAX_LENGTH_COMPANY_NAME_FOUND_IN_UK = 160;
+
     @Test
     public void shouldNotBeNull() {
         assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> new CompanyName(null));
@@ -26,17 +28,19 @@ public final class CompanyNameTest {
     public void shouldRejectEmptyName() {
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> new CompanyName(""))
-            .withMessage("Company name must be between 1-255 characters");
+            .withMessage("Company name must be between 1-160 characters");
         new CompanyName("a");
     }
 
     @Test
     public void shouldRejectTooLongName() {
-        final val notTooLongName = "c".repeat(255);
-        final val tooLongName = "c".repeat(256);
+        final val overMaxLength = MAX_LENGTH_COMPANY_NAME_FOUND_IN_UK + 1;
+        final val notTooLongName = "c".repeat(MAX_LENGTH_COMPANY_NAME_FOUND_IN_UK);
+        final val tooLongName = "c".repeat(overMaxLength);
+
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> new CompanyName(tooLongName))
-            .withMessage("Company name must be between 1-255 characters");
+            .withMessage("Company name must be between 1-160 characters");
         new CompanyName(notTooLongName);
     }
 

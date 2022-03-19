@@ -2,20 +2,20 @@ package org.ignast.stockinvesting.quotes.persistence.dbmigration;
 
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyList;
 import static java.util.stream.Collectors.toUnmodifiableList;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import lombok.val;
 import org.assertj.core.api.AbstractAssert;
+import org.jetbrains.annotations.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.testcontainers.shaded.org.apache.commons.lang.RandomStringUtils;
 
 public final class MysqlAssert extends AbstractAssert<MysqlAssert, JdbcTemplate> {
 
@@ -31,81 +31,116 @@ public final class MysqlAssert extends AbstractAssert<MysqlAssert, JdbcTemplate>
         return new MysqlAssert(database);
     }
 
-    public MysqlAssert containsTable(final String expectedTable) {
-        final val result = database.queryForList("SHOW TABLES;");
-        expectSingleColumnStartingWithTables(result);
-        return expectResultsToContainTable(result, expectedTable);
+    public void containsTable(final String expectedTableName) {
+        final List<Object> listedTables = getListedTables();
+        assertContainsTable(expectedTableName, listedTables);
     }
 
-    public MysqlAssert notContainsTable(final String expectedTable) {
-        final val result = database.queryForList("SHOW TABLES;");
-        expectSingleColumnStartingWithTables(result);
-        return expectResultsNotToContainTable(result, expectedTable);
+    public void notContainsTable(final String expectedTableName) {
+        final List<Object> listedTables = getListedTables();
+        assertNotContainsTable(expectedTableName, listedTables);
     }
 
-    private MysqlAssert expectResultsToContainTable(
-        final List<Map<String, Object>> result,
-        final String expectedTable
-    ) {
-        final val actualTables = result
+    private List<Object> getListedTables() {
+        final val rows = database.queryForList("SHOW TABLES;");
+        final val columnNameForTables = getColumnNameForTables(rows);
+        final val listedTables = rows
             .stream()
-            .flatMap(row -> row.values().stream())
+            .map(r -> r.get(columnNameForTables))
             .collect(toUnmodifiableList());
-        if (actualTables.contains(expectedTable)) {
-            return null;
-        } else {
-            throw new AssertionError(
-                format(
-                    "List of tables in the database %s expected to contain '%s' table, but '%s' table did not exist",
-                    actualTables,
-                    expectedTable,
-                    expectedTable
-                )
-            );
+        return listedTables;
+    }
+
+    private void assertContainsTable(final String expectedTableName, final List<Object> tables) {
+        if (!tables.contains(expectedTableName)) {
+            throw errorTableNotFound(expectedTableName, tables);
         }
     }
 
-    private MysqlAssert expectResultsNotToContainTable(
-        final List<Map<String, Object>> result,
-        final String expectedTable
-    ) {
-        final val actualTables = result
+    private void assertNotContainsTable(final String expectedTableName, final List<Object> tables) {
+        if (tables.contains(expectedTableName)) {
+            throw errorTableExists(expectedTableName, tables);
+        }
+    }
+
+    private String getColumnNameForTables(final List<Map<String, Object>> rows) {
+        return rows.stream().findFirst().map(row -> extractColumnNameForTablesFrom(row)).orElse("Tables");
+    }
+
+    @NotNull
+    private String extractColumnNameForTablesFrom(final Map<String, Object> row) {
+        final val columnNames = row.keySet().stream().toList();
+        final String theOnlyColumnName = getTheOnlyColumnName(columnNames);
+        if (!theOnlyColumnName.startsWith("Tables")) {
+            throw errorNoTablesColumn(columnNames);
+        }
+        return theOnlyColumnName;
+    }
+
+    private String getTheOnlyColumnName(final List<String> columnNames) {
+        assertThatHasOnlyOneColumnName(columnNames);
+        final val theOnlyColumn = columnNames
             .stream()
-            .flatMap(row -> row.values().stream())
-            .collect(toUnmodifiableList());
-        if (actualTables.contains(expectedTable)) {
-            throw new AssertionError(
-                format(
-                    "List of tables in the database %s expected not to contain '%s' table, but '%s' table did exist",
-                    actualTables,
-                    expectedTable,
-                    expectedTable
-                )
-            );
-        }
-        return null;
+            .findFirst()
+            .orElseThrow(() -> errorNoColumnsReturned());
+        return theOnlyColumn;
     }
 
-    private void expectSingleColumnStartingWithTables(final List<Map<String, Object>> result) {
-        if (!result.isEmpty()) {
-            final val columns = result.get(0).keySet().stream().toList();
-            if (columns.size() > 1) {
-                throw new AssertionError(
-                    format(
-                        "Results from the database showing tables expected to have 1 column, but had multiple %s",
-                        columns
-                    )
-                );
-            } else if (columns.size() == 1 && !columns.get(0).startsWith("Tables")) {
-                throw new AssertionError(
-                    format(
-                        "Results from the database showing tables expected to have a column starting with 'Tables', " +
-                        "but was %s",
-                        columns
-                    )
-                );
-            }
+    private void assertThatHasOnlyOneColumnName(final List<String> columnNames) {
+        if (columnNames.size() > 1) {
+            throw errorMultipleColumns(columnNames);
         }
+        if (columnNames.isEmpty()) {
+            errorNoColumnsReturned();
+        }
+    }
+
+    private AssertionError errorNoColumnsReturned() {
+        return new AssertionError("Broken database query result: result contains no columns");
+    }
+
+    private AssertionError errorTableNotFound(final String expectedTable, final List<Object> actualTables) {
+        return new AssertionError(
+            format(
+                "List of tables in the database %s expected to contain '%s' table, " +
+                "but '%s' table did not exist",
+                actualTables,
+                expectedTable,
+                expectedTable
+            )
+        );
+    }
+
+    private AssertionError errorTableExists(final String expectedTable, final List<Object> actualTables) {
+        return new AssertionError(
+            format(
+                "List of tables in the database %s expected not to contain '%s' table, " +
+                "but '%s' table did exist",
+                actualTables,
+                expectedTable,
+                expectedTable
+            )
+        );
+    }
+
+    private AssertionError errorNoTablesColumn(final List<String> columns) {
+        return new AssertionError(
+            format(
+                "Results from the database showing tables expected to have a column " +
+                "starting with 'Tables', but was %s",
+                columns
+            )
+        );
+    }
+
+    private AssertionError errorMultipleColumns(final List<String> columns) {
+        return new AssertionError(
+            format(
+                "Results from the database showing tables expected to have 1 column, " +
+                "but had multiple %s",
+                columns
+            )
+        );
     }
 }
 
@@ -115,12 +150,13 @@ final class MysqlAssertContainsTableTest {
 
     @Test
     public void shouldFailIfNoTableExistsInDatabase() {
-        when(database.queryForList("SHOW TABLES;")).thenReturn(emptyList());
+        when(database.queryForList("SHOW TABLES;")).thenReturn(Collections.emptyList());
 
         assertThatExceptionOfType(AssertionError.class)
             .isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("client"))
             .withMessage(
-                "List of tables in the database [] expected to contain 'client' table, but 'client' table did not exist"
+                "List of tables in the database [] expected to contain 'client' table, " +
+                "but 'client' table did not exist"
             );
     }
 
@@ -138,6 +174,15 @@ final class MysqlAssertContainsTableTest {
     }
 
     @Test
+    public void shouldFailIfQueryingDatabaseResultsInNoColumnsReturned() {
+        when(database.queryForList("SHOW TABLES;")).thenReturn(List.of(Collections.emptyMap()));
+
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("order"))
+            .withMessage("Broken database query result: result contains no columns");
+    }
+
+    @Test
     public void shouldFailIfExpectedTableNotExistsInDatabase() {
         final val tablesNotContainingUser = asList(
             asMap("Tables_in_schema", "client"),
@@ -149,43 +194,40 @@ final class MysqlAssertContainsTableTest {
         assertThatExceptionOfType(AssertionError.class)
             .isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("user"))
             .withMessage(
-                "List of tables in the database [client, provider, order] expected to contain 'user' table, " +
-                "but 'user' table did not exist"
+                "List of tables in the database [client, provider, order] " +
+                "expected to contain 'user' table, but 'user' table did not exist"
             );
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldFailIfResultsContainMoreThanOneColumn() {
-        final val secondColumn = "another_column_" + RandomStringUtils.randomAlphabetic(3).toLowerCase();
         when(database.queryForList("SHOW TABLES;"))
-            .thenReturn(aRecordInOrderedColumns("Tables_in_schema", "provider", secondColumn, "client"));
+            .thenReturn(aRecordInOrderedColumns("Tables_in_schema", "provider", "another_column", "client"));
 
         assertThatExceptionOfType(AssertionError.class)
             .isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("order"))
             .withMessage(
-                format(
-                    "Results from the database showing tables expected to have 1 column, " +
-                    "but had multiple [Tables_in_schema, %s]",
-                    secondColumn
-                )
+                "Results from the database showing tables expected to have 1 column, " +
+                "but had multiple [Tables_in_schema, another_column]"
             );
     }
 
     @Test
     public void shouldFailIfResultsDoNotContainColumnStartingWithLiteralTables() {
         when(database.queryForList("SHOW TABLES;"))
-            .thenReturn(List.of(asMap("column_not_starting_with_tables", "any")));
+            .thenReturn(List.of(Map.of("column_not_starting_with_tables", "any")));
 
         assertThatExceptionOfType(AssertionError.class)
             .isThrownBy(() -> MysqlAssert.assertThat(database).containsTable("order"))
             .withMessage(
-                "Results from the database showing tables expected to have a column starting with 'Tables', " +
-                "but was [column_not_starting_with_tables]"
+                "Results from the database showing tables expected to have a column " +
+                "starting with 'Tables', but was [column_not_starting_with_tables]"
             );
     }
 
     private Map<String, List<Map<String, Object>>> tablesWithResultsContainingIt() {
-        final val threeTables = asList(
+        final List<Map<String, Object>> threeTables = asList(
             asMap("Tables_in_schema", "client"),
             asMap("Tables_in_schema", "order"),
             asMap("Tables_in_schema", "item")
@@ -220,13 +262,13 @@ final class MysqlAssertContainsTableTest {
     }
 }
 
-class MysqlAssertNotContainsTableTest {
+final class MysqlAssertNotContainsTableTest {
 
     private final JdbcTemplate database = mock(JdbcTemplate.class);
 
     @Test
     public void shouldSucceedIfNoTableExistsInDatabase() {
-        when(database.queryForList("SHOW TABLES;")).thenReturn(emptyList());
+        when(database.queryForList("SHOW TABLES;")).thenReturn(Collections.emptyList());
 
         MysqlAssert.assertThat(database).notContainsTable("client");
     }
@@ -237,6 +279,15 @@ class MysqlAssertNotContainsTableTest {
             .thenReturn(List.of(asMap("Tables_in_schema", "provider")));
 
         MysqlAssert.assertThat(database).notContainsTable("order");
+    }
+
+    @Test
+    public void shouldFailIfQueryingDatabaseResultsInNoColumnsReturned() {
+        when(database.queryForList("SHOW TABLES;")).thenReturn(List.of(Collections.emptyMap()));
+
+        assertThatExceptionOfType(AssertionError.class)
+            .isThrownBy(() -> MysqlAssert.assertThat(database).notContainsTable("order"))
+            .withMessage("Broken database query result: result contains no columns");
     }
 
     private Map<String, List<Map<String, Object>>> tableWithResultsNotContainingIt() {
@@ -259,19 +310,16 @@ class MysqlAssertNotContainsTableTest {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldFailIfResultsContainMoreThanOneColumn() {
-        final val secondColumn = "another_column_" + RandomStringUtils.randomAlphabetic(3).toLowerCase();
         when(database.queryForList("SHOW TABLES;"))
-            .thenReturn(aRecordInOrderedColumns("Tables_in_schema", "provider", secondColumn, "client"));
+            .thenReturn(aRecordInOrderedColumns("Tables_in_schema", "provider", "another_column", "client"));
 
         assertThatExceptionOfType(AssertionError.class)
             .isThrownBy(() -> MysqlAssert.assertThat(database).notContainsTable("order"))
             .withMessage(
-                format(
-                    "Results from the database showing tables expected to have 1 column, " +
-                    "but had multiple [Tables_in_schema, %s]",
-                    secondColumn
-                )
+                "Results from the database showing tables expected to have 1 column, " +
+                "but had multiple [Tables_in_schema, another_column]"
             );
     }
 
@@ -283,8 +331,8 @@ class MysqlAssertNotContainsTableTest {
         assertThatExceptionOfType(AssertionError.class)
             .isThrownBy(() -> MysqlAssert.assertThat(database).notContainsTable("order"))
             .withMessage(
-                "Results from the database showing tables expected to have a column starting with 'Tables', " +
-                "but was [column_not_starting_with_tables]"
+                "Results from the database showing tables expected to have a column " +
+                "starting with 'Tables', but was [column_not_starting_with_tables]"
             );
     }
 

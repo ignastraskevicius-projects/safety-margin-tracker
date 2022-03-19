@@ -22,6 +22,8 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 @Testcontainers
 public final class AppDbMigrationTest {
 
+    private static final int MAX_COMPANY_NAME_LENGTH = 160;
+
     @Container
     private static final MySQLContainer APP_DB = AppDbContainer.singleton();
 
@@ -179,7 +181,7 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldPermitLongEnoughCompanyNames() {
-            final val notTooLongName = "c".repeat(255);
+            final val notTooLongName = "c".repeat(MAX_COMPANY_NAME_LENGTH);
             db.execute(
                 format(
                     """
@@ -192,7 +194,7 @@ public final class AppDbMigrationTest {
 
         @Test
         public void shouldPermitLongEnoughJson() {
-            final val notTooLongName = "c".repeat(255);
+            final val notTooLongName = "c".repeat(MAX_COMPANY_NAME_LENGTH + 1);
             final val notTooLongJson = format(
                 """
                         {

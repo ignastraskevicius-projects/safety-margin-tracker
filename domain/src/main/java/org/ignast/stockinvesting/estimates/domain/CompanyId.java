@@ -6,6 +6,8 @@ import lombok.val;
 
 public final class CompanyId {
 
+    private static final int UUID_LENGTH = 36;
+
     private CompanyId() {}
 
     public static UUID toUUID(@NonNull final String id) {
@@ -27,7 +29,7 @@ public final class CompanyId {
     }
 
     private static void expecte36Characters(final String id) {
-        if (id.length() != 36) {
+        if (id.length() != UUID_LENGTH) {
             throw new IllegalArgumentException("Must consist of 36 characters");
         }
     }

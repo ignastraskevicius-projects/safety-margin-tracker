@@ -17,10 +17,16 @@ import org.springframework.http.HttpStatus;
 
 public final class GenericErrorControllerTest {
 
+    private static final int NOT_FOUND = 404;
+
+    private static final int SERVICE_UNAVAILABLE = 503;
+
+    private static final int BAD_REQUEST = 400;
+
     private final GenericErrorController controller = new GenericErrorController();
 
     @ParameterizedTest
-    @ValueSource(ints = { 404, 503 })
+    @ValueSource(ints = { NOT_FOUND, SERVICE_UNAVAILABLE })
     public void shouldPreserveHttpStatus(final int statusCode) {
         final val request = MockitoUtils.mock(
             HttpServletRequest.class,
@@ -63,11 +69,11 @@ public final class GenericErrorControllerTest {
     @Test
     public void shouldNotExposeDetailsAboutClientErrors() {
         final val request = mock(HttpServletRequest.class);
-        when(request.getAttribute(ERROR_STATUS_CODE)).thenReturn(400);
+        when(request.getAttribute(ERROR_STATUS_CODE)).thenReturn(BAD_REQUEST);
 
         final val response = controller.handleError(request);
 
-        assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody().getErrorName()).isNull();
     }
 }

@@ -129,7 +129,7 @@ final class CompanyControllerNameParsingIT extends CompanyControllerITBase {
     public void shouldRejectCompanyWithInvalidName() throws Exception {
         when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
         assertThatRequest("")
-            .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-255 characters"));
+            .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-160 characters"));
     }
 }
 

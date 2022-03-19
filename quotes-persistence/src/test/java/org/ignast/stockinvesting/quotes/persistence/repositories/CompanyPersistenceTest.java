@@ -57,10 +57,11 @@ final class CompanyPersistenceTest {
     @Test
     public void shouldInsertCompany() {
         final StockExchange nasdaq = new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"));
+        final val externalId = 6;
 
         companyRepository.save(
             Company.create(
-                new CompanyExternalId(6),
+                new CompanyExternalId(externalId),
                 new CompanyName("Amazon"),
                 new StockSymbol("AMZN"),
                 nasdaq
@@ -70,13 +71,14 @@ final class CompanyPersistenceTest {
 
         final val result = jdbcTemplate.queryForMap("SELECT * FROM company;");
         assertThat((Integer) result.get("id")).isNotNull().isGreaterThan(0);
-        assertThat(result.get("external_id")).isEqualTo(6);
+        assertThat(result.get("external_id")).isEqualTo(externalId);
         assertThat(result.get("company_name")).isEqualTo("Amazon");
         assertThat(result.get("stock_symbol")).isEqualTo("AMZN");
         assertThat(result.get("market_identifier_code")).isEqualTo("XNAS");
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldFindCompanyByExternalId() {
         jdbcTemplate.execute(
             "INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) " +

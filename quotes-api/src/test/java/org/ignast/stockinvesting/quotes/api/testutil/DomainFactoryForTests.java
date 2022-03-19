@@ -9,6 +9,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.Company;
 import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
@@ -24,6 +25,7 @@ public final class DomainFactoryForTests {
 
     private DomainFactoryForTests() {}
 
+    @SuppressWarnings("checkstyle:magicnumber")
     public static Company amazon() {
         return new Company(
             new CompanyExternalId(6),
@@ -53,7 +55,8 @@ final class DomainFactoryForTestsTest {
 
     @Test
     public void shouldCreateAmazon() {
-        assertThat(amazon().getExternalId()).isEqualTo(new CompanyExternalId(6));
+        final val externalAmazonIdForTests = 6;
+        assertThat(amazon().getExternalId()).isEqualTo(new CompanyExternalId(externalAmazonIdForTests));
         assertThat(amazon().getName()).isEqualTo(new CompanyName("Amazon"));
         assertThat(amazon().getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
         assertThat(amazon().getStockExchange().getMarketIdentifierCode())

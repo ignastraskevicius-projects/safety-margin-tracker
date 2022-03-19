@@ -50,6 +50,7 @@ public final class DockerizedDevMysqlIT {
     }
 
     @Test
+    @SuppressWarnings("checkstyle:magicnumber")
     public void shouldCreateCompany() {
         companyRepository.save(
             Company.create(

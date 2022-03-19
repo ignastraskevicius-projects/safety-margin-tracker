@@ -4,7 +4,6 @@ import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTest
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceContentMatchesJson;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceLinksMatchesJson;
-import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
@@ -29,13 +28,23 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
     }
 
     @Test
-    public void retrievedCompanyShouldContainLinkToItself() throws Exception {
+    public void retrievedCompanyShouldContainLinks() throws Exception {
         when(companies.findByExternalId(any())).thenReturn(amazon());
         mockMvc
             .perform(get("/companies/5").accept(APP_V1))
             .andExpect(status().isOk())
             .andExpect(header().string("Content-Type", APP_V1))
-            .andExpect(resourceLinksMatchesJson(link("self", "http://localhost/companies/5")));
+            .andExpect(
+                resourceLinksMatchesJson(
+                    """
+                           {
+                                "_links":{
+                                    "self":{"href":"http://localhost/companies/5"},
+                                    "quotes:quotedPrice":{"href":"http://localhost/companies/5/price"}
+                                }
+                            }"""
+                )
+            );
     }
 
     @Test

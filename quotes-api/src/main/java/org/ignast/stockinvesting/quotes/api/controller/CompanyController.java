@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.quotes.api.controller;
 
 import static org.ignast.stockinvesting.quotes.api.controller.VersionedApiMediaTypes.V1;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.List;
 import javax.validation.Valid;
@@ -28,6 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/companies")
 public class CompanyController {
 
+    private static final String QUOTED_PRICE_REL = "quotes:quotedPrice";
+
     private final Companies companies;
 
     private final StockExchanges stockExchanges;
@@ -43,16 +46,24 @@ public class CompanyController {
     public EntityModel<CompanyDTO> createCompany(@Valid @RequestBody final CompanyDTO companyDTO) {
         final val externalId = companyDTO.getId();
         companies.create(mapFromDto(companyDTO));
-        final val selfLink = linkTo(CompanyController.class).slash(externalId).withSelfRel();
-        return EntityModel.of(companyDTO, selfLink);
+
+        final val selfLink = linkTo(methodOn(CompanyController.class).retrieveCompanyById(externalId))
+            .withSelfRel();
+        final val priceLink = linkTo(
+            methodOn(PriceController.class).retrievePriceForCompanyWithId(externalId)
+        )
+            .withRel(QUOTED_PRICE_REL);
+        return EntityModel.of(companyDTO, selfLink, priceLink);
     }
 
     @GetMapping(value = "/{id}", produces = V1)
     public EntityModel<CompanyDTO> retrieveCompanyById(@PathVariable final int id) {
         final val company = companies.findByExternalId(new CompanyExternalId(id));
-        final val selfLink = linkTo(CompanyController.class).slash(id).withSelfRel();
 
-        return EntityModel.of(mapToDto(company), selfLink);
+        final val selfLink = linkTo(CompanyController.class).slash(id).withSelfRel();
+        final val priceLink = linkTo(methodOn(PriceController.class).retrievePriceForCompanyWithId(id))
+            .withRel(QUOTED_PRICE_REL);
+        return EntityModel.of(mapToDto(company), selfLink, priceLink);
     }
 
     private Company mapFromDto(final CompanyDTO companyDTO) {

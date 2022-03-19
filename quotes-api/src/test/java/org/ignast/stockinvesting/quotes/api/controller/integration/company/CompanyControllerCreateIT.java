@@ -11,7 +11,6 @@ import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonError
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceContentMatchesJson;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceLinksMatchesJson;
-import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -51,13 +50,23 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
     }
 
     @Test
-    public void createdCompanyShouldContainLinkToItself() throws Exception {
+    public void createdCompanyShouldContainLinks() throws Exception {
         when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
         mockMvc
             .perform(put("/companies/").contentType(APP_V1).content(bodyFactory.createAmazon()))
             .andExpect(status().isCreated())
             .andExpect(header().string("Content-Type", APP_V1))
-            .andExpect(resourceLinksMatchesJson(link("self", "http://localhost/companies/6")));
+            .andExpect(
+                resourceLinksMatchesJson(
+                    """
+                           {
+                                "_links":{
+                                    "self":{"href":"http://localhost/companies/6"},
+                                    "quotes:quotedPrice":{"href":"http://localhost/companies/6/price"}
+                                }
+                            }"""
+                )
+            );
     }
 
     @Test
@@ -128,7 +137,7 @@ final class CompanyControllerNameParsingIT extends CompanyControllerITBase {
     @Test
     public void shouldRejectCompanyWithInvalidName() throws Exception {
         when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
-        assertThatRequest("")
+        assertThatRequest(bodyFactory.createWithNameJsonPair("\"name\":\"\""))
             .failsValidation(forInvalidValueAt("$.name", "Company name must be between 1-160 characters"));
     }
 }

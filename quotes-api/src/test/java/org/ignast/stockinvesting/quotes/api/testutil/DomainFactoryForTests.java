@@ -19,6 +19,7 @@ import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
+import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Test;
 
 public final class DomainFactoryForTests {
@@ -27,11 +28,11 @@ public final class DomainFactoryForTests {
 
     @SuppressWarnings("checkstyle:magicnumber")
     public static Company amazon() {
-        return new Company(
+        return Company.create(
             new CompanyExternalId(6),
             new CompanyName("Amazon"),
             new StockSymbol("AMZN"),
-            new StockExchanges(new StubQuotesRepository()).getFor(new MarketIdentifierCode("XNAS"))
+            new StockExchanges((s, m) -> new BigDecimal("3000")).getFor(new MarketIdentifierCode("XNAS"))
         );
     }
 
@@ -61,10 +62,11 @@ final class DomainFactoryForTestsTest {
         assertThat(amazon().getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
         assertThat(amazon().getStockExchange().getMarketIdentifierCode())
             .isEqualTo(new MarketIdentifierCode("XNAS"));
+        assertThat(amazon().getQuotedPrice()).isEqualTo(Money.of(new BigDecimal("3000"), "USD"));
     }
 
     @Test
-    public void shouldCreateStockExchangeNotSupportinSymbol() {
+    public void shouldCreateStockExchangeNotSupportingSymbol() {
         assertThatExceptionOfType(StockSymbolNotSupportedInThisMarket.class)
             .isThrownBy(() -> exchangeNotSupportingAnySymbol().getQuotedPrice(new StockSymbol("AAAA")));
     }

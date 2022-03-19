@@ -16,7 +16,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.val;
 import org.javamoney.moneta.Money;
 
-@RequiredArgsConstructor
+@RequiredArgsConstructor(access = AccessLevel.PRIVATE)
 @NoArgsConstructor(access = AccessLevel.PROTECTED) //JPA requirement for entities
 @Entity
 public class Company {
@@ -42,9 +42,9 @@ public class Company {
     @Getter
     private StockSymbol stockSymbol;
 
-    @Embedded
     @NonNull
     @Getter
+    @Column(name = "market_identifier_code")
     private StockExchange stockExchange;
 
     public static Company create(

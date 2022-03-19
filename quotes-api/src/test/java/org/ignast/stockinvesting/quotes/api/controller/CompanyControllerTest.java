@@ -37,7 +37,7 @@ public final class CompanyControllerTest {
         final val dto = amazonDto();
         final val captor = ArgumentCaptor.forClass(Company.class);
 
-        final val createdCompanyDto = controller.createCompany(dto);
+        controller.createCompany(dto);
 
         verify(companies).create(captor.capture());
         final val company = captor.getValue();
@@ -46,24 +46,30 @@ public final class CompanyControllerTest {
         assertThat(company.getStockSymbol())
             .isEqualTo(new StockSymbol(dto.getListings().get(0).getStockSymbol()));
         assertThat(company.getStockExchange()).isEqualTo(stockExchange);
-
-        assertThat(createdCompanyDto.getContent()).isEqualTo(dto);
-        assertThat(createdCompanyDto.getLink("self").isPresent());
-        createdCompanyDto
-            .getLink("self")
-            .ifPresent(c -> assertThat(c.getHref()).endsWith(format("/companies/%d", amazonDto().getId())));
     }
 
     @Test
-    public void companyShouldLinkToItself() {
-        when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(mock(StockExchange.class));
-        final val companyDto = amazonDto();
+    public void createdCompanyShouldLinkToItself() {
+        final val stockExchange = mock(StockExchange.class);
+        when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(stockExchange);
+        final val dto = amazonDto();
 
-        final val createdCompanyDto = controller.createCompany(companyDto);
+        final val createdCompanyDto = controller.createCompany(dto);
 
-        assertThat(createdCompanyDto.getContent()).isEqualTo(companyDto);
         assertThat(createdCompanyDto.getRequiredLink("self").getHref())
             .endsWith(format("/companies/%d", amazonDto().getId()));
+    }
+
+    @Test
+    public void createdCompanyShouldLinkToPrice() {
+        final val stockExchange = mock(StockExchange.class);
+        when(stockExchanges.getFor(new MarketIdentifierCode("XNAS"))).thenReturn(stockExchange);
+        final val dto = amazonDto();
+
+        final val createdCompanyDto = controller.createCompany(dto);
+
+        assertThat(createdCompanyDto.getRequiredLink("quotes:quotedPrice").getHref())
+            .endsWith(format("/companies/%d/price", amazonDto().getId()));
     }
 
     @Test
@@ -94,5 +100,16 @@ public final class CompanyControllerTest {
 
         assertThat(retrievedCompany.getRequiredLink("self").getHref())
             .endsWith(format("/companies/%d", amazonExternalId));
+    }
+
+    @Test
+    public void retrievedCompanyShouldLinkToItsPrice() {
+        final val amazonExternalId = amazon().getExternalId().get();
+        when(companies.findByExternalId(new CompanyExternalId(amazonExternalId))).thenReturn(amazon());
+
+        final val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
+
+        assertThat(retrievedCompany.getRequiredLink("quotes:quotedPrice").getHref())
+            .endsWith(format("/companies/%d/price", amazonExternalId));
     }
 }

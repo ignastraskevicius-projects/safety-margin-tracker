@@ -1,7 +1,9 @@
 package org.ignast.stockinvesting.quotes.persistence.integrationtest;
 
+import static java.math.BigDecimal.TEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
+import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.constantPriceExchanges;
 
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.Company;
@@ -11,6 +13,7 @@ import org.ignast.stockinvesting.quotes.domain.CompanyRepository;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
+import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
@@ -78,6 +81,11 @@ public final class DockerizedDevMysqlIT {
         @Bean
         FlywayMigrationStrategy noMigration() {
             return f -> {};
+        }
+
+        @Bean
+        StockExchanges constantPriceStockExchanges() {
+            return constantPriceExchanges(Money.of(TEN, "USD"));
         }
     }
 }

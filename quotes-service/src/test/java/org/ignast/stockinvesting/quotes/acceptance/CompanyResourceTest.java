@@ -76,35 +76,12 @@ public final class CompanyResourceTest {
 
     @Test
     public void shouldCreateCompany() throws JSONException {
-        final val microsoft =
-            """
-                            {
-                                "id":5,
-                                "name":"Microsoft",
-                                "listings":[{
-                                    "marketIdentifier":"XNAS",
-                                    "stockSymbol":"MSFT"
-                                }]
-                            }""";
         final val company = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", microsoft))
+            .hop(f -> f.put("quotes:company", getMicrosoft()))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(CREATED);
-        assertEquals(
-            "should create company",
-            """
-                            {
-                                "id":5,
-                                "name":"Microsoft",
-                                "listings":[{
-                                    "marketIdentifier":"XNAS",
-                                    "stockSymbol":"MSFT"
-                                }]
-                            }""",
-            company.getBody(),
-            false
-        );
+        assertEquals("should create company", getMicrosoft(), company.getBody(), false);
     }
 
     @Test
@@ -125,11 +102,9 @@ public final class CompanyResourceTest {
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertEquals(
-            "should create company",
+            "fails to create company",
             """
-                            {
-                                "errorName":"stockSymbolNotSupportedInThisMarket"
-                            }""",
+                        {"errorName":"stockSymbolNotSupportedInThisMarket"}""",
             company.getBody(),
             false
         );
@@ -137,36 +112,45 @@ public final class CompanyResourceTest {
 
     @Test
     public void shouldRetrieveCreatedCompany() throws JSONException {
-        final val microsoft =
-            """
-                            {
-                                "id":5,
-                                "name":"Microsoft",
-                                "listings":[{
-                                    "marketIdentifier":"XNAS",
-                                    "stockSymbol":"AMZN"
-                                }]
-                            }""";
         final val company = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", microsoft))
+            .hop(f -> f.put("quotes:company", getMicrosoft()))
             .hop(f -> f.get("self"))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(OK);
+        assertEquals("should create company", getMicrosoft(), company.getBody(), false);
+    }
+
+    @Test
+    public void shouldRetrieveQuotedPrice() throws JSONException {
+        final val quotedPrice = quotesTraversors
+            .startAt(rootResourceOn(port))
+            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .hop(f -> f.get("quotes:quotedPrice"))
+            .perform();
+        assertThat(quotedPrice.getStatusCode()).isEqualTo(OK);
         assertEquals(
-            "should create company",
+            "should retrieve price",
             """
                             {
-                                "id":5,
-                                "name":"Microsoft",
-                                "listings":[{
-                                    "marketIdentifier":"XNAS",
-                                    "stockSymbol":"AMZN"
-                                }]
+                                "amount":"128.5",
+                                "currency":"USD"
                             }""",
-            company.getBody(),
+            quotedPrice.getBody(),
             false
         );
+    }
+
+    private String getMicrosoft() {
+        return """
+                {
+                    "id":5,
+                    "name":"Microsoft",
+                    "listings":[{
+                        "marketIdentifier":"XNAS",
+                        "stockSymbol":"MSFT"
+                    }]
+                }""";
     }
 
     @TestConfiguration

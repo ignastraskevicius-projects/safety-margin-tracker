@@ -1,8 +1,10 @@
 package org.ignast.stockinvesting.quotes.persistence.repositories;
 
+import static java.math.BigDecimal.TEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
+import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.constantPriceExchanges;
 
 import java.sql.SQLException;
 import javax.sql.DataSource;
@@ -16,6 +18,7 @@ import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.ignast.stockinvesting.quotes.persistence.dbmigration.ProductionDatabaseMigrationVersions;
+import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayConfigurationCustomizer;
@@ -32,6 +35,8 @@ import org.springframework.test.context.transaction.TestTransaction;
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @SuppressWarnings("checkstyle:innertypelast")
 final class CompanyPersistenceTest {
+
+    private static final Money TEN_USD = Money.of(TEN, "USD");
 
     @Autowired
     private CompanyRepository companyRepository;
@@ -91,8 +96,8 @@ final class CompanyPersistenceTest {
             assertThat(c.getExternalId()).isEqualTo(new CompanyExternalId(16));
             assertThat(c.getName()).isEqualTo(new CompanyName("Amazon"));
             assertThat(c.getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
-            assertThat(c.getStockExchange().getMarketIdentifierCode())
-                .isEqualTo(new MarketIdentifierCode("XNAS"));
+            assertThat(c.getStockExchange().getQuotedPrice(new StockSymbol("AMXN")))
+                .isEqualTo(Money.of(TEN, "USD"));
         });
     }
 
@@ -145,5 +150,14 @@ final class CompanyPersistenceTest {
     private void commit() {
         TestTransaction.flagForCommit();
         TestTransaction.end();
+    }
+
+    @TestConfiguration
+    static class StockExchangesConfiguration {
+
+        @Bean
+        StockExchanges constantPriceStockExchanges() {
+            return constantPriceExchanges(TEN_USD);
+        }
     }
 }

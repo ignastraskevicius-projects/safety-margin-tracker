@@ -2,30 +2,19 @@ package org.ignast.stockinvesting.quotes.domain;
 
 import static java.lang.String.format;
 
-import javax.persistence.Embeddable;
-import javax.persistence.Embedded;
-import javax.persistence.Transient;
 import lombok.NonNull;
 import lombok.val;
 import org.javamoney.moneta.Money;
 
-@Embeddable
-public class StockExchange {
+public final class StockExchange {
 
     private static final int PENCE_IN_POUND = 100;
 
-    @Embedded
-    private MarketIdentifierCode marketIdentifierCode;
+    private final MarketIdentifierCode marketIdentifierCode;
 
-    @Transient
-    private CurrencyCode quoteCurrency;
+    private final CurrencyCode quoteCurrency;
 
-    @Transient
-    private QuotesRepository quotes;
-
-    protected StockExchange() {
-        //JPA requirement entities to have default constructor
-    }
+    private final QuotesRepository quotes;
 
     private StockExchange(
         @NonNull final MarketIdentifierCode marketIdentifierCode,

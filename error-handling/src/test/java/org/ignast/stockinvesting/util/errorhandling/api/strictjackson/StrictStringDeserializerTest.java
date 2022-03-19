@@ -93,7 +93,11 @@ final class StrictStringDeserializerTest {
 
     private static final class IntWrapper {
 
-        public int intValue;
+        private final int intValue;
+
+        public IntWrapper(@JsonProperty(value = "intValue", required = true) final int intValue) {
+            this.intValue = intValue;
+        }
     }
 
     private static final class StringWrapper {

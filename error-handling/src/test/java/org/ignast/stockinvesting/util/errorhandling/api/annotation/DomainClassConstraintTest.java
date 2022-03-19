@@ -136,7 +136,7 @@ final class DomainClassIntegerBackedObjectValidatorValidatorTest {
     public void shouldFailToConstructWithNull() {
         assertThatNullPointerExceptionIsThrownBy(
             () -> new IntegerBackedObjectValidator(null),
-            () -> new IntegerBackedObjectValidator((supporting(null, null)))
+            () -> new IntegerBackedObjectValidator(supporting(null, null))
         );
     }
 

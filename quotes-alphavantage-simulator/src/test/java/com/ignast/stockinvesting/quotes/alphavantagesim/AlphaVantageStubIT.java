@@ -143,9 +143,9 @@ final class DockerizedAlphaVantageStubIT {
 @JsonPropertyOrder({ "function", "symbol", "apikey" })
 final class QueryParams {
 
-    private static String API_KEY = "1OFDQOSYMBH3NP";
+    private static final String API_KEY = "1OFDQOSYMBH3NP";
 
-    private static String GLOBAL_QUOTE = "GLOBAL_QUOTE";
+    private static final String GLOBAL_QUOTE = "GLOBAL_QUOTE";
 
     private final String function;
 

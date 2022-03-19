@@ -32,9 +32,11 @@ abstract class CompanyControllerIntegrationTestBase {
 
     protected static final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.estimates-v1.hal+json";
 
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
 
     @Autowired
+    @SuppressWarnings("checkstyle:visibilitymodifier")
     protected MockMvc mockMvc;
 
     MockMvcAssert assertThatRequest(final String body) throws Exception {

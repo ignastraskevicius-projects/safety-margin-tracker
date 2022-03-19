@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import java.util.Collections;
 import java.util.Currency;
 import lombok.val;
 import org.ignast.stockinvesting.domain.Companies;
@@ -24,13 +23,7 @@ final class CompanyControllerTest {
     @ParameterizedTest
     @ValueSource(strings = { "invalidCurrency", "anotherInvalidCurrency" })
     public void shouldFailToCreateCompanyWithInvalidCurrency(final String currency) {
-        final val company = new CompanyDTO(
-            "anyId",
-            "anyName",
-            "anyHomeCountry",
-            currency,
-            Collections.emptyList()
-        );
+        final val company = new CompanyDTO("anyId", "anyName", "anyHomeCountry", currency);
 
         assertThatExceptionOfType(IllegalArgumentException.class)
             .isThrownBy(() -> controller.defineCompany(company));
@@ -39,13 +32,7 @@ final class CompanyControllerTest {
     @Test
     public void shouldCreateCompany() {
         final val currencyCode = "USD";
-        final val company = new CompanyDTO(
-            "someId",
-            "Santander",
-            "FR",
-            currencyCode,
-            Collections.emptyList()
-        );
+        final val company = new CompanyDTO("someId", "Santander", "FR", currencyCode);
         final val captor = ArgumentCaptor.forClass(Company.class);
 
         controller.defineCompany(company);

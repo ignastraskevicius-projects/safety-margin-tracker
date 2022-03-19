@@ -8,17 +8,19 @@ import org.springframework.stereotype.Service;
 @Service
 public class StockExchanges {
 
+    private static final String USD = "USD";
+
     private final Map<MarketIdentifierCode, StockExchange> supportedStockExchanges;
 
     public StockExchanges(final QuotesRepository quotes) {
         supportedStockExchanges =
             Map.ofEntries(
                 newStockExchange(new MarketIdentifierCode("XFRA"), new CurrencyCode("EUR"), quotes),
-                newStockExchange(new MarketIdentifierCode("XNYS"), new CurrencyCode("USD"), quotes),
+                newStockExchange(new MarketIdentifierCode("XNYS"), new CurrencyCode(USD), quotes),
                 newStockExchange(new MarketIdentifierCode("XTSE"), new CurrencyCode("CAD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XHKG"), new CurrencyCode("HKD"), quotes),
                 newStockExchange(new MarketIdentifierCode("XASX"), new CurrencyCode("AUD"), quotes),
-                newStockExchange(new MarketIdentifierCode("XNAS"), new CurrencyCode("USD"), quotes),
+                newStockExchange(new MarketIdentifierCode("XNAS"), new CurrencyCode(USD), quotes),
                 newStockExchange(new MarketIdentifierCode("XLON"), new CurrencyCode("GBP"), quotes)
             );
     }

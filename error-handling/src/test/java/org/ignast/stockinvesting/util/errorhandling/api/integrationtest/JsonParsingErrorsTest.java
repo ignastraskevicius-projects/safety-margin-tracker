@@ -35,10 +35,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+@SuppressWarnings("checkstyle:outertypefilename")
 @WebMvcTest(ErrorExtractorConfiguration.class)
 final class UnparsableJsonErrorsTest {
 
     private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
+
+    private static final String ROOT = "/";
 
     @Autowired
     private MockMvc mockMvc;
@@ -46,7 +49,7 @@ final class UnparsableJsonErrorsTest {
     @Test
     public void shouldRejectCompaniesBeingDefinedViaBlankBody() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
     }
@@ -54,7 +57,7 @@ final class UnparsableJsonErrorsTest {
     @Test
     public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("not-a-json-object"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("not-a-json-object"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
     }
@@ -72,10 +75,10 @@ final class UnparsableJsonErrorsTest {
     static class TestController {
 
         static String rootResourceOn(final int port) {
-            return "http://localhost:" + port + "/";
+            return "http://localhost:" + port + ROOT;
         }
 
-        @PostMapping(value = "/", consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
+        @PostMapping(value = ROOT, consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
         public HttpEntity<String> updateTest(@RequestBody final TestDTO b) {
             return new HttpEntity<>("");
         }
@@ -87,6 +90,8 @@ final class UnparsableJsonErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 final class JsonStringFieldErrorsTest {
 
+    private static final String ROOT = "/";
+
     private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
@@ -95,7 +100,7 @@ final class JsonStringFieldErrorsTest {
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.testField")));
     }
@@ -103,7 +108,7 @@ final class JsonStringFieldErrorsTest {
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testField\":null}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testField\":null}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.testField")));
     }
@@ -114,7 +119,7 @@ final class JsonStringFieldErrorsTest {
         throws Exception {
         mockMvc
             .perform(
-                post("/")
+                post(ROOT)
                     .contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                     .content(format("{\"testField\":%s}", wrongType))
             )
@@ -126,7 +131,7 @@ final class JsonStringFieldErrorsTest {
     public void shouldRejectRequestsNotComplyingWithBusinessRequirements() throws Exception {
         mockMvc
             .perform(
-                post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testField\":\"someValue\"}")
+                post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testField\":\"someValue\"}")
             )
             .andExpect(status().isBadRequest())
             .andExpect(
@@ -155,10 +160,10 @@ final class JsonStringFieldErrorsTest {
     static class TestController {
 
         static String rootResourceOn(final int port) {
-            return "http://localhost:" + port + "/";
+            return "http://localhost:" + port + ROOT;
         }
 
-        @PostMapping(value = "/", consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
+        @PostMapping(value = ROOT, consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
         public HttpEntity<String> updateTest(@Valid @RequestBody final TestDTO dto) {
             return new HttpEntity<>("");
         }
@@ -183,6 +188,8 @@ final class JsonStringFieldErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 final class JsonIntegerFieldErrorsTest {
 
+    private static final String ROOT = "/";
+
     private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
@@ -191,7 +198,7 @@ final class JsonIntegerFieldErrorsTest {
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.integerField")));
     }
@@ -199,7 +206,7 @@ final class JsonIntegerFieldErrorsTest {
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"integerField\":null}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"integerField\":null}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.integerField")));
     }
@@ -210,7 +217,7 @@ final class JsonIntegerFieldErrorsTest {
         throws Exception {
         mockMvc
             .perform(
-                post("/")
+                post(ROOT)
                     .contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                     .content(format("{\"integerField\":%s}", wrongType))
             )
@@ -221,7 +228,7 @@ final class JsonIntegerFieldErrorsTest {
     @Test
     public void shouldRejectRequestsNotComplyingWithBusinessRequirements() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"integerField\":5}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"integerField\":5}"))
             .andExpect(status().isBadRequest())
             .andExpect(
                 bodyMatchesJson(forInvalidValueAt("$.integerField", "failed with test domain requirement"))
@@ -249,10 +256,10 @@ final class JsonIntegerFieldErrorsTest {
     static class TestController {
 
         static String rootResourceOn(final int port) {
-            return "http://localhost:" + port + "/";
+            return "http://localhost:" + port + ROOT;
         }
 
-        @PostMapping(value = "/", consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
+        @PostMapping(value = ROOT, consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
         public HttpEntity<String> updateTest(@Valid @RequestBody final TestDTO b) {
             return new HttpEntity<>("");
         }
@@ -277,6 +284,8 @@ final class JsonIntegerFieldErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 final class JsonCollectionErrorsTest {
 
+    private static final String ROOT = "/";
+
     private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
@@ -285,7 +294,7 @@ final class JsonCollectionErrorsTest {
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.testList")));
     }
@@ -293,7 +302,7 @@ final class JsonCollectionErrorsTest {
     @Test
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":null}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":null}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.testList")));
     }
@@ -304,7 +313,7 @@ final class JsonCollectionErrorsTest {
         throws Exception {
         mockMvc
             .perform(
-                post("/")
+                post(ROOT)
                     .contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                     .content(format("{\"testList\":%s}", wrongType))
             )
@@ -315,7 +324,7 @@ final class JsonCollectionErrorsTest {
     @Test
     public void shouldRejectRequestContainingLessElementsThanRequired() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":[]}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":[]}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forInvalidValueAt("$.testList", "message for too few")));
     }
@@ -323,7 +332,7 @@ final class JsonCollectionErrorsTest {
     @Test
     public void shouldRejectRequestsContainingMoreElementsThanRequired() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":[{},{}]}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":[{},{}]}"))
             .andExpect(bodyMatchesJson(forInvalidValueAt("$.testList", "message for too many")));
     }
 
@@ -334,7 +343,7 @@ final class JsonCollectionErrorsTest {
     ) throws Exception {
         final val body = format("{\"testList\":[%s]}", listingOfWrongType);
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content(body))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content(body))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forObjectRequiredAt("$.testList[0]")));
     }
@@ -352,10 +361,10 @@ final class JsonCollectionErrorsTest {
     static class TestController {
 
         static String rootResourceOn(final int port) {
-            return "http://localhost:" + port + "/";
+            return "http://localhost:" + port + ROOT;
         }
 
-        @PostMapping(value = "/", consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
+        @PostMapping(value = ROOT, consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
         public HttpEntity<String> updateTest(@Valid @RequestBody final TestDTO b) {
             return new HttpEntity<>("");
         }
@@ -376,6 +385,8 @@ final class JsonCollectionErrorsTest {
 @WebMvcTest(ErrorExtractorConfiguration.class)
 final class JsonNestedStringFieldErrorsTest {
 
+    private static final String ROOT = "/";
+
     private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
 
     @Autowired
@@ -384,7 +395,7 @@ final class JsonNestedStringFieldErrorsTest {
     @Test
     public void shouldRejectRequestWithoutMandatoryField() throws Exception {
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":[{}]}"))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("{\"testList\":[{}]}"))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forMissingFieldAt("$.testList[0].testField")));
     }
@@ -393,7 +404,7 @@ final class JsonNestedStringFieldErrorsTest {
     public void shouldRejectRequestWhereNullIsSubmittedForMandatoryField() throws Exception {
         mockMvc
             .perform(
-                post("/")
+                post(ROOT)
                     .contentType(RESOURCE_SPECIFIC_MEDIA_TYPE)
                     .content("{\"testList\":[{\"testField\":null}]}")
             )
@@ -407,7 +418,7 @@ final class JsonNestedStringFieldErrorsTest {
         throws Exception {
         final val body = format("{\"testList\":[{\"testField\":%s}]}}", wrongType);
         mockMvc
-            .perform(post("/").contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content(body))
+            .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content(body))
             .andExpect(status().isBadRequest())
             .andExpect(bodyMatchesJson(forStringRequiredAt("$.testList[0].testField")));
     }
@@ -425,10 +436,10 @@ final class JsonNestedStringFieldErrorsTest {
     static class TestController {
 
         static String rootResourceOn(final int port) {
-            return "http://localhost:" + port + "/";
+            return "http://localhost:" + port + ROOT;
         }
 
-        @PostMapping(value = "/", consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
+        @PostMapping(value = ROOT, consumes = RESOURCE_SPECIFIC_MEDIA_TYPE)
         public HttpEntity<String> updateTest(@Validated @RequestBody final TestDTO b) {
             return new HttpEntity<>("");
         }

@@ -66,11 +66,11 @@ public final class HateoasTraversorTest {
     @Test
     public void traverseRootOnly() {
         server
-            .expect(requestTo("http://root"))
+            .expect(requestTo("http://root1"))
             .andExpect(method(GET))
             .andRespond(withSuccess("someResponse", APPLICATION_JSON));
 
-        final val response = traversors.startAt("http://root").perform();
+        final val response = traversors.startAt("http://root1").perform();
 
         assertThat(response.getBody()).isEqualTo("someResponse");
     }

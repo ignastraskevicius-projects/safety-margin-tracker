@@ -19,7 +19,7 @@ public final class StockExchangesTest {
     private final StockExchanges stockExchanges = new StockExchanges(quotes);
 
     @Test
-    public void FrankfurtExchangeShouldBeSupported() {
+    public void frankfurtExchangeShouldBeSupported() {
         final val volkswagenSymbol = new StockSymbol("VOW3");
         final val fraMic = new MarketIdentifierCode("XFRA");
         when(quotes.getQuotedPriceOf(volkswagenSymbol, fraMic)).thenReturn(TEN);
@@ -30,7 +30,7 @@ public final class StockExchangesTest {
     }
 
     @Test
-    public void NewYorkExchangeShouldBeSupported() {
+    public void newYorkExchangeShouldBeSupported() {
         final val amazonSymbol = new StockSymbol("AMZN");
         final val nyseMic = new MarketIdentifierCode("XNYS");
         when(quotes.getQuotedPriceOf(amazonSymbol, nyseMic)).thenReturn(ONE);
@@ -41,7 +41,7 @@ public final class StockExchangesTest {
     }
 
     @Test
-    public void TorontoExchangeShouldBeSupported() {
+    public void torontoExchangeShouldBeSupported() {
         final val royalBankOfCanadaSymbol = new StockSymbol("RY");
         final val tsxMic = new MarketIdentifierCode("XTSE");
         when(quotes.getQuotedPriceOf(royalBankOfCanadaSymbol, tsxMic)).thenReturn(ONE);
@@ -52,7 +52,7 @@ public final class StockExchangesTest {
     }
 
     @Test
-    public void HongKongStockExchangeShouldBeSupported() {
+    public void hongKongStockExchangeShouldBeSupported() {
         final val alibabaSymbol = new StockSymbol("9988");
         final val hkexMic = new MarketIdentifierCode("XHKG");
         when(quotes.getQuotedPriceOf(alibabaSymbol, hkexMic)).thenReturn(ONE);
@@ -63,7 +63,7 @@ public final class StockExchangesTest {
     }
 
     @Test
-    public void AustralianSecuritiesExchangeShouldBeSupported() {
+    public void australianSecuritiesExchangeShouldBeSupported() {
         final val telsraSymbol = new StockSymbol("TLS");
         final val asxMic = new MarketIdentifierCode("XASX");
         when(quotes.getQuotedPriceOf(telsraSymbol, asxMic)).thenReturn(ONE);
@@ -74,7 +74,7 @@ public final class StockExchangesTest {
     }
 
     @Test
-    public void NasdaqShouldBeSupported() {
+    public void nasdaqShouldBeSupported() {
         final val appleSymbol = new StockSymbol("AAPL");
         final val nasdaqMic = new MarketIdentifierCode("XNAS");
         when(quotes.getQuotedPriceOf(appleSymbol, nasdaqMic)).thenReturn(ONE);
@@ -86,7 +86,7 @@ public final class StockExchangesTest {
 
     @Test
     @SuppressWarnings("checkstyle:magicnumber")
-    public void LondonStockExchangeShouldBeSupported() {
+    public void londonStockExchangeShouldBeSupported() {
         final val penceInPound = 100;
         final val astrazenecaSymbol = new StockSymbol("AZN");
         final val lseMic = new MarketIdentifierCode("XLON");

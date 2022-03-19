@@ -10,8 +10,6 @@ import org.assertj.core.api.ObjectAssert;
 import org.ignast.stockinvesting.estimates.domain.CompanyName;
 import org.ignast.stockinvesting.estimates.domain.CountryCode;
 import org.ignast.stockinvesting.estimates.domain.CurrencyCode;
-import org.ignast.stockinvesting.estimates.domain.MarketIdentifierCode;
-import org.ignast.stockinvesting.estimates.domain.StockSymbol;
 import org.ignast.stockinvesting.util.errorhandling.api.annotation.From1ParamConstructor;
 import org.junit.jupiter.api.Test;
 
@@ -24,8 +22,6 @@ final class AppErrorsHandlingConfigurationTest {
     @Test
     public void shouldHaveClassCorrectlyAssignedForTypeConstructors() {
         final val countOfTypesSupported = asList(
-            checkConstructedType(MarketIdentifierCode.class, t -> t.construct("XNYS")),
-            checkConstructedType(StockSymbol.class, t -> t.construct("AMZN")),
             checkConstructedType(CountryCode.class, t -> t.construct("US")),
             checkConstructedType(CurrencyCode.class, t -> t.construct("USD")),
             checkConstructedType(UUID.class, t -> t.construct("0c52907c-80de-48dc-84a7-4e02c3842300")),

@@ -27,6 +27,8 @@ import org.springframework.test.web.servlet.ResultActions;
 @Import({ AppErrorsHandlingConfiguration.class, HalConfig.class })
 abstract class CompanyControllerITBase {
 
+    protected static final String APP_V1 = "application/vnd.stockinvesting.quotes-v1.hal+json";
+
     protected CompanyJsonBodyFactory bodyFactory = new CompanyJsonBodyFactory();
 
     @MockBean
@@ -37,8 +39,6 @@ abstract class CompanyControllerITBase {
 
     @Autowired
     protected MockMvc mockMvc;
-
-    protected final String APP_V1 = "application/vnd.stockinvesting.quotes-v1.hal+json";
 
     MockMvcAssert assertThatRequest(final String body) throws Exception {
         return new MockMvcAssert(mockMvc.perform(put("/companies/").contentType(APP_V1).content(body)));

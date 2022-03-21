@@ -1,4 +1,6 @@
-# Stock Investing
+# Quotes
+
+A Little microservice providing quoted price of stocks of public companies via HATEOAS API
 
 ## Set up
 
@@ -7,19 +9,29 @@
 * Docker Engine 20.10.12
 * Docker Compose 1.26.0
 
+* port 3306 open
+* port 8081 open
+* port 8080 open
+
 ### 1. Build
 
 ./mvnw install
 
 ### 2. Run
 
-* root resource is available at http://localhost:8080
-* mediatype required to talk to this service is 'application/vnd.stockinvesting.estimates-v1.hal+json'
+#### Usage
 
-#### Production setup (against real alphavantage service)
+* root resource will be available at http://localhost:8080
+* mediatype required to talk to this service is 'application/vnd.stockinvesting.quotes-v1.hal+json'
 
-./run-prod.sh
+#### Deploy (dev-env)
 
-#### Development setup (against alphavantage simulator)
+./run.sh
 
-./run-dev.sh
+#### Destroy (dev-env)
+
+./destroy.sh
+
+### 3. Performance Tests (against dev-env)
+
+./mvnw -f quotes-performance/pom.xml gatling:test

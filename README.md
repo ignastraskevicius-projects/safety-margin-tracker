@@ -9,9 +9,9 @@ A Little microservice providing quoted price of stocks of public companies via H
 * Docker Engine 20.10.12
 * Docker Compose 1.26.0
 
-* port 3306 open
-* port 8081 open
-* port 8080 open
+* port 3306 to be open
+* port 8081 to be open
+* port 8080 to be open
 
 ### 1. Build
 
@@ -22,7 +22,8 @@ A Little microservice providing quoted price of stocks of public companies via H
 #### Usage
 
 * root resource will be available at http://localhost:8080
-* mediatype required to talk to this service is 'application/vnd.stockinvesting.quotes-v1.hal+json'
+* mediatype required to talk to the service is 'application/vnd.stockinvesting.quotes-v1.hal+json'
+* service usage is indicated primarily via HTTP status codes and subsequently via error messages
 
 #### Deploy (dev-env)
 

@@ -1,6 +1,5 @@
 package org.ignast.stockinvesting.quotes.acceptance;
 
-import static java.lang.String.format;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.acceptance.Uris.rootResourceOn;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
@@ -11,7 +10,6 @@ import static org.springframework.http.HttpStatus.OK;
 import lombok.val;
 import org.ignast.stockinvesting.testutil.api.traversor.HateoasTraversor;
 import org.json.JSONException;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,60 +17,15 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.MediaType;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.MySQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
-import org.testcontainers.utility.DockerImageName;
 
-@Testcontainers
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public final class CompanyResourceTest {
-
-    private static final int EXPOSED_ALPHAVANTAGE_PORT = 8080;
-
-    @Container
-    private static final GenericContainer ALPHAVANTAGE = new GenericContainer(
-        DockerImageName.parse(System.getProperty("alphavantage.image"))
-    )
-        .withExposedPorts(EXPOSED_ALPHAVANTAGE_PORT);
-
-    @Container
-    private static final MySQLContainer MYSQL = new MySQLContainer(
-        DockerImageName
-            .parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT")
-            .asCompatibleSubstituteFor("mysql")
-    )
-        .withPassword("test");
-
-    @LocalServerPort
-    private int port;
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+public final class CompanyResourceTest extends AcceptanceTestEnvironment {
 
     @Autowired
     private HateoasTraversor.Factory quotesTraversors;
 
-    @AfterEach
-    public void cleanupDatabase() {
-        jdbcTemplate.execute("DELETE FROM company;");
-    }
-
-    @DynamicPropertySource
-    private static void registedDatasource(final DynamicPropertyRegistry registry) {
-        registry.add("alphavantage.url", () -> format("http://localhost:%d", getAlphavantagePort()));
-        registry.add("spring.datasource.url", () -> MYSQL.getJdbcUrl().replace("/test", "/quotes"));
-        registry.add("spring.datasource.username", () -> "root");
-        registry.add("spring.datasource.password", () -> "test");
-    }
-
-    private static Integer getAlphavantagePort() {
-        return ALPHAVANTAGE.getMappedPort(EXPOSED_ALPHAVANTAGE_PORT);
-    }
+    @LocalServerPort
+    private int port;
 
     @Test
     public void shouldCreateCompany() throws JSONException {

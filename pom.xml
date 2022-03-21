@@ -16,6 +16,7 @@
 	    <module>quotes-domain</module>
 	    <module>quotes-persistence</module>
 	    <module>quotes-alphavantage-adapter</module>
+        <module>quotes-performance</module>
     </modules>
     <packaging>pom</packaging>
 
@@ -49,6 +50,7 @@
         <wiremock.version>2.32.0</wiremock.version>
         <hamcrest.version>2.2</hamcrest.version>
         <prettier.version>0.17</prettier.version>
+        <jakarta.xml.bind.version>2.3.3</jakarta.xml.bind.version>
     </properties>
 
     <dependencies>
@@ -128,6 +130,11 @@
                 <version>${springboot.version}</version>
             </dependency>
             <dependency>
+                <groupId>jakarta.xml.bind</groupId>
+                <artifactId>jakarta.xml.bind-api</artifactId>
+                <version>${jakarta.xml.bind.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-web</artifactId>
                 <version>${springframework.version}</version>
@@ -136,12 +143,6 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-commons</artifactId>
                 <version>${springdata.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-jdbc</artifactId>
-                <version>${springframework.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>

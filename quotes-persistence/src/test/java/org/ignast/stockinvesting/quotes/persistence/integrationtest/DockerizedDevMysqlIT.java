@@ -3,35 +3,35 @@ package org.ignast.stockinvesting.quotes.persistence.integrationtest;
 import static java.math.BigDecimal.TEN;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.anyQuotes;
-import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.constantPriceExchanges;
 
 import lombok.val;
+import org.ignast.stockinvesting.quotes.TestApp;
 import org.ignast.stockinvesting.quotes.domain.Company;
 import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
+import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
-import org.javamoney.moneta.Money;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.flyway.FlywayMigrationStrategy;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
-import org.springframework.test.context.transaction.TestTransaction;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.testcontainers.containers.MySQLContainer;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 import org.testcontainers.utility.DockerImageName;
 
 @Testcontainers
-@DataJpaTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@ExtendWith(SpringExtension.class)
+@Import(TestApp.class)
 public final class DockerizedDevMysqlIT {
 
     @Container
@@ -63,29 +63,24 @@ public final class DockerizedDevMysqlIT {
                 new StockExchanges(anyQuotes()).getFor(new MarketIdentifierCode("XNAS"))
             )
         );
-        commit();
+
         final val result = companyRepository.findByExternalId(new CompanyExternalId(3));
 
         assertThat(result.isPresent());
         result.ifPresent(c -> assertThat(c.getName().get()).isEqualTo("Amazon"));
     }
 
-    private void commit() {
-        TestTransaction.flagForCommit();
-        TestTransaction.end();
-    }
-
     @TestConfiguration
     static class TestConfig {
 
         @Bean
-        FlywayMigrationStrategy noMigration() {
-            return f -> {};
+        QuotesRepository constantPriceQuotes() {
+            return (s, m) -> TEN;
         }
 
         @Bean
-        StockExchanges constantPriceStockExchanges() {
-            return constantPriceExchanges(Money.of(TEN, "USD"));
+        FlywayMigrationStrategy noMigration() {
+            return f -> {};
         }
     }
 }

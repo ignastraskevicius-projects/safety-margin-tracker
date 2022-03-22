@@ -1,8 +1,7 @@
 package org.ignast.stockinvesting.quotes.performance.simulation
 
 import io.gatling.core.Predef.intToFiniteDuration
-import io.gatling.core.CoreDsl
-import io.gatling.core.Predef.scenario
+import io.gatling.core.{CoreDsl}
 import io.gatling.core.scenario.Simulation
 import io.gatling.http.HttpDsl
 
@@ -23,16 +22,20 @@ class PriceSimulation extends Simulation with CoreDsl with HttpDsl {
       .exec(http("RetrieveQuotedPrice")
         .get("#{quotedPrice}")
         .header("Content-Type", "application/vnd.stockinvesting.quotes-v1.hal+json")
-      ).pause(2)
+      ).exec( session => { println(session); session }).pause(2)
 
 
     val users = scenario("QueryPriceSimulation").exec(queryQuotedPrice)
 
-    setUp(users.inject(
+    setUp(new Setup().adminSetsUpCompaniesForUsers.inject(atOnceUsers(8)),
+        users.inject(
+        nothingFor(4),
         rampUsers(10).during(10),
-        constantUsersPerSec(10).during(60)))
+        constantUsersPerSec(10).during(60 * 5)))
       .assertions(
-        global.responseTime.max.lt(100),
-        forAll.failedRequests.percent.lte(5)
+        details("RetrieveCompany").responseTime.max.lt(1000),
+        details("RetrieveQuotedPrice").responseTime.max.lt(1000),
+        details("RetrieveCompany").failedRequests.percent.lte(1),
+        details("RetrieveQuotedPrice").failedRequests.percent.lte(1)
       )
 }

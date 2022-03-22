@@ -15,6 +15,20 @@ public final class AppBusinessErrorDTOTest {
     }
 
     @Test
+    public void shouldCreateForCompanyAlreadyExists() {
+        final val error = AppBusinessErrorDTO.createForCompanyAlreadyExists();
+
+        assertThat(error.getErrorName()).isEqualTo("companyAlreadyExists");
+    }
+
+    @Test
+    public void shouldCreateForListingAlreadyExists() {
+        final val error = AppBusinessErrorDTO.createForListingAlreadyExists();
+
+        assertThat(error.getErrorName()).isEqualTo("listingAlreadyExists");
+    }
+
+    @Test
     public void shouldCreateForStockSymbolNotSupportedInTheMarket() {
         final val error = AppBusinessErrorDTO.createForStockSymbolNotSupportedInThisMarket();
 

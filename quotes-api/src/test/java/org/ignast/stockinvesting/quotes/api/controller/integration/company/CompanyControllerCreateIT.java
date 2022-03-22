@@ -12,6 +12,7 @@ import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatcher
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceContentMatchesJson;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceLinksMatchesJson;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
@@ -21,7 +22,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import lombok.val;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyRepository.CompanyAlreadyExists;
+import org.ignast.stockinvesting.quotes.domain.CompanyRepository.ListingAlreadyExists;
+import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.junit.jupiter.api.Test;
 
 public final class CompanyControllerCreateIT extends CompanyControllerITBase {
@@ -67,6 +73,35 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
                             }"""
                 )
             );
+    }
+
+    @Test
+    public void shouldRejectDuplicateCompany() throws Exception {
+        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
+        final val alreadyExists = new CompanyAlreadyExists(
+            mock(CompanyExternalId.class),
+            new RuntimeException()
+        );
+        doThrow(alreadyExists).when(companies).create(any());
+
+        assertThatRequest(bodyFactory.createAmazon())
+            .failsValidation("""
+                        {"errorName":"companyAlreadyExists"}""");
+    }
+
+    @Test
+    public void shouldRejectCompanyWithExistingListing() throws Exception {
+        when(stockExchanges.getFor(any())).thenReturn(mock(StockExchange.class));
+        final val listingAlreadyExists = new ListingAlreadyExists(
+            mock(StockSymbol.class),
+            mock(MarketIdentifierCode.class),
+            new RuntimeException()
+        );
+        doThrow(listingAlreadyExists).when(companies).create(any());
+
+        assertThatRequest(bodyFactory.createAmazon())
+            .failsValidation("""
+                        {"errorName":"listingAlreadyExists"}""");
     }
 
     @Test

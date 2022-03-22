@@ -12,7 +12,6 @@ import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.Company;
 import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
-import org.ignast.stockinvesting.quotes.domain.CompanyRepository;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
 import org.ignast.stockinvesting.quotes.domain.StockExchanges;
@@ -39,7 +38,7 @@ final class CompanyPersistenceTest {
     private static final Money TEN_USD = Money.of(TEN, "USD");
 
     @Autowired
-    private CompanyRepository companyRepository;
+    private SpringCompanyRepository companyRepository;
 
     private final JdbcTemplate jdbcTemplate;
 
@@ -112,7 +111,7 @@ final class CompanyPersistenceTest {
             nasdaq
         );
         final val amazon2 = Company.create(
-            new CompanyExternalId(6),
+            new CompanyExternalId(7),
             new CompanyName("Amazon2"),
             amazonSymbol,
             nasdaq

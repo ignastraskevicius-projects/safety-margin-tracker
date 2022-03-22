@@ -35,10 +35,4 @@ A Little microservice providing quoted price of stocks of public companies via H
 
 ### 3. Performance Tests (against dev-env)
 
-#### Setup
-
-./mvnw -f quotes-performance/pom.xml gatling:test -Dgatling.simulationClass=org.ignast.stockinvesting.quotes.performance.simulation.Setup
-
-#### Execute
-
-./mvnw -f quotes-performance/pom.xml gatling:test -Dgatling.simulationClass=org.ignast.stockinvesting.quotes.performance.simulation.PriceSimulation
+./mvnw -f quotes-performance/pom.xml gatling:test

@@ -1,11 +1,11 @@
 package org.ignast.stockinvesting.quotes.performance.simulation
 
 import io.gatling.core.CoreDsl
-import io.gatling.core.scenario.Simulation
 import io.gatling.http.HttpDsl
 
-class Setup extends Simulation with CoreDsl with HttpDsl {
+class Setup extends CoreDsl with HttpDsl {
   implicit val configuration = io.gatling.core.Predef.configuration
+
 
   val companiesFeed = Array(
     Map("id" -> "1",
@@ -36,7 +36,4 @@ class Setup extends Simulation with CoreDsl with HttpDsl {
       .body(StringBody("#{json}")))
 
   val adminSetsUpCompaniesForUsers = scenario("SetUpCompaniesForUsers").exec(createCompanies)
-
-  setUp(adminSetsUpCompaniesForUsers.inject(atOnceUsers(8)))
-    .assertions(global.failedRequests.percent.lte(0))
 }

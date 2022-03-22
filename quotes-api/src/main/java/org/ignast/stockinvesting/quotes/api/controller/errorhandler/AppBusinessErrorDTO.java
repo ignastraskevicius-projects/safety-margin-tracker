@@ -18,6 +18,14 @@ public final class AppBusinessErrorDTO implements BusinessErrorDTO {
         return new AppBusinessErrorDTO("stockSymbolNotSupportedInThisMarket");
     }
 
+    public static AppBusinessErrorDTO createForCompanyAlreadyExists() {
+        return new AppBusinessErrorDTO("companyAlreadyExists");
+    }
+
+    public static AppBusinessErrorDTO createForListingAlreadyExists() {
+        return new AppBusinessErrorDTO("listingAlreadyExists");
+    }
+
     @Override
     public String getErrorName() {
         return errorName;

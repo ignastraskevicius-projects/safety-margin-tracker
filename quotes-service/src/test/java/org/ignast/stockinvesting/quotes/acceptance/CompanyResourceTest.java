@@ -38,6 +38,26 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     }
 
     @Test
+    public void shouldNotCreateDuplicateCompanies() throws JSONException {
+        quotesTraversors
+            .startAt(rootResourceOn(port))
+            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .perform();
+        final val duplicacte = quotesTraversors
+            .startAt(rootResourceOn(port))
+            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .perform();
+        assertThat(duplicacte.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertEquals(
+            "fails to create duplicate",
+            """
+                {"errorName":"companyAlreadyExists"}""",
+            duplicacte.getBody(),
+            true
+        );
+    }
+
+    @Test
     public void shouldNotCreateCompaniesForUnsupportedSymbols() throws JSONException {
         final val unsupportedCompany =
             """
@@ -59,7 +79,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
             """
                         {"errorName":"stockSymbolNotSupportedInThisMarket"}""",
             company.getBody(),
-            false
+            true
         );
     }
 

@@ -187,6 +187,30 @@ public final class AppDbMigrationTest {
         }
 
         @Test
+        public void shouldRejectCompanyWithSameExternalIdEvenIfListingInformationIsDuplicateToo() {
+            final val externalId = 1;
+            final val insertAmazon = format(
+                """
+                        INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                        VALUES (2,'Amazon','AMZN','XNAS')""",
+                externalId
+            );
+            final val insertHsbc = format(
+                """
+                        INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                        VALUES (2,'Santander','AMZN','XNAS')""",
+                externalId
+            );
+
+            db.execute(insertAmazon);
+            assertThatExceptionOfType(DuplicateKeyException.class)
+                .isThrownBy(() -> db.execute(insertHsbc))
+                .withRootCauseInstanceOf(SQLIntegrityConstraintViolationException.class)
+                .havingRootCause()
+                .withMessageContaining("Duplicate entry '2' for key 'company.unique_external_id'");
+        }
+
+        @Test
         public void shouldAcceptCompaniesWithSameSymbolInDifferentMarkets() {
             final val symbol = "X";
             final val insertXsymbolInTse = format(

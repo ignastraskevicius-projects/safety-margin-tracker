@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.quotes.persistence.testutil;
 
 import static java.math.BigDecimal.TEN;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.amazon;
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.constantPriceExchange;
 import static org.ignast.stockinvesting.quotes.persistence.testutil.DomainFactoryForTests.constantPriceExchanges;
 import static org.mockito.ArgumentMatchers.any;
@@ -9,6 +10,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import lombok.val;
+import org.ignast.stockinvesting.quotes.domain.Company;
+import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
+import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
@@ -21,6 +25,19 @@ import org.junit.jupiter.api.Test;
 public final class DomainFactoryForTests {
 
     private DomainFactoryForTests() {}
+
+    @SuppressWarnings("checkstyle:magicnumber")
+    public static Company amazon() {
+        final val nasdaq = mock(StockExchange.class);
+        when(nasdaq.getMarketIdentifierCode()).thenReturn(new MarketIdentifierCode("XNAS"));
+
+        return Company.create(
+            new CompanyExternalId(6),
+            new CompanyName("Amazon"),
+            new StockSymbol("AMZN"),
+            nasdaq
+        );
+    }
 
     public static QuotesRepository anyQuotes() {
         return MockitoUtils.mock(
@@ -45,6 +62,18 @@ public final class DomainFactoryForTests {
 }
 
 final class DomainFactoryForTestsTest {
+
+    @Test
+    public void shouldCreateAmazon() {
+        final val externalAmazonIdForTests = 6;
+        assertThat(amazon().getExternalId()).isEqualTo(new CompanyExternalId(externalAmazonIdForTests));
+        assertThat(amazon().getName()).isEqualTo(new CompanyName("Amazon"));
+        assertThat(amazon().getStockSymbol()).isEqualTo(new StockSymbol("AMZN"));
+        assertThat(amazon().getStockExchange().getMarketIdentifierCode())
+            .isEqualTo(new MarketIdentifierCode("XNAS"));
+        assertThat(amazon().getStockExchange().getMarketIdentifierCode())
+            .isEqualTo(new MarketIdentifierCode("XNAS"));
+    }
 
     @Test
     public void shouldCreateConstantPriceExchanges() {

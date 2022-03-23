@@ -4,10 +4,7 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <modules>
-        <module>estimates-service</module>
         <module>quotes-alphavantage-simulator</module>
-        <module>domain</module>
-	    <module>persistence</module>
 	    <module>error-handling</module>
 	    <module>api-test-util</module>
 	    <module>static-analysis</module>

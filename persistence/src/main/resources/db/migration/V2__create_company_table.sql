@@ -1,1 +1,0 @@
-CREATE TABLE IF NOT EXISTS company (id varchar(36) PRIMARY KEY, name varchar(160), country_code varchar(2), company_json json, CONSTRAINT unique_name_in_country UNIQUE(name, country_code));

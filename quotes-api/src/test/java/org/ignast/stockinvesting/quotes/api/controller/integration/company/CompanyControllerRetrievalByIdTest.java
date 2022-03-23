@@ -40,7 +40,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
                            {
                                 "_links":{
                                     "self":{"href":"http://localhost/companies/5"},
-                                    "quotes:quotedPrice":{"href":"http://localhost/companies/5/price"}
+                                    "quotes:getQuotedPrice":{"href":"http://localhost/companies/5/price"}
                                 }
                             }"""
                 )

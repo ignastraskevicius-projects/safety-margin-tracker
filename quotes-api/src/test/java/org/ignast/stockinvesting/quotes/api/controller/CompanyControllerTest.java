@@ -68,7 +68,7 @@ public final class CompanyControllerTest {
 
         final val createdCompanyDto = controller.createCompany(dto);
 
-        assertThat(createdCompanyDto.getRequiredLink("quotes:quotedPrice").getHref())
+        assertThat(createdCompanyDto.getRequiredLink("quotes:getQuotedPrice").getHref())
             .endsWith(format("/companies/%d/price", amazonDto().getId()));
     }
 
@@ -109,7 +109,7 @@ public final class CompanyControllerTest {
 
         final val retrievedCompany = controller.retrieveCompanyById(amazonExternalId);
 
-        assertThat(retrievedCompany.getRequiredLink("quotes:quotedPrice").getHref())
+        assertThat(retrievedCompany.getRequiredLink("quotes:getQuotedPrice").getHref())
             .endsWith(format("/companies/%d/price", amazonExternalId));
     }
 }

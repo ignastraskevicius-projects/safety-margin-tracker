@@ -42,6 +42,6 @@ public class DockerizedImageIT {
         final val response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
         assertThat(response.statusCode()).isEqualTo(OK);
-        assertThat(response.body()).startsWith("{\"_links\":{\"quotes:companies\":{\"href\"");
+        assertThat(response.body()).startsWith("{\"_links\":{\"quotes:createCompany\":{\"href\"");
     }
 }

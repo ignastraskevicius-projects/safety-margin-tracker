@@ -18,7 +18,7 @@ class PriceSimulation extends Simulation with CoreDsl with HttpDsl {
       .exec(http("RetrieveCompany")
         .get("http://localhost:8081/companies/#{id}")
         .header("Content-Type", "application/vnd.stockinvesting.quotes-v1.hal+json")
-        .check(jsonPath("$._links.quotes:quotedPrice.href").saveAs("quotedPrice")))
+        .check(jsonPath("$._links.quotes:getQuotedPrice.href").saveAs("quotedPrice")))
       .exec(http("RetrieveQuotedPrice")
         .get("#{quotedPrice}")
         .header("Content-Type", "application/vnd.stockinvesting.quotes-v1.hal+json")

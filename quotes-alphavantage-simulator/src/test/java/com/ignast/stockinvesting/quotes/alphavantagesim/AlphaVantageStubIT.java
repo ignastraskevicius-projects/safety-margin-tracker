@@ -118,16 +118,18 @@ final class DockerizedAlphaVantageStubIT {
 
     private static final String DOCKER_IMAGE_NAME = System.getProperty("docker.image");
 
+    private static final int PORT = 8080;
+
     @Container
     public static final GenericContainer CONTAINER = new GenericContainer(
         DockerImageName.parse(DOCKER_IMAGE_NAME)
     )
-        .withExposedPorts(8080);
+        .withExposedPorts(PORT);
 
     @Test
     public void shouldContainQuotedPrices() throws IOException, InterruptedException {
         final val client = HttpClient.newHttpClient();
-        final val port = CONTAINER.getMappedPort(8080);
+        final val port = CONTAINER.getMappedPort(PORT);
         final val uri = format("http://localhost:%d/query?%s", port, validParamsBuilder().build().toString());
         final val request = HttpRequest.newBuilder().uri(URI.create(uri)).build();
 

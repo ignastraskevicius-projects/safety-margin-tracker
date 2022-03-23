@@ -22,7 +22,7 @@ public final class RootController {
         final val root = new Root();
         root.add(
             linkTo(methodOn(CompanyController.class).createCompany(new CompanyDTO(1, "any", List.of())))
-                .withRel("quotes:company")
+                .withRel("quotes:companies")
         );
         return new ResponseEntity<>(root, HttpStatus.OK);
     }

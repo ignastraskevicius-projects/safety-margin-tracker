@@ -6,7 +6,6 @@ import io.gatling.http.HttpDsl
 class Setup extends CoreDsl with HttpDsl {
   implicit val configuration = io.gatling.core.Predef.configuration
 
-
   val companiesFeed = Array(
     Map("id" -> "1",
       "json" -> """{"id":1,"name":"Amazon","listings":[{"marketIdentifier":"XNAS", "stockSymbol":"AMZN"}]}"""),
@@ -28,8 +27,8 @@ class Setup extends CoreDsl with HttpDsl {
 
   val createCompanies = feed(companiesFeed)
     .exec(http("RetrieveRoot")
-      .get("http://localhost:8080/")
-      .check(jsonPath("$._links.quotes:company.href").saveAs("companies")))
+      .get("http://localhost:8081/")
+      .check(jsonPath("$._links.quotes:companies.href").saveAs("companies")))
     .exec(http("Create Company")
       .put("#{companies}")
       .header("Content-Type", "application/vnd.stockinvesting.quotes-v1.hal+json")

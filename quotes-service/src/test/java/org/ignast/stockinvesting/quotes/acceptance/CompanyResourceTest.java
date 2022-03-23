@@ -31,7 +31,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     public void shouldCreateCompany() throws JSONException {
         final val company = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .hop(f -> f.put("quotes:companies", getMicrosoft()))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(CREATED);
         assertEquals("should create company", getMicrosoft(), company.getBody(), false);
@@ -41,11 +41,11 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     public void shouldNotCreateDuplicateCompanies() throws JSONException {
         quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .hop(f -> f.put("quotes:companies", getMicrosoft()))
             .perform();
         final val duplicacte = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .hop(f -> f.put("quotes:companies", getMicrosoft()))
             .perform();
         assertThat(duplicacte.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertEquals(
@@ -71,7 +71,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
                             }""";
         final val company = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", unsupportedCompany))
+            .hop(f -> f.put("quotes:companies", unsupportedCompany))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertEquals(
@@ -87,7 +87,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     public void shouldRetrieveCreatedCompany() throws JSONException {
         final val company = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .hop(f -> f.put("quotes:companies", getMicrosoft()))
             .hop(f -> f.get("self"))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(OK);
@@ -98,7 +98,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     public void shouldRetrieveQuotedPrice() throws JSONException {
         final val quotedPrice = quotesTraversors
             .startAt(rootResourceOn(port))
-            .hop(f -> f.put("quotes:company", getMicrosoft()))
+            .hop(f -> f.put("quotes:companies", getMicrosoft()))
             .hop(f -> f.get("quotes:quotedPrice"))
             .perform();
         assertThat(quotedPrice.getStatusCode()).isEqualTo(OK);

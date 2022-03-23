@@ -26,9 +26,7 @@ public class AcceptanceTestEnvironment {
 
     @Container
     private static final MySQLContainer MYSQL = new MySQLContainer(
-        DockerImageName
-            .parse("org.ignast.stock-investing.quotes/mysql-dev:1.0-SNAPSHOT")
-            .asCompatibleSubstituteFor("mysql")
+        DockerImageName.parse(System.getProperty("mysqldev.image")).asCompatibleSubstituteFor("mysql")
     )
         .withPassword("test");
 

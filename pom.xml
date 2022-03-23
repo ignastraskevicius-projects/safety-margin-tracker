@@ -28,7 +28,9 @@
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
 
-        <alphavantage.dockerimage>org.ignast.stock-investing.quotes/alphavantage-simulator:${project.version}</alphavantage.dockerimage>
+        <alphavantage.dockerimage>${project.groupId}/alphavantage-simulator:${project.version}</alphavantage.dockerimage>
+        <mysql.dev.dockerimage>${project.groupId}/mysql-dev:${project.version}</mysql.dev.dockerimage>
+        <app.dockerimage>${project.groupId}/quotes-service:${project.version}</app.dockerimage>
 
         <springboot.version>2.6.4</springboot.version>
         <springframework.version>5.3.16</springframework.version>
@@ -283,7 +285,7 @@
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.22.2</version>
+                    <version>3.0.0-M5</version>
                     <executions>
                         <execution>
                             <goals>

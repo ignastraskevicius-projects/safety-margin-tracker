@@ -28,7 +28,7 @@ class Setup extends CoreDsl with HttpDsl {
   val createCompanies = feed(companiesFeed)
     .exec(http("RetrieveRoot")
       .get("http://localhost:8081/")
-      .check(jsonPath("$._links.quotes:companies.href").saveAs("companies")))
+      .check(jsonPath("$._links.quotes:createCompany.href").saveAs("companies")))
     .exec(http("Create Company")
       .put("#{companies}")
       .header("Content-Type", "application/vnd.stockinvesting.quotes-v1.hal+json")

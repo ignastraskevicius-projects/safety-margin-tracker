@@ -70,7 +70,7 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
                            {
                                 "_links":{
                                     "self":{"href":"http://localhost/companies/6"},
-                                    "quotes:quotedPrice":{"href":"http://localhost/companies/6/price"}
+                                    "quotes:getQuotedPrice":{"href":"http://localhost/companies/6/price"}
                                 }
                             }"""
                 )

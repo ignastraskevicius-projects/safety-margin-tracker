@@ -31,7 +31,7 @@ public final class RootControllerTest {
         root
             .andExpect(status().isOk())
             .andExpect(header().string(CONTENT_TYPE, V1_MEDIA_TYPE))
-            .andExpect(content().string(hasRel("quotes:companies").withHrefContaining("/companies")));
+            .andExpect(content().string(hasRel("quotes:createCompany").withHrefContaining("/companies")));
     }
 
     @Test

@@ -40,4 +40,12 @@ public final class AppBusinessErrorDTOTest {
         assertThat(error.getErrorName()).isEqualTo("stockSymbolNotSupportedInThisMarket");
         assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST);
     }
+
+    @Test
+    public void shouldCreateForMarketNotSupported() {
+        final val error = AppBusinessErrorDTO.createForMarketNotSupported();
+
+        assertThat(error.getErrorName()).isEqualTo("marketNotSupported");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST);
+    }
 }

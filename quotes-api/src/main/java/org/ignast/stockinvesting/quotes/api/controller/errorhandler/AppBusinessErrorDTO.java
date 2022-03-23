@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+
 import org.ignast.stockinvesting.util.errorhandling.api.BusinessErrorDTO;
 import org.springframework.http.HttpStatus;
 
@@ -19,15 +21,19 @@ public final class AppBusinessErrorDTO implements BusinessErrorDTO {
     }
 
     public static AppBusinessErrorDTO createForStockSymbolNotSupportedInThisMarket() {
-        return new AppBusinessErrorDTO("stockSymbolNotSupportedInThisMarket", HttpStatus.BAD_REQUEST);
+        return new AppBusinessErrorDTO("stockSymbolNotSupportedInThisMarket", BAD_REQUEST);
     }
 
     public static AppBusinessErrorDTO createForCompanyAlreadyExists() {
-        return new AppBusinessErrorDTO("companyAlreadyExists", HttpStatus.BAD_REQUEST);
+        return new AppBusinessErrorDTO("companyAlreadyExists", BAD_REQUEST);
     }
 
     public static AppBusinessErrorDTO createForListingAlreadyExists() {
-        return new AppBusinessErrorDTO("listingAlreadyExists", HttpStatus.BAD_REQUEST);
+        return new AppBusinessErrorDTO("listingAlreadyExists", BAD_REQUEST);
+    }
+
+    public static AppBusinessErrorDTO createForMarketNotSupported() {
+        return new AppBusinessErrorDTO("marketNotSupported", BAD_REQUEST);
     }
 
     @Override

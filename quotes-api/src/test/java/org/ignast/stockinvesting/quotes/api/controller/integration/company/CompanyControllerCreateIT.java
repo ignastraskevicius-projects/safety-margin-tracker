@@ -27,6 +27,7 @@ import org.ignast.stockinvesting.quotes.domain.CompanyRepository.CompanyAlreadyE
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.ListingAlreadyExists;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockExchange;
+import org.ignast.stockinvesting.quotes.domain.StockExchangeNotSupported;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
 import org.junit.jupiter.api.Test;
 
@@ -89,6 +90,18 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
             .failsValidation(
                 """
                         {"httpStatus":400,"errorName":"companyAlreadyExists"}"""
+            );
+    }
+
+    @Test
+    public void shouldRejectCompaniesListedInUnsupportedExchanges() throws Exception {
+        final val notSnsuppoted = new StockExchangeNotSupported(mock(MarketIdentifierCode.class));
+        when(stockExchanges.getFor(any())).thenThrow(notSnsuppoted);
+
+        assertThatRequest(bodyFactory.createAmazon())
+            .failsValidation(
+                """
+                                {"httpStatus":400,"errorName":"marketNotSupported"}"""
             );
     }
 

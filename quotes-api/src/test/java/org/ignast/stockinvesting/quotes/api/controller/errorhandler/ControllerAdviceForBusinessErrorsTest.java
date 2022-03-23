@@ -9,6 +9,7 @@ import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.CompanyAlreadyExists;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.ListingAlreadyExists;
+import org.ignast.stockinvesting.quotes.domain.StockExchangeNotSupported;
 import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
 import org.junit.jupiter.api.Test;
 
@@ -31,6 +32,14 @@ public final class ControllerAdviceForBusinessErrorsTest {
         );
 
         assertThat(error.getErrorName()).isEqualTo("stockSymbolNotSupportedInThisMarket");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
+    }
+
+    @Test
+    public void shouldHandleMarketNotSupported() {
+        final val error = handler.handleMarketNotSupported(mock(StockExchangeNotSupported.class));
+
+        assertThat(error.getErrorName()).isEqualTo("marketNotSupported");
         assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 

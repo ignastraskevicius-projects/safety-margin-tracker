@@ -15,6 +15,8 @@ A Little microservice providing quoted price of stocks of public companies via H
 
 ### 1. Build
 
+./mvnw -f static-analysis/pom.xml clean install
+
 ./mvnw install
 
 ### 2. Run

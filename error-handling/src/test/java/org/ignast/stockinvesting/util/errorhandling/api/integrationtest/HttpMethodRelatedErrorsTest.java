@@ -30,7 +30,7 @@ final class GetMethodRelatedErrorsTest {
         mockMvc
             .perform(get("/").accept("application/hal+json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
@@ -38,7 +38,7 @@ final class GetMethodRelatedErrorsTest {
         mockMvc
             .perform(get("/").accept("application/json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
@@ -46,7 +46,7 @@ final class GetMethodRelatedErrorsTest {
         mockMvc
             .perform(post("/"))
             .andExpect(status().isMethodNotAllowed())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":405,\"errorName\":\"methodNotAllowed\"}"));
     }
 
     @TestConfiguration
@@ -85,7 +85,7 @@ final class WriteMethodRelatedErrorsTest {
         mockMvc
             .perform(post("/").contentType("application/json"))
             .andExpect(status().isUnsupportedMediaType())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":415,\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
@@ -93,7 +93,7 @@ final class WriteMethodRelatedErrorsTest {
         mockMvc
             .perform(post("/").contentType("application/hal+json"))
             .andExpect(status().isUnsupportedMediaType())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":415,\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
@@ -101,7 +101,7 @@ final class WriteMethodRelatedErrorsTest {
         mockMvc
             .perform(get("/").contentType(HAL_JSON))
             .andExpect(status().isMethodNotAllowed())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":405,\"errorName\":\"methodNotAllowed\"}"));
     }
 
     @TestConfiguration

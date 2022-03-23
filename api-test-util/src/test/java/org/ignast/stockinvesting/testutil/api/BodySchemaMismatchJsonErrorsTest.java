@@ -21,10 +21,11 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'fieldIsMissing',
-                                'jsonPath':'someJsonPath'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"fieldIsMissing",
+                                "jsonPath":"someJsonPath"
                             }]
                         }"""
             );
@@ -36,13 +37,14 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'fieldIsMissing',
-                                'jsonPath':'someJsonPath'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"fieldIsMissing",
+                                "jsonPath":"someJsonPath"
                             }, {
-                                'errorName':'fieldIsMissing',
-                                'jsonPath':'someOtherPath'
+                                "errorName":"fieldIsMissing",
+                                "jsonPath":"someOtherPath"
                             }]
                         }"""
             );
@@ -54,10 +56,11 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'valueMustBeString',
-                                'jsonPath':'someJsonPath'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"valueMustBeString",
+                                "jsonPath":"someJsonPath"
                             }]
                         }"""
             );
@@ -69,10 +72,11 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'valueMustBeInteger',
-                                'jsonPath':'someJsonPath'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"valueMustBeInteger",
+                                "jsonPath":"someJsonPath"
                             }]
                         }"""
             );
@@ -84,10 +88,11 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'valueMustBeObject',
-                                'jsonPath':'someJsonPath'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"valueMustBeObject",
+                                "jsonPath":"someJsonPath"
                             }]
                         }"""
             );
@@ -99,10 +104,11 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                     {
-                        'errorName':'bodyDoesNotMatchSchema',
-                        'validationErrors':[{
-                            'errorName':'valueMustBeArray',
-                            'jsonPath':'someJsonPath'
+                        "httpStatus":400,
+                        "errorName":"bodyDoesNotMatchSchema",
+                        "validationErrors":[{
+                            "errorName":"valueMustBeArray",
+                            "jsonPath":"someJsonPath"
                         }]
                     }"""
             );
@@ -114,11 +120,12 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'valueIsInvalid',
-                                'jsonPath':'someJsonPath',
-                                'message':'someMessage'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"valueIsInvalid",
+                                "jsonPath":"someJsonPath",
+                                "message":"someMessage"
                             }]
                         }"""
             );
@@ -132,15 +139,16 @@ final class BodySchemaMismatchJsonErrorsTest {
             .isEqualTo(
                 """
                         {
-                            'errorName':'bodyDoesNotMatchSchema',
-                            'validationErrors':[{
-                                'errorName':'valueIsInvalid',
-                                'jsonPath':'someJsonPath',
-                                'message':'someMessage'
+                            "httpStatus":400,
+                            "errorName":"bodyDoesNotMatchSchema",
+                            "validationErrors":[{
+                                "errorName":"valueIsInvalid",
+                                "jsonPath":"someJsonPath",
+                                "message":"someMessage"
                             },{
-                                'errorName':'valueIsInvalid',
-                                'jsonPath':'someOtherJsonPath',
-                                'message':'someOtherMessage'
+                                "errorName":"valueIsInvalid",
+                                "jsonPath":"someOtherJsonPath",
+                                "message":"someOtherMessage"
                             }]
                         }"""
             );

@@ -51,7 +51,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
         assertEquals(
             "fails to create duplicate",
             """
-                {"errorName":"companyAlreadyExists"}""",
+                {"httpStatus":400,"errorName":"companyAlreadyExists"}""",
             duplicacte.getBody(),
             true
         );
@@ -77,7 +77,7 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
         assertEquals(
             "fails to create company",
             """
-                        {"errorName":"stockSymbolNotSupportedInThisMarket"}""",
+                        {\"httpStatus\":400,"errorName":"stockSymbolNotSupportedInThisMarket"}""",
             company.getBody(),
             true
         );

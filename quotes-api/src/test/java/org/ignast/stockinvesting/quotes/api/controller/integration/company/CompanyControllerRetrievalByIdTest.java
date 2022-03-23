@@ -54,7 +54,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
             .perform(get("/companies/5").accept(APP_V1))
             .andExpect(status().isNotFound())
             .andExpect(header().string("Content-Type", APP_V1))
-            .andExpect(bodyMatchesJson("{}"));
+            .andExpect(bodyMatchesJson("{'httpStatus':404}"));
     }
 
     @Test
@@ -62,7 +62,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
         mockMvc
             .perform(get("/companies/5").accept("application/json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
@@ -70,7 +70,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
         mockMvc
             .perform(get("/companies/5").accept("application/hal+json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
@@ -78,6 +78,6 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
         mockMvc
             .perform(put("/companies/5").contentType(HAL_JSON))
             .andExpect(status().isMethodNotAllowed())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":405,\"errorName\":\"methodNotAllowed\"}"));
     }
 }

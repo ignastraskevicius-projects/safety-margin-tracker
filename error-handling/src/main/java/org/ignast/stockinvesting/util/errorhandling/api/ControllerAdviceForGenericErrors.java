@@ -60,7 +60,7 @@ public final class ControllerAdviceForGenericErrors {
                 validationErrorsExtractor.extractAnnotationBasedErrorsFrom(exception)
             );
         } catch (ValidationErrorsExtractionException e) {
-            return StandardErrorDTO.createNameless();
+            return StandardErrorDTO.createNameless(HttpStatus.BAD_REQUEST);
         }
     }
 
@@ -78,7 +78,7 @@ public final class ControllerAdviceForGenericErrors {
                     )
                 );
             } catch (JacksonParsingErrorExtractionException e) {
-                return StandardErrorDTO.createNameless();
+                return StandardErrorDTO.createNameless(HttpStatus.BAD_REQUEST);
             }
         } else {
             return StandardErrorDTO.createBodyNotParsable();

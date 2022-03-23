@@ -37,12 +37,13 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
         mockMvc
             .perform(put("/companies/").contentType(APP_V1))
             .andExpect(status().isBadRequest())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":400,\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test
     public void shouldRejectCompaniesNotBeingDefinedInJson() throws Exception {
-        assertThatRequest("not-a-json-object").failsValidation("{\"errorName\":\"bodyNotParsable\"}");
+        assertThatRequest("not-a-json-object")
+            .failsValidation("{\"httpStatus\":400,\"errorName\":\"bodyNotParsable\"}");
     }
 
     @Test
@@ -85,8 +86,10 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
         doThrow(alreadyExists).when(companies).create(any());
 
         assertThatRequest(bodyFactory.createAmazon())
-            .failsValidation("""
-                        {"errorName":"companyAlreadyExists"}""");
+            .failsValidation(
+                """
+                        {"httpStatus":400,"errorName":"companyAlreadyExists"}"""
+            );
     }
 
     @Test
@@ -100,8 +103,10 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
         doThrow(listingAlreadyExists).when(companies).create(any());
 
         assertThatRequest(bodyFactory.createAmazon())
-            .failsValidation("""
-                        {"errorName":"listingAlreadyExists"}""");
+            .failsValidation(
+                """
+                        {"httpStatus":400,"errorName":"listingAlreadyExists"}"""
+            );
     }
 
     @Test
@@ -109,7 +114,7 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
         mockMvc
             .perform(put("/companies/").contentType("application/json"))
             .andExpect(status().isUnsupportedMediaType())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":415,\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
@@ -117,7 +122,7 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
         mockMvc
             .perform(put("/companies/").contentType("application/hal+json"))
             .andExpect(status().isUnsupportedMediaType())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"unsupportedContentType\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":415,\"errorName\":\"unsupportedContentType\"}"));
     }
 
     @Test
@@ -125,7 +130,7 @@ public final class CompanyControllerCreateIT extends CompanyControllerITBase {
         mockMvc
             .perform(get("/companies/").contentType(HAL_JSON))
             .andExpect(status().isMethodNotAllowed())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":405,\"errorName\":\"methodNotAllowed\"}"));
     }
 
     @Test
@@ -273,6 +278,6 @@ final class CompanyControllerTestIndividualListingParsingIT extends CompanyContr
         final val exchange = exchangeNotSupportingAnySymbol();
         when(stockExchanges.getFor(any())).thenReturn(exchange);
         assertThatRequest(bodyFactory.createAmazon())
-            .failsValidation("{\"errorName\":\"stockSymbolNotSupportedInThisMarket\"}");
+            .failsValidation("{\"httpStatus\":400, \"errorName\":\"stockSymbolNotSupportedInThisMarket\"}");
     }
 }

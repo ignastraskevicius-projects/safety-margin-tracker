@@ -54,7 +54,7 @@ final class ManualWiringIT {
         final val response = restTemplate.exchange(url(port), PUT, EMPTY, String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(METHOD_NOT_ALLOWED);
-        assertThat(response.getBody()).isEqualTo("{\"errorName\":\"methodNotAllowed\"}");
+        assertThat(response.getBody()).contains("methodNotAllowed");
     }
 
     @Test

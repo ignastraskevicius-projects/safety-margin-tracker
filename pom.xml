@@ -7,7 +7,6 @@
         <module>quotes-alphavantage-simulator</module>
 	    <module>error-handling</module>
 	    <module>api-test-util</module>
-	    <module>static-analysis</module>
 	    <module>quotes-service</module>
 	    <module>quotes-api</module>
 	    <module>quotes-domain</module>

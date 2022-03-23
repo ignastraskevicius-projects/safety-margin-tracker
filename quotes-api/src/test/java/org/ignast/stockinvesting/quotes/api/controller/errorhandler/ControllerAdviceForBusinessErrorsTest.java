@@ -2,7 +2,10 @@ package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.NOT_FOUND;
 
+import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.CompanyAlreadyExists;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.ListingAlreadyExists;
@@ -14,29 +17,35 @@ public final class ControllerAdviceForBusinessErrorsTest {
     private final ControllerAdviceForBusinessErrors handler = new ControllerAdviceForBusinessErrors();
 
     @Test
-    public void shouldHandleSymbolNotSupported() {
-        assertThat(handler.handleCompanyNotFound(mock(CompanyNotFound.class)).getErrorName()).isNull();
+    public void shouldHandleCompanyNotFound() {
+        final val error = handler.handleCompanyNotFound(mock(CompanyNotFound.class));
+
+        assertThat(error.getErrorName()).isNull();
+        assertThat(error.getHttpStatus()).isEqualTo(NOT_FOUND.value());
     }
 
     @Test
     public void shouldHandleSymbolNotSupportedInMarket() {
-        assertThat(
-            handler
-                .handleSymbolNotSupportedInMarket(mock(StockSymbolNotSupportedInThisMarket.class))
-                .getErrorName()
-        )
-            .isEqualTo("stockSymbolNotSupportedInThisMarket");
+        final val error = handler.handleSymbolNotSupportedInMarket(
+            mock(StockSymbolNotSupportedInThisMarket.class)
+        );
+
+        assertThat(error.getErrorName()).isEqualTo("stockSymbolNotSupportedInThisMarket");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
     public void shouldHandleCompanyAlreadyExists() {
-        assertThat(handler.handleCompanyAlreadyExists(mock(CompanyAlreadyExists.class)).getErrorName())
-            .isEqualTo("companyAlreadyExists");
+        final val error = handler.handleCompanyAlreadyExists(mock(CompanyAlreadyExists.class));
+
+        assertThat(error.getErrorName()).isEqualTo("companyAlreadyExists");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
     public void shouldHandleListingAlreadyExists() {
-        assertThat(handler.handleListingAlreadyExists(mock(ListingAlreadyExists.class)).getErrorName())
-            .isEqualTo("listingAlreadyExists");
+        final val error = handler.handleListingAlreadyExists(mock(ListingAlreadyExists.class));
+        assertThat(error.getErrorName()).isEqualTo("listingAlreadyExists");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 }

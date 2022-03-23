@@ -1,26 +1,32 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
 import java.util.Collections;
 import java.util.List;
 import lombok.val;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 
 class StandardErrorDTOTest {
 
     @Test
-    public void shouldCreateNamelessError() {
-        final val error = StandardErrorDTO.createNameless();
-
-        assertThat(error.getErrorName()).isNull();
+    public void shouldNotCreateNullError() {
+        assertThatNullPointerException().isThrownBy(() -> StandardErrorDTO.createNameless(null));
+        StandardErrorDTO.createNameless(HttpStatus.BAD_GATEWAY);
     }
 
     @Test
-    public void shouldCreateResourceNotFound() {
-        final val error = StandardErrorDTO.createForResourceNotFound();
+    public void shouldCreateNamelessError() {
+        final val error = StandardErrorDTO.createNameless(HttpStatus.BAD_GATEWAY);
 
-        assertThat(error.getErrorName()).isEqualTo("resourceNotFound");
+        final val badGateway = 502;
+        assertThat(error.getErrorName()).isNull();
+        assertThat(error.getHttpStatus()).isEqualTo(badGateway);
     }
 
     @Test
@@ -28,13 +34,19 @@ class StandardErrorDTOTest {
         final val error = StandardErrorDTO.createForMethodNotAllowed();
 
         assertThat(error.getErrorName()).isEqualTo("methodNotAllowed");
+        assertThat(error.getHttpStatus()).isEqualTo(HttpStatus.METHOD_NOT_ALLOWED.value());
     }
 
     @Test
     public void shouldCreateBusinessError() {
-        final val error = StandardErrorDTO.createForBusinessError(() -> "someBusinessError");
+        final val businessError = mock(BusinessErrorDTO.class);
+        when(businessError.getErrorName()).thenReturn("businessRuleViolation");
+        when(businessError.getHttpStatus()).thenReturn(BAD_REQUEST);
 
-        assertThat(error.getErrorName()).isEqualTo("someBusinessError");
+        final val error = StandardErrorDTO.createForBusinessError(businessError);
+
+        assertThat(error.getErrorName()).isEqualTo("businessRuleViolation");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
@@ -42,6 +54,7 @@ class StandardErrorDTOTest {
         final val error = StandardErrorDTO.createForMediaTypeNotAcceptable();
 
         assertThat(error.getErrorName()).isEqualTo("mediaTypeNotAcceptable");
+        assertThat(error.getHttpStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
     }
 
     @Test
@@ -49,6 +62,7 @@ class StandardErrorDTOTest {
         final val error = StandardErrorDTO.createForUnsupportedContentType();
 
         assertThat(error.getErrorName()).isEqualTo("unsupportedContentType");
+        assertThat(error.getHttpStatus()).isEqualTo(HttpStatus.UNSUPPORTED_MEDIA_TYPE.value());
     }
 
     @Test
@@ -56,6 +70,7 @@ class StandardErrorDTOTest {
         final val error = StandardErrorDTO.createBodyNotParsable();
 
         assertThat(error.getErrorName()).isEqualTo("bodyNotParsable");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 }
 

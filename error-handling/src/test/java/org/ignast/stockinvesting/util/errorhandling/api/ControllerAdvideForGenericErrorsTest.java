@@ -10,6 +10,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
+import static org.springframework.http.HttpStatus.NOT_ACCEPTABLE;
+import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import lombok.val;
@@ -43,7 +47,9 @@ final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
         final val error = handler.handleMethodArgumentNotValidException(exception);
 
         assertThat(error).isInstanceOf(BodyDoesNotMatchSchemaErrorDTO.class);
-        assertThat(((BodyDoesNotMatchSchemaErrorDTO) error).getValidationErrors()).isNotEmpty();
+        final val rootValidationError = (BodyDoesNotMatchSchemaErrorDTO) error;
+        assertThat(rootValidationError.getValidationErrors()).isNotEmpty();
+        assertThat(rootValidationError.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
@@ -55,6 +61,7 @@ final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
         final val error = handler.handleMethodArgumentNotValidException(exception);
 
         assertThat(error.getErrorName()).isNull();
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 }
 
@@ -76,7 +83,9 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
         final val error = handler.handleUnparsableJson(jacksonFieldLevelError());
 
         assertThat(error).isInstanceOf(BodyDoesNotMatchSchemaErrorDTO.class);
-        assertThat(((BodyDoesNotMatchSchemaErrorDTO) error).getValidationErrors()).isNotEmpty();
+        final val rootValidationError = (BodyDoesNotMatchSchemaErrorDTO) error;
+        assertThat(rootValidationError.getValidationErrors()).isNotEmpty();
+        assertThat(rootValidationError.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
@@ -86,6 +95,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
         final val error = handler.handleUnparsableJson(withoutCause());
 
         assertThat(error.getErrorName()).isEqualTo("bodyNotParsable");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
@@ -95,6 +105,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
         final val error = handler.handleUnparsableJson(unknownCause());
 
         assertThat(error.getErrorName()).isEqualTo("bodyNotParsable");
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 
     @Test
@@ -105,6 +116,7 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
         final val error = handler.handleUnparsableJson(jacksonFieldLevelError());
 
         assertThat(error.getErrorName()).isNull();
+        assertThat(error.getHttpStatus()).isEqualTo(BAD_REQUEST.value());
     }
 }
 
@@ -117,30 +129,27 @@ final class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
 
     @Test
     public void shouldHandleMethodNotAllowed() {
-        assertThat(
-            handler.handleMethodNotAllowed(mock(HttpRequestMethodNotSupportedException.class)).getErrorName()
-        )
-            .isEqualTo("methodNotAllowed");
+        final val error = handler.handleMethodNotAllowed(mock(HttpRequestMethodNotSupportedException.class));
+        assertThat(error.getErrorName()).isEqualTo("methodNotAllowed");
+        assertThat(error.getHttpStatus()).isEqualTo(METHOD_NOT_ALLOWED.value());
     }
 
     @Test
     public void shouldHandleMediaTypeNotAcceptable() {
-        assertThat(
-            handler
-                .handleMediaTypeNotAcceptable(mock(HttpMediaTypeNotAcceptableException.class))
-                .getErrorName()
-        )
-            .isEqualTo("mediaTypeNotAcceptable");
+        final val error = handler.handleMediaTypeNotAcceptable(
+            mock(HttpMediaTypeNotAcceptableException.class)
+        );
+        assertThat(error.getErrorName()).isEqualTo("mediaTypeNotAcceptable");
+        assertThat(error.getHttpStatus()).isEqualTo(NOT_ACCEPTABLE.value());
     }
 
     @Test
     public void shouldHandleContentTypeNotSupported() {
-        assertThat(
-            handler
-                .handleUnsupportedContentType(mock(HttpMediaTypeNotSupportedException.class))
-                .getErrorName()
-        )
-            .isEqualTo("unsupportedContentType");
+        final val error = handler.handleUnsupportedContentType(
+            mock(HttpMediaTypeNotSupportedException.class)
+        );
+        assertThat(error.getErrorName()).isEqualTo("unsupportedContentType");
+        assertThat(error.getHttpStatus()).isEqualTo(UNSUPPORTED_MEDIA_TYPE.value());
     }
 }
 

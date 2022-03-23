@@ -51,7 +51,7 @@ final class UnparsableJsonErrorsTest {
         mockMvc
             .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE))
             .andExpect(status().isBadRequest())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":400,\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @Test
@@ -59,7 +59,7 @@ final class UnparsableJsonErrorsTest {
         mockMvc
             .perform(post(ROOT).contentType(RESOURCE_SPECIFIC_MEDIA_TYPE).content("not-a-json-object"))
             .andExpect(status().isBadRequest())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"bodyNotParsable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":400,\"errorName\":\"bodyNotParsable\"}"));
     }
 
     @TestConfiguration

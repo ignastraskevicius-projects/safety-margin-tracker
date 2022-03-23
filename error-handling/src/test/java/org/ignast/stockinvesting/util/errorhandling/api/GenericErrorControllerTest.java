@@ -4,7 +4,6 @@ import static javax.servlet.RequestDispatcher.ERROR_STATUS_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 
 import javax.servlet.http.HttpServletRequest;
@@ -36,6 +35,7 @@ public final class GenericErrorControllerTest {
         final val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(statusCode));
+        assertThat(response.getBody().getHttpStatus()).isEqualTo(statusCode);
     }
 
     @Test
@@ -43,6 +43,7 @@ public final class GenericErrorControllerTest {
         final val response = controller.handleError(null);
 
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getBody().getHttpStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
     }
 
     @Test

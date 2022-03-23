@@ -10,6 +10,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"fieldIsMissing",
@@ -25,6 +26,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"fieldIsMissing",
@@ -43,6 +45,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"valueMustBeString",
@@ -57,6 +60,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"valueMustBeInteger",
@@ -71,6 +75,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"valueMustBeObject",
@@ -85,6 +90,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"valueMustBeArray",
@@ -99,6 +105,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"valueIsInvalid",
@@ -119,6 +126,7 @@ public final class BodySchemaMismatchJsonErrors {
         return format(
             """
                         {
+                            "httpStatus":400,
                             "errorName":"bodyDoesNotMatchSchema",
                             "validationErrors":[{
                                 "errorName":"valueIsInvalid",

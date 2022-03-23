@@ -39,7 +39,7 @@ public final class RootControllerTest {
         mockMvc
             .perform(get("/").accept("application/hal+json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
@@ -47,7 +47,7 @@ public final class RootControllerTest {
         mockMvc
             .perform(get("/").accept("application/json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
     }
 
     @Test
@@ -55,6 +55,6 @@ public final class RootControllerTest {
         mockMvc
             .perform(post("/"))
             .andExpect(status().isMethodNotAllowed())
-            .andExpect(bodyMatchesJson("{\"errorName\":\"methodNotAllowed\"}"));
+            .andExpect(bodyMatchesJson("{\"httpStatus\":405,\"errorName\":\"methodNotAllowed\"}"));
     }
 }

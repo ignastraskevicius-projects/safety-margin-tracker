@@ -84,6 +84,32 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     }
 
     @Test
+    public void shouldNotCreateCompaniesListedInUnsupportedMarkets() throws JSONException {
+        final val unsupportedCompany =
+            """
+                                {
+                                    "id":5,
+                                    "name":"Microsoft",
+                                    "listings":[{
+                                        "marketIdentifier":"XNOP",
+                                        "stockSymbol":"AMZN"
+                                    }]
+                                }""";
+        final val company = quotesTraversors
+            .startAt(rootResourceOn(port))
+            .hop(f -> f.put("quotes:companies", unsupportedCompany))
+            .perform();
+        assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
+        assertEquals(
+            "fails to create company",
+            """
+                            {\"httpStatus\":400,"errorName":"marketNotSupported"}""",
+            company.getBody(),
+            true
+        );
+    }
+
+    @Test
     public void shouldRetrieveCreatedCompany() throws JSONException {
         final val company = quotesTraversors
             .startAt(rootResourceOn(port))

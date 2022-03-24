@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.quotes.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.quotes.acceptance.Uris.rootResourceOn;
+import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.CREATED;
@@ -13,12 +14,11 @@ import org.json.JSONException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.context.annotation.Bean;
-import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@TestPropertySource(properties = { "server.port=8080", "documentation.url=http://localhost:8080" })
 public final class CompanyResourceTest extends AcceptanceTestEnvironment {
 
     @Autowired
@@ -38,6 +38,23 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
     }
 
     @Test
+    public void docsShouldBeAccessible() throws JSONException {
+        final val docs = quotesTraversors
+            .startAt(rootResourceOn(port))
+            .hop(f -> f.getDocsFor("createCompany"))
+            .perform();
+        assertThat(docs.getStatusCode()).isEqualTo(OK);
+        assertThatJson(docs.getBody())
+            .isEqualTo(
+                """
+                {
+                    "mediaType":"application/vnd.stockinvesting.quotes-v1.hal+json",
+                    "methods":[{"method":"PUT"}]
+                }"""
+            );
+    }
+
+    @Test
     public void shouldNotCreateDuplicateCompanies() throws JSONException {
         quotesTraversors
             .startAt(rootResourceOn(port))
@@ -48,13 +65,9 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
             .hop(f -> f.put("quotes:createCompany", getMicrosoft()))
             .perform();
         assertThat(duplicacte.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertEquals(
-            "fails to create duplicate",
-            """
-                {"httpStatus":400,"errorName":"companyAlreadyExists"}""",
-            duplicacte.getBody(),
-            true
-        );
+        assertThatJson(duplicacte.getBody())
+            .isEqualTo("""
+                {"httpStatus":400,"errorName":"companyAlreadyExists"}""");
     }
 
     @Test
@@ -74,13 +87,11 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
             .hop(f -> f.put("quotes:createCompany", unsupportedCompany))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertEquals(
-            "fails to create company",
-            """
-                        {\"httpStatus\":400,"errorName":"stockSymbolNotSupportedInThisMarket"}""",
-            company.getBody(),
-            true
-        );
+        assertThatJson(company.getBody())
+            .isEqualTo(
+                """
+                        {\"httpStatus\":400,"errorName":"stockSymbolNotSupportedInThisMarket"}"""
+            );
     }
 
     @Test
@@ -100,13 +111,11 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
             .hop(f -> f.put("quotes:createCompany", unsupportedCompany))
             .perform();
         assertThat(company.getStatusCode()).isEqualTo(BAD_REQUEST);
-        assertEquals(
-            "fails to create company",
-            """
-                            {\"httpStatus\":400,"errorName":"marketNotSupported"}""",
-            company.getBody(),
-            true
-        );
+        assertThatJson(company.getBody())
+            .isEqualTo(
+                """
+                            {\"httpStatus\":400,"errorName":"marketNotSupported"}"""
+            );
     }
 
     @Test
@@ -125,19 +134,17 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
         final val quotedPrice = quotesTraversors
             .startAt(rootResourceOn(port))
             .hop(f -> f.put("quotes:createCompany", getMicrosoft()))
-            .hop(f -> f.get("quotes:getQuotedPrice"))
+            .hop(f -> f.get("quotes:queryQuotedPrice"))
             .perform();
         assertThat(quotedPrice.getStatusCode()).isEqualTo(OK);
-        assertEquals(
-            "should retrieve price",
-            """
+        assertThatJson(quotedPrice.getBody())
+            .isEqualTo(
+                """
                             {
                                 "amount":"128.5",
                                 "currency":"USD"
-                            }""",
-            quotedPrice.getBody(),
-            false
-        );
+                            }"""
+            );
     }
 
     private String getMicrosoft() {
@@ -150,14 +157,5 @@ public final class CompanyResourceTest extends AcceptanceTestEnvironment {
                         "stockSymbol":"MSFT"
                     }]
                 }""";
-    }
-
-    @TestConfiguration
-    static class AppMediaTypeConfig {
-
-        @Bean
-        public MediaType appMediaType() {
-            return MediaType.parseMediaType("application/vnd.stockinvesting.quotes-v1.hal+json");
-        }
     }
 }

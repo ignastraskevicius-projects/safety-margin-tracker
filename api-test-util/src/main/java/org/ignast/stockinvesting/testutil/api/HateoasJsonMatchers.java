@@ -7,17 +7,54 @@ import org.json.JSONObject;
 
 public final class HateoasJsonMatchers {
 
+    private static final String LINKS = "_links";
+
+    private static final String HREF = "href";
+
     private HateoasJsonMatchers() {}
 
     public static HasRel hasRel(final String relName) {
         return new HasRel(relName);
     }
 
+    public static HasCuries hasCuries() {
+        return new HasCuries();
+    }
+
+    public static final class HasCuries {
+
+        public HasCuries() {}
+
+        public TypeSafeMatcher<String> withHref() {
+            return new ExistsRelWithHref();
+        }
+
+        static final class ExistsRelWithHref extends TypeSafeMatcher<String> {
+
+            @Override
+            protected boolean matchesSafely(final String hateoasJson) {
+                try {
+                    new JSONObject(hateoasJson)
+                        .getJSONObject(LINKS)
+                        .getJSONArray("curies")
+                        .getJSONObject(0)
+                        .getString(HREF);
+                    return true;
+                } catch (JSONException e) {
+                    return false;
+                }
+            }
+
+            @Override
+            public void describeTo(final Description description) {
+                description.appendText(
+                    String.format("HATEOAS json should contain a 'curies' rel with a href")
+                );
+            }
+        }
+    }
+
     public static final class HasRel {
-
-        private static final String LINKS = "_links";
-
-        private static final String HREF = "href";
 
         private final String relName;
 

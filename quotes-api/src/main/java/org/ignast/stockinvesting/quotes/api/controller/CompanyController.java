@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/companies")
 public class CompanyController {
 
-    private static final String QUOTED_PRICE_REL = "quotes:getQuotedPrice";
+    private static final String QUOTED_PRICE_REL = "quotes:queryQuotedPrice";
 
     private final Companies companies;
 

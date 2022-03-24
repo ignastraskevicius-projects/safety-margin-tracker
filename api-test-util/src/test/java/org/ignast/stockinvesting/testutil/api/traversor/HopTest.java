@@ -2,7 +2,9 @@ package org.ignast.stockinvesting.testutil.api.traversor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.curiesLink;
 import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -28,16 +30,6 @@ public final class HopTest {
         "application/app.specific.media.type-v1.hal+json"
     );
 
-    private static final String RESPONSE_FROM_SERVER = "someResponseFromServer";
-
-    private final RestTemplate restTemplate = RestTemplateStubs.stubExchanging(RESPONSE_FROM_SERVER);
-
-    private final HrefExtractor hrefExtractor = mock(HrefExtractor.class);
-
-    private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
-
-    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
-
     @Test
     public void factoryShouldNotBeCreatedWithNullAppMediaType() {
         assertThatExceptionOfType(NullPointerException.class)
@@ -60,13 +52,28 @@ public final class HopTest {
     public void factoryShouldBeCreatedWithNonNullArguments() {
         new Hop.Factory(mock(MediaType.class), mock(RestTemplate.class), mock(HrefExtractor.class));
     }
+}
+
+final class GetHopTest {
+
+    private static final MediaType APP_V1 = MediaType.parseMediaType(
+        "application/app.specific.media.type-v1.hal+json"
+    );
+
+    private static final String RESPONSE_FROM_SERVER = "someResponseFromServer";
+
+    private final RestTemplate restTemplate = RestTemplateStubs.stubExchanging(RESPONSE_FROM_SERVER);
+
+    private final HrefExtractor hrefExtractor = mock(HrefExtractor.class);
+
+    private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
+
+    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
 
     @Test
     public void hopsTraversalShouldNotAcceptNullEntities() {
         assertThatExceptionOfType(NullPointerException.class)
             .isThrownBy(() -> hopFactory.get("any").traverse(null));
-        assertThatExceptionOfType(NullPointerException.class)
-            .isThrownBy(() -> hopFactory.put("any", "request").traverse(null));
     }
 
     @Test
@@ -93,6 +100,85 @@ public final class HopTest {
 
         assertThatExceptionOfType(TestException.class)
             .isThrownBy(() -> hopFactory.get("any").traverse(response));
+    }
+
+    private static class TestException extends RuntimeException {}
+}
+
+final class GetCuriesHopTest {
+
+    private static final MediaType APP_V1 = MediaType.parseMediaType(
+        "application/app.specific.media.type-v1.hal+json"
+    );
+
+    private static final String RESPONSE_FROM_SERVER = "someResponseFromServer";
+
+    private final RestTemplate restTemplate = RestTemplateStubs.stubExchanging(RESPONSE_FROM_SERVER);
+
+    private final HrefExtractor hrefExtractor = mock(HrefExtractor.class);
+
+    private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
+
+    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+
+    @Test
+    public void getHopShouldNotAcceptNullRels() {
+        assertThatExceptionOfType(NullPointerException.class).isThrownBy(() -> hopFactory.get(null));
+    }
+
+    @Test
+    public void hopsTraversalShouldNotAcceptNullEntities() {
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> hopFactory.getDocsFor("any").traverse(null));
+    }
+
+    @Test
+    public void shouldTraverseGetCuriesHop() {
+        final val linkToCuries = status(OK).contentType(APP_V1).body(curiesLink("any", "service.com/{rel}"));
+        when(hrefExtractor.extractCuriesHref(linkToCuries, "action")).thenReturn("service.com/action");
+
+        final val companyResponse = hopFactory.getDocsFor("action").traverse(linkToCuries);
+
+        verify(restTemplate)
+            .exchange(eq("service.com/action"), eq(GET), entityCaptor.capture(), eq(String.class));
+        assertThat(entityCaptor.getValue().getHeaders().get("Accept")).isEqualTo(List.of(APP_V1.toString()));
+        assertThat(companyResponse.getBody()).isEqualTo(RESPONSE_FROM_SERVER);
+    }
+
+    @Test
+    public void getHopTraversalShouldFailWhenHrefCannotBeExtracted() {
+        final val response = mock(ResponseEntity.class);
+        when(hrefExtractor.extractCuriesHref(response, "rel")).thenThrow(TestException.class);
+
+        assertThatExceptionOfType(TestException.class)
+            .isThrownBy(() -> hopFactory.getDocsFor("rel").traverse(response));
+
+        verify(hrefExtractor).extractCuriesHref(any(), any());
+    }
+
+    private static class TestException extends RuntimeException {}
+}
+
+final class PutHopTest {
+
+    private static final MediaType APP_V1 = MediaType.parseMediaType(
+        "application/app.specific.media.type-v1.hal+json"
+    );
+
+    private static final String RESPONSE_FROM_SERVER = "someResponseFromServer";
+
+    private final RestTemplate restTemplate = RestTemplateStubs.stubExchanging(RESPONSE_FROM_SERVER);
+
+    private final HrefExtractor hrefExtractor = mock(HrefExtractor.class);
+
+    private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
+
+    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+
+    @Test
+    public void hopsTraversalShouldNotAcceptNullEntities() {
+        assertThatExceptionOfType(NullPointerException.class)
+            .isThrownBy(() -> hopFactory.put("any", "request").traverse(null));
     }
 
     @Test

@@ -25,7 +25,6 @@ A Little microservice providing quoted price of stocks of public companies via H
 
 * root resource will be available at http://localhost:8081
 * mediatype required to talk to the service is 'application/vnd.stockinvesting.quotes-v1.hal+json'
-* service usage is indicated primarily via HTTP status codes and subsequently via error messages
 
 #### Deploy (dev-env)
 

@@ -10,14 +10,23 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import lombok.val;
+import org.hamcrest.core.StringContains;
 import org.ignast.stockinvesting.quotes.api.controller.HalConfig;
+import org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppErrorsHandlingConfiguration;
 import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.test.web.servlet.MockMvc;
 
-@WebMvcTest({ RootController.class, HalConfig.class, ErrorExtractorConfiguration.class })
+@WebMvcTest(
+    {
+        RootController.class,
+        HalConfig.class,
+        ErrorExtractorConfiguration.class,
+        AppErrorsHandlingConfiguration.class,
+    }
+)
 public final class RootControllerTest {
 
     private static final String V1_MEDIA_TYPE = "application/vnd.stockinvesting.quotes-v1.hal+json";
@@ -39,7 +48,7 @@ public final class RootControllerTest {
         mockMvc
             .perform(get("/").accept("application/hal+json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(content().string(new StringContains("mediaTypeNotAcceptable")));
     }
 
     @Test
@@ -47,7 +56,7 @@ public final class RootControllerTest {
         mockMvc
             .perform(get("/").accept("application/json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(content().string(new StringContains("mediaTypeNotAcceptable")));
     }
 
     @Test

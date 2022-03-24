@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forIntegerRequiredAt;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forMissingFieldAt;
 import static org.ignast.stockinvesting.testutil.api.BodySchemaMismatchJsonErrors.forStringRequiredAt;
+import static org.ignast.stockinvesting.testutil.api.JsonAssert.assertThatJson;
 import static org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.annotationscan.AnnotationScanWiringIT.TestController.url;
 import static org.skyscreamer.jsonassert.JSONAssert.assertEquals;
 import static org.springframework.http.HttpEntity.EMPTY;
@@ -126,6 +127,26 @@ final class AnnotationScanWiringIT {
         final val response = getWithoutAcceptHeader(url(port));
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
+        assertThatJson(response.body())
+            .isEqualTo(
+                "{'httpStatus':406,'errorName':'mediaTypeNotAcceptable','message':'Missing Accept header'}"
+            );
+    }
+
+    @Test
+    @SuppressWarnings("checkstyle:linelength")
+    public void shouldWireInApplicationMediaForNotAcceptableError() throws Exception {
+        final val response = getWithoutAcceptHeader(url(port));
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
+        assertThatJson(response.body())
+            .isEqualTo(
+                """
+        {   "httpStatus":406,
+            "errorName":"mediaTypeNotAcceptable",
+            "message":"This version of service supports only 'application/specific.mediatype+json'"
+        }"""
+            );
     }
 
     private HttpResponse<String> getWithoutAcceptHeader(final String url)

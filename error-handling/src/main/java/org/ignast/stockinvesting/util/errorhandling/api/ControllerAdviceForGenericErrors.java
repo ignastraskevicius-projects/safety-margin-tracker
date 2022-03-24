@@ -2,7 +2,10 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import java.util.List;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -14,19 +17,17 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
+@RequiredArgsConstructor
 public final class ControllerAdviceForGenericErrors {
 
+    @NonNull
     private final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor;
 
+    @NonNull
     private final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor;
 
-    public ControllerAdviceForGenericErrors(
-        final AnnotationBasedValidationErrorsExtractor validationErrorsExtractor,
-        final JacksonParsingErrorsExtractor jacksonParsingErrorsExtractor
-    ) {
-        this.validationErrorsExtractor = validationErrorsExtractor;
-        this.jacksonParsingErrorsExtractor = jacksonParsingErrorsExtractor;
-    }
+    @NonNull
+    private final MediaType appMediaType;
 
     @ResponseStatus(HttpStatus.METHOD_NOT_ALLOWED)
     @ExceptionHandler
@@ -39,7 +40,7 @@ public final class ControllerAdviceForGenericErrors {
     @ExceptionHandler
     @ResponseBody
     public StandardErrorDTO handleMediaTypeNotAcceptable(final HttpMediaTypeNotAcceptableException e) {
-        return StandardErrorDTO.createForMediaTypeNotAcceptable();
+        return StandardErrorDTO.createForNotAcceptableRequiresInstead(appMediaType);
     }
 
     @ResponseStatus(HttpStatus.UNSUPPORTED_MEDIA_TYPE)

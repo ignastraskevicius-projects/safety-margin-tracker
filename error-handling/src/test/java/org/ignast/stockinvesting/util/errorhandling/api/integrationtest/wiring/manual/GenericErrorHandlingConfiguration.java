@@ -16,7 +16,7 @@ import org.springframework.http.MediaType;
 
 @TestConfiguration
 @Import({ MediaTypeInterceptorConfig.class, ErrorExtractorConfiguration.class })
-final class GenericErrorHandlingConfiguration {
+class GenericErrorHandlingConfiguration {
 
     @Bean
     public ErrorController errorController(final MediaType appMediaType) {
@@ -38,6 +38,6 @@ final class GenericErrorHandlingConfiguration {
         final JacksonParsingErrorsExtractor parsing,
         final AnnotationBasedValidationErrorsExtractor validation
     ) {
-        return new ControllerAdviceForGenericErrors(validation, parsing);
+        return new ControllerAdviceForGenericErrors(validation, parsing, MediaType.APPLICATION_CBOR);
     }
 }

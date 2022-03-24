@@ -4,8 +4,10 @@ import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatcher
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.core.StringContains;
 import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -22,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 @WebMvcTest(ErrorExtractorConfiguration.class)
 final class GetMethodRelatedErrorsTest {
 
+    private static final String APP_MEDIA_TYPE = "application/specific.hal+json";
+
     @Autowired
     private MockMvc mockMvc;
 
@@ -30,7 +35,7 @@ final class GetMethodRelatedErrorsTest {
         mockMvc
             .perform(get("/").accept("application/hal+json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(content().string(new StringContains("mediaTypeNotAcceptable")));
     }
 
     @Test
@@ -38,7 +43,7 @@ final class GetMethodRelatedErrorsTest {
         mockMvc
             .perform(get("/").accept("application/json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(content().string(new StringContains("mediaTypeNotAcceptable")));
     }
 
     @Test
@@ -51,6 +56,11 @@ final class GetMethodRelatedErrorsTest {
 
     @TestConfiguration
     static class TestControllerConfig {
+
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
+        }
 
         @Bean
         public TestController testController() {
@@ -110,6 +120,11 @@ final class WriteMethodRelatedErrorsTest {
         @Bean
         public TestController testController() {
             return new TestController();
+        }
+
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
         }
     }
 

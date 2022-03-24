@@ -1,6 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller;
 
 import static java.lang.String.format;
+import static org.ignast.stockinvesting.quotes.api.controller.VersionedApiMediaTypes.V1;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -15,12 +16,12 @@ import org.springframework.http.MediaType;
 public class HalConfig {
 
     @Bean
-    public HalConfiguration halAcceptingServiceSpecificMediaType() {
-        return new HalConfiguration().withMediaType(MediaType.valueOf(VersionedApiMediaTypes.V1));
+    HalConfiguration halAcceptingServiceSpecificMediaType() {
+        return new HalConfiguration().withMediaType(MediaType.valueOf(V1));
     }
 
     @Bean
-    public CurieProvider curieProvider(@Value("${documentation.url}") final String docsUrl) {
+    CurieProvider curieProvider(@Value("${documentation.url}") final String docsUrl) {
         return new DefaultCurieProvider("quotes", UriTemplate.of(format("%s/rels/quotes/{rel}", docsUrl)));
     }
 }

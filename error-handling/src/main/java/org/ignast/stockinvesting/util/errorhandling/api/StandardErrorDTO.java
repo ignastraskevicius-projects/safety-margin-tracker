@@ -1,5 +1,6 @@
 package org.ignast.stockinvesting.util.errorhandling.api;
 
+import static java.lang.String.format;
 import static java.util.Objects.requireNonNullElse;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.METHOD_NOT_ALLOWED;
@@ -9,17 +10,28 @@ import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 import java.util.Collections;
 import java.util.List;
 import lombok.NonNull;
+import lombok.val;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 public class StandardErrorDTO {
 
+    private static final String MEDIA_TYPE_NOT_ACCEPTABLE = "mediaTypeNotAcceptable";
+
     private final HttpStatus httpStatus;
+
+    private String message;
 
     private final String errorName;
 
     private StandardErrorDTO(final String errorName, @NonNull final HttpStatus status) {
+        this(errorName, status, null);
+    }
+
+    private StandardErrorDTO(final String errorName, final HttpStatus status, final String message) {
         this.errorName = errorName;
         this.httpStatus = status;
+        this.message = message;
     }
 
     public static StandardErrorDTO createNameless(final HttpStatus status) {
@@ -40,8 +52,13 @@ public class StandardErrorDTO {
         return new StandardErrorDTO("methodNotAllowed", METHOD_NOT_ALLOWED);
     }
 
-    public static StandardErrorDTO createForMediaTypeNotAcceptable() {
-        return new StandardErrorDTO("mediaTypeNotAcceptable", NOT_ACCEPTABLE);
+    public static StandardErrorDTO createForNotAcceptableRequiresInstead(final MediaType appMediaType) {
+        final val message = format("This version of service supports only '%s'", appMediaType);
+        return new StandardErrorDTO(MEDIA_TYPE_NOT_ACCEPTABLE, NOT_ACCEPTABLE, message);
+    }
+
+    public static StandardErrorDTO createForNotAcceptableNoHeader() {
+        return new StandardErrorDTO(MEDIA_TYPE_NOT_ACCEPTABLE, NOT_ACCEPTABLE, "Missing Accept header");
     }
 
     public static StandardErrorDTO createForUnsupportedContentType() {
@@ -59,6 +76,10 @@ public class StandardErrorDTO {
 
     public int getHttpStatus() {
         return httpStatus.value();
+    }
+
+    public String getMessage() {
+        return message;
     }
 
     public static final class BodyDoesNotMatchSchemaErrorDTO extends StandardErrorDTO {

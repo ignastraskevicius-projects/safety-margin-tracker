@@ -2,9 +2,11 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatNullPointerException;
+import static org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO.createForNotAcceptableRequiresInstead;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.MediaType.parseMediaType;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,11 +52,24 @@ class StandardErrorDTOTest {
     }
 
     @Test
-    public void shouldCreateMediaTypeNotAcceptable() {
-        final val error = StandardErrorDTO.createForMediaTypeNotAcceptable();
+    public void shouldCreateMediaTypeNotAcceptableDueToUnsupportedHeader() {
+        final val appMediaType = parseMediaType("application/specific.hal+json");
+
+        final val error = createForNotAcceptableRequiresInstead(appMediaType);
 
         assertThat(error.getErrorName()).isEqualTo("mediaTypeNotAcceptable");
         assertThat(error.getHttpStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
+        assertThat(error.getMessage())
+            .isEqualTo("This version of service supports only 'application/specific.hal+json'");
+    }
+
+    @Test
+    public void shouldCreateMediaTypeNotAcceptableDueToNoHeader() {
+        final val error = StandardErrorDTO.createForNotAcceptableNoHeader();
+
+        assertThat(error.getErrorName()).isEqualTo("mediaTypeNotAcceptable");
+        assertThat(error.getHttpStatus()).isEqualTo(HttpStatus.NOT_ACCEPTABLE.value());
+        assertThat(error.getMessage()).isEqualTo("Missing Accept header");
     }
 
     @Test

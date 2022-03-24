@@ -29,6 +29,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -68,6 +69,11 @@ final class UnparsableJsonErrorsTest {
         @Bean
         public TestController testController() {
             return new TestController();
+        }
+
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
         }
     }
 
@@ -141,6 +147,11 @@ final class JsonStringFieldErrorsTest {
 
     @TestConfiguration
     static class TestControllerConfig {
+
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
+        }
 
         @Bean
         public TestController testController() {
@@ -241,6 +252,11 @@ final class JsonIntegerFieldErrorsTest {
         @Bean
         public TestController testController() {
             return new TestController();
+        }
+
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
         }
 
         @Bean
@@ -352,6 +368,11 @@ final class JsonCollectionErrorsTest {
     static class TestControllerConfig {
 
         @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
+        }
+
+        @Bean
         public TestController testController() {
             return new TestController();
         }
@@ -425,6 +446,11 @@ final class JsonNestedStringFieldErrorsTest {
 
     @TestConfiguration
     static class TestControllerConfig {
+
+        @Bean
+        public MediaType appMediaType() {
+            return MediaType.APPLICATION_PDF;
+        }
 
         @Bean
         public TestController testController() {

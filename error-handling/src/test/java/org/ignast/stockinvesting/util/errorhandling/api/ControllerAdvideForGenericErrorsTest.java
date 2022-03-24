@@ -6,6 +6,7 @@ import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotRea
 import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.unknownCause;
 import static org.ignast.stockinvesting.util.errorhandling.api.HttpMessageNotReadableExceptionMock.withoutCause;
 import static org.ignast.stockinvesting.util.errorhandling.api.ValidationErrorDTOs.anyValidationErrorDTO;
+import static org.ignast.stockinvesting.utiltest.ExceptionAssert.assertThatNullPointerExceptionIsThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.mock;
@@ -20,6 +21,7 @@ import lombok.val;
 import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO.BodyDoesNotMatchSchemaErrorDTO;
 import org.ignast.stockinvesting.utiltest.MockitoUtils;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.HttpMediaTypeNotAcceptableException;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -35,7 +37,8 @@ final class ControllerAdviceForGenericErrorsForInvalidArgumentsTest {
 
     private final ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
         javaxErrorExtractor,
-        mock(JacksonParsingErrorsExtractor.class)
+        mock(JacksonParsingErrorsExtractor.class),
+        mock(MediaType.class)
     );
 
     @Test
@@ -73,7 +76,8 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
 
     private final ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
         mock(AnnotationBasedValidationErrorsExtractor.class),
-        jacksonErrorExtractor
+        jacksonErrorExtractor,
+        mock(MediaType.class)
     );
 
     @Test
@@ -122,10 +126,42 @@ final class ControllerAdviceForGenericErrorsForJacksonParsingTest {
 
 final class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
 
+    private final MediaType appMediaType = MediaType.parseMediaType("application/specific.hal+json");
+
     private final ControllerAdviceForGenericErrors handler = new ControllerAdviceForGenericErrors(
         mock(AnnotationBasedValidationErrorsExtractor.class),
-        mock(JacksonParsingErrorsExtractor.class)
+        mock(JacksonParsingErrorsExtractor.class),
+        appMediaType
     );
+
+    @Test
+    public void shouldNotCreateWithNullArguments() {
+        assertThatNullPointerExceptionIsThrownBy(
+            () ->
+                new ControllerAdviceForGenericErrors(
+                    mock(AnnotationBasedValidationErrorsExtractor.class),
+                    mock(JacksonParsingErrorsExtractor.class),
+                    null
+                ),
+            () ->
+                new ControllerAdviceForGenericErrors(
+                    mock(AnnotationBasedValidationErrorsExtractor.class),
+                    null,
+                    mock(MediaType.class)
+                ),
+            () ->
+                new ControllerAdviceForGenericErrors(
+                    null,
+                    mock(JacksonParsingErrorsExtractor.class),
+                    mock(MediaType.class)
+                )
+        );
+        new ControllerAdviceForGenericErrors(
+            mock(AnnotationBasedValidationErrorsExtractor.class),
+            mock(JacksonParsingErrorsExtractor.class),
+            mock(MediaType.class)
+        );
+    }
 
     @Test
     public void shouldHandleMethodNotAllowed() {
@@ -139,8 +175,11 @@ final class ControllerAdviceForGenericErrorsHandlerForOtherErrorsTest {
         final val error = handler.handleMediaTypeNotAcceptable(
             mock(HttpMediaTypeNotAcceptableException.class)
         );
+
         assertThat(error.getErrorName()).isEqualTo("mediaTypeNotAcceptable");
         assertThat(error.getHttpStatus()).isEqualTo(NOT_ACCEPTABLE.value());
+        final val message = "This version of service supports only 'application/specific.hal+json'";
+        assertThat(error.getMessage()).isEqualTo(message);
     }
 
     @Test

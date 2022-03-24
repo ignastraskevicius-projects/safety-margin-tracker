@@ -11,9 +11,11 @@ import static org.mockito.Mockito.when;
 import static org.springframework.hateoas.MediaTypes.HAL_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.header;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import org.hamcrest.core.StringContains;
 import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.context.TestPropertySource;
@@ -76,7 +78,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
         mockMvc
             .perform(get("/companies/5").accept("application/json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(content().string(new StringContains("mediaTypeNotAcceptable")));
     }
 
     @Test
@@ -84,7 +86,7 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
         mockMvc
             .perform(get("/companies/5").accept("application/hal+json"))
             .andExpect(status().isNotAcceptable())
-            .andExpect(bodyMatchesJson("{\"httpStatus\":406,\"errorName\":\"mediaTypeNotAcceptable\"}"));
+            .andExpect(content().string(new StringContains("mediaTypeNotAcceptable")));
     }
 
     @Test

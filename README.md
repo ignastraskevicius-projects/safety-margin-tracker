@@ -8,10 +8,7 @@ A Little microservice providing quoted price of stocks of public companies via H
 * Java 17
 * Docker Engine 20.10.12
 * Docker Compose 1.26.0
-
-* port 3306 to be open
-* port 8081 to be open
-* port 8080 to be open
+* ports 3306, 8080, 8081 to be free
 
 ### 1. Build
 

@@ -2,6 +2,8 @@ package org.ignast.stockinvesting.testutil.api.traversor;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.curiesLink;
+import static org.ignast.stockinvesting.testutil.api.traversor.HateoasLink.link;
 import static org.ignast.stockinvesting.testutil.api.traversor.RestTemplateBuilderStubs.stub;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -11,6 +13,7 @@ import static org.springframework.http.HttpMethod.PUT;
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
+import static org.springframework.http.MediaType.parseMediaType;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withBadRequest;
@@ -31,9 +34,9 @@ import org.springframework.web.client.RestTemplate;
 @RestClientTest(HateoasTraversor.Factory.class)
 public final class HateoasTraversorTest {
 
-    private static final MediaType APP_V1 = MediaType.parseMediaType(
-        "application/app.specific.media.type-v1.hal+json"
-    );
+    private static final String ROOT_URI = "http://root";
+
+    private static final MediaType APP_V1 = parseMediaType("application/app.specific.media.type-v1.hal+json");
 
     @Autowired
     private HateoasTraversor.Factory traversors;
@@ -66,11 +69,11 @@ public final class HateoasTraversorTest {
     @Test
     public void traverseRootOnly() {
         server
-            .expect(requestTo("http://root1"))
+            .expect(requestTo(ROOT_URI))
             .andExpect(method(GET))
             .andRespond(withSuccess("someResponse", APPLICATION_JSON));
 
-        final val response = traversors.startAt("http://root1").perform();
+        final val response = traversors.startAt(ROOT_URI).perform();
 
         assertThat(response.getBody()).isEqualTo("someResponse");
     }
@@ -78,15 +81,31 @@ public final class HateoasTraversorTest {
     @Test
     public void traverseGetHop() {
         server
-            .expect(requestTo("http://root"))
+            .expect(requestTo(ROOT_URI))
             .andExpect(method(GET))
-            .andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+            .andRespond(withSuccess(link("company", "http://root/company"), APP_V1));
         server
             .expect(requestTo("http://root/company"))
             .andExpect(method(GET))
-            .andRespond(withSuccess(HateoasLink.link("company", "http://any"), APP_V1));
+            .andRespond(withSuccess(link("company", "http://any"), APP_V1));
 
-        final val response = traversors.startAt("http://root").hop(f -> f.get("company")).perform();
+        final val response = traversors.startAt(ROOT_URI).hop(f -> f.get("company")).perform();
+
+        assertThat(response.getBody()).contains("http://any");
+    }
+
+    @Test
+    public void traverseGetCuriesHop() {
+        server
+            .expect(requestTo(ROOT_URI))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(curiesLink("service", "http://rels/{rel}"), APP_V1));
+        server
+            .expect(requestTo("http://rels/action"))
+            .andExpect(method(GET))
+            .andRespond(withSuccess(link("any", "http://any"), APP_V1));
+
+        final val response = traversors.startAt(ROOT_URI).hop(f -> f.getDocsFor("action")).perform();
 
         assertThat(response.getBody()).contains("http://any");
     }
@@ -94,18 +113,15 @@ public final class HateoasTraversorTest {
     @Test
     public void traversePutHop() {
         server
-            .expect(requestTo("http://root"))
+            .expect(requestTo(ROOT_URI))
             .andExpect(method(GET))
-            .andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+            .andRespond(withSuccess(link("company", "http://root/company"), APP_V1));
         server
             .expect(requestTo("http://root/company"))
             .andExpect(method(PUT))
-            .andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
+            .andRespond(withSuccess(link("any", "http://any"), APP_V1));
 
-        final val response = traversors
-            .startAt("http://root")
-            .hop(f -> f.put("company", "someRequest"))
-            .perform();
+        final val response = traversors.startAt(ROOT_URI).hop(f -> f.put("company", "someRequest")).perform();
 
         assertThat(response.getBody()).contains("http://any");
     }
@@ -113,20 +129,20 @@ public final class HateoasTraversorTest {
     @Test
     public void traverseMultipleHops() {
         server
-            .expect(requestTo("http://root"))
+            .expect(requestTo(ROOT_URI))
             .andExpect(method(GET))
-            .andRespond(withSuccess(HateoasLink.link("company", "http://root/company"), APP_V1));
+            .andRespond(withSuccess(link("company", "http://root/company"), APP_V1));
         server
             .expect(requestTo("http://root/company"))
             .andExpect(method(GET))
-            .andRespond(withSuccess(HateoasLink.link("president", "http://root/president"), APP_V1));
+            .andRespond(withSuccess(link("president", "http://root/president"), APP_V1));
         server
             .expect(requestTo("http://root/president"))
             .andExpect(method(GET))
-            .andRespond(withSuccess(HateoasLink.link("any", "http://any"), APP_V1));
+            .andRespond(withSuccess(link("any", "http://any"), APP_V1));
 
         final val response = traversors
-            .startAt("http://root")
+            .startAt(ROOT_URI)
             .hop(f -> f.get("company"))
             .hop(f -> f.get("president"))
             .perform();
@@ -137,11 +153,11 @@ public final class HateoasTraversorTest {
     @Test
     public void shouldHandleClientErrors() {
         server
-            .expect(requestTo("http://root"))
+            .expect(requestTo(ROOT_URI))
             .andExpect(method(GET))
             .andRespond(withBadRequest().contentType(APPLICATION_JSON).body("someResponse"));
 
-        final val response = traversors.startAt("http://root").perform();
+        final val response = traversors.startAt(ROOT_URI).perform();
 
         assertThat(response.getStatusCode()).isEqualTo(BAD_REQUEST);
         assertThat(response.getBody()).isEqualTo("someResponse");
@@ -150,11 +166,11 @@ public final class HateoasTraversorTest {
     @Test
     public void shouldHandleServerErrors() {
         server
-            .expect(requestTo("http://root"))
+            .expect(requestTo(ROOT_URI))
             .andExpect(method(GET))
             .andRespond(withServerError().contentType(APPLICATION_JSON).body("someResponse"));
 
-        final val response = traversors.startAt("http://root").perform();
+        final val response = traversors.startAt(ROOT_URI).perform();
 
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
         assertThat(response.getBody()).isEqualTo("someResponse");

@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.testutil.api.traversor;
 
 import static org.springframework.http.HttpMethod.GET;
 
+import java.util.function.Function;
 import lombok.AllArgsConstructor;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
@@ -35,8 +36,12 @@ public interface Hop {
             return new PutHop(appMediaType, restTemplate, hrefExtractor, rel, body);
         }
 
-        public TraversableHop get(final String rel) {
-            return new GetHop(appMediaType, restTemplate, hrefExtractor, rel);
+        public TraversableHop get(@NonNull final String rel) {
+            return new GetHop(appMediaType, restTemplate, r -> hrefExtractor.extractHref(r, rel));
+        }
+
+        public TraversableHop getDocsFor(final String rel) {
+            return new GetHop(appMediaType, restTemplate, r -> hrefExtractor.extractCuriesHref(r, rel));
         }
 
         @AllArgsConstructor
@@ -74,14 +79,11 @@ public interface Hop {
 
             private final RestTemplate restTemplate;
 
-            private final HrefExtractor hrefExtractor;
-
-            @NonNull
-            private final String rel;
+            private final Function<ResponseEntity<String>, String> extractorHref;
 
             @Override
             ResponseEntity<String> traverse(@NonNull final ResponseEntity<String> previousResponse) {
-                final val href = hrefExtractor.extractHref(previousResponse, rel);
+                final val href = extractorHref.apply(previousResponse);
                 return restTemplate.exchange(href, GET, acceptV1(), String.class);
             }
 

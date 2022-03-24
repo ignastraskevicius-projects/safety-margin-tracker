@@ -1,5 +1,7 @@
 package org.ignast.stockinvesting.quotes.api.controller.integration.company;
 
+import static java.lang.String.format;
+import static org.ignast.stockinvesting.quotes.api.controller.integration.company.CompanyControllerRetrievalByIdTest.DOCS_URL;
 import static org.ignast.stockinvesting.quotes.api.testutil.DomainFactoryForTests.amazon;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.bodyMatchesJson;
 import static org.ignast.stockinvesting.testutil.api.NonExtensibleContentMatchers.resourceContentMatchesJson;
@@ -14,8 +16,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.junit.jupiter.api.Test;
+import org.springframework.test.context.TestPropertySource;
 
+@TestPropertySource(properties = { "documentation.url=" + DOCS_URL })
 class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
+
+    static final String DOCS_URL = "http://documentation:8081";
 
     @Test
     public void shouldRetrieveCompany() throws Exception {
@@ -36,13 +42,21 @@ class CompanyControllerRetrievalByIdTest extends CompanyControllerITBase {
             .andExpect(header().string("Content-Type", APP_V1))
             .andExpect(
                 resourceLinksMatchesJson(
-                    """
+                    format(
+                        """
                            {
                                 "_links":{
                                     "self":{"href":"http://localhost/companies/5"},
-                                    "quotes:getQuotedPrice":{"href":"http://localhost/companies/5/price"}
+                                    "quotes:queryQuotedPrice":{"href":"http://localhost/companies/5/price"},
+                                    "curies":[{
+                                        "name":"quotes",
+                                        "href":"%s/rels/quotes/{rel}",
+                                        "templated":true
+                                    }]
                                 }
-                            }"""
+                            }""",
+                        DOCS_URL
+                    )
                 )
             );
     }

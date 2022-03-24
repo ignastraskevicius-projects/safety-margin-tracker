@@ -34,6 +34,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -42,6 +43,10 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Import(GenericErrorHandlingConfiguration.class)
 final class ManualWiringIT {
+
+    private static final MediaType APP_MEDIA_TYPE = MediaType.parseMediaType(
+        "application/specific.mediatype+json"
+    );
 
     @LocalServerPort
     private int port;
@@ -109,11 +114,11 @@ final class ManualWiringIT {
     }
 
     @Test
-    public void shouldNotSerializeNullErrorNamesForSelfExplanatoryErrorCodes() {
+    public void shouldWireInEerrorHandlerAndJacksonNullSerializationExcludes() {
         final val response = restTemplate.getForEntity(url(port) + "/notexistent/path", String.class);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody()).isEqualTo("{}");
+        assertThat(response.getBody()).isEqualTo("{\"httpStatus\":404}");
     }
 
     @Test
@@ -141,6 +146,11 @@ final class ManualWiringIT {
 
     @TestConfiguration
     static class TestControllerConfig {
+
+        @Bean
+        MediaType appMediaType() {
+            return APP_MEDIA_TYPE;
+        }
 
         @Bean
         public TestController testController() {

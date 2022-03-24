@@ -12,14 +12,15 @@ import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.MediaType;
 
 @TestConfiguration
 @Import({ MediaTypeInterceptorConfig.class, ErrorExtractorConfiguration.class })
 final class GenericErrorHandlingConfiguration {
 
     @Bean
-    public ErrorController errorController() {
-        return new GenericErrorController();
+    public ErrorController errorController(final MediaType appMediaType) {
+        return new GenericErrorController(appMediaType);
     }
 
     @Bean

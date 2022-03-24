@@ -45,6 +45,49 @@ final class HateoasJsonMatchersForRelTest {
     }
 }
 
+final class HateoasJsonMatchersForCuriesTest {
+
+    private final Matcher<String> matcher = HateoasJsonMatchers.hasCuries().withHref();
+
+    @Test
+    public void messageShouldIndicateExpectationAndActualOutcome() {
+        final val testJson = "{}";
+        final val desc = new StringDescription();
+
+        matcher.describeTo(desc);
+        matcher.describeMismatch(testJson, desc);
+
+        assertThat(desc.toString())
+            .contains("HATEOAS json should contain a 'curies' rel with a href")
+            .contains(testJson);
+    }
+
+    @Test
+    public void shouldNotMatchJsonWithoutHateoasLinks() {
+        assertThat(matcher.matches("{}")).isFalse();
+    }
+
+    @Test
+    public void shouldNotMatchJsonWithoutSpecifiedLinks() {
+        assertThat(matcher.matches("{\"_links\":{}}")).isFalse();
+    }
+
+    @Test
+    public void shouldNotMatchJsonHavingZeroCuries() {
+        assertThat(matcher.matches("{\"_links\":{\"curies\":[]]}}")).isFalse();
+    }
+
+    @Test
+    public void shouldNotMatchJsonHavingCuriesWithoutHrefCuries() {
+        assertThat(matcher.matches("{\"_links\":{\"curies\":[{}]]}}")).isFalse();
+    }
+
+    @Test
+    public void shouldMatchAnyHrefs() {
+        assertThat(matcher.matches("{\"_links\":{\"curies\":[{\"href\":\"any\"}]}}")).isTrue();
+    }
+}
+
 final class HateoasJsonMatchersForRelAndHrefTest {
 
     private final Matcher<String> matcher = HateoasJsonMatchers

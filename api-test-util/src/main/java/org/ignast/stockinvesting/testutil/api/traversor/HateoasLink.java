@@ -13,4 +13,19 @@ public final class HateoasLink {
     public static String anyLink() {
         return "{\"_links\":{\"any\":{\"href\":\"any\"}}}";
     }
+
+    public static String curiesLink(final String service, final String uri) {
+        return format(
+            """
+                {"_links":{
+                    "curies":[{
+                        "name":"%s",
+                        "href":"%s",
+                        "templated":true
+                    }]
+                }}""",
+            service,
+            uri
+        );
+    }
 }

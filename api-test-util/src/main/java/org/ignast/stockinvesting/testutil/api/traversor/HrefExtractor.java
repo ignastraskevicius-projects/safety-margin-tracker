@@ -17,6 +17,12 @@ import org.springframework.http.ResponseEntity;
 
 public class HrefExtractor {
 
+    private static final String CURIES = "curies";
+
+    private static final String LINKS = "_links";
+
+    private static final String HREF = "href";
+
     private final MediaType appMediaType;
 
     public HrefExtractor(@NonNull final MediaType appMediaType) {
@@ -24,8 +30,43 @@ public class HrefExtractor {
     }
 
     @SuppressWarnings("checkstyle:designforextension")
-    protected String extractHref(final ResponseEntity<String> previousResponse, final String rel) {
-        return new Extractor(previousResponse, rel).extract();
+    protected String extractHref(final ResponseEntity<String> response, final String rel) {
+        return new Extractor(response, rel).extractValidating(this::traverseToResourceHref);
+    }
+
+    public String extractCuriesHref(final ResponseEntity<String> response, final String rel) {
+        final val templatedHref = new Extractor(response, CURIES)
+            .extractValidating(this::traverseToCuriesHref);
+        return expandRelParam(templatedHref, rel);
+    }
+
+    private String expandRelParam(final String templatedHref, final String rel) {
+        final val relParam = "{rel}";
+        if (templatedHref.contains(relParam)) {
+            return templatedHref.replace(relParam, rel);
+        } else {
+            final val error = "Hop to 'curies' failed: href is not templated with 'rel' parameter";
+            throw new IllegalArgumentException(error);
+        }
+    }
+
+    private String traverseToCuriesHref(final String json, final String rel) throws JSONException {
+        MatcherAssert.assertThat(json, HateoasJsonMatchers.hasCuries().withHref());
+        return new JSONObject(json)
+            .getJSONObject(LINKS)
+            .getJSONArray(CURIES)
+            .getJSONObject(0)
+            .getString(HREF);
+    }
+
+    private String traverseToResourceHref(final String json, final String rel) throws JSONException {
+        MatcherAssert.assertThat(json, HateoasJsonMatchers.hasRel(rel).withHref());
+        return new JSONObject(json).getJSONObject(LINKS).getJSONObject(rel).getString(HREF);
+    }
+
+    private static interface AssertingTraversor {
+        public String traverseAsserting(final String json, final String rel)
+            throws AssertionError, JSONException;
     }
 
     private final class Extractor {
@@ -39,27 +80,23 @@ public class HrefExtractor {
             this.rel = rel;
         }
 
-        private String extract() {
+        private String extractValidating(final AssertingTraversor traverseAsserting) {
             expectSuccessfulResponse();
             expectAppResponse();
-            return extractHref();
+            expectValidJson(previousResponse.getBody());
+            return extractHref(traverseAsserting);
         }
 
-        private String extractHref() {
-            final val jsonBody = toJson(previousResponse.getBody());
+        private String extractHref(final AssertingTraversor traverseAsserting) {
             try {
-                MatcherAssert.assertThat(
-                    previousResponse.getBody(),
-                    HateoasJsonMatchers.hasRel(rel).withHref()
-                );
-                return jsonBody.getJSONObject("_links").getJSONObject(rel).getString("href");
+                return traverseAsserting.traverseAsserting(previousResponse.getBody(), rel);
             } catch (AssertionError | JSONException e) {
                 final val message = format("previous response does not contain rel to '%s'", rel);
                 throw new IllegalArgumentException(formatError(message));
             }
         }
 
-        private JSONObject toJson(final String previousResponseBody) {
+        private JSONObject expectValidJson(final String previousResponseBody) {
             try {
                 return new JSONObject(previousResponseBody);
             } catch (JSONException e) {

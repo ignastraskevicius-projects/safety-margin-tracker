@@ -2,6 +2,7 @@ package org.ignast.stockinvesting.util.errorhandling.api;
 
 import static javax.servlet.RequestDispatcher.ERROR_STATUS_CODE;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNullPointerException;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.HttpStatus.INTERNAL_SERVER_ERROR;
@@ -13,8 +14,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 
 public final class GenericErrorControllerTest {
+
+    private static final MediaType APP_MEDIA_TYPE = MediaType.parseMediaType("application/specific+json");
 
     private static final int NOT_FOUND = 404;
 
@@ -22,7 +26,13 @@ public final class GenericErrorControllerTest {
 
     private static final int BAD_REQUEST = 400;
 
-    private final GenericErrorController controller = new GenericErrorController();
+    private final GenericErrorController controller = new GenericErrorController(APP_MEDIA_TYPE);
+
+    @Test
+    public void shouldNotCreateWithNullArguments() {
+        assertThatNullPointerException().isThrownBy(() -> new GenericErrorController(null));
+        new GenericErrorController(MediaType.APPLICATION_JSON);
+    }
 
     @ParameterizedTest
     @ValueSource(ints = { NOT_FOUND, SERVICE_UNAVAILABLE })
@@ -35,6 +45,7 @@ public final class GenericErrorControllerTest {
         final val response = controller.handleError(request);
 
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.valueOf(statusCode));
+        assertThat(response.getHeaders().getContentType()).isEqualTo(APP_MEDIA_TYPE);
         assertThat(response.getBody().getHttpStatus()).isEqualTo(statusCode);
     }
 
@@ -43,6 +54,7 @@ public final class GenericErrorControllerTest {
         final val response = controller.handleError(null);
 
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
+        assertThat(response.getHeaders().getContentType()).isEqualTo(APP_MEDIA_TYPE);
         assertThat(response.getBody().getHttpStatus()).isEqualTo(INTERNAL_SERVER_ERROR.value());
     }
 
@@ -52,6 +64,7 @@ public final class GenericErrorControllerTest {
 
         final val response = controller.handleError(request);
 
+        assertThat(response.getHeaders().getContentType()).isEqualTo(APP_MEDIA_TYPE);
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
@@ -64,6 +77,7 @@ public final class GenericErrorControllerTest {
 
         final val response = controller.handleError(request);
 
+        assertThat(response.getHeaders().getContentType()).isEqualTo(APP_MEDIA_TYPE);
         assertThat(response.getStatusCode()).isEqualTo(INTERNAL_SERVER_ERROR);
     }
 
@@ -74,6 +88,7 @@ public final class GenericErrorControllerTest {
 
         final val response = controller.handleError(request);
 
+        assertThat(response.getHeaders().getContentType()).isEqualTo(APP_MEDIA_TYPE);
         assertThat(response.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
         assertThat(response.getBody().getErrorName()).isNull();
     }

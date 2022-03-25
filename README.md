@@ -1,6 +1,6 @@
 # Quotes
 
-A Little microservice providing quoted price of stocks of public companies via HATEOAS API
+A little microservice providing quoted price of stock of public companies via HATEOAS HAL API
 
 ## Set up
 
@@ -21,7 +21,7 @@ A Little microservice providing quoted price of stocks of public companies via H
 #### Usage
 
 * root resource will be available at http://localhost:8081
-* API is enabled to self-serve, including live in-service documentation
+* API is enablead for self-serve, includes live in-service documentation
 
 #### Deploy (dev-env)
 

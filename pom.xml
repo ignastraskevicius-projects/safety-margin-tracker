@@ -30,6 +30,7 @@
         <alphavantage.dockerimage>${project.groupId}/alphavantage-simulator:${project.version}</alphavantage.dockerimage>
         <mysql.dev.dockerimage>${project.groupId}/mysql-dev:${project.version}</mysql.dev.dockerimage>
         <app.dockerimage>${project.groupId}/quotes-service:${project.version}</app.dockerimage>
+        <testutil.bash.bats.dockerimage>${project.groupId}/testutil.bash.bats:${project.version}</testutil.bash.bats.dockerimage>
 
         <springboot.version>2.6.4</springboot.version>
         <springframework.version>5.3.16</springframework.version>
@@ -330,7 +331,7 @@
                     </dependency>
                     <dependency>
                         <groupId>org.ignast.stock-investing</groupId>
-                        <artifactId>static-analysis</artifactId>
+                        <artifactId>build-tools</artifactId>
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>

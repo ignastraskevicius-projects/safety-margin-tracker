@@ -339,6 +339,7 @@
                     <includeTestSourceDirectory>true</includeTestSourceDirectory>
                     <configLocation>global/checkstyle.xml</configLocation>
                     <encoding>UTF-8</encoding>
+                    <resourceIncludes>**/*.properties,**/*.xml</resourceIncludes>
                     <consoleOutput>true</consoleOutput>
                 </configuration>
                 <executions>

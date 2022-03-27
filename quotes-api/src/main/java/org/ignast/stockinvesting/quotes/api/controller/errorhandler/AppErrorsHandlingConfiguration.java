@@ -7,15 +7,15 @@ import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
-import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.BodyValidationConfig;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.postparsed.annotation.DomainClassConstraint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 
 @Configuration
-@Import(ErrorExtractorConfiguration.class)
+@Import(BodyValidationConfig.class)
 public class AppErrorsHandlingConfiguration {
 
     @Bean

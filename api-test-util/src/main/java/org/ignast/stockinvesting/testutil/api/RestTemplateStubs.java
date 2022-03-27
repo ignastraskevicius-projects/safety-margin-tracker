@@ -7,6 +7,7 @@ import static org.springframework.http.HttpStatus.OK;
 import static org.springframework.http.ResponseEntity.status;
 
 import lombok.val;
+import org.mockito.ArgumentMatchers;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,7 +17,7 @@ public final class RestTemplateStubs {
 
     public static RestTemplate stubExchanging(final String response) {
         final val restTemplate = mock(RestTemplate.class);
-        when(restTemplate.exchange(any(String.class), any(), any(), any(Class.class)))
+        when(restTemplate.exchange(any(String.class), any(), any(), ArgumentMatchers.<Class<String>>any()))
             .thenReturn(ok(response));
         return restTemplate;
     }

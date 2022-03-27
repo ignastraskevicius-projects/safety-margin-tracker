@@ -8,7 +8,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.hamcrest.core.StringContains;
-import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.BodyValidationConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SuppressWarnings("checkstyle:outertypefilename")
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class GetMethodRelatedErrorsTest {
 
     private static final String APP_MEDIA_TYPE = "application/specific.hal+json";
@@ -84,7 +84,7 @@ final class GetMethodRelatedErrorsTest {
     }
 }
 
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class WriteMethodRelatedErrorsTest {
 
     @Autowired

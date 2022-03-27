@@ -5,14 +5,14 @@ import static org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppBu
 import static org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppBusinessErrorDTO.createForListingAlreadyExists;
 import static org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppBusinessErrorDTO.createForMarketNotSupported;
 import static org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppBusinessErrorDTO.createForStockSymbolNotSupportedInThisMarket;
-import static org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO.createForBusinessError;
+import static org.ignast.stockinvesting.util.errorhandling.api.dto.StandardErrorDTO.createForBusinessError;
 
 import org.ignast.stockinvesting.quotes.domain.CompanyNotFound;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.CompanyAlreadyExists;
 import org.ignast.stockinvesting.quotes.domain.CompanyRepository.ListingAlreadyExists;
 import org.ignast.stockinvesting.quotes.domain.StockExchangeNotSupported;
 import org.ignast.stockinvesting.quotes.domain.StockSymbolNotSupportedInThisMarket;
-import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO;
+import org.ignast.stockinvesting.util.errorhandling.api.dto.StandardErrorDTO;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

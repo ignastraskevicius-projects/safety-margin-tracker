@@ -11,7 +11,7 @@ import org.ignast.stockinvesting.quotes.domain.CompanyExternalId;
 import org.ignast.stockinvesting.quotes.domain.CompanyName;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.From1ParamConstructor;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.postparsed.annotation.From1ParamConstructor;
 import org.junit.jupiter.api.Test;
 
 public final class AppErrorsHandlingConfigurationTest {

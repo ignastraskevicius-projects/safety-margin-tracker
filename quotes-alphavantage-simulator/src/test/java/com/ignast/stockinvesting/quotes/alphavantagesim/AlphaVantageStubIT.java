@@ -99,8 +99,9 @@ public final class AlphaVantageStubIT {
         assertThat(response.headers().allValues("Content-Type")).contains("application/json");
     }
 
-    private Map jsonAsMap(final HttpResponse<String> response) throws JsonProcessingException {
-        return mapper.readValue(response.body(), HashMap.class);
+    private Map<String, Object> jsonAsMap(final HttpResponse<String> response)
+        throws JsonProcessingException {
+        return mapper.readValue(response.body(), new TypeReference<HashMap<String, Object>>() {});
     }
 
     private HttpResponse<String> query(final String path) throws IOException, InterruptedException {
@@ -120,6 +121,7 @@ final class DockerizedAlphaVantageStubIT {
 
     private static final int PORT = 8080;
 
+    @SuppressWarnings("rawtypes")
     @Container
     public static final GenericContainer CONTAINER = new GenericContainer(
         DockerImageName.parse(DOCKER_IMAGE_NAME)

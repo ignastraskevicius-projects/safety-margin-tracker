@@ -18,7 +18,11 @@ import java.util.List;
 import lombok.val;
 import org.ignast.stockinvesting.testutil.api.RestTemplateStubs;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +58,7 @@ public final class HopTest {
     }
 }
 
+@ExtendWith(MockitoExtension.class)
 final class GetHopTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType(
@@ -68,7 +73,11 @@ final class GetHopTest {
 
     private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
 
-    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+    @Mock
+    private ResponseEntity<String> response;
+
+    @Captor
+    private ArgumentCaptor<HttpEntity<String>> entityCaptor;
 
     @Test
     public void hopsTraversalShouldNotAcceptNullEntities() {
@@ -95,7 +104,6 @@ final class GetHopTest {
 
     @Test
     public void getHopTraversalShouldFailWhenHrefCannotBeExtracted() {
-        final val response = mock(ResponseEntity.class);
         when(hrefExtractor.extractHref(response, "any")).thenThrow(TestException.class);
 
         assertThatExceptionOfType(TestException.class)
@@ -105,6 +113,7 @@ final class GetHopTest {
     private static class TestException extends RuntimeException {}
 }
 
+@ExtendWith(MockitoExtension.class)
 final class GetCuriesHopTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType(
@@ -119,7 +128,11 @@ final class GetCuriesHopTest {
 
     private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
 
-    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+    @Mock
+    private ResponseEntity<String> response;
+
+    @Captor
+    private ArgumentCaptor<HttpEntity<String>> entityCaptor;
 
     @Test
     public void getHopShouldNotAcceptNullRels() {
@@ -147,7 +160,6 @@ final class GetCuriesHopTest {
 
     @Test
     public void getHopTraversalShouldFailWhenHrefCannotBeExtracted() {
-        final val response = mock(ResponseEntity.class);
         when(hrefExtractor.extractCuriesHref(response, "rel")).thenThrow(TestException.class);
 
         assertThatExceptionOfType(TestException.class)
@@ -159,6 +171,7 @@ final class GetCuriesHopTest {
     private static class TestException extends RuntimeException {}
 }
 
+@ExtendWith(MockitoExtension.class)
 final class PutHopTest {
 
     private static final MediaType APP_V1 = MediaType.parseMediaType(
@@ -173,7 +186,11 @@ final class PutHopTest {
 
     private final Hop.Factory hopFactory = new Hop.Factory(APP_V1, restTemplate, hrefExtractor);
 
-    private final ArgumentCaptor<HttpEntity<String>> entityCaptor = ArgumentCaptor.forClass(HttpEntity.class);
+    @Mock
+    private ResponseEntity<String> response;
+
+    @Captor
+    private ArgumentCaptor<HttpEntity<String>> entityCaptor;
 
     @Test
     public void hopsTraversalShouldNotAcceptNullEntities() {
@@ -209,7 +226,6 @@ final class PutHopTest {
 
     @Test
     public void putHopTraversalShouldFailWhenHrefCannotBeExtracted() {
-        final ResponseEntity<String> response = mock(ResponseEntity.class);
         when(hrefExtractor.extractHref(response, "any")).thenThrow(TestException.class);
 
         assertThatExceptionOfType(TestException.class)

@@ -5,7 +5,7 @@ import javax.validation.constraints.NotNull;
 import lombok.EqualsAndHashCode;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.StockSymbol;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.postparsed.annotation.DomainClassConstraint;
 
 @EqualsAndHashCode
 public final class ListingDTO {

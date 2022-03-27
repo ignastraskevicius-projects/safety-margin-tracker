@@ -7,7 +7,7 @@ import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lombok.val;
-import org.ignast.stockinvesting.util.errorhandling.api.StandardErrorDTO;
+import org.ignast.stockinvesting.util.errorhandling.api.dto.StandardErrorDTO;
 import org.springframework.web.servlet.HandlerInterceptor;
 
 public final class MediaTypeCheckerInterceptor implements HandlerInterceptor {

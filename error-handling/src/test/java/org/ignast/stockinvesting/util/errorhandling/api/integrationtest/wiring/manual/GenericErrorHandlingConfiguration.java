@@ -1,13 +1,15 @@
 package org.ignast.stockinvesting.util.errorhandling.api.integrationtest.wiring.manual;
 
-import org.ignast.stockinvesting.util.errorhandling.api.AnnotationBasedValidationErrorsExtractor;
-import org.ignast.stockinvesting.util.errorhandling.api.ControllerAdviceForGenericErrors;
-import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
-import org.ignast.stockinvesting.util.errorhandling.api.GenericErrorController;
-import org.ignast.stockinvesting.util.errorhandling.api.JacksonParsingErrorsExtractor;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.BodyValidationConfig;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.parsing.ControllerAdviceForParsingValidation;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.parsing.JacksonParsingErrorsExtractor;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.parsing.strictjackson.StrictIntegerDeserializer;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.parsing.strictjackson.StrictStringDeserializer;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.postparsed.AnnotationBasedValidationErrorsExtractor;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.postparsed.ControllerAdviceForPostParsedValidation;
+import org.ignast.stockinvesting.util.errorhandling.api.genericvalidation.ControllerAdviceForGenericErrors;
+import org.ignast.stockinvesting.util.errorhandling.api.genericvalidation.GenericErrorController;
 import org.ignast.stockinvesting.util.errorhandling.api.interceptor.MediaTypeInterceptorConfig;
-import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictIntegerDeserializer;
-import org.ignast.stockinvesting.util.errorhandling.api.strictjackson.StrictStringDeserializer;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.web.servlet.error.ErrorController;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +17,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 
 @TestConfiguration
-@Import({ MediaTypeInterceptorConfig.class, ErrorExtractorConfiguration.class })
+@Import({ MediaTypeInterceptorConfig.class, BodyValidationConfig.class })
 class GenericErrorHandlingConfiguration {
 
     @Bean
@@ -34,10 +36,21 @@ class GenericErrorHandlingConfiguration {
     }
 
     @Bean
-    public ControllerAdviceForGenericErrors genericControllerAdvice(
-        final JacksonParsingErrorsExtractor parsing,
+    public ControllerAdviceForGenericErrors genericControllerAdvice() {
+        return new ControllerAdviceForGenericErrors(MediaType.APPLICATION_CBOR);
+    }
+
+    @Bean
+    public ControllerAdviceForParsingValidation parsingValidationControllerAdvice(
+        final JacksonParsingErrorsExtractor parsing
+    ) {
+        return new ControllerAdviceForParsingValidation(parsing);
+    }
+
+    @Bean
+    public ControllerAdviceForPostParsedValidation postParsingValidationControllerAdvice(
         final AnnotationBasedValidationErrorsExtractor validation
     ) {
-        return new ControllerAdviceForGenericErrors(validation, parsing, MediaType.APPLICATION_CBOR);
+        return new ControllerAdviceForPostParsedValidation(validation);
     }
 }

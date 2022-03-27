@@ -13,7 +13,7 @@ import lombok.val;
 import org.hamcrest.core.StringContains;
 import org.ignast.stockinvesting.quotes.api.controller.HalConfig;
 import org.ignast.stockinvesting.quotes.api.controller.errorhandler.AppErrorsHandlingConfiguration;
-import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.BodyValidationConfig;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.MockMvc;
     {
         RootController.class,
         HalConfig.class,
-        ErrorExtractorConfiguration.class,
+        BodyValidationConfig.class,
         AppErrorsHandlingConfiguration.class,
     }
 )

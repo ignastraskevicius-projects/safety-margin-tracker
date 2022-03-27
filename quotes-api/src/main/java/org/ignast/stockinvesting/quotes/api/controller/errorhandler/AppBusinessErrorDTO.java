@@ -2,7 +2,7 @@ package org.ignast.stockinvesting.quotes.api.controller.errorhandler;
 
 import static org.springframework.http.HttpStatus.BAD_REQUEST;
 
-import org.ignast.stockinvesting.util.errorhandling.api.BusinessErrorDTO;
+import org.ignast.stockinvesting.util.errorhandling.api.dto.BusinessErrorDTO;
 import org.springframework.http.HttpStatus;
 
 public final class AppBusinessErrorDTO implements BusinessErrorDTO {

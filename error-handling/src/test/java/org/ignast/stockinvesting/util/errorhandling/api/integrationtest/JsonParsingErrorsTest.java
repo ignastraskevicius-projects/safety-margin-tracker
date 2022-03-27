@@ -19,8 +19,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 import lombok.Getter;
 import lombok.val;
-import org.ignast.stockinvesting.util.errorhandling.api.ErrorExtractorConfiguration;
-import org.ignast.stockinvesting.util.errorhandling.api.annotation.DomainClassConstraint;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.BodyValidationConfig;
+import org.ignast.stockinvesting.util.errorhandling.api.bodyvalidation.postparsed.annotation.DomainClassConstraint;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @SuppressWarnings("checkstyle:outertypefilename")
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class UnparsableJsonErrorsTest {
 
     private static final String RESOURCE_SPECIFIC_MEDIA_TYPE = "application/resourceSpecificHeader.hal+json";
@@ -93,7 +93,7 @@ final class UnparsableJsonErrorsTest {
     class TestDTO {}
 }
 
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class JsonStringFieldErrorsTest {
 
     private static final String ROOT = "/";
@@ -196,7 +196,7 @@ final class JsonStringFieldErrorsTest {
     }
 }
 
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class JsonIntegerFieldErrorsTest {
 
     private static final String ROOT = "/";
@@ -297,7 +297,7 @@ final class JsonIntegerFieldErrorsTest {
     }
 }
 
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class JsonCollectionErrorsTest {
 
     private static final String ROOT = "/";
@@ -403,7 +403,7 @@ final class JsonCollectionErrorsTest {
     static class TestElementDTO {}
 }
 
-@WebMvcTest(ErrorExtractorConfiguration.class)
+@WebMvcTest(BodyValidationConfig.class)
 final class JsonNestedStringFieldErrorsTest {
 
     private static final String ROOT = "/";

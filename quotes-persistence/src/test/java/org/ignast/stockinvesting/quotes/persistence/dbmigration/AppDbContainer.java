@@ -13,6 +13,7 @@ public final class AppDbContainer {
 
     private static final String DATABASE_NAME = "testschema";
 
+    @SuppressWarnings("rawtypes")
     private static final MySQLContainer CONTAINER = new MySQLContainer("mysql:8.0.28-debian")
         .withDatabaseName(DATABASE_NAME)
         .withUsername(USERNAME)
@@ -20,10 +21,12 @@ public final class AppDbContainer {
 
     private AppDbContainer() {}
 
+    @SuppressWarnings("rawtypes")
     public static MySQLContainer singleton() {
         return CONTAINER;
     }
 
+    @SuppressWarnings("rawtypes")
     public static DataSource getDataSourceTo(final MySQLContainer mysql) {
         final val dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName("com.mysql.cj.jdbc.Driver");

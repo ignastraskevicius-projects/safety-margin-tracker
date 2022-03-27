@@ -24,6 +24,7 @@ import org.testcontainers.junit.jupiter.Testcontainers;
 public final class AppDbMigrationTest {
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final MySQLContainer APP_DB = AppDbContainer.singleton();
 
     private static final int MAX_COMPANY_NAME_LENGTH = 160;
@@ -81,7 +82,7 @@ public final class AppDbMigrationTest {
         public void shouldAcceptCompany() {
             final val insertAmazon =
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'Amazon','AMZN','XNYS')""";
             db.execute(insertAmazon);
         }
@@ -90,11 +91,11 @@ public final class AppDbMigrationTest {
         public void shouldAutoincrementId() {
             final val insertAmazon =
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (15,'Amazon','AMZN','XNAS')""";
             final val insertMicrosoft =
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (16,'Microsoft','MSFT','XNAS')""";
             db.execute(insertAmazon);
             db.execute(insertMicrosoft);
@@ -117,13 +118,13 @@ public final class AppDbMigrationTest {
             final val externalId = 1;
             final val insertAmazon = format(
                 """
-                    INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1, 2,'Amazon','AMZN','XNAS')""",
                 externalId
             );
             final val insertHsbc = format(
                 """
-                    INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (id, external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1, 3,'Santander','HSBC','XLON')""",
                 externalId
             );
@@ -141,13 +142,13 @@ public final class AppDbMigrationTest {
             final val externalId = 1;
             final val insertAmazon = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (%d,'Amazon','AMZN','XNYS')""",
                 externalId
             );
             final val insertHsbc = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (%d,'Santander','HSBC','XLON')""",
                 externalId
             );
@@ -166,14 +167,14 @@ public final class AppDbMigrationTest {
             final val mic = "XNYS";
             final val insertAmazonInUs = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'Amazon','%s','%s')""",
                 symbol,
                 mic
             );
             final val insertAnotherAmazonInUs = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (2,'Microsoft','%s','%s')""",
                 symbol,
                 mic
@@ -191,13 +192,13 @@ public final class AppDbMigrationTest {
             final val externalId = 1;
             final val insertAmazon = format(
                 """
-                        INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                        INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                         VALUES (2,'Amazon','AMZN','XNAS')""",
                 externalId
             );
             final val insertHsbc = format(
                 """
-                        INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                        INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                         VALUES (2,'Santander','AMZN','XNAS')""",
                 externalId
             );
@@ -215,13 +216,13 @@ public final class AppDbMigrationTest {
             final val symbol = "X";
             final val insertXsymbolInTse = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'TMX group','%s','XTSX')""",
                 symbol
             );
             final val insertXsymbolInNyse = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (2,'United States steel corporation','%s','XNYS')""",
                 symbol
             );
@@ -235,13 +236,13 @@ public final class AppDbMigrationTest {
             final val mic = "XNAS";
             final val insertAmazon = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'Amazon','AMZN','%s')""",
                 mic
             );
             final val insertMicrosoft = format(
                 """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (2,'Microsoft','MSFT','%s')""",
                 mic
             );
@@ -256,7 +257,7 @@ public final class AppDbMigrationTest {
             db.execute(
                 format(
                     """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'%s','FR','{}')""",
                     notTooLongName
                 )
@@ -269,7 +270,7 @@ public final class AppDbMigrationTest {
             db.execute(
                 format(
                     """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'AMZN','%s','XNAS')""",
                     notTooLongSymbol
                 )

@@ -16,6 +16,7 @@ import org.testcontainers.utility.DockerImageName;
 public final class DockerizedDevMysqlIT {
 
     @Container
+    @SuppressWarnings("rawtypes")
     public static final MySQLContainer MYSQL = new MySQLContainer(
         DockerImageName.parse(System.getProperty("docker.image")).asCompatibleSubstituteFor("mysql")
     )
@@ -28,7 +29,7 @@ public final class DockerizedDevMysqlIT {
     public void shouldCreateCompany() {
         jdbcTemplate.execute(
             """
-                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code) 
+                    INSERT INTO company (external_id, company_name, stock_symbol, market_identifier_code)
                     VALUES (1,'Amazon','AMZN','XNYS')"""
         );
 

@@ -48,14 +48,17 @@ public final class AppErrorsHandlingConfigurationTest {
         assertThat(TYPES_CONSTRUCTABLE_FROM_INTEGER).hasSize(countOfTypesSupported);
     }
 
-    private ObjectAssert verifyConstructionFromString(
+    private ObjectAssert<Object> verifyConstructionFromString(
         final Class<?> type,
         final Construct<String> construct
     ) {
         return assertThat(construct.apply(TYPES_CONSTRUCTABLE_FROM_STRING.get(type))).isInstanceOf(type);
     }
 
-    private ObjectAssert verifyConstructionFromInt(final Class<?> type, final Construct<Integer> construct) {
+    private ObjectAssert<Object> verifyConstructionFromInt(
+        final Class<?> type,
+        final Construct<Integer> construct
+    ) {
         return assertThat(construct.apply(TYPES_CONSTRUCTABLE_FROM_INTEGER.get(type))).isInstanceOf(type);
     }
 

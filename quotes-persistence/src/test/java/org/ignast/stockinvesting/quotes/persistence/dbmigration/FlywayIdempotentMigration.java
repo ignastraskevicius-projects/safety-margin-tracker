@@ -82,6 +82,7 @@ final class FlywayMigration implements MysqlMigration {
 final class FlywayIdempotentMigrationTest {
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final MySQLContainer MYSQL = AppDbContainer.singleton();
 
     private static final String FLYWAY_METADATA_TABLE = "flyway_schema_history";

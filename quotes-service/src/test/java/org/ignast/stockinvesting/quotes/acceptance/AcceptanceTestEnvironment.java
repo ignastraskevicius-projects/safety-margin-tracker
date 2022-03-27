@@ -19,12 +19,14 @@ public class AcceptanceTestEnvironment {
     private static final int EXPOSED_ALPHAVANTAGE_PORT = 8080;
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final GenericContainer ALPHAVANTAGE = new GenericContainer(
         DockerImageName.parse(System.getProperty("alphavantage.image"))
     )
         .withExposedPorts(EXPOSED_ALPHAVANTAGE_PORT);
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final MySQLContainer MYSQL = new MySQLContainer(
         DockerImageName.parse(System.getProperty("mysqldev.image")).asCompatibleSubstituteFor("mysql")
     )

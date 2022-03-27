@@ -2,12 +2,8 @@ package org.ignast.stockinvesting.quotes.alphavantage;
 
 import static java.lang.String.format;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import java.math.BigDecimal;
 import java.util.Optional;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.ToString;
 import lombok.val;
 import org.ignast.stockinvesting.quotes.domain.MarketIdentifierCode;
 import org.ignast.stockinvesting.quotes.domain.QuotesRepository;
@@ -91,34 +87,5 @@ public class AlphaVantageQuotes implements QuotesRepository {
         } catch (RestClientException e) {
             throw new QuoteRetrievalFailedException(COMMUNICATION_FAILED, e);
         }
-    }
-}
-
-@ToString
-final class QuoteResponseDTO {
-
-    @Getter
-    private final Optional<QuoteDTO> quote;
-
-    @Getter
-    private final Optional<String> error;
-
-    public QuoteResponseDTO(
-        @NonNull @JsonProperty("Global Quote") final Optional<QuoteDTO> quote,
-        @NonNull @JsonProperty("Error Message") final Optional<String> error
-    ) {
-        this.quote = quote;
-        this.error = error;
-    }
-}
-
-@ToString
-final class QuoteDTO {
-
-    @Getter
-    private final Optional<BigDecimal> price;
-
-    public QuoteDTO(@NonNull @JsonProperty(value = "05. price") final Optional<BigDecimal> price) {
-        this.price = price;
     }
 }

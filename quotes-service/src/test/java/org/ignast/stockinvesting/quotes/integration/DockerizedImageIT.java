@@ -23,6 +23,7 @@ public class DockerizedImageIT {
     private static final int OK = 200;
 
     @Container
+    @SuppressWarnings("rawtypes")
     private static final GenericContainer APP = new GenericContainer(
         DockerImageName.parse(System.getProperty("app.docker.image"))
     )
